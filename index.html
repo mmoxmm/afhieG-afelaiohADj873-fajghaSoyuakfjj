@@ -12,12 +12,14 @@
   --text:#1a1a18;--text2:#5a5a55;--text3:#999990;
   --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
   --success:#1d9e75;--success-bg:#e1f5ee;
+  --accent:#3a6ea8;--accent-bg:#e8f0f9;
   --radius:8px;--radius-lg:12px;
 }
 @media(prefers-color-scheme:dark){:root{
   --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#323230;
   --text:#e8e6de;--text2:#9a9890;--text3:#666660;
   --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+  --accent:#5b8fc8;--accent-bg:#1e2d3e;
 }}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;font-size:16px;min-height:100vh}
 .app{max-width:680px;margin:0 auto;padding:20px 16px 60px}
@@ -31,6 +33,8 @@ input:focus{border-color:var(--text2)}
 .tabs{display:flex;gap:2px;border-bottom:0.5px solid var(--border);margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;padding:10px 14px;white-space:nowrap;transition:color .15s}
 .tab.active{color:var(--text);border-bottom-color:var(--text);font-weight:500}
+
+/* ---- Stats tab ---- */
 .col-headers{display:grid;grid-template-columns:90px 72px 1fr 1fr 1fr;gap:6px;padding:0 10px 6px;font-size:11px;color:var(--text3)}
 .col-headers span:not(:first-child){text-align:center}
 .stat-row{display:grid;grid-template-columns:90px 72px 1fr 1fr 1fr;gap:6px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:10px;margin-bottom:4px}
@@ -47,6 +51,18 @@ input:focus{border-color:var(--text2)}
 .metric-label{font-size:10px;color:var(--text3);margin-bottom:4px}
 .metric-val{font-size:20px;font-weight:500}
 .metric-desc{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ---- Skills tab ---- */
+.skill-tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.skill-mode-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.toggle-wrap{position:relative;display:inline-block;width:40px;height:22px;cursor:pointer}
+.toggle-wrap input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:11px;transition:.2s}
+.toggle-slider:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.toggle-wrap input:checked+.toggle-slider{background:var(--accent)}
+.toggle-wrap input:checked+.toggle-slider:before{transform:translateX(18px)}
+.skill-mode-label{font-size:11px;color:var(--text2)}
+
 .skill-headers{display:grid;grid-template-columns:1fr 76px 58px 58px 36px;gap:6px;padding:0 4px 8px;font-size:11px;color:var(--text3)}
 .skill-headers span:not(:first-child){text-align:center}
 .skill-row{display:grid;grid-template-columns:1fr 76px 58px 58px 36px;gap:6px;align-items:center;margin-bottom:6px}
@@ -56,8 +72,11 @@ input:focus{border-color:var(--text2)}
 .btn-remove:active{background:var(--bg2)}
 .btn-add{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:6px;transition:background .12s}
 .btn-add:active{background:var(--bg2)}
+
+/* ---- Dice tab ---- */
 .dice-hint{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px}
 .dice-hint small{font-size:12px;color:var(--text3)}
+.dice-hint code{font-family:monospace;background:var(--bg2);padding:1px 5px;border-radius:4px;font-size:12px}
 .dice-section-title{font-size:11px;color:var(--text3);letter-spacing:.05em;margin:16px 0 10px}
 .dice-blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .dice-block{background:var(--bg2);border-radius:var(--radius);padding:12px}
@@ -65,7 +84,7 @@ input:focus{border-color:var(--text2)}
 .dice-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .dice-row:last-child{margin-bottom:0}
 .dice-row-label{font-size:12px;color:var(--text2)}
-.cmd-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:monospace;font-size:13px;padding:5px 9px;transition:background .12s;user-select:none;white-space:nowrap}
+.cmd-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:monospace;font-size:12px;padding:5px 9px;transition:background .12s;user-select:none;white-space:nowrap;max-width:100%}
 .cmd-chip:active{background:var(--bg3)}
 .cmd-chip.copied{border-color:var(--success);color:var(--success)}
 .bonus-block{background:var(--bg2);border-radius:var(--radius);padding:12px;margin-top:8px}
@@ -74,6 +93,8 @@ input:focus{border-color:var(--text2)}
 .bonus-row{display:flex;flex-direction:column;gap:5px}
 .bonus-label{font-size:11px;color:var(--text2)}
 .dice-empty{font-size:13px;color:var(--text3);text-align:center;padding:40px 0}
+
+/* ---- Ref tab ---- */
 .ref-row{display:grid;grid-template-columns:1fr 20px 1fr;gap:8px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:10px 12px;margin-bottom:4px}
 .ref-v6{font-size:13px;color:var(--text2)}
 .ref-v7{font-size:13px;font-weight:500}
@@ -89,6 +110,26 @@ input:focus{border-color:var(--text2)}
 .db-build{font-size:12px;color:var(--text2);text-align:center}
 .section-title{font-size:11px;color:var(--text3);letter-spacing:.05em;margin:0 0 10px}
 .section-gap{margin-top:20px}
+
+/* ---- Ref Preview ---- */
+.preview-block{background:var(--accent-bg);border:0.5px solid var(--accent);border-radius:var(--radius-lg);padding:14px;margin-bottom:16px}
+.preview-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.preview-label{font-size:12px;color:var(--text2);white-space:nowrap}
+.preview-select{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:7px 10px;outline:none;flex:1;min-width:0;cursor:pointer}
+.preview-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.preview-cell{background:var(--bg);border-radius:var(--radius);padding:10px 8px;text-align:center}
+.preview-cell-label{font-size:10px;color:var(--text3);margin-bottom:4px}
+.preview-cell-val{font-size:20px;font-weight:600}
+.preview-cell-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.preview-cell.normal .preview-cell-val{color:var(--text)}
+.preview-cell.hard .preview-cell-val{color:var(--accent)}
+.preview-cell.extreme .preview-cell-val{color:#c0392b}
+.preview-empty{font-size:13px;color:var(--text3);text-align:center;padding:8px 0}
+
+@media(prefers-color-scheme:dark){
+  .preview-cell.extreme .preview-cell-val{color:#e07060}
+}
+
 @media(max-width:400px){
   .stat-row{grid-template-columns:80px 64px 1fr 1fr 1fr}
   .col-headers{grid-template-columns:80px 64px 1fr 1fr 1fr}
@@ -113,9 +154,10 @@ input:focus{border-color:var(--text2)}
     <button class="tab" data-tab="ref">判定リファレンス</button>
   </div>
 
+  <!-- Stats tab -->
   <div id="tab-stats">
     <div class="col-headers">
-      <span>能力値</span><span>6版入力</span><span>7版</span><span>1/2</span><span>1/5</span>
+      <span>能力値</span><span>6版入力</span><span>7版（×5）</span><span>1/2</span><span>1/5</span>
     </div>
     <div id="stat-rows"></div>
     <div class="derived" id="derived" style="display:none">
@@ -124,16 +166,29 @@ input:focus{border-color:var(--text2)}
     </div>
   </div>
 
+  <!-- Skills tab -->
   <div id="tab-skills" style="display:none">
+    <div class="skill-tab-header">
+      <div style="font-size:12px;color:var(--text2)">技能一覧</div>
+      <div class="skill-mode-toggle">
+        <span class="skill-mode-label" id="mode-label-6">6版値を入力</span>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="skill-mode-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="skill-mode-label" id="mode-label-7">7版値を入力</span>
+      </div>
+    </div>
     <div class="skill-headers">
-      <span>技能名</span><span>値</span><span>1/2</span><span>1/5</span><span></span>
+      <span>技能名</span><span id="skill-col-val">値（6版）</span><span id="skill-col-v7">7版値</span><span>1/2</span><span></span>
     </div>
     <div id="skill-rows"></div>
     <button class="btn-add" id="add-skill">＋ 技能を追加</button>
   </div>
 
+  <!-- Dice tab -->
   <div id="tab-dice" style="display:none">
-    <p class="dice-hint">クリックでコピー → ここふぉりあにそのまま貼り付けて振れます<br><small>CC(n) = d100を振ってnと比較し、成功レベルを自動判定</small></p>
+    <p class="dice-hint">クリックでコピー → ここふぉりあにそのまま貼り付けて振れます<br><small>例: <code>CC&lt;=60 【火器】</code> → d100を振って60以下なら成功</small></p>
     <div id="dice-content"></div>
     <div class="bonus-block">
       <div class="bonus-title">ボーナス・ペナルティダイス</div>
@@ -146,7 +201,20 @@ input:focus{border-color:var(--text2)}
     </div>
   </div>
 
+  <!-- Ref tab -->
   <div id="tab-ref" style="display:none">
+
+    <!-- Preview block -->
+    <div class="preview-block">
+      <div class="preview-header">
+        <span class="preview-label">判定プレビュー：</span>
+        <select class="preview-select" id="preview-select">
+          <option value="">── 能力値・技能を選択 ──</option>
+        </select>
+      </div>
+      <div id="preview-result"><p class="preview-empty">上から能力値か技能を選ぶと、各難易度の目標値が表示されます</p></div>
+    </div>
+
     <div class="section-title">判定難易度の変換</div>
     <div class="ref-row"><span class="ref-v6">能力値 ×5（通常）</span><span class="ref-arrow">→</span><span class="ref-v7">通常成功（そのまま）</span></div>
     <div class="ref-row"><span class="ref-v6">能力値 ×3</span><span class="ref-arrow">→</span><span class="ref-v7">困難成功（値の1/2以下）</span></div>
@@ -188,6 +256,10 @@ const STATS=[
 const vals={};
 STATS.forEach(s=>vals[s.key]="");
 
+// skills: value is always stored as the 7版 value (after any conversion)
+// skillMode: false = input is 6版 (raw, no ×5), true = input is 7版 directly
+let skillMode7=false; // false = 6版入力モード
+
 function getDB(t){
   if(t<=64)return{db:"−2",build:"−2"};if(t<=84)return{db:"−1",build:"−1"};
   if(t<=124)return{db:"なし",build:"0"};if(t<=164)return{db:"+1D4",build:"1"};
@@ -200,6 +272,7 @@ function getMOV(s,d,sz){
   if(s<sz&&d<sz)return"7";if(s>sz&&d>sz)return"9";return"8";
 }
 
+// ---- Stats ----
 function buildStatRows(){
   const wrap=document.getElementById("stat-rows");
   wrap.innerHTML="";
@@ -233,6 +306,7 @@ function updateStats(){
   });
   updateDerived();
   updateDice();
+  updatePreviewSelect();
 }
 
 function updateDerived(){
@@ -261,61 +335,139 @@ function updateDerived(){
   ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-val">${m.value}</div><div class="metric-desc">${m.desc}</div></div>`).join("");
 }
 
-let skillList=[{id:0,name:"",value:""}];
+// ---- Skills ----
+// Each skill stores: { id, name, inputVal (string), v7val (computed int) }
+let skillList=[{id:0,name:"",inputVal:""}];
 let nextId=1;
+
+function skillV7(inputVal){
+  const n=parseInt(inputVal)||0;
+  if(!n) return 0;
+  return skillMode7 ? n : n; // In 6版 mode, value is already the % (no ×5)
+}
 
 function buildSkillRows(){
   const wrap=document.getElementById("skill-rows");
   wrap.innerHTML="";
+
+  // Update column header
+  document.getElementById("skill-col-val").textContent=skillMode7?"値（7版）":"値（6版）";
+  document.getElementById("skill-col-v7").textContent=skillMode7?"—":"1/5";
+
   skillList.forEach(sk=>{
-    const n=parseInt(sk.value)||0;
+    const v7=skillV7(sk.inputVal);
+    const half=v7>0?Math.floor(v7/2):null;
+    const fifth=v7>0?Math.floor(v7/5):null;
     const row=document.createElement("div");
     row.className="skill-row";
+
+    // In 7版 mode: col3 = "—", col4 = 1/2
+    // In 6版 mode: col3 = 1/5 of value, col4 = 1/2 of value
+    // Wait — we show: 値 | [7版値 if 6版mode else —] | 1/2 | ×
+    // Actually: col headers are 技能名 | 値 | 7版値 | 1/2 | del
+    // In 6版 mode: 値=input, 7版値=same(already%), 1/2=half, 1/5=fifth → show half & fifth
+    // Let's keep 3 data cols: input | half | fifth | del (same as original skill tab)
+    // For 7版 mode: input IS the v7 value already, so col "7版値" shows "—" or "入力値そのまま"
+
+    let col3, col4;
+    if(skillMode7){
+      // 7版モード: 入力値がそのまま7版値 → half and fifth
+      col3=half!==null?`<div class="skill-val">${half}</div>`:`<div class="skill-val skill-empty">—</div>`;
+      col4=fifth!==null?`<div class="skill-val">${fifth}</div>`:`<div class="skill-val skill-empty">—</div>`;
+    } else {
+      // 6版モード: 入力値=6版% → 1/2, 1/5
+      col3=half!==null?`<div class="skill-val">${half}</div>`:`<div class="skill-val skill-empty">—</div>`;
+      col4=fifth!==null?`<div class="skill-val">${fifth}</div>`:`<div class="skill-val skill-empty">—</div>`;
+    }
+
     row.innerHTML=`
-      <input type="text" placeholder="技能名..." value="${sk.name}" data-id="${sk.id}" data-field="name" style="padding:10px 10px">
-      <input type="number" min="0" max="100" placeholder="—" value="${sk.value}" data-id="${sk.id}" data-field="value" style="text-align:center;padding:10px 4px">
-      <div class="${n>0?'skill-val':'skill-val skill-empty'}">${n>0?Math.floor(n/2):"—"}</div>
-      <div class="${n>0?'skill-val':'skill-val skill-empty'}">${n>0?Math.floor(n/5):"—"}</div>
+      <input type="text" placeholder="技能名..." value="${escapeHtml(sk.name)}" data-id="${sk.id}" data-field="name" style="padding:10px 10px">
+      <input type="number" min="0" max="999" placeholder="—" value="${sk.inputVal}" data-id="${sk.id}" data-field="inputVal" style="text-align:center;padding:10px 4px">
+      ${col3}
+      ${col4}
       <button class="btn-remove" data-id="${sk.id}" aria-label="削除">×</button>
     `;
     wrap.appendChild(row);
   });
-  wrap.querySelectorAll("input").forEach(inp=>{
+
+  wrap.querySelectorAll("input[data-field='name']").forEach(inp=>{
     inp.addEventListener("input",e=>{
       const id=parseInt(e.target.dataset.id);
-      const field=e.target.dataset.field;
-      skillList=skillList.map(s=>s.id===id?{...s,[field]:e.target.value}:s);
+      skillList=skillList.map(s=>s.id===id?{...s,name:e.target.value}:s);
+      updateDice();
+      updatePreviewSelect();
+    });
+  });
+  wrap.querySelectorAll("input[data-field='inputVal']").forEach(inp=>{
+    inp.addEventListener("input",e=>{
+      const id=parseInt(e.target.dataset.id);
+      skillList=skillList.map(s=>s.id===id?{...s,inputVal:e.target.value}:s);
       buildSkillRows();
       updateDice();
+      updatePreviewSelect();
     });
   });
   wrap.querySelectorAll(".btn-remove").forEach(btn=>{
     btn.addEventListener("click",e=>{
       const id=parseInt(e.target.dataset.id);
-      if(skillList.length>1){skillList=skillList.filter(s=>s.id!==id);buildSkillRows();updateDice();}
+      if(skillList.length>1){
+        skillList=skillList.filter(s=>s.id!==id);
+        buildSkillRows();
+        updateDice();
+        updatePreviewSelect();
+      }
     });
   });
 }
 
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+document.getElementById("skill-mode-toggle").addEventListener("change",e=>{
+  skillMode7=e.target.checked;
+  // Update header labels style
+  document.getElementById("mode-label-6").style.fontWeight=skillMode7?"":"600";
+  document.getElementById("mode-label-7").style.fontWeight=skillMode7?"600":"";
+  document.getElementById("skill-col-val").textContent=skillMode7?"値（7版）":"値（6版）";
+  document.getElementById("skill-col-v7").textContent=skillMode7?"1/5":"1/5";
+  buildSkillRows();
+  updateDice();
+  updatePreviewSelect();
+});
+
 document.getElementById("add-skill").addEventListener("click",()=>{
-  skillList.push({id:nextId++,name:"",value:""});
+  skillList.push({id:nextId++,name:"",inputVal:""});
   buildSkillRows();
 });
 
-function makeDiceBlock(name,value){
+// ---- Dice ----
+function makeDiceCmd(name, value){
+  // Format: CC<=60 【技能名】
+  return `CC<=${value} 【${name}】`;
+}
+
+function makeDiceBlock(name, value){
   const half=Math.floor(value/2);
   const fifth=Math.floor(value/5);
+  const cmd=makeDiceCmd(name,value);
+  const cmdHalf=makeDiceCmd(name,half);
+  const cmdFifth=makeDiceCmd(name,fifth);
   return `<div class="dice-block">
-    <div class="dice-block-name">${name}</div>
-    <div class="dice-row"><span class="dice-row-label">通常成功</span><button class="cmd-chip" data-cmd="CC(${value})">CC(${value})</button></div>
-    <div class="dice-row"><span class="dice-row-label">困難成功</span><button class="cmd-chip" data-cmd="CC(${half})">CC(${half})</button></div>
-    <div class="dice-row"><span class="dice-row-label">極限成功</span><button class="cmd-chip" data-cmd="CC(${fifth})">CC(${fifth})</button></div>
+    <div class="dice-block-name">${escapeHtml(name)}</div>
+    <div class="dice-row"><span class="dice-row-label">通常成功 (${value})</span><button class="cmd-chip" data-cmd="${escapeAttr(cmd)}">${escapeHtml(cmd)}</button></div>
+    <div class="dice-row"><span class="dice-row-label">困難成功 (${half})</span><button class="cmd-chip" data-cmd="${escapeAttr(cmdHalf)}">${escapeHtml(cmdHalf)}</button></div>
+    <div class="dice-row"><span class="dice-row-label">極限成功 (${fifth})</span><button class="cmd-chip" data-cmd="${escapeAttr(cmdFifth)}">${escapeHtml(cmdFifth)}</button></div>
   </div>`;
+}
+
+function escapeAttr(s){
+  return s.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
 }
 
 function updateDice(){
   const activeStats=STATS.filter(({key})=>(parseInt(vals[key])||0)>0);
-  const activeSkills=skillList.filter(s=>s.name&&(parseInt(s.value)||0)>0);
+  const activeSkills=skillList.filter(s=>s.name&&(parseInt(s.inputVal)||0)>0);
   const content=document.getElementById("dice-content");
   if(activeStats.length===0&&activeSkills.length===0){
     content.innerHTML=`<p class="dice-empty">ステータスか技能を入力してください</p>`;
@@ -332,7 +484,7 @@ function updateDice(){
   if(activeSkills.length>0){
     html+=`<div class="dice-section-title">技能</div><div class="dice-blocks">`;
     activeSkills.forEach(sk=>{
-      html+=makeDiceBlock(sk.name,parseInt(sk.value));
+      html+=makeDiceBlock(sk.name,parseInt(sk.inputVal)||0);
     });
     html+="</div>";
   }
@@ -346,26 +498,105 @@ function bindCopy(root){
       const cmd=e.currentTarget.dataset.cmd;
       navigator.clipboard.writeText(cmd).then(()=>{
         e.currentTarget.classList.add("copied");
-        const orig=e.currentTarget.textContent;
-        e.currentTarget.textContent="コピーしました";
-        setTimeout(()=>{e.currentTarget.classList.remove("copied");e.currentTarget.textContent=cmd;},1400);
+        const origText=e.currentTarget.textContent;
+        e.currentTarget.textContent="コピーしました ✓";
+        setTimeout(()=>{
+          e.currentTarget.classList.remove("copied");
+          e.currentTarget.textContent=origText;
+        },1400);
       });
     });
   });
 }
 
+// Static bonus dice copy
 document.querySelectorAll(".cmd-chip[data-cmd]").forEach(btn=>{
   btn.addEventListener("click",e=>{
     const cmd=e.currentTarget.dataset.cmd;
     navigator.clipboard.writeText(cmd).then(()=>{
       const orig=e.currentTarget.textContent;
       e.currentTarget.classList.add("copied");
-      e.currentTarget.textContent="コピーしました";
+      e.currentTarget.textContent="コピーしました ✓";
       setTimeout(()=>{e.currentTarget.classList.remove("copied");e.currentTarget.textContent=orig;},1400);
     });
   });
 });
 
+// ---- Preview ----
+function getAllOptions(){
+  const opts=[];
+  // Stats
+  STATS.forEach(({key,label,jp})=>{
+    const raw=parseInt(vals[key])||0;
+    if(raw>0){
+      opts.push({label:`${label}（${jp}）`,value:raw*5,type:"stat"});
+    }
+  });
+  // Skills
+  skillList.forEach(sk=>{
+    const v=parseInt(sk.inputVal)||0;
+    if(sk.name&&v>0){
+      opts.push({label:sk.name,value:v,type:"skill"});
+    }
+  });
+  return opts;
+}
+
+function updatePreviewSelect(){
+  const sel=document.getElementById("preview-select");
+  const current=sel.value;
+  sel.innerHTML=`<option value="">── 能力値・技能を選択 ──</option>`;
+  const opts=getAllOptions();
+  opts.forEach((o,i)=>{
+    const el=document.createElement("option");
+    el.value=i;
+    el.textContent=`${o.label}（${o.value}）`;
+    sel.appendChild(el);
+  });
+  // Try to restore selection
+  if(current!==""){
+    sel.value=current;
+  }
+  renderPreview();
+}
+
+function renderPreview(){
+  const sel=document.getElementById("preview-select");
+  const result=document.getElementById("preview-result");
+  const idx=parseInt(sel.value);
+  const opts=getAllOptions();
+  if(isNaN(idx)||!opts[idx]){
+    result.innerHTML=`<p class="preview-empty">上から能力値か技能を選ぶと、各難易度の目標値が表示されます</p>`;
+    return;
+  }
+  const {label,value}=opts[idx];
+  const half=Math.floor(value/2);
+  const fifth=Math.floor(value/5);
+  result.innerHTML=`
+    <div class="preview-table">
+      <div class="preview-cell normal">
+        <div class="preview-cell-label">通常成功</div>
+        <div class="preview-cell-val">${value}</div>
+        <div class="preview-cell-sub">以下で成功</div>
+      </div>
+      <div class="preview-cell hard">
+        <div class="preview-cell-label">困難成功</div>
+        <div class="preview-cell-val">${half}</div>
+        <div class="preview-cell-sub">以下で成功</div>
+      </div>
+      <div class="preview-cell extreme">
+        <div class="preview-cell-label">極限成功</div>
+        <div class="preview-cell-val">${fifth}</div>
+        <div class="preview-cell-sub">以下で成功</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">${escapeHtml(label)}の判定</div>
+  `;
+}
+
+document.getElementById("preview-select").addEventListener("change",renderPreview);
+
+// ---- Tabs ----
 document.querySelectorAll(".tab").forEach(btn=>{
   btn.addEventListener("click",()=>{
     document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
@@ -374,9 +605,11 @@ document.querySelectorAll(".tab").forEach(btn=>{
     ["stats","skills","dice","ref"].forEach(id=>{
       document.getElementById(`tab-${id}`).style.display=id===t?"":"none";
     });
+    if(t==="ref") updatePreviewSelect();
   });
 });
 
+// ---- Init ----
 buildStatRows();
 buildSkillRows();
 updateDice();
