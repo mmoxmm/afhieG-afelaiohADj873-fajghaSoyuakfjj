@@ -15,7 +15,7 @@
   --accent:#2c5f8a;
   --danger:#b03030;--danger-bg:#fdecea;
   --warn:#b07020;--warn-bg:#fdf5e0;
-  --radius:8px;--radius-lg:12px;
+  --radius:6px;--radius-lg:10px;
   --shadow:0 1px 3px rgba(0,0,0,0.08);
 }
 @media(prefers-color-scheme:dark){:root{
@@ -28,227 +28,252 @@
   --shadow:0 1px 4px rgba(0,0,0,0.35);
 }}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;font-size:16px;display:flex;flex-direction:column}
-.app-header{flex-shrink:0;padding:14px 16px 0;max-width:720px;width:100%;margin:0 auto}
-.app-tabs{flex-shrink:0;max-width:720px;width:100%;margin:0 auto;padding:0 16px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;font-size:15px;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.app-header{flex-shrink:0;padding:8px 12px 0;max-width:720px;width:100%;margin:0 auto}
+.app-tabs{flex-shrink:0;max-width:720px;width:100%;margin:0 auto;padding:0 12px}
 .app-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.app-body-inner{max-width:720px;margin:0 auto;padding:14px 16px 60px}
-h1{font-size:16px;font-weight:600;margin-bottom:2px}
-.subtitle{font-size:12px;color:var(--text3);margin-bottom:10px}
-.name-wrap{margin-bottom:10px}
-label.field-label{display:block;font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em}
+.app-body-inner{max-width:720px;margin:0 auto;padding:8px 12px 48px}
+h1{font-size:14px;font-weight:600;margin-bottom:1px}
+.subtitle{font-size:11px;color:var(--text3);margin-bottom:6px}
+.name-wrap{margin-bottom:6px}
+label.field-label{display:block;font-size:10px;color:var(--text3);margin-bottom:3px;letter-spacing:.04em}
+
+/* ── INPUTS ── */
 input[type=text],input[type=number],textarea,select{
   background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);
-  color:var(--text);font-family:inherit;font-size:15px;padding:9px 12px;
+  color:var(--text);font-family:inherit;font-size:14px;padding:6px 9px;
   outline:none;transition:border .15s,box-shadow .15s;-moz-appearance:textfield;width:100%}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(44,95,138,.12)}
-textarea{resize:vertical;min-height:100px;line-height:1.6;font-size:13px}
-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+textarea{resize:vertical;min-height:80px;line-height:1.6;font-size:12px}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
 
-/* TABS */
+/* ── TABS ── */
 .tabs{display:flex;border-bottom:1px solid var(--border2);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:9px 12px;white-space:nowrap;transition:color .15s;flex-shrink:0}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:11px;padding:7px 10px;white-space:nowrap;transition:color .15s;flex-shrink:0}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
 
-/* CARD */
-.card{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);box-shadow:var(--shadow);padding:12px;margin-bottom:8px}
-.card-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+/* ── CARD ── */
+.card{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);box-shadow:var(--shadow);padding:8px;margin-bottom:6px}
+.card-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
 
-/* STATS */
-.col-headers{display:grid;grid-template-columns:88px 66px 1fr 1fr 1fr;gap:5px;padding:0 10px 5px;font-size:10px;color:var(--text3)}
+/* ── STATS ── */
+.col-headers{display:grid;grid-template-columns:80px 56px 1fr 1fr 1fr;gap:4px;padding:0 8px 4px;font-size:9px;color:var(--text3)}
 .col-headers span:not(:first-child){text-align:center}
-.stat-row{display:grid;grid-template-columns:88px 66px 1fr 1fr 1fr;gap:5px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:8px 10px;margin-bottom:3px;border:0.5px solid var(--border)}
-.stat-name{display:flex;align-items:baseline;gap:4px}
-.stat-name strong{font-size:13px;font-weight:600}
-.stat-name span{font-size:10px;color:var(--text3)}
-.stat-val{text-align:center;font-size:15px;font-weight:600}
-.stat-half,.stat-fifth{text-align:center;font-size:13px;color:var(--text2)}
-.derived{margin-top:12px}
-.derived-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.metric{background:var(--bg2);border-radius:var(--radius);padding:9px 6px;text-align:center;border:0.5px solid var(--border)}
-.metric-label{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
-.metric-val{font-size:18px;font-weight:700}
-.metric-desc{font-size:9px;color:var(--text3);margin-top:1px}
+.stat-row{display:grid;grid-template-columns:80px 56px 1fr 1fr 1fr;gap:4px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:5px 8px;margin-bottom:2px;border:0.5px solid var(--border)}
+.stat-name{display:flex;align-items:baseline;gap:3px}
+.stat-name strong{font-size:12px;font-weight:600}
+.stat-name span{font-size:9px;color:var(--text3)}
+.stat-val{text-align:center;font-size:14px;font-weight:600}
+.stat-half,.stat-fifth{text-align:center;font-size:12px;color:var(--text2)}
+.stat-row input{padding:5px 2px;font-size:13px;text-align:center}
 
-/* SKILLS */
-.skill-tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.toggle-wrap{position:relative;display:inline-block;width:38px;height:20px;cursor:pointer}
+.derived{margin-top:8px}
+.derived-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:6px 4px;text-align:center;border:0.5px solid var(--border)}
+.metric-label{font-size:8px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1px}
+.metric-val{font-size:16px;font-weight:700}
+.metric-desc{font-size:8px;color:var(--text3);margin-top:1px}
+
+/* ── SKILLS ── */
+.skill-tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.toggle-wrap{position:relative;display:inline-block;width:34px;height:18px;cursor:pointer}
 .toggle-wrap input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:10px;transition:.2s}
-.toggle-slider:before{content:"";position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:9px;transition:.2s}
+.toggle-slider:before{content:"";position:absolute;width:12px;height:12px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .toggle-wrap input:checked+.toggle-slider{background:var(--accent)}
-.toggle-wrap input:checked+.toggle-slider:before{transform:translateX(18px)}
-.skill-mode-toggle{display:flex;align-items:center;gap:6px}
-.sml{font-size:11px;color:var(--text3)}
-.skill-headers{display:grid;grid-template-columns:1fr 70px 54px 54px 32px;gap:5px;padding:0 2px 6px;font-size:10px;color:var(--text3)}
+.toggle-wrap input:checked+.toggle-slider:before{transform:translateX(16px)}
+.skill-mode-toggle{display:flex;align-items:center;gap:5px}
+.sml{font-size:10px;color:var(--text3)}
+.skill-headers{display:grid;grid-template-columns:1fr 64px 50px 50px 28px;gap:4px;padding:0 2px 4px;font-size:9px;color:var(--text3)}
 .skill-headers span:not(:first-child){text-align:center}
-.skill-row{display:grid;grid-template-columns:1fr 70px 54px 54px 32px;gap:5px;align-items:center;margin-bottom:5px}
-.skill-val{text-align:center;font-size:13px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:9px 2px;border:0.5px solid var(--border)}
-.btn-remove{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:15px;height:38px;width:32px;display:flex;align-items:center;justify-content:center}
-.btn-add{background:none;border:0.5px dashed var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:9px;margin-top:6px;display:flex;align-items:center;gap:4px;width:100%;justify-content:center}
+.skill-row{display:grid;grid-template-columns:1fr 64px 50px 50px 28px;gap:4px;align-items:center;margin-bottom:4px}
+.skill-row input{padding:6px 6px;font-size:13px}
+.skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:7px 2px;border:0.5px solid var(--border)}
+.btn-remove{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:14px;height:34px;width:28px;display:flex;align-items:center;justify-content:center}
+.btn-add{background:none;border:0.5px dashed var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:11px;padding:7px;margin-top:4px;display:flex;align-items:center;gap:3px;width:100%;justify-content:center}
 
-/* DICE */
-.dice-hint{font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)}
-.dice-hint code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:11px;color:var(--text2)}
-.dice-section-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 7px}
-.dice-blocks{display:flex;flex-direction:column;gap:5px}
-.dice-block{background:var(--bg2);border-radius:var(--radius);padding:11px 12px;border:0.5px solid var(--border)}
-.dice-block-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.db-badge{font-size:10px;font-family:'SF Mono',Consolas,monospace;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;border:0.5px solid rgba(176,112,32,.3);font-weight:600}
-.dice-col-headers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:3px}
-.dice-col-lbl{font-size:9px;font-weight:600;color:var(--text3);text-align:center;letter-spacing:.05em;text-transform:uppercase}
-.dice-cmd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+/* ── DICE ── */
+.dice-hint{font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:7px;padding:7px 10px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)}
+.dice-hint code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:1px 4px;border-radius:3px;font-size:10px;color:var(--text2)}
+.dice-section-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 5px}
+.dice-blocks{display:flex;flex-direction:column;gap:4px}
+
+/* ── DICE BLOCK (compact redesign) ── */
+.dice-block{background:var(--bg2);border-radius:var(--radius);padding:8px 10px;border:0.5px solid var(--border)}
+.dice-block-name{font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.db-badge{font-size:9px;font-family:'SF Mono',Consolas,monospace;background:var(--warn-bg);color:var(--warn);border-radius:3px;padding:1px 5px;border:0.5px solid rgba(176,112,32,.3);font-weight:600}
+
+/* Main (normal) roll — full width */
+.dice-main-row{margin-bottom:4px}
+.dice-main-row .cmd-chip{width:100%;font-size:11px;padding:7px 6px;min-height:34px}
+
+/* Hard + Extreme — side by side, smaller */
+.dice-sub-row{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.dice-sub-label{font-size:9px;color:var(--text3);text-align:center;margin-bottom:2px;font-weight:500}
+.dice-sub-row .cmd-chip{font-size:10px;padding:5px 3px;min-height:30px;opacity:.85}
+
 /* cmd chips */
-.cmd-chip{display:flex;align-items:center;justify-content:center;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:'SF Mono',Consolas,monospace;font-size:10px;padding:7px 3px;transition:all .12s;user-select:none;width:100%;text-align:center;line-height:1.35;word-break:break-all;min-height:40px}
+.cmd-chip{display:flex;align-items:center;justify-content:center;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:'SF Mono',Consolas,monospace;line-height:1.3;word-break:break-all;text-align:center;transition:all .12s;user-select:none}
 .cmd-chip:active{background:var(--bg3)}
 .cmd-chip.copied{border-color:var(--success);color:var(--success);background:var(--success-bg)}
 .cmd-chip.chip-n{border-color:rgba(44,95,138,.2)}
 .cmd-chip.chip-h{border-color:rgba(44,95,138,.4);color:var(--accent)}
 .cmd-chip.chip-e{border-color:rgba(176,48,48,.35);color:var(--danger)}
-.dice-empty{font-size:13px;color:var(--text3);text-align:center;padding:36px 0}
-/* weapon row in damage section */
-.weapon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px;margin-top:6px}
-.weapon-row-lbl{font-size:9px;color:var(--text3);text-align:center;margin-bottom:2px}
-/* bonus section in dice tab */
-.bonus-block{background:var(--bg2);border-radius:var(--radius);padding:11px 12px;margin-top:8px;border:0.5px solid var(--border)}
-.bonus-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px}
-.bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.bonus-row{display:flex;flex-direction:column;gap:3px}
-.bonus-lbl{font-size:10px;color:var(--text3)}
+.dice-empty{font-size:12px;color:var(--text3);text-align:center;padding:28px 0}
 
-/* REF */
-.preview-block{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);box-shadow:var(--shadow);padding:14px;margin-bottom:14px}
-.preview-block-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
-.preview-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.preview-label{font-size:11px;color:var(--text3);white-space:nowrap}
-.preview-select{font-size:13px;padding:7px 28px 7px 10px}
-.preview-manual{display:grid;grid-template-columns:1fr 88px;gap:6px;margin-bottom:10px}
-.preview-manual-label{font-size:10px;color:var(--text3);margin-bottom:3px}
-.preview-manual input{font-size:13px;padding:7px 10px}
-.preview-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:10px}
-.preview-cell{background:var(--bg);border-radius:var(--radius);padding:10px 6px;text-align:center;border:0.5px solid var(--border)}
-.preview-cell-label{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
-.preview-cell-val{font-size:22px;font-weight:700}
-.preview-cell-sub{font-size:9px;color:var(--text3);margin-top:2px}
+/* weapon row in damage section */
+.weapon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:3px;margin-top:5px}
+.weapon-row-lbl{font-size:9px;color:var(--text3);text-align:center;margin-bottom:2px}
+
+/* bonus section */
+.bonus-block{background:var(--bg2);border-radius:var(--radius);padding:8px 10px;margin-top:6px;border:0.5px solid var(--border)}
+.bonus-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.bonus-row{display:flex;flex-direction:column;gap:2px}
+.bonus-lbl{font-size:9px;color:var(--text3)}
+.bonus-row .cmd-chip{font-size:10px;padding:5px 3px;min-height:30px}
+
+/* ── REF ── */
+.preview-block{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);box-shadow:var(--shadow);padding:10px;margin-bottom:10px}
+.preview-block-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.preview-header{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.preview-label{font-size:10px;color:var(--text3);white-space:nowrap}
+.preview-select{font-size:12px;padding:5px 24px 5px 8px}
+.preview-manual{display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:8px}
+.preview-manual-label{font-size:9px;color:var(--text3);margin-bottom:2px}
+.preview-manual input{font-size:12px;padding:5px 8px}
+.preview-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:8px}
+.preview-cell{background:var(--bg);border-radius:var(--radius);padding:7px 4px;text-align:center;border:0.5px solid var(--border)}
+.preview-cell-label{font-size:8px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.preview-cell-val{font-size:20px;font-weight:700}
+.preview-cell-sub{font-size:8px;color:var(--text3);margin-top:1px}
 .preview-cell.normal .preview-cell-val{color:var(--text)}
 .preview-cell.hard .preview-cell-val{color:var(--accent)}
 .preview-cell.extreme .preview-cell-val{color:var(--danger)}
-.preview-dice-label{font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:600}
-.preview-dice-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.preview-dice-tag{font-size:10px;color:var(--text3);min-width:58px;flex-shrink:0}
-.preview-empty{font-size:12px;color:var(--text3);text-align:center;padding:10px 0}
-.preview-source-hint{font-size:10px;color:var(--text3);margin-top:8px;text-align:center}
-/* bonus dice in preview (ref tab) */
-.preview-bonus-wrap{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)}
-.preview-bonus-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-.preview-bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.preview-dice-label{font-size:9px;color:var(--text3);margin-bottom:4px;font-weight:600}
+.preview-dice-row{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.preview-dice-tag{font-size:9px;color:var(--text3);min-width:50px;flex-shrink:0}
+.preview-dice-row .cmd-chip{flex:1;font-size:10px;padding:5px 4px;min-height:28px}
+.preview-empty{font-size:11px;color:var(--text3);text-align:center;padding:8px 0}
+.preview-source-hint{font-size:9px;color:var(--text3);margin-top:6px;text-align:center}
+.preview-bonus-wrap{margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border)}
+.preview-bonus-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.preview-bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.preview-bonus-grid .cmd-chip{font-size:10px;padding:5px 3px;min-height:28px}
 
-.ref-row{display:grid;grid-template-columns:1fr 18px 1fr;gap:6px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:9px 12px;margin-bottom:3px;border:0.5px solid var(--border)}
-.ref-v6{font-size:12px;color:var(--text2)}
-.ref-v7{font-size:12px;font-weight:600}
-.ref-arrow{font-size:12px;color:var(--text3);text-align:center}
-.combat-row{background:var(--bg2);border-radius:var(--radius);padding:9px 12px;margin-bottom:3px;border:0.5px solid var(--border)}
-.combat-label{font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px}
-.combat-inner{display:grid;grid-template-columns:1fr 18px 1fr;gap:6px;align-items:center}
-.combat-v6{font-size:11px;color:var(--text2)}
-.combat-v7{font-size:11px;font-weight:500}
-.db-row{display:grid;grid-template-columns:1fr 78px 64px;gap:5px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:7px 12px;margin-bottom:3px;border:0.5px solid var(--border)}
-.db-range{font-size:11px;color:var(--text2)}
-.db-val{font-size:13px;font-weight:600;text-align:center}
-.db-build{font-size:11px;color:var(--text2);text-align:center}
-.section-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:0 0 7px}
-.section-gap{margin-top:16px}
+.ref-row{display:grid;grid-template-columns:1fr 16px 1fr;gap:5px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:6px 10px;margin-bottom:2px;border:0.5px solid var(--border)}
+.ref-v6{font-size:11px;color:var(--text2)}
+.ref-v7{font-size:11px;font-weight:600}
+.ref-arrow{font-size:11px;color:var(--text3);text-align:center}
+.combat-row{background:var(--bg2);border-radius:var(--radius);padding:7px 10px;margin-bottom:2px;border:0.5px solid var(--border)}
+.combat-label{font-size:9px;font-weight:600;color:var(--text3);margin-bottom:4px}
+.combat-inner{display:grid;grid-template-columns:1fr 16px 1fr;gap:5px;align-items:center}
+.combat-v6{font-size:10px;color:var(--text2)}
+.combat-v7{font-size:10px;font-weight:500}
+.db-row{display:grid;grid-template-columns:1fr 70px 58px;gap:4px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:5px 10px;margin-bottom:2px;border:0.5px solid var(--border)}
+.db-range{font-size:10px;color:var(--text2)}
+.db-val{font-size:12px;font-weight:600;text-align:center}
+.db-build{font-size:10px;color:var(--text2);text-align:center}
+.section-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:0 0 5px}
+.section-gap{margin-top:12px}
 
-/* KP TOOLS */
-.full-card{background:var(--bg2);border-radius:var(--radius-lg);padding:12px;border:0.5px solid var(--border);box-shadow:var(--shadow);margin-bottom:8px}
-.kp-card-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.kp-row{display:flex;gap:5px;align-items:center;margin-bottom:6px}
-.kp-row input,.kp-row select{flex:1;font-size:13px;padding:7px 10px}
-.kp-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;padding:8px 12px;white-space:nowrap;flex-shrink:0}
+/* ── KP TOOLS ── */
+.full-card{background:var(--bg2);border-radius:var(--radius-lg);padding:8px 10px;border:0.5px solid var(--border);box-shadow:var(--shadow);margin-bottom:6px}
+.kp-card-title{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.kp-row{display:flex;gap:4px;align-items:center;margin-bottom:5px}
+.kp-row input,.kp-row select{flex:1;font-size:12px;padding:5px 8px}
+.kp-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:11px;padding:6px 10px;white-space:nowrap;flex-shrink:0}
 .kp-btn:active{opacity:.8}
-.kp-result{font-size:12px;color:var(--text2);background:var(--bg);border-radius:var(--radius);padding:8px 10px;min-height:34px;line-height:1.7;border:0.5px solid var(--border)}
-.kp-result code{font-family:'SF Mono',Consolas,monospace;font-size:11px;cursor:pointer;background:var(--bg3);padding:1px 5px;border-radius:4px}
+.kp-result{font-size:11px;color:var(--text2);background:var(--bg);border-radius:var(--radius);padding:6px 9px;min-height:30px;line-height:1.7;border:0.5px solid var(--border)}
+.kp-result code{font-family:'SF Mono',Consolas,monospace;font-size:10px;cursor:pointer;background:var(--bg3);padding:1px 4px;border-radius:3px}
 .kp-result code:hover{background:var(--bg2)}
-/* HP tracker */
-.hp-list{display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto}
-.hp-item{display:grid;grid-template-columns:1fr 56px 60px auto;gap:5px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:6px 8px;border:0.5px solid var(--border)}
-.hp-name{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hp-bar-wrap{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.hp-bar{height:100%;border-radius:3px;transition:width .3s}
-.hp-nums{font-size:12px;font-weight:600;text-align:center;white-space:nowrap}
-.hp-btns{display:flex;gap:3px;flex-shrink:0}
-.hp-btn{background:none;border:0.5px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;font-size:13px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
-/* Initiative */
-.init-list{display:flex;flex-direction:column;gap:3px;max-height:200px;overflow-y:auto}
-.init-item{display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:var(--radius);padding:6px 10px;border:0.5px solid var(--border)}
-.init-item.active{border-color:var(--accent);background:rgba(44,95,138,.07)}
-.init-val{font-size:15px;font-weight:700;min-width:24px;color:var(--accent)}
-.init-name{font-size:12px;font-weight:500;flex:1}
-.init-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 4px}
-/* Buttons */
-.btn-row{display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap}
-.btn-sm-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:11px;padding:6px 10px;flex:1;white-space:nowrap}
-.btn-sm-sec:active{background:var(--bg3)}
-.btn-sm-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:11px;padding:6px 10px;flex:1;white-space:nowrap}
 
-/* SAVE */
-.sync-key-block{background:var(--bg2);border-radius:var(--radius-lg);padding:12px;margin-bottom:12px;border:0.5px solid var(--border);box-shadow:var(--shadow)}
-.sync-key-title{font-size:11px;font-weight:600;margin-bottom:3px}
-.sync-key-desc{font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.6}
-.sync-key-row{display:flex;gap:6px;align-items:center}
-.sync-key-row input{flex:1;font-size:13px;padding:8px 10px}
-.btn-sync{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;padding:9px 13px;white-space:nowrap}
+/* HP tracker */
+.hp-list{display:flex;flex-direction:column;gap:2px;max-height:200px;overflow-y:auto}
+.hp-item{display:grid;grid-template-columns:1fr 50px 54px auto;gap:4px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:5px 7px;border:0.5px solid var(--border)}
+.hp-name{font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hp-bar-wrap{height:4px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.hp-bar{height:100%;border-radius:3px;transition:width .3s}
+.hp-nums{font-size:11px;font-weight:600;text-align:center;white-space:nowrap}
+.hp-btns{display:flex;gap:2px;flex-shrink:0}
+.hp-btn{background:none;border:0.5px solid var(--border2);border-radius:4px;color:var(--text2);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+
+/* Initiative */
+.init-list{display:flex;flex-direction:column;gap:2px;max-height:180px;overflow-y:auto}
+.init-item{display:flex;align-items:center;gap:5px;background:var(--bg);border-radius:var(--radius);padding:5px 8px;border:0.5px solid var(--border)}
+.init-item.active{border-color:var(--accent);background:rgba(44,95,138,.07)}
+.init-val{font-size:13px;font-weight:700;min-width:22px;color:var(--accent)}
+.init-name{font-size:11px;font-weight:500;flex:1}
+.init-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px;padding:1px 3px}
+
+/* Buttons */
+.btn-row{display:flex;gap:4px;margin-bottom:5px;flex-wrap:wrap}
+.btn-sm-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:10px;padding:5px 8px;flex:1;white-space:nowrap}
+.btn-sm-sec:active{background:var(--bg3)}
+.btn-sm-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:10px;padding:5px 8px;flex:1;white-space:nowrap}
+
+/* ── SAVE ── */
+.sync-key-block{background:var(--bg2);border-radius:var(--radius-lg);padding:10px;margin-bottom:8px;border:0.5px solid var(--border);box-shadow:var(--shadow)}
+.sync-key-title{font-size:11px;font-weight:600;margin-bottom:2px}
+.sync-key-desc{font-size:9px;color:var(--text3);margin-bottom:6px;line-height:1.5}
+.sync-key-row{display:flex;gap:5px;align-items:center}
+.sync-key-row input{flex:1;font-size:12px;padding:6px 8px}
+.btn-sync{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:11px;padding:7px 11px;white-space:nowrap}
 .btn-sync:active{opacity:.8}
-.sync-status{font-size:10px;margin-top:6px;min-height:14px}
+.sync-status{font-size:9px;margin-top:5px;min-height:12px}
 .sync-status.ok{color:var(--success)}.sync-status.err{color:var(--danger)}.sync-status.ing{color:var(--text3)}
-.save-toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.btn-pri{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;padding:9px 16px;white-space:nowrap}
+.save-toolbar{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.btn-pri{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;padding:7px 14px;white-space:nowrap}
 .btn-pri:active{opacity:.8}
-.btn-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;padding:9px 12px;white-space:nowrap}
+.btn-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;padding:7px 10px;white-space:nowrap}
 .btn-sec:active{background:var(--bg3)}
-.btn-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:12px;padding:7px 10px;white-space:nowrap}
+.btn-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:10px;padding:5px 8px;white-space:nowrap}
 .btn-dng:active{background:var(--danger-bg)}
-.save-empty{font-size:13px;color:var(--text3);text-align:center;padding:36px 0}
-.save-list{display:flex;flex-direction:column;gap:6px}
-.save-card{background:var(--bg2);border-radius:var(--radius-lg);padding:12px;border:0.5px solid var(--border);box-shadow:var(--shadow)}
-.save-card-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.save-card-name{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.save-card-date{font-size:10px;color:var(--text3);white-space:nowrap}
-.save-card-actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
-.save-card-stats{display:flex;flex-wrap:wrap;gap:4px}
-.stat-chip{background:var(--bg3);border-radius:4px;padding:2px 6px;font-size:10px;color:var(--text3);border:0.5px solid var(--border)}
+.save-empty{font-size:12px;color:var(--text3);text-align:center;padding:28px 0}
+.save-list{display:flex;flex-direction:column;gap:5px}
+.save-card{background:var(--bg2);border-radius:var(--radius-lg);padding:9px;border:0.5px solid var(--border);box-shadow:var(--shadow)}
+.save-card-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.save-card-name{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.save-card-date{font-size:9px;color:var(--text3);white-space:nowrap}
+.save-card-actions{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.save-card-stats{display:flex;flex-wrap:wrap;gap:3px}
+.stat-chip{background:var(--bg3);border-radius:3px;padding:1px 5px;font-size:9px;color:var(--text3);border:0.5px solid var(--border)}
 .stat-chip strong{color:var(--text2)}
-.db-chip{background:var(--warn-bg);color:var(--warn);border:0.5px solid rgba(176,112,32,.35);border-radius:4px;padding:2px 7px;font-size:10px;font-family:'SF Mono',Consolas,monospace;font-weight:600}
-.save-section-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
-/* toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:9px 18px;font-size:12px;z-index:999;opacity:0;transition:transform .25s,opacity .25s;pointer-events:none;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-/* MYTHOS TAB */
-.madness-item{background:var(--bg);border-radius:var(--radius);padding:8px 10px;margin-bottom:4px;border:0.5px solid var(--border);font-size:12px;line-height:1.6}
-.madness-num{font-size:10px;font-weight:600;color:var(--text3);margin-right:5px}
-.madness-title{font-weight:600;color:var(--text);margin-right:4px}
+.db-chip{background:var(--warn-bg);color:var(--warn);border:0.5px solid rgba(176,112,32,.35);border-radius:3px;padding:1px 6px;font-size:9px;font-family:'SF Mono',Consolas,monospace;font-weight:600}
+.save-section-lbl{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+
+/* ── MYTHOS ── */
+.madness-item{background:var(--bg);border-radius:var(--radius);padding:6px 8px;margin-bottom:3px;border:0.5px solid var(--border);font-size:11px;line-height:1.5}
+.madness-num{font-size:9px;font-weight:600;color:var(--text3);margin-right:4px}
+.madness-title{font-weight:600;color:var(--text);margin-right:3px}
 .madness-desc{color:var(--text2)}
 .madness-highlight{background:var(--warn-bg);border-color:rgba(176,112,32,.35)}
-.balance-row{display:grid;grid-template-columns:1fr 46px 46px 28px;gap:4px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:6px 8px;margin-bottom:3px;border:0.5px solid var(--border);font-size:12px}
+.balance-row{display:grid;grid-template-columns:1fr 44px 44px 26px;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:5px 7px;margin-bottom:2px;border:0.5px solid var(--border);font-size:11px}
 .balance-row-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.balance-val{text-align:center;font-size:11px;color:var(--text2)}
-.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px}
-.balance-summary{background:var(--bg2);border-radius:var(--radius);padding:10px 12px;border:0.5px solid var(--border)}
-.balance-meter{height:8px;border-radius:4px;background:var(--bg3);margin:6px 0;overflow:hidden;position:relative}
-.balance-meter-fill{height:100%;border-radius:4px;transition:width .4s}
-.balance-label{font-size:11px;color:var(--text2);display:flex;justify-content:space-between}
-.balance-verdict{font-size:13px;font-weight:600;margin-top:6px;text-align:center}
-.history-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:3px;cursor:pointer;background:var(--bg);transition:background .12s}
+.balance-val{text-align:center;font-size:10px;color:var(--text2)}
+.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px}
+.balance-summary{background:var(--bg2);border-radius:var(--radius);padding:8px 10px;border:0.5px solid var(--border)}
+.balance-meter{height:6px;border-radius:3px;background:var(--bg3);margin:5px 0;overflow:hidden;position:relative}
+.balance-meter-fill{height:100%;border-radius:3px;transition:width .4s}
+.balance-label{font-size:10px;color:var(--text2);display:flex;justify-content:space-between}
+.balance-verdict{font-size:12px;font-weight:600;margin-top:5px;text-align:center}
+.history-item{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:2px;cursor:pointer;background:var(--bg);transition:background .12s}
 .history-item:active{background:var(--bg3)}
-.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
-.history-time{font-size:10px;color:var(--text3);flex-shrink:0}
-.history-copy{font-size:10px;color:var(--text3);flex-shrink:0}
+.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.history-time{font-size:9px;color:var(--text3);flex-shrink:0}
+.history-copy{font-size:9px;color:var(--text3);flex-shrink:0}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:7px 16px;font-size:11px;z-index:999;opacity:0;transition:transform .25s,opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
 @media(max-width:420px){
-  .stat-row,.col-headers{grid-template-columns:74px 58px 1fr 1fr 1fr}
-  .dice-cmd-grid,.dice-col-headers{gap:2px}
-  .cmd-chip{font-size:9px;padding:6px 2px}
+  .stat-row,.col-headers{grid-template-columns:68px 52px 1fr 1fr 1fr}
+  .dice-sub-row .cmd-chip{font-size:9px}
 }
 </style>
 </head>
@@ -281,7 +306,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
   <div id="stat-rows"></div>
   <div id="derived" style="display:none">
-    <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:12px 0 6px">派生ステータス</div>
+    <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:8px 0 5px">派生ステータス</div>
     <div class="derived-grid" id="derived-grid"></div>
   </div>
 </div>
@@ -289,7 +314,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <!-- SKILLS -->
 <div id="tab-skills" style="display:none">
   <div class="skill-tab-header">
-    <div style="font-size:11px;color:var(--text3)">技能一覧</div>
+    <div style="font-size:10px;color:var(--text3)">技能一覧</div>
     <div class="skill-mode-toggle">
       <span class="sml" id="lbl6" style="font-weight:600;color:var(--text2)">6版入力</span>
       <label class="toggle-wrap"><input type="checkbox" id="skill-mode-toggle"><span class="toggle-slider"></span></label>
@@ -379,11 +404,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="kp-card-title">⚔️ 対抗ロール</div>
     <div class="kp-row">
       <input type="text" id="opp-n1" placeholder="技能名 A" style="flex:1">
-      <input type="number" id="opp-v1" placeholder="値%" style="width:65px;flex:none">
+      <input type="number" id="opp-v1" placeholder="値%" style="width:60px;flex:none">
     </div>
     <div class="kp-row">
       <input type="text" id="opp-n2" placeholder="技能名 B" style="flex:1">
-      <input type="number" id="opp-v2" placeholder="値%" style="width:65px;flex:none">
+      <input type="number" id="opp-v2" placeholder="値%" style="width:60px;flex:none">
       <button class="kp-btn" id="btn-opp">生成</button>
     </div>
     <div class="kp-result" id="opp-result">対抗させる2つの値を入力して生成</div>
@@ -393,18 +418,18 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="kp-card-title">❤️ HPトラッカー</div>
     <div class="kp-row">
       <input type="text" id="hp-name" placeholder="NPC名" style="flex:1">
-      <input type="number" id="hp-max" placeholder="最大HP" style="width:70px;flex:none">
+      <input type="number" id="hp-max" placeholder="最大HP" style="width:64px;flex:none">
       <button class="kp-btn" id="btn-hp-add">追加</button>
     </div>
-    <div class="hp-list" id="hp-list"><div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">NPCを追加してください</div></div>
-    <button class="btn-add" id="btn-hp-clear" style="margin-top:5px;font-size:11px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
+    <div class="hp-list" id="hp-list"><div style="font-size:11px;color:var(--text3);text-align:center;padding:6px">NPCを追加してください</div></div>
+    <button class="btn-add" id="btn-hp-clear" style="margin-top:4px;font-size:10px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
   </div>
 
   <div class="full-card">
     <div class="kp-card-title">🎲 イニシアティブ管理</div>
     <div class="kp-row">
       <input type="text" id="init-name" placeholder="名前" style="flex:1">
-      <input type="number" id="init-dex" placeholder="DEX" style="width:62px;flex:none">
+      <input type="number" id="init-dex" placeholder="DEX" style="width:56px;flex:none">
       <button class="kp-btn" id="btn-init-add">追加</button>
     </div>
     <div class="btn-row">
@@ -412,7 +437,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <button class="btn-sm-sec" id="btn-init-next">次のターン →</button>
       <button class="btn-sm-dng" id="btn-init-clear">クリア</button>
     </div>
-    <div class="init-list" id="init-list"><div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">参加者を追加してください</div></div>
+    <div class="init-list" id="init-list"><div style="font-size:11px;color:var(--text3);text-align:center;padding:6px">参加者を追加してください</div></div>
   </div>
 
   <div class="full-card">
@@ -423,80 +448,73 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 <!-- MYTHOS & MADNESS -->
 <div id="tab-mythos" style="display:none">
-
-  <!-- 神話生物SAN損失チェック -->
   <div class="full-card">
     <div class="kp-card-title">🐙 神話知識チェック補助</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.6">神話生物に遭遇・神話の真実を知ったときのSAN判定コマンドを生成します</div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px;line-height:1.5">神話生物に遭遇・神話の真実を知ったときのSAN判定コマンドを生成します</div>
     <div class="kp-row">
-      <select id="mythos-select" style="flex:1;font-size:13px;padding:8px 10px">
+      <select id="mythos-select" style="flex:1;font-size:12px;padding:6px 8px">
         <option value="">── 神話生物・出来事を選択 ──</option>
       </select>
     </div>
     <div class="kp-row">
       <input type="text" id="mythos-name-custom" placeholder="または名前を直接入力..." style="flex:1">
-      <input type="number" id="mythos-san-s" placeholder="成功" style="width:60px;flex:none">
-      <input type="number" id="mythos-san-f" placeholder="失敗" style="width:60px;flex:none">
+      <input type="number" id="mythos-san-s" placeholder="成功" style="width:54px;flex:none">
+      <input type="number" id="mythos-san-f" placeholder="失敗" style="width:54px;flex:none">
       <button class="kp-btn" id="btn-mythos-gen">生成</button>
     </div>
     <div class="kp-result" id="mythos-result">上から選択するか、直接入力して生成してください</div>
   </div>
 
-  <!-- 一時的狂気テーブル -->
   <div class="full-card">
     <div class="kp-card-title">😵 一時的狂気</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">1ラウンド（1d10ラウンド）続く狂気。SAN5点以上一度に失った場合など。</div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px">1ラウンド（1d10ラウンド）続く狂気。SAN5点以上一度に失った場合など。</div>
     <div class="btn-row">
       <button class="btn-sm-sec" id="btn-temp-mad">ランダムで引く 🎲</button>
       <button class="btn-sm-sec" id="btn-temp-all">全一覧表示</button>
     </div>
-    <div class="kp-result" id="temp-mad-result" style="min-height:50px">ボタンを押すとランダムで狂気を引きます</div>
+    <div class="kp-result" id="temp-mad-result" style="min-height:44px">ボタンを押すとランダムで狂気を引きます</div>
   </div>
 
-  <!-- 永続的狂気テーブル -->
   <div class="full-card">
     <div class="kp-card-title">🌑 永続的狂気</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">1d10時間続く狂気。SAN10点以上一度に失った場合、または累積などで発症。</div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px">1d10時間続く狂気。SAN10点以上一度に失った場合、または累積などで発症。</div>
     <div class="btn-row">
       <button class="btn-sm-sec" id="btn-perm-mad">ランダムで引く 🎲</button>
       <button class="btn-sm-sec" id="btn-perm-all">全一覧表示</button>
     </div>
-    <div class="kp-result" id="perm-mad-result" style="min-height:50px">ボタンを押すとランダムで狂気を引きます</div>
+    <div class="kp-result" id="perm-mad-result" style="min-height:44px">ボタンを押すとランダムで狂気を引きます</div>
   </div>
 
-  <!-- ダイス履歴 -->
   <div class="full-card">
     <div class="kp-card-title">📋 ダイスコマンド履歴</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">コピーしたコマンドの履歴。クリックで再コピー。</div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px">コピーしたコマンドの履歴。クリックで再コピー。</div>
     <div class="btn-row">
       <button class="btn-sm-dng" id="btn-history-clear">履歴をクリア</button>
     </div>
-    <div id="dice-history-list"><div style="font-size:12px;color:var(--text3);text-align:center;padding:10px">まだ履歴がありません</div></div>
+    <div id="dice-history-list"><div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">まだ履歴がありません</div></div>
   </div>
 
-  <!-- 遭遇バランス確認 -->
   <div class="full-card">
     <div class="kp-card-title">⚖️ 遭遇バランス確認</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.6">PC側とNPC側の戦闘力を比較して難易度を概算します</div>
-    <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.06em;margin-bottom:5px">PC側（探索者）</div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px;line-height:1.5">PC側とNPC側の戦闘力を比較して難易度を概算します</div>
+    <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;margin-bottom:4px">PC側（探索者）</div>
     <div id="balance-pc-list"></div>
-    <div class="kp-row" style="margin-top:4px">
+    <div class="kp-row" style="margin-top:3px">
       <input type="text" id="bal-pc-name" placeholder="PC名" style="flex:1">
-      <input type="number" id="bal-pc-hp" placeholder="HP" style="width:52px;flex:none">
-      <input type="number" id="bal-pc-dmg" placeholder="DB%" style="width:52px;flex:none" title="1回の平均ダメージ期待値">
+      <input type="number" id="bal-pc-hp" placeholder="HP" style="width:48px;flex:none">
+      <input type="number" id="bal-pc-dmg" placeholder="DB%" style="width:48px;flex:none">
       <button class="kp-btn" id="btn-bal-pc-add">追加</button>
     </div>
-    <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.06em;margin:10px 0 5px">NPC・モンスター側</div>
+    <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;margin:8px 0 4px">NPC・モンスター側</div>
     <div id="balance-npc-list"></div>
-    <div class="kp-row" style="margin-top:4px">
+    <div class="kp-row" style="margin-top:3px">
       <input type="text" id="bal-npc-name" placeholder="NPC名" style="flex:1">
-      <input type="number" id="bal-npc-hp" placeholder="HP" style="width:52px;flex:none">
-      <input type="number" id="bal-npc-dmg" placeholder="平均ダメ" style="width:52px;flex:none">
+      <input type="number" id="bal-npc-hp" placeholder="HP" style="width:48px;flex:none">
+      <input type="number" id="bal-npc-dmg" placeholder="平均ダメ" style="width:48px;flex:none">
       <button class="kp-btn" id="btn-bal-npc-add">追加</button>
     </div>
-    <div id="balance-result" style="margin-top:10px"></div>
+    <div id="balance-result" style="margin-top:8px"></div>
   </div>
-
 </div>
 
 <!-- SAVE -->
@@ -537,7 +555,6 @@ let nextId=1;
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function escA(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;")}
 
-// DB lookup — lowercase dice (base roll), uppercase for bonus part
 function getDB(t){
   if(t<=64) return{label:"-2",build:"-2",cmd:null};
   if(t<=84)  return{label:"-1",build:"-1",cmd:null};
@@ -553,7 +570,6 @@ function getMOV(s,d,sz){
   if(!s&&!d&&!sz)return"—";
   if(s<sz&&d<sz)return"7";if(s>sz&&d>sz)return"9";return"8";
 }
-// CC command — base d lowercase
 function ccCmd(name,val){return `CC<=${val} 【${name}】`}
 
 function showToast(msg){
@@ -565,14 +581,18 @@ function copyText(text,btn){
     if(!btn)return;
     const orig=btn.dataset.ot||btn.textContent;
     if(!btn.dataset.ot)btn.dataset.ot=orig;
-    btn.classList.add("copied");btn.textContent="コピーしました ✓";
+    btn.classList.add("copied");btn.textContent="✓ コピー";
     clearTimeout(btn._ct);
     btn._ct=setTimeout(()=>{btn.classList.remove("copied");btn.textContent=btn.dataset.ot;delete btn.dataset.ot},1400);
   }).catch(()=>showToast("コピー失敗"));
 }
 function bindCopy(root){
   root.querySelectorAll(".cmd-chip").forEach(btn=>{
-    btn.addEventListener("click",e=>copyText(e.currentTarget.dataset.cmd,e.currentTarget));
+    btn.addEventListener("click",e=>{
+      const cmd=e.currentTarget.dataset.cmd;
+      copyText(cmd,e.currentTarget);
+      addHistory(cmd);
+    });
   });
 }
 
@@ -583,7 +603,7 @@ function buildStatRows(){
     const row=document.createElement("div");row.className="stat-row";
     row.innerHTML=`
       <div class="stat-name"><strong>${label}</strong><span>${jp}</span></div>
-      <div><input type="number" min="0" max="99" placeholder="—" data-key="${key}" style="text-align:center;padding:7px 2px"></div>
+      <div><input type="number" min="0" max="99" placeholder="—" data-key="${key}" style="text-align:center;padding:5px 2px;font-size:13px"></div>
       <div class="stat-val" id="v7-${key}">—</div>
       <div class="stat-half" id="h-${key}">—</div>
       <div class="stat-fifth" id="f-${key}">—</div>`;
@@ -628,10 +648,10 @@ function buildSkillRows(){
     const v=parseInt(sk.inputVal)||0,half=v?Math.floor(v/2):null,fifth=v?Math.floor(v/5):null;
     const row=document.createElement("div");row.className="skill-row";
     row.innerHTML=`
-      <input type="text" placeholder="技能名..." value="${esc(sk.name)}" data-id="${sk.id}" data-f="name" style="padding:8px 9px">
-      <input type="number" min="0" max="999" placeholder="—" value="${sk.inputVal}" data-id="${sk.id}" data-f="val" style="text-align:center;padding:8px 2px">
-      <div class="skill-val${half==null?" skill-empty":""}">${half!=null?half:"—"}</div>
-      <div class="skill-val${fifth==null?" skill-empty":""}">${fifth!=null?fifth:"—"}</div>
+      <input type="text" placeholder="技能名..." value="${esc(sk.name)}" data-id="${sk.id}" data-f="name" style="padding:6px 8px">
+      <input type="number" min="0" max="999" placeholder="—" value="${sk.inputVal}" data-id="${sk.id}" data-f="val" style="text-align:center;padding:6px 2px">
+      <div class="skill-val">${half!=null?half:"—"}</div>
+      <div class="skill-val">${fifth!=null?fifth:"—"}</div>
       <button class="btn-remove" data-id="${sk.id}">×</button>`;
     wrap.appendChild(row);
   });
@@ -656,26 +676,29 @@ document.getElementById("skill-mode-toggle").addEventListener("change",e=>{
 document.getElementById("add-skill").addEventListener("click",()=>{skillList.push({id:nextId++,name:"",inputVal:""});buildSkillRows();});
 
 // ===== DICE =====
-// Weapon list: [name, base dice (lowercase)]
 const WEAPONS=[
   ["素手","1d3"],["短剣・ナイフ","1d4"],["棍棒","1d6"],["槍","1d6"],
   ["刀・大剣","1d8"],["斧","1d6"],["ライフル","2d6"],["ハンドガン","1d8"],
 ];
 
+// Compact dice block: normal full-width, hard+extreme smaller below
 function makeDiceBlock(name, value){
   const half=Math.floor(value/2), fifth=Math.floor(value/5);
   const cmdN=ccCmd(name,value), cmdH=ccCmd(name,half), cmdE=ccCmd(name,fifth);
   return `<div class="dice-block">
-    <div class="dice-block-name">${esc(name)}</div>
-    <div class="dice-col-headers">
-      <div class="dice-col-lbl">通常 (${value})</div>
-      <div class="dice-col-lbl">ハード (${half})</div>
-      <div class="dice-col-lbl">極限 (${fifth})</div>
-    </div>
-    <div class="dice-cmd-grid">
+    <div class="dice-block-name">${esc(name)} <span style="font-size:10px;color:var(--text3);font-weight:400">${value}</span></div>
+    <div class="dice-main-row">
       <button class="cmd-chip chip-n" data-cmd="${escA(cmdN)}">${esc(cmdN)}</button>
-      <button class="cmd-chip chip-h" data-cmd="${escA(cmdH)}">${esc(cmdH)}</button>
-      <button class="cmd-chip chip-e" data-cmd="${escA(cmdE)}">${esc(cmdE)}</button>
+    </div>
+    <div class="dice-sub-row">
+      <div>
+        <div class="dice-sub-label">ハード (${half})</div>
+        <button class="cmd-chip chip-h" data-cmd="${escA(cmdH)}">${esc(cmdH)}</button>
+      </div>
+      <div>
+        <div class="dice-sub-label">極限 (${fifth})</div>
+        <button class="cmd-chip chip-e" data-cmd="${escA(cmdE)}">${esc(cmdE)}</button>
+      </div>
     </div>
   </div>`;
 }
@@ -685,24 +708,21 @@ function makeDamageSection(strV,sizV){
   const db=getDB(total);
   if(!db.cmd) return `<div class="dice-block">
     <div class="dice-block-name">ダメージボーナス <span class="db-badge">STR+SIZ=${total} → ${db.label}</span></div>
-    <div style="font-size:11px;color:var(--text3)">ダメージボーナスなし（${db.label}）</div>
+    <div style="font-size:10px;color:var(--text3)">ダメージボーナスなし（${db.label}）</div>
   </div>`;
 
-  // Weapon + DB commands (base lowercase + DB uppercase)
-  let weaponHtml=`<div style="margin-top:7px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">武器＋DB コマンド</div><div class="weapon-grid">`;
-  // DB単体
+  let weaponHtml=`<div style="margin-top:5px;font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px">武器＋DB コマンド</div><div class="weapon-grid">`;
   weaponHtml+=`<div><div class="weapon-row-lbl">DB単体</div><button class="cmd-chip" data-cmd="${escA(db.cmd)}">${esc(db.cmd)}</button></div>`;
   WEAPONS.forEach(([wn,wd])=>{
-    const combined=`${wd}+${db.cmd}`; // e.g. 1d8+1D6
+    const combined=`${wd}+${db.cmd}`;
     weaponHtml+=`<div><div class="weapon-row-lbl">${esc(wn)}</div><button class="cmd-chip" data-cmd="${escA(combined)}">${esc(combined)}</button></div>`;
   });
   weaponHtml+="</div>";
 
-  // Build > 0: bonus dice section
   const buildNum=parseInt(db.build)||0;
   let bonusHtml="";
   if(buildNum>0){
-    bonusHtml=`<div style="margin-top:8px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">ビルド${db.build}のボーナスダイス</div>
+    bonusHtml=`<div style="margin-top:6px;font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px">ビルド${db.build}のボーナスダイス</div>
     <div class="weapon-grid">
       <div><div class="weapon-row-lbl">ボーナス1個</div><button class="cmd-chip" data-cmd="2d100KH">2d100KH</button></div>
       <div><div class="weapon-row-lbl">ボーナス2個</div><button class="cmd-chip" data-cmd="3d100KH">3d100KH</button></div>
@@ -745,7 +765,12 @@ function updateDice(){
   content.innerHTML=html;
   bindCopy(content);
 }
-document.querySelectorAll(".bonus-chip").forEach(btn=>btn.addEventListener("click",e=>copyText(e.currentTarget.dataset.cmd,e.currentTarget)));
+document.querySelectorAll(".bonus-chip").forEach(btn=>{
+  btn.addEventListener("click",e=>{
+    copyText(e.currentTarget.dataset.cmd,e.currentTarget);
+    addHistory(e.currentTarget.dataset.cmd);
+  });
+});
 
 // ===== PREVIEW =====
 let previewManualActive=false;
@@ -766,25 +791,21 @@ function renderPreviewFromValues(name,value){
   if(!value||value<=0){result.innerHTML=`<p class="preview-empty">セレクトか手動入力で値を指定してください</p>`;return;}
   const half=Math.floor(value/2),fifth=Math.floor(value/5);
   const cmdN=ccCmd(name,value),cmdH=ccCmd(name,half),cmdE=ccCmd(name,fifth);
-
-  // Bonus dice block for preview
   const strV=parseInt(vals.str)||0,sizV=parseInt(vals.siz)||0;
   const hasDmg=strV>0||sizV>0;
   let bonusSection="";
   if(hasDmg){
     const db=getDB((strV*5)+(sizV*5));
-    const buildNum=parseInt(db.build)||0;
     bonusSection=`<div class="preview-bonus-wrap">
       <div class="preview-bonus-title">ボーナス・ペナルティダイス <span class="db-badge">ビルド ${db.build}</span></div>
       <div class="preview-bonus-grid">
-        <div><div class="weapon-row-lbl" style="margin-bottom:3px">ボーナス1個</div><button class="cmd-chip" data-cmd="2d100KH">2d100KH</button></div>
-        <div><div class="weapon-row-lbl" style="margin-bottom:3px">ボーナス2個</div><button class="cmd-chip" data-cmd="3d100KH">3d100KH</button></div>
-        <div><div class="weapon-row-lbl" style="margin-bottom:3px">ペナルティ1個</div><button class="cmd-chip" data-cmd="2d100KL">2d100KL</button></div>
-        <div><div class="weapon-row-lbl" style="margin-bottom:3px">ペナルティ2個</div><button class="cmd-chip" data-cmd="3d100KL">3d100KL</button></div>
+        <div><div class="weapon-row-lbl" style="margin-bottom:2px">ボーナス1個</div><button class="cmd-chip" data-cmd="2d100KH">2d100KH</button></div>
+        <div><div class="weapon-row-lbl" style="margin-bottom:2px">ボーナス2個</div><button class="cmd-chip" data-cmd="3d100KH">3d100KH</button></div>
+        <div><div class="weapon-row-lbl" style="margin-bottom:2px">ペナルティ1個</div><button class="cmd-chip" data-cmd="2d100KL">2d100KL</button></div>
+        <div><div class="weapon-row-lbl" style="margin-bottom:2px">ペナルティ2個</div><button class="cmd-chip" data-cmd="3d100KL">3d100KL</button></div>
       </div>
     </div>`;
   }
-
   result.innerHTML=`
     <div class="preview-table">
       <div class="preview-cell normal"><div class="preview-cell-label">通常</div><div class="preview-cell-val">${value}</div><div class="preview-cell-sub">以下で成功</div></div>
@@ -797,7 +818,10 @@ function renderPreviewFromValues(name,value){
     <div class="preview-dice-row"><span class="preview-dice-tag">極限</span><button class="cmd-chip chip-e" data-cmd="${escA(cmdE)}">${esc(cmdE)}</button></div>
     <div class="preview-source-hint">${esc(name)} の判定</div>
     ${bonusSection}`;
-  result.querySelectorAll(".cmd-chip").forEach(btn=>btn.addEventListener("click",e=>copyText(e.currentTarget.dataset.cmd,e.currentTarget)));
+  result.querySelectorAll(".cmd-chip").forEach(btn=>btn.addEventListener("click",e=>{
+    copyText(e.currentTarget.dataset.cmd,e.currentTarget);
+    addHistory(e.currentTarget.dataset.cmd);
+  }));
 }
 function renderPreview(){
   const mn=document.getElementById("preview-manual-name").value.trim();
@@ -812,7 +836,6 @@ document.getElementById("preview-manual-name").addEventListener("input",()=>{pre
 document.getElementById("preview-manual-val").addEventListener("input",()=>{previewManualActive=true;document.getElementById("preview-select").value="";renderPreview();});
 
 // ===== KP TOOLS =====
-// SAN
 document.getElementById("btn-san").addEventListener("click",()=>{
   const cur=parseInt(document.getElementById("san-cur").value)||0;
   const s=document.getElementById("san-s").value.trim();
@@ -821,23 +844,22 @@ document.getElementById("btn-san").addEventListener("click",()=>{
   const chk=`CC<=${cur} 【正気度チェック】`;
   const el=document.getElementById("san-result");
   el.innerHTML=`チェック: <code>${esc(chk)}</code>${s?`<br>成功時損失: <code>${esc(s)}</code>`:""}${f?`<br>失敗時損失: <code>${esc(f)}</code>`:""}`;
-  el.querySelectorAll("code").forEach(c=>{c.addEventListener("click",()=>{navigator.clipboard.writeText(c.textContent);showToast("コピーしました");});});
+  el.querySelectorAll("code").forEach(c=>{c.addEventListener("click",()=>{navigator.clipboard.writeText(c.textContent);addHistory(c.textContent);showToast("コピーしました");});});
 });
 
-// Opposed
 document.getElementById("btn-opp").addEventListener("click",()=>{
   const n1=document.getElementById("opp-n1").value.trim()||"A",v1=parseInt(document.getElementById("opp-v1").value)||0;
   const n2=document.getElementById("opp-n2").value.trim()||"B",v2=parseInt(document.getElementById("opp-v2").value)||0;
   const el=document.getElementById("opp-result");
   el.innerHTML=`${esc(n1)}: <code>${esc(ccCmd(n1,v1))}</code><br>${esc(n2)}: <code>${esc(ccCmd(n2,v2))}</code>`;
-  el.querySelectorAll("code").forEach(c=>{c.addEventListener("click",()=>{navigator.clipboard.writeText(c.textContent);showToast("コピーしました");});});
+  el.querySelectorAll("code").forEach(c=>{c.addEventListener("click",()=>{navigator.clipboard.writeText(c.textContent);addHistory(c.textContent);showToast("コピーしました");});});
 });
 
 // HP Tracker
 let hpList=[];
 function renderHpList(){
   const wrap=document.getElementById("hp-list");
-  if(!hpList.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">NPCを追加してください</div>`;return;}
+  if(!hpList.length){wrap.innerHTML=`<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px">NPCを追加してください</div>`;return;}
   wrap.innerHTML=hpList.map((h,i)=>{
     const pct=Math.max(0,h.cur/h.max*100);
     const col=pct>50?"#1d9e75":pct>25?"#d4a030":"#b03030";
@@ -874,7 +896,7 @@ document.getElementById("btn-hp-clear").addEventListener("click",()=>{if(confirm
 let initList=[],initTurn=0;
 function renderInitList(){
   const wrap=document.getElementById("init-list");
-  if(!initList.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">参加者を追加してください</div>`;return;}
+  if(!initList.length){wrap.innerHTML=`<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px">参加者を追加してください</div>`;return;}
   wrap.innerHTML=initList.map((it,i)=>`
     <div class="init-item${i===initTurn?" active":""}">
       <span class="init-val">${it.dex}</span>
@@ -896,7 +918,6 @@ document.getElementById("btn-init-sort").addEventListener("click",()=>{initList.
 document.getElementById("btn-init-next").addEventListener("click",()=>{if(!initList.length)return;initTurn=(initTurn+1)%initList.length;renderInitList();});
 document.getElementById("btn-init-clear").addEventListener("click",()=>{if(confirm("リセットしますか？")){initList=[];initTurn=0;renderInitList();saveKp();}});
 
-// Session memo
 let memoTimer=null;
 document.getElementById("session-memo").addEventListener("input",()=>{
   clearTimeout(memoTimer);memoTimer=setTimeout(()=>localStorage.setItem("coc_memo",document.getElementById("session-memo").value),600);
@@ -913,7 +934,7 @@ function loadKp(){
   renderHpList();renderInitList();
 }
 
-// ===== CLOUD SYNC (kvdb.io) =====
+// ===== CLOUD SYNC =====
 const KVDB="8D9cJG8dPfTmqCmPXD2R5e";
 const L_SAVES="coc_saves_local",L_KEY="coc_synckey";
 let syncKey="",currentSaves=[];
@@ -990,9 +1011,9 @@ function renderSaveCard(sv){
     </div>
     <div class="save-card-stats">${chips||'<span style="color:var(--text3)">ステータスなし</span>'}${skillN?`<span class="stat-chip">技能 ${skillN}個</span>`:""}${dbChip}</div>
     <div class="save-card-actions">
-      <button class="btn-pri btn-sm btn-load" style="font-size:11px;padding:6px 10px" data-id="${sv.id}">読み込む</button>
-      <button class="btn-sec btn-sm btn-update" style="font-size:11px;padding:6px 9px" data-id="${sv.id}">上書き</button>
-      <button class="btn-dng btn-sm btn-delete" data-id="${sv.id}">削除</button>
+      <button class="btn-pri btn-load" style="font-size:10px;padding:5px 9px" data-id="${sv.id}">読み込む</button>
+      <button class="btn-sec btn-update" style="font-size:10px;padding:5px 8px" data-id="${sv.id}">上書き</button>
+      <button class="btn-dng btn-delete" data-id="${sv.id}">削除</button>
     </div>
   </div>`;
 }
@@ -1021,7 +1042,7 @@ async function applyKey(key){
 document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
 document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
 
-// ===== MYTHOS DATA =====
+// ===== MYTHOS =====
 const MYTHOS_BEINGS=[
   {name:"ディープ・ワン（初遭遇）",s:0,f:2},{name:"ディープ・ワン（群れ）",s:1,f:1+4},
   {name:"クトゥルフ（直視）",s:1,f:1+10},{name:"クトゥルフ（知識のみ）",s:1,f:6},
@@ -1065,15 +1086,11 @@ const PERM_MADNESS=[
   {id:10,title:"崩壊",desc:"現実との接触を失い、神話の真実を「当然のこと」として受け入れてしまう。"},
 ];
 
-// 神話セレクト初期化
 function initMythosSelect(){
   const sel=document.getElementById("mythos-select");
   MYTHOS_BEINGS.forEach((b,i)=>{
-    const opt=document.createElement("option");
-    opt.value=i;
-    const sLabel=typeof b.s==="number"&&b.s===0?"0":`${b.s}`;
-    const fLabel=typeof b.f==="number"?`${b.f}`:`${b.f}`;
-    opt.textContent=`${b.name}（成功:${sLabel} / 失敗:${fLabel}）`;
+    const opt=document.createElement("option");opt.value=i;
+    opt.textContent=`${b.name}（成功:${b.s} / 失敗:${b.f}）`;
     sel.appendChild(opt);
   });
   sel.addEventListener("change",()=>{
@@ -1088,20 +1105,18 @@ function initMythosSelect(){
 
 document.getElementById("btn-mythos-gen").addEventListener("click",()=>{
   const name=document.getElementById("mythos-name-custom").value.trim()||"SAN判定";
-  const sanCur=parseInt(document.getElementById("san-cur").value)||"?";
   const s=document.getElementById("mythos-san-s").value.trim();
   const f=document.getElementById("mythos-san-f").value.trim();
   const el=document.getElementById("mythos-result");
   if(!s&&!f){el.textContent="成功時・失敗時の損失を入力してください";return;}
-  // current SANをKPツールから読む
   const curSan=document.getElementById("san-cur").value||"?";
   const chkCmd=curSan!=="?"?`CC<=${curSan} 【${name}・SAN判定】`:`CC<=XX 【${name}・SAN判定】`;
   el.innerHTML=`
-    <div style="margin-bottom:5px;font-weight:600;font-size:12px">${esc(name)}</div>
+    <div style="margin-bottom:4px;font-weight:600;font-size:11px">${esc(name)}</div>
     判定: <code>${esc(chkCmd)}</code><br>
     ${s?`成功時損失: <code>${esc(s)}</code><br>`:""}
     ${f?`失敗時損失: <code>${esc(f)}</code>`:""}
-    ${curSan==="?"?'<div style="font-size:10px;color:var(--text3);margin-top:4px">※KPツール→正気度チェックの「現在SAN」を入力するとコマンドに反映されます</div>':""}
+    ${curSan==="?"?'<div style="font-size:9px;color:var(--text3);margin-top:3px">※KPツール→正気度チェックの「現在SAN」を入力するとコマンドに反映されます</div>':""}
   `;
   el.querySelectorAll("code").forEach(c=>{
     c.style.cursor="pointer";
@@ -1109,42 +1124,35 @@ document.getElementById("btn-mythos-gen").addEventListener("click",()=>{
   });
 });
 
-function renderMadnessList(list,containerId,highlight){
+function renderMadnessList(list,containerId){
   const el=document.getElementById(containerId);
   el.innerHTML=list.map(m=>`
-    <div class="madness-item${highlight===m.id?" madness-highlight":""}">
+    <div class="madness-item">
       <span class="madness-num">${m.id}.</span><span class="madness-title">${esc(m.title)}</span>
       <span class="madness-desc">${esc(m.desc)}</span>
     </div>`).join("");
 }
 
 document.getElementById("btn-temp-mad").addEventListener("click",()=>{
-  const idx=Math.floor(Math.random()*TEMP_MADNESS.length);
-  const m=TEMP_MADNESS[idx];
+  const m=TEMP_MADNESS[Math.floor(Math.random()*TEMP_MADNESS.length)];
   document.getElementById("temp-mad-result").innerHTML=`
-    <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🎲 結果（${m.id}番）</div>
-    <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(m.title)}</div>
-    <div style="font-size:12px;color:var(--text2);line-height:1.6">${esc(m.desc)}</div>`;
+    <div style="font-size:10px;color:var(--text3);margin-bottom:3px">🎲 結果（${m.id}番）</div>
+    <div style="font-weight:600;font-size:13px;margin-bottom:2px">${esc(m.title)}</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.5">${esc(m.desc)}</div>`;
 });
-document.getElementById("btn-temp-all").addEventListener("click",()=>{
-  renderMadnessList(TEMP_MADNESS,"temp-mad-result",-1);
-});
+document.getElementById("btn-temp-all").addEventListener("click",()=>renderMadnessList(TEMP_MADNESS,"temp-mad-result"));
 document.getElementById("btn-perm-mad").addEventListener("click",()=>{
-  const idx=Math.floor(Math.random()*PERM_MADNESS.length);
-  const m=PERM_MADNESS[idx];
+  const m=PERM_MADNESS[Math.floor(Math.random()*PERM_MADNESS.length)];
   document.getElementById("perm-mad-result").innerHTML=`
-    <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🎲 結果（${m.id}番）</div>
-    <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(m.title)}</div>
-    <div style="font-size:12px;color:var(--text2);line-height:1.6">${esc(m.desc)}</div>`;
+    <div style="font-size:10px;color:var(--text3);margin-bottom:3px">🎲 結果（${m.id}番）</div>
+    <div style="font-weight:600;font-size:13px;margin-bottom:2px">${esc(m.title)}</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.5">${esc(m.desc)}</div>`;
 });
-document.getElementById("btn-perm-all").addEventListener("click",()=>{
-  renderMadnessList(PERM_MADNESS,"perm-mad-result",-1);
-});
+document.getElementById("btn-perm-all").addEventListener("click",()=>renderMadnessList(PERM_MADNESS,"perm-mad-result"));
 
 // ===== DICE HISTORY =====
 let diceHistory=[];
 function addHistory(cmd){
-  // Remove duplicate
   diceHistory=diceHistory.filter(h=>h.cmd!==cmd);
   diceHistory.unshift({cmd,time:new Date()});
   if(diceHistory.length>30)diceHistory=diceHistory.slice(0,30);
@@ -1153,7 +1161,7 @@ function addHistory(cmd){
 }
 function renderHistory(){
   const wrap=document.getElementById("dice-history-list");
-  if(!diceHistory.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px">まだ履歴がありません</div>`;return;}
+  if(!diceHistory.length){wrap.innerHTML=`<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">まだ履歴がありません</div>`;return;}
   wrap.innerHTML=diceHistory.map((h,i)=>{
     const now=new Date(),diff=Math.floor((now-h.time)/1000);
     const timeStr=diff<60?`${diff}秒前`:diff<3600?`${Math.floor(diff/60)}分前`:h.time.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
@@ -1210,10 +1218,8 @@ function updateBalanceResult(){
   const npcTotalHp=balNpc.reduce((a,b)=>a+b.hp,0);
   const pcTotalDmg=balPc.reduce((a,b)=>a+b.dmg,0);
   const npcTotalDmg=balNpc.reduce((a,b)=>a+b.dmg,0);
-  // PCがNPCを倒すのに何ラウンド？（NPCのHP / PCの平均ダメージ）
   const roundsToKillNpc=pcTotalDmg>0?Math.ceil(npcTotalHp/pcTotalDmg):99;
   const roundsToKillPc=npcTotalDmg>0?Math.ceil(pcTotalHp/npcTotalDmg):99;
-  // バランス比 (PC有利 > 1)
   const ratio=roundsToKillPc>0?roundsToKillNpc/roundsToKillPc:0;
   let verdict,verdictColor,fillPc;
   if(ratio<0.5){verdict="🔴 NPC圧勝 — かなり危険な遭遇です";verdictColor="var(--danger)";fillPc=Math.round(ratio*100);}
@@ -1222,14 +1228,14 @@ function updateBalanceResult(){
   else if(ratio<2.0){verdict="🔵 PC優勢 — PC側がやや有利です";verdictColor="var(--accent)";fillPc=Math.min(90,Math.round(ratio*50));}
   else{verdict="⚪ PC圧勝 — ほぼリスクなしの遭遇です";verdictColor="var(--text3)";fillPc=95;}
   res.innerHTML=`<div class="balance-summary">
-    <div class="balance-label"><span>PC側 HP合計:${pcTotalHp} / 平均ダメ:${pcTotalDmg}</span><span>NPC側 HP:${npcTotalHp} / ダメ:${npcTotalDmg}</span></div>
+    <div class="balance-label"><span>PC側 HP:${pcTotalHp} / ダメ:${pcTotalDmg}</span><span>NPC側 HP:${npcTotalHp} / ダメ:${npcTotalDmg}</span></div>
     <div class="balance-meter"><div class="balance-meter-fill" style="width:${fillPc}%;background:${verdictColor}"></div></div>
-    <div style="font-size:10px;color:var(--text3);display:flex;justify-content:space-between;margin-bottom:4px">
-      <span>NPC側を倒すまで≒${roundsToKillNpc===99?"∞":roundsToKillNpc}ラウンド</span>
-      <span>PC側が倒されるまで≒${roundsToKillPc===99?"∞":roundsToKillPc}ラウンド</span>
+    <div style="font-size:9px;color:var(--text3);display:flex;justify-content:space-between;margin-bottom:3px">
+      <span>NPC倒す≒${roundsToKillNpc===99?"∞":roundsToKillNpc}R</span>
+      <span>PC倒される≒${roundsToKillPc===99?"∞":roundsToKillPc}R</span>
     </div>
     <div class="balance-verdict" style="color:${verdictColor}">${verdict}</div>
-    <div style="font-size:10px;color:var(--text3);margin-top:4px;text-align:center">※ダメージ期待値の平均による概算です。回避・技能は考慮されません</div>
+    <div style="font-size:9px;color:var(--text3);margin-top:3px;text-align:center">※ダメージ期待値の平均による概算。回避・技能は考慮されません</div>
   </div>`;
 }
 document.getElementById("btn-bal-pc-add").addEventListener("click",()=>{
@@ -1247,26 +1253,6 @@ document.getElementById("btn-bal-npc-add").addEventListener("click",()=>{
   balNpc.push({name,hp,dmg});
   document.getElementById("bal-npc-name").value="";document.getElementById("bal-npc-hp").value="";document.getElementById("bal-npc-dmg").value="";
   renderBalList(balNpc,"balance-npc-list","npc");updateBalanceResult();
-});
-
-// Override copyText to log history
-const _origCopyText=copyText;
-// Patch bindCopy to also log history
-const _origBindCopy=bindCopy;
-function bindCopy(root){
-  root.querySelectorAll(".cmd-chip").forEach(btn=>{
-    btn.addEventListener("click",e=>{
-      const cmd=e.currentTarget.dataset.cmd;
-      copyText(e.currentTarget.dataset.cmd,e.currentTarget);
-      addHistory(cmd);
-    });
-  });
-}
-// Re-bind bonus chips with history
-document.querySelectorAll(".bonus-chip").forEach(btn=>{
-  // Remove old listener by cloning (bonus chips are bound at page load already)
-  // We'll just add history on top
-  btn.addEventListener("click",e=>{addHistory(e.currentTarget.dataset.cmd);});
 });
 
 // ===== TABS =====
