@@ -27,69 +27,69 @@
   --shadow:0 1px 4px rgba(0,0,0,0.4);
 }}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;font-size:15px;display:flex;flex-direction:column}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;font-size:16px;display:flex;flex-direction:column}
 .app-header{flex-shrink:0;padding:7px 11px 0;max-width:740px;width:100%;margin:0 auto}
 .app-tabs{flex-shrink:0;max-width:740px;width:100%;margin:0 auto;padding:0 11px}
 .app-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .app-body-inner{max-width:740px;margin:0 auto;padding:7px 11px 44px}
-h1{font-size:13px;font-weight:700;margin-bottom:1px}
-.subtitle{font-size:10px;color:var(--text3);margin-bottom:5px}
-input[type=text],input[type=number],textarea,select{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:5px 8px;outline:none;transition:border .15s;-moz-appearance:textfield;width:100%}
+h1{font-size:18px;font-weight:700;margin-bottom:2px}
+.subtitle{font-size:13px;color:var(--text3);margin-bottom:5px}
+input[type=text],input[type=number],textarea,select{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:15px;padding:6px 10px;outline:none;transition:border .15s;-moz-appearance:textfield;width:100%}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--accent)}
-textarea{resize:vertical;min-height:60px;line-height:1.55;font-size:12px}
+textarea{resize:vertical;min-height:60px;line-height:1.55;font-size:15px}
 select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px}
 .inp-wrap{position:relative;display:flex;align-items:center;width:100%}
 .inp-wrap input,.inp-wrap select{flex:1;padding-right:20px}
-.inp-clear{position:absolute;right:3px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;line-height:1;padding:2px 3px;display:none;z-index:1}
+.inp-clear{position:absolute;right:3px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:2px 3px;display:none;z-index:1}
 .inp-wrap.hv .inp-clear{display:block}
 .tabs{display:flex;border-bottom:1px solid var(--border2);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:6px 9px;white-space:nowrap;flex-shrink:0}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:15px;padding:6px 9px;white-space:nowrap;flex-shrink:0}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
-.col-headers{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;padding:0 6px 3px;font-size:9px;color:var(--text3)}
+.col-headers{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;padding:0 6px 3px;font-size:12px;color:var(--text3)}
 .col-headers span:not(:first-child){text-align:center}
 .stat-row{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:3px 6px;margin-bottom:2px;border:0.5px solid var(--border)}
 .stat-row.derived-row{background:var(--bg3);border-color:var(--border2)}
 .stat-name{display:flex;align-items:baseline;gap:3px}
-.stat-name strong{font-size:12px;font-weight:700}
-.stat-name em{font-size:8px;color:var(--text3);font-style:normal}
-.stat-val{text-align:center;font-size:14px;font-weight:700}
-.stat-half,.stat-fifth{text-align:center;font-size:12px;color:var(--text2)}
-.stat-row input{padding:3px 14px 3px 2px;font-size:12px;text-align:center;background:transparent;border-color:transparent;width:100%}
+.stat-name strong{font-size:15px;font-weight:700}
+.stat-name em{font-size:11px;color:var(--text3);font-style:normal}
+.stat-val{text-align:center;font-size:17px;font-weight:700}
+.stat-half,.stat-fifth{text-align:center;font-size:15px;color:var(--text2)}
+.stat-row input{padding:3px 14px 3px 2px;font-size:15px;text-align:center;background:transparent;border-color:transparent;width:100%}
 .stat-row input:focus{background:var(--bg2);border-color:var(--accent)}
-.stat-clr{background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0;line-height:1;display:none;width:20px;text-align:center}
+.stat-clr{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0;line-height:1;display:none;width:20px;text-align:center}
 .stat-row-div{height:1px;background:var(--border2);margin:4px 0;opacity:.6}
 .derived-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:4px}
 .metric{background:var(--bg2);border-radius:var(--radius);padding:4px 2px;text-align:center;border:0.5px solid var(--border)}
-.metric-label{font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
-.metric-val{font-size:13px;font-weight:700}
-.metric-desc{font-size:7px;color:var(--text3)}
+.metric-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
+.metric-val{font-size:15px;font-weight:700}
+.metric-desc{font-size:10px;color:var(--text3)}
 .accordion{margin-top:5px;border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
-.acc-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);cursor:pointer;user-select:none;min-height:30px}
+.acc-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);cursor:pointer;user-select:none;min-height:34px}
 .acc-hd-left{display:flex;align-items:center;gap:5px}
-.acc-title{font-size:11px;font-weight:700;color:var(--text2)}
-.acc-badge{font-size:8px;background:var(--accent);color:#fff;border-radius:8px;padding:1px 5px;font-weight:700}
-.acc-arrow{font-size:9px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.acc-title{font-size:14px;font-weight:700;color:var(--text2)}
+.acc-badge{font-size:11px;background:var(--accent);color:#fff;border-radius:8px;padding:1px 5px;font-weight:700}
+.acc-arrow{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0}
 .acc-arrow.open{transform:rotate(180deg)}
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
-.atk-headers{display:grid;grid-template-columns:1fr 58px 56px 58px 22px;gap:3px;padding:0 2px 3px;font-size:9px;color:var(--text3);text-align:center}
+.atk-headers{display:grid;grid-template-columns:1fr 58px 56px 58px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
 .atk-headers span:first-child{text-align:left}
 .atk-row{display:grid;grid-template-columns:1fr 58px 56px 58px 22px;gap:3px;align-items:center;margin-bottom:3px}
-.atk-row input{padding:5px 6px;font-size:12px;text-align:center}
+.atk-row input{padding:5px 6px;font-size:15px;text-align:center}
 .atk-row input:first-child{text-align:left}
-.spl-headers{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;padding:0 2px 3px;font-size:9px;color:var(--text3)}
+.spl-headers{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3)}
 .spl-row{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;align-items:center;margin-bottom:3px}
-.spl-row input{padding:5px 6px;font-size:12px}
-.sk-headers{display:grid;grid-template-columns:1fr 60px 46px 46px 22px;gap:3px;padding:0 2px 3px;font-size:9px;color:var(--text3);text-align:center}
+.spl-row input{padding:5px 6px;font-size:15px}
+.sk-headers{display:grid;grid-template-columns:1fr 60px 46px 46px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
 .sk-row{display:grid;grid-template-columns:1fr 60px 46px 46px 22px;gap:3px;align-items:center;margin-bottom:3px}
-.sk-row input{padding:5px 6px;font-size:12px;text-align:center}
+.sk-row input{padding:5px 6px;font-size:15px;text-align:center}
 .sk-row input:first-child{text-align:left}
-.skill-val{text-align:center;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:5px 2px;border:0.5px solid var(--border)}
-.btn-remove{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;width:22px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.btn-add{background:none;border:0.5px dashed var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:10px;padding:5px;margin-top:3px;display:flex;align-items:center;gap:3px;width:100%;justify-content:center}
+.skill-val{text-align:center;font-size:14px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:5px 2px;border:0.5px solid var(--border)}
+.btn-remove{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:15px;width:22px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-add{background:none;border:0.5px dashed var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:5px;margin-top:3px;display:flex;align-items:center;gap:3px;width:100%;justify-content:center}
 .skill-mode-toggle{display:flex;align-items:center;gap:5px;margin-bottom:5px}
 .toggle-wrap{position:relative;display:inline-block;width:30px;height:16px;cursor:pointer}
 .toggle-wrap input{opacity:0;width:0;height:0}
@@ -97,150 +97,150 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .toggle-slider:before{content:"";position:absolute;width:10px;height:10px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .toggle-wrap input:checked+.toggle-slider{background:var(--accent)}
 .toggle-wrap input:checked+.toggle-slider:before{transform:translateX(14px)}
-.sml{font-size:10px;color:var(--text3)}
-.dice-hint{font-size:10px;color:var(--text3);line-height:1.5;margin-bottom:5px;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)}
-.dice-hint code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:0 3px;border-radius:3px;font-size:9px;color:var(--text2)}
+.sml{font-size:13px;color:var(--text3)}
+.dice-hint{font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:5px;padding:6px 10px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)}
+.dice-hint code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:0 3px;border-radius:3px;font-size:12px;color:var(--text2)}
 .dice-blocks{display:grid;grid-template-columns:1fr 1fr;gap:3px}
 .dice-block{background:var(--bg2);border-radius:var(--radius);padding:6px 8px;border:0.5px solid var(--border)}
-.dice-block-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.db-badge{font-size:9px;font-family:'SF Mono',Consolas,monospace;background:var(--warn-bg);color:var(--warn);border-radius:3px;padding:0 4px;border:0.5px solid rgba(176,112,32,.25);font-weight:700}
+.dice-block-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.db-badge{font-size:12px;font-family:'SF Mono',Consolas,monospace;background:var(--warn-bg);color:var(--warn);border-radius:3px;padding:0 4px;border:0.5px solid rgba(176,112,32,.25);font-weight:700}
 .dice-main-row{margin-bottom:2px}
-.dice-main-row .cmd-chip{width:100%;font-size:10px;padding:5px;min-height:28px}
+.dice-main-row .cmd-chip{width:100%;font-size:13px;padding:5px;min-height:32px}
 .dice-sub-row{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.dice-sub-label{font-size:8px;color:var(--text3);text-align:center;margin-bottom:1px;font-weight:600}
-.dice-sub-row .cmd-chip{font-size:9px;padding:3px 2px;min-height:24px;opacity:.8}
+.dice-sub-label{font-size:11px;color:var(--text3);text-align:center;margin-bottom:1px;font-weight:600}
+.dice-sub-row .cmd-chip{font-size:12px;padding:3px 2px;min-height:32px;opacity:.8}
 .cmd-chip{display:flex;align-items:center;justify-content:center;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:'SF Mono',Consolas,monospace;line-height:1.3;word-break:break-all;text-align:center;transition:all .1s;user-select:none}
 .cmd-chip:active{background:var(--bg3)}
 .cmd-chip.copied{border-color:var(--success);color:var(--success);background:var(--success-bg)}
 .cmd-chip.chip-n{border-color:rgba(40,85,160,.2)}
 .cmd-chip.chip-h{border-color:rgba(40,85,160,.4);color:var(--accent)}
 .cmd-chip.chip-e{border-color:rgba(192,48,48,.35);color:var(--danger)}
-.dice-empty{font-size:11px;color:var(--text3);text-align:center;padding:22px 0}
+.dice-empty{font-size:14px;color:var(--text3);text-align:center;padding:22px 0}
 .weapon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:3px;margin-top:3px}
-.weapon-row-lbl{font-size:8px;color:var(--text3);text-align:center;margin-bottom:1px}
+.weapon-row-lbl{font-size:11px;color:var(--text3);text-align:center;margin-bottom:1px}
 .bonus-block{background:var(--bg2);border-radius:var(--radius);padding:6px 8px;margin-top:4px;border:0.5px solid var(--border)}
 .bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px}
 .bonus-row{display:flex;flex-direction:column;gap:2px}
-.bonus-lbl{font-size:8px;color:var(--text3)}
-.bonus-row .cmd-chip{font-size:9px;padding:3px 2px;min-height:24px}
+.bonus-lbl{font-size:11px;color:var(--text3)}
+.bonus-row .cmd-chip{font-size:12px;padding:3px 2px;min-height:32px}
 .ref-2col{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
 .ref-panel{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px}
-.ref-panel-title{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
-.ref-row{display:flex;align-items:baseline;gap:3px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:9px}
+.ref-panel-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.ref-row{display:flex;align-items:baseline;gap:3px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
 .ref-row:last-child{border-bottom:none}
 .ref-v6{color:var(--text2);flex:1}.ref-v7{font-weight:700;flex:1}.ref-arrow{color:var(--text3);flex-shrink:0}
-.db-compact-row{display:grid;grid-template-columns:1fr 52px;gap:3px;align-items:center;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:9px}
+.db-compact-row{display:grid;grid-template-columns:1fr 52px;gap:3px;align-items:center;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
 .db-compact-row:last-child{border-bottom:none}
 .db-range{color:var(--text2)}.db-val{font-weight:700;text-align:center}
 .combat-compact{display:flex;flex-direction:column;gap:1px}
-.combat-item{display:flex;align-items:baseline;gap:2px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:9px}
+.combat-item{display:flex;align-items:baseline;gap:2px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
 .combat-item:last-child{border-bottom:none}
 .combat-lbl{font-weight:700;min-width:44px;color:var(--text2)}
 .combat-v6{color:var(--text3);flex:1}.combat-v7{font-weight:600;flex:1}
 .preview-block{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px;margin-bottom:5px}
-.preview-block-title{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.preview-block-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
 .preview-header{display:flex;align-items:center;gap:5px;margin-bottom:4px}
-.preview-label{font-size:9px;color:var(--text3);white-space:nowrap}
-.preview-select{font-size:12px;padding:4px 22px 4px 7px;flex:1}
+.preview-label{font-size:12px;color:var(--text3);white-space:nowrap}
+.preview-select{font-size:15px;padding:4px 22px 4px 7px;flex:1}
 .preview-manual{display:grid;grid-template-columns:1fr 70px;gap:3px;margin-bottom:5px}
-.preview-manual-lbl{font-size:9px;color:var(--text3);margin-bottom:1px}
-.preview-manual input{font-size:12px;padding:4px 7px}
+.preview-manual-lbl{font-size:12px;color:var(--text3);margin-bottom:1px}
+.preview-manual input{font-size:15px;padding:4px 7px}
 .preview-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:5px}
 .preview-cell{background:var(--bg);border-radius:var(--radius);padding:5px 2px;text-align:center;border:0.5px solid var(--border)}
-.preview-cell-label{font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
-.preview-cell-val{font-size:17px;font-weight:700}
-.preview-cell-sub{font-size:7px;color:var(--text3)}
+.preview-cell-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
+.preview-cell-val{font-size:21px;font-weight:700}
+.preview-cell-sub{font-size:10px;color:var(--text3)}
 .preview-cell.normal .preview-cell-val{color:var(--text)}
 .preview-cell.hard .preview-cell-val{color:var(--accent)}
 .preview-cell.extreme .preview-cell-val{color:var(--danger)}
 .full-card{background:var(--bg2);border-radius:var(--radius-lg);padding:7px 8px;border:0.5px solid var(--border);box-shadow:var(--shadow);margin-bottom:5px}
-.kp-card-title{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.kp-card-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
 .kp-row{display:flex;gap:3px;align-items:center;margin-bottom:4px}
-.kp-row .inp-wrap input{font-size:12px;padding:5px 18px 5px 7px}
-.kp-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:11px;padding:5px 9px;white-space:nowrap;flex-shrink:0;height:30px}
+.kp-row .inp-wrap input{font-size:15px;padding:5px 18px 5px 7px}
+.kp-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:5px 9px;white-space:nowrap;flex-shrink:0;height:34px}
 .kp-btn:active{opacity:.8}
-.kp-result{font-size:12px;color:var(--text2);background:var(--bg);border-radius:var(--radius);padding:5px 8px;min-height:28px;line-height:1.65;border:0.5px solid var(--border)}
-.kp-result code{font-family:'SF Mono',Consolas,monospace;font-size:9px;cursor:pointer;background:var(--bg3);padding:0 3px;border-radius:3px}
-.san-note{font-size:9px;color:var(--text3);margin-bottom:4px}
+.kp-result{font-size:15px;color:var(--text2);background:var(--bg);border-radius:var(--radius);padding:6px 10px;min-height:32px;line-height:1.65;border:0.5px solid var(--border)}
+.kp-result code{font-family:'SF Mono',Consolas,monospace;font-size:12px;cursor:pointer;background:var(--bg3);padding:0 3px;border-radius:3px}
+.san-note{font-size:12px;color:var(--text3);margin-bottom:4px}
 .san-note code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:0 2px;border-radius:2px}
 .hp-list{display:flex;flex-direction:column;gap:2px;max-height:160px;overflow-y:auto}
 .hp-item{display:grid;grid-template-columns:1fr 44px 50px auto;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:3px 5px;border:0.5px solid var(--border)}
-.hp-name{font-size:10px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hp-name{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hp-bar-wrap{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
 .hp-bar{height:100%;border-radius:2px;transition:width .3s}
-.hp-nums{font-size:10px;font-weight:700;text-align:center;white-space:nowrap}
+.hp-nums{font-size:13px;font-weight:700;text-align:center;white-space:nowrap}
 .hp-btns{display:flex;gap:2px}
-.hp-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;font-size:11px;width:17px;height:17px;display:flex;align-items:center;justify-content:center;line-height:1}
+.hp-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;font-size:14px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1}
 .init-list{display:flex;flex-direction:column;gap:2px;max-height:140px;overflow-y:auto}
 .init-item{display:flex;align-items:center;gap:4px;background:var(--bg);border-radius:var(--radius);padding:3px 6px;border:0.5px solid var(--border)}
 .init-item.active{border-color:var(--accent);background:rgba(40,85,160,.06)}
-.init-val{font-size:12px;font-weight:700;min-width:20px;color:var(--accent)}
-.init-name{font-size:10px;font-weight:600;flex:1}
-.init-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:10px;padding:1px 2px}
+.init-val{font-size:15px;font-weight:700;min-width:20px;color:var(--accent)}
+.init-name{font-size:13px;font-weight:600;flex:1}
+.init-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:1px 2px}
 .btn-row{display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap}
-.btn-sm-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:10px;padding:4px 6px;flex:1;white-space:nowrap}
+.btn-sm-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;padding:4px 6px;flex:1;white-space:nowrap}
 .btn-sm-sec:active{background:var(--bg3)}
-.btn-sm-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:10px;padding:4px 6px;flex:1;white-space:nowrap}
+.btn-sm-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:4px 6px;flex:1;white-space:nowrap}
 .spell-ref-item{background:var(--bg);border-radius:var(--radius);padding:6px 8px;margin-bottom:3px;border:0.5px solid var(--border);cursor:pointer}
 .spell-ref-item.custom-spell{border-left:2px solid var(--accent)}
-.spell-ref-name{font-size:11px;font-weight:700;color:var(--text)}
-.spell-ref-meta{font-size:9px;color:var(--accent);margin:1px 0}
-.spell-ref-desc{font-size:10px;color:var(--text2);line-height:1.5}
+.spell-ref-name{font-size:14px;font-weight:700;color:var(--text)}
+.spell-ref-meta{font-size:12px;color:var(--accent);margin:1px 0}
+.spell-ref-desc{font-size:13px;color:var(--text2);line-height:1.5}
 .sync-key-block{background:var(--bg2);border-radius:var(--radius-lg);padding:8px;margin-bottom:5px;border:0.5px solid var(--border)}
-.sync-key-title{font-size:10px;font-weight:700;margin-bottom:1px}
-.sync-key-desc{font-size:9px;color:var(--text3);margin-bottom:4px;line-height:1.4}
+.sync-key-title{font-size:13px;font-weight:700;margin-bottom:1px}
+.sync-key-desc{font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.4}
 .sync-key-row{display:flex;gap:4px}
 .sync-key-row .inp-wrap{flex:1}
-.sync-key-row input{font-size:12px;padding:5px 18px 5px 7px}
-.btn-sync{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:10px;padding:6px 10px;flex-shrink:0}
-.sync-status{font-size:9px;margin-top:3px;min-height:11px}
+.sync-key-row input{font-size:15px;padding:5px 18px 5px 7px}
+.btn-sync{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;padding:6px 10px;flex-shrink:0}
+.sync-status{font-size:12px;margin-top:3px;min-height:11px}
 .sync-status.ok{color:var(--success)}.sync-status.err{color:var(--danger)}.sync-status.ing{color:var(--text3)}
 .save-toolbar{display:flex;gap:4px;margin-bottom:5px}
-.btn-pri{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:11px;padding:6px 12px}
+.btn-pri{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:6px 12px}
 .btn-pri:active{opacity:.8}
-.btn-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:11px;padding:6px 9px}
-.btn-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:9px;padding:4px 7px}
-.save-empty{font-size:11px;color:var(--text3);text-align:center;padding:22px 0}
+.btn-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:14px;padding:6px 9px}
+.btn-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 7px}
+.save-empty{font-size:14px;color:var(--text3);text-align:center;padding:22px 0}
 .save-list{display:flex;flex-direction:column;gap:4px}
 .save-card{background:var(--bg2);border-radius:var(--radius-lg);padding:7px;border:0.5px solid var(--border)}
 .save-card-head{display:flex;align-items:center;gap:5px;margin-bottom:3px}
-.save-card-name{font-size:12px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.save-card-date{font-size:9px;color:var(--text3);white-space:nowrap}
+.save-card-name{font-size:15px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.save-card-date{font-size:12px;color:var(--text3);white-space:nowrap}
 .save-card-actions{display:flex;gap:3px;margin-top:3px}
 .save-card-stats{display:flex;flex-wrap:wrap;gap:2px}
-.stat-chip{background:var(--bg3);border-radius:3px;padding:1px 4px;font-size:9px;color:var(--text3);border:0.5px solid var(--border)}
+.stat-chip{background:var(--bg3);border-radius:3px;padding:1px 4px;font-size:12px;color:var(--text3);border:0.5px solid var(--border)}
 .stat-chip strong{color:var(--text2)}
-.db-chip{background:var(--warn-bg);color:var(--warn);border:0.5px solid rgba(168,96,16,.25);border-radius:3px;padding:1px 5px;font-size:9px;font-family:'SF Mono',Consolas,monospace;font-weight:700}
-.madness-item{background:var(--bg);border-radius:var(--radius);padding:4px 7px;margin-bottom:2px;border:0.5px solid var(--border);font-size:10px;line-height:1.5}
-.madness-num{font-size:8px;font-weight:700;color:var(--text3);margin-right:3px}
+.db-chip{background:var(--warn-bg);color:var(--warn);border:0.5px solid rgba(168,96,16,.25);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'SF Mono',Consolas,monospace;font-weight:700}
+.madness-item{background:var(--bg);border-radius:var(--radius);padding:4px 7px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px;line-height:1.5}
+.madness-num{font-size:11px;font-weight:700;color:var(--text3);margin-right:3px}
 .madness-title{font-weight:700;color:var(--text);margin-right:3px}
 .madness-desc{color:var(--text2)}
-.balance-row{display:grid;grid-template-columns:1fr 38px 38px 20px;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:3px 5px;margin-bottom:2px;border:0.5px solid var(--border);font-size:10px}
-.balance-val{text-align:center;font-size:9px;color:var(--text2)}
-.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px}
+.balance-row{display:grid;grid-template-columns:1fr 38px 38px 20px;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:3px 5px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px}
+.balance-val{text-align:center;font-size:12px;color:var(--text2)}
+.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px}
 .balance-summary{background:var(--bg2);border-radius:var(--radius);padding:6px 8px;border:0.5px solid var(--border)}
 .balance-meter{height:4px;border-radius:2px;background:var(--bg3);margin:4px 0;overflow:hidden}
 .balance-meter-fill{height:100%;border-radius:2px;transition:width .4s}
-.balance-label{font-size:9px;color:var(--text2);display:flex;justify-content:space-between}
-.balance-verdict{font-size:11px;font-weight:700;margin-top:3px;text-align:center}
+.balance-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between}
+.balance-verdict{font-size:14px;font-weight:700;margin-top:3px;text-align:center}
 .history-item{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:2px;cursor:pointer;background:var(--bg)}
 .history-item:active{background:var(--bg3)}
-.san-chip{display:inline-flex;align-items:center;gap:3px;background:var(--accent);color:#fff;border-radius:4px;padding:2px 7px;font-size:9px;cursor:pointer;margin:2px;font-weight:600}
+.san-chip{display:inline-flex;align-items:center;gap:3px;background:var(--accent);color:#fff;border-radius:4px;padding:2px 7px;font-size:12px;cursor:pointer;margin:2px;font-weight:600}
 .san-chip:active{opacity:.7}
-.san-chip .chip-x{opacity:.7;font-size:10px}
-.being-row{display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;align-items:center;padding:2px 3px;border-radius:var(--radius);margin-bottom:2px;background:var(--bg);cursor:pointer;border:0.5px solid var(--border);font-size:10px}
+.san-chip .chip-x{opacity:.7;font-size:13px}
+.being-row{display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;align-items:center;padding:2px 3px;border-radius:var(--radius);margin-bottom:2px;background:var(--bg);cursor:pointer;border:0.5px solid var(--border);font-size:13px}
 .being-row:hover{background:var(--bg3)}
 .being-row.custom-row{border-left:2px solid var(--accent)}
-.being-s{text-align:center;color:var(--success);font-weight:700;font-size:10px}
-.being-f{text-align:center;color:var(--danger);font-weight:700;font-size:10px}
-.being-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:10px;padding:0}
-.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:9px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.history-time{font-size:8px;color:var(--text3);white-space:nowrap}
+.being-s{text-align:center;color:var(--success);font-weight:700;font-size:13px}
+.being-f{text-align:center;color:var(--danger);font-weight:700;font-size:13px}
+.being-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0}
+.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-time{font-size:11px;color:var(--text3);white-space:nowrap}
 .custom-add-section{margin-top:6px;border-top:0.5px solid var(--border);padding-top:5px}
-.custom-add-title{font-size:9px;color:var(--text3);margin-bottom:3px;font-weight:700}
+.custom-add-title{font-size:12px;color:var(--text3);margin-bottom:3px;font-weight:700}
 .custom-add-row{display:grid;gap:3px;margin-bottom:2px}
-.custom-add-hint{font-size:8px;color:var(--text3);margin-top:2px}
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:10px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
+.custom-add-hint{font-size:11px;color:var(--text3);margin-top:2px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:400px){.stat-row,.col-headers{grid-template-columns:62px 46px 1fr 1fr 1fr 20px}.ref-2col{grid-template-columns:1fr}}
 </style>
@@ -253,7 +253,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <input type="text" id="npc-name" placeholder="NPC / モンスター名...">
       <button class="inp-clear" onclick="clrInp('npc-name','w-npcname')">×</button>
     </div>
-    <button onclick="fullReset()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:9px;padding:5px 7px;white-space:nowrap;flex-shrink:0">全リセット</button>
+    <button onclick="fullReset()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;padding:5px 7px;white-space:nowrap;flex-shrink:0">全リセット</button>
   </div>
 </div>
 <div class="app-tabs">
@@ -272,7 +272,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="col-headers"><span>能力値</span><span>6版入力</span><span>×5</span><span>1/2</span><span>1/5</span><span></span></div>
   <div id="stat-rows"></div>
   <div class="stat-row-div"></div>
-  <div style="font-size:9px;color:var(--text3);padding:0 2px;margin-bottom:3px">派生値（自動 or 手入力で上書き）</div>
+  <div style="font-size:12px;color:var(--text3);padding:0 2px;margin-bottom:3px">派生値（自動 or 手入力で上書き）</div>
   <div id="derived-rows"></div>
   <div class="derived-mini" id="derived-mini"></div>
   <div class="accordion" id="acc-atk">
@@ -302,7 +302,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
   </div>
   <div class="accordion" id="acc-memo" style="margin-top:4px">
-    <div class="acc-hd" onclick="toggleAcc('memo')"><div class="acc-hd-left"><span class="acc-title">その他メモ</span><span style="font-size:9px;color:var(--text3);margin-left:3px">装甲・特殊能力など</span></div><span class="acc-arrow" id="arrow-memo">▼</span></div>
+    <div class="acc-hd" onclick="toggleAcc('memo')"><div class="acc-hd-left"><span class="acc-title">その他メモ</span><span style="font-size:12px;color:var(--text3);margin-left:3px">装甲・特殊能力など</span></div><span class="acc-arrow" id="arrow-memo">▼</span></div>
     <div class="acc-body" id="body-memo"><textarea id="npc-memo" placeholder="装甲・特殊能力など..." style="width:100%"></textarea></div>
   </div>
 </div>
@@ -311,7 +311,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="dice-hint">タップでコピー→ここふぉりあへ。<code>CC&lt;=60 【火器】</code> ／ ダメージ: <code>1d8+1D6</code></div>
   <div id="dice-content"></div>
   <div class="bonus-block">
-    <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase">汎用ボーナス・ペナルティ</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase">汎用ボーナス・ペナルティ</div>
     <div class="bonus-grid">
       <div class="bonus-row"><span class="bonus-lbl">ボーナス1個</span><button class="cmd-chip bonus-chip" data-cmd="2d100KH">2d100KH</button></div>
       <div class="bonus-row"><span class="bonus-lbl">ボーナス2個</span><button class="cmd-chip bonus-chip" data-cmd="3d100KH">3d100KH</button></div>
@@ -374,15 +374,15 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="kp-card-title">🎲 イニシアティブ</div>
   <div class="kp-row"><div class="inp-wrap" id="w-initname" style="flex:2"><input type="text" id="init-name" placeholder="名前"><button class="inp-clear" onclick="clrInp('init-name','w-initname')">×</button></div><div class="inp-wrap" id="w-initdex" style="flex:1"><input type="number" id="init-dex" placeholder="DEX"><button class="inp-clear" onclick="clrInp('init-dex','w-initdex')">×</button></div><button class="kp-btn" id="btn-init-add">追加</button></div>
   <div class="btn-row"><button class="btn-sm-sec" id="btn-init-sort">▼ DEX順</button><button class="btn-sm-sec" id="btn-init-next">次ターン →</button><button class="btn-sm-dng" id="btn-init-clear">クリア</button></div>
-  <div class="init-list" id="init-list"><div style="font-size:10px;color:var(--text3);text-align:center;padding:4px">参加者を追加してください</div></div>
+  <div class="init-list" id="init-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">参加者を追加してください</div></div>
 </div>
 <div class="full-card">
   <div class="kp-card-title">⚖️ 遭遇バランス確認</div>
-  <div style="font-size:9px;color:var(--text3);margin-bottom:4px">PC側とNPC側の戦闘力を比較して難易度を概算します</div>
-  <div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:2px">PC側</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:4px">PC側とNPC側の戦闘力を比較して難易度を概算します</div>
+  <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:2px">PC側</div>
   <div id="balance-pc-list"></div>
   <div class="kp-row" style="margin-top:2px"><div class="inp-wrap" style="flex:2"><input type="text" id="bal-pc-name" placeholder="PC名"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-pc-hp" placeholder="HP"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-pc-dmg" placeholder="DB"></div><button class="kp-btn" id="btn-bal-pc-add">追加</button></div>
-  <div style="font-size:9px;font-weight:700;color:var(--text3);margin:5px 0 2px">NPC側</div>
+  <div style="font-size:12px;font-weight:700;color:var(--text3);margin:5px 0 2px">NPC側</div>
   <div id="balance-npc-list"></div>
   <div class="kp-row" style="margin-top:2px"><div class="inp-wrap" style="flex:2"><input type="text" id="bal-npc-name" placeholder="NPC名"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-npc-hp" placeholder="HP"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-npc-dmg" placeholder="ダメ"></div><button class="kp-btn" id="btn-bal-npc-add">追加</button></div>
   <div id="balance-result" style="margin-top:5px"></div>
@@ -396,8 +396,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <div class="full-card">
   <div class="kp-card-title">❤️ HPトラッカー</div>
   <div class="kp-row"><div class="inp-wrap" id="w-hpname" style="flex:2"><input type="text" id="hp-name" placeholder="名前"><button class="inp-clear" onclick="clrInp('hp-name','w-hpname')">×</button></div><div class="inp-wrap" id="w-hpmax" style="flex:1"><input type="number" id="hp-max" placeholder="最大HP"><button class="inp-clear" onclick="clrInp('hp-max','w-hpmax')">×</button></div><button class="kp-btn" id="btn-hp-add">追加</button></div>
-  <div class="hp-list" id="hp-list"><div style="font-size:10px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div></div>
-  <button class="btn-add" id="btn-hp-clear" style="margin-top:3px;font-size:9px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
+  <div class="hp-list" id="hp-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div></div>
+  <button class="btn-add" id="btn-hp-clear" style="margin-top:3px;font-size:12px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
 </div>
 <div class="full-card">
   <div class="kp-card-title">📝 セッションメモ（自動保存）</div>
@@ -410,10 +410,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="kp-card-title">🐙 神話・呪文 SAN判定コマンド生成</div>
   <div class="san-note">神話生物・呪文を複数選んでまとめてコマンド生成。損失は直接編集も可。</div>
   <div style="display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap">
-    <div style="flex:1;min-width:120px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">① 神話生物</div><select id="san-sel-being" style="width:100%;font-size:12px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
-    <div style="flex:1;min-width:120px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">② 呪文</div><select id="san-sel-spell" style="width:100%;font-size:12px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
+    <div style="flex:1;min-width:120px"><div style="font-size:12px;color:var(--text3);margin-bottom:2px">① 神話生物</div><select id="san-sel-being" style="width:100%;font-size:15px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
+    <div style="flex:1;min-width:120px"><div style="font-size:12px;color:var(--text3);margin-bottom:2px">② 呪文</div><select id="san-sel-spell" style="width:100%;font-size:15px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
   </div>
-  <div id="san-selected-list" style="display:none;margin-bottom:5px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;font-weight:700">選択中（タップで除外）</div><div id="san-chips"></div></div>
+  <div id="san-selected-list" style="display:none;margin-bottom:5px"><div style="font-size:12px;color:var(--text3);margin-bottom:3px;font-weight:700">選択中（タップで除外）</div><div id="san-chips"></div></div>
   <div class="kp-row"><div class="inp-wrap" id="w-mname" style="flex:3"><input type="text" id="mythos-name-custom" placeholder="または名前を直接入力..."><button class="inp-clear" onclick="clrInp('mythos-name-custom','w-mname')">×</button></div><div class="inp-wrap" id="w-mss" style="flex:1"><input type="text" id="mythos-san-s" placeholder="成功"><button class="inp-clear" onclick="clrInp('mythos-san-s','w-mss')">×</button></div><div class="inp-wrap" id="w-msf" style="flex:1"><input type="text" id="mythos-san-f" placeholder="失敗"><button class="inp-clear" onclick="clrInp('mythos-san-f','w-msf')">×</button></div><button class="kp-btn" id="btn-mythos-gen">生成</button></div>
   <div class="kp-result" id="mythos-result">選択するか、直接入力して生成してください</div>
 </div>
@@ -425,10 +425,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="custom-add-section">
         <div class="custom-add-title">＋ カスタム生物を追加</div>
         <div class="custom-add-row" style="grid-template-columns:1fr 36px 36px 26px">
-          <input type="text" id="new-being-name" placeholder="生物名" style="font-size:11px;padding:4px 6px">
-          <input type="text" id="new-being-s" placeholder="成" style="font-size:11px;padding:4px 4px;text-align:center">
-          <input type="text" id="new-being-f" placeholder="失" style="font-size:11px;padding:4px 4px;text-align:center">
-          <button onclick="addCustomBeing()" style="background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:14px;font-weight:700;padding:0">+</button>
+          <input type="text" id="new-being-name" placeholder="生物名" style="font-size:14px;padding:4px 6px">
+          <input type="text" id="new-being-s" placeholder="成" style="font-size:14px;padding:4px 4px;text-align:center">
+          <input type="text" id="new-being-f" placeholder="失" style="font-size:14px;padding:4px 4px;text-align:center">
+          <button onclick="addCustomBeing()" style="background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:17px;font-weight:700;padding:0">+</button>
         </div>
         <div id="mythos-sync-status" class="sync-status"></div>
       </div>
@@ -441,10 +441,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="custom-add-section">
         <div class="custom-add-title">＋ カスタム呪文を追加</div>
         <div class="custom-add-row" style="grid-template-columns:1fr 40px 40px 26px">
-          <input type="text" id="new-spell-name" placeholder="呪文名" style="font-size:11px;padding:4px 6px">
-          <input type="text" id="new-spell-mp" placeholder="MP" style="font-size:11px;padding:4px 4px;text-align:center">
-          <input type="text" id="new-spell-san" placeholder="SAN失" style="font-size:11px;padding:4px 4px;text-align:center">
-          <button onclick="addCustomSpell()" style="background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:14px;font-weight:700;padding:0">+</button>
+          <input type="text" id="new-spell-name" placeholder="呪文名" style="font-size:14px;padding:4px 6px">
+          <input type="text" id="new-spell-mp" placeholder="MP" style="font-size:14px;padding:4px 4px;text-align:center">
+          <input type="text" id="new-spell-san" placeholder="SAN失" style="font-size:14px;padding:4px 4px;text-align:center">
+          <button onclick="addCustomSpell()" style="background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:17px;font-weight:700;padding:0">+</button>
         </div>
         <div class="custom-add-hint">SAN失敗時損失を入力（例: 1d6）。クラウドキー設定時は自動同期。</div>
       </div>
@@ -452,19 +452,19 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 </div>
 <div class="full-card">
-  <div class="kp-card-title">😵 一時的狂気 <span style="font-size:8px;font-weight:400;color:var(--text3)">SAN5点以上一度に失った場合など</span></div>
+  <div class="kp-card-title">😵 一時的狂気 <span style="font-size:11px;font-weight:400;color:var(--text3)">SAN5点以上一度に失った場合など</span></div>
   <div class="btn-row"><button class="btn-sm-sec" id="btn-temp-mad">ランダム 🎲</button><button class="btn-sm-sec" id="btn-temp-all">全一覧</button></div>
   <div class="kp-result" id="temp-mad-result" style="min-height:36px">ボタンを押すと引きます</div>
 </div>
 <div class="full-card">
-  <div class="kp-card-title">🌑 永続的狂気 <span style="font-size:8px;font-weight:400;color:var(--text3)">SAN10点以上など</span></div>
+  <div class="kp-card-title">🌑 永続的狂気 <span style="font-size:11px;font-weight:400;color:var(--text3)">SAN10点以上など</span></div>
   <div class="btn-row"><button class="btn-sm-sec" id="btn-perm-mad">ランダム 🎲</button><button class="btn-sm-sec" id="btn-perm-all">全一覧</button></div>
   <div class="kp-result" id="perm-mad-result" style="min-height:36px">ボタンを押すと引きます</div>
 </div>
 <div class="full-card">
   <div class="kp-card-title">📋 コマンド履歴</div>
   <div class="btn-row"><button class="btn-sm-dng" id="btn-history-clear">クリア</button></div>
-  <div id="dice-history-list"><div style="font-size:10px;color:var(--text3);text-align:center;padding:6px">まだ履歴がありません</div></div>
+  <div id="dice-history-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:6px">まだ履歴がありません</div></div>
 </div>
 </div>
 <!-- SAVE TAB -->
@@ -595,7 +595,7 @@ function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
   STATS.forEach(({key,label,jp})=>{
     const row=document.createElement("div");row.className="stat-row";
-    row.innerHTML=`<div class="stat-name"><strong>${label}</strong><em>${jp}</em></div><div style="position:relative"><input type="number" min="0" max="99" placeholder="—" data-key="${key}" style="text-align:center;padding:3px 16px 3px 2px;width:100%"><button class="stat-clr" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:10px;width:16px">×</button></div><div class="stat-val" id="v7-${key}">—</div><div class="stat-half" id="h-${key}">—</div><div class="stat-fifth" id="f-${key}">—</div><div></div>`;
+    row.innerHTML=`<div class="stat-name"><strong>${label}</strong><em>${jp}</em></div><div style="position:relative"><input type="number" min="0" max="99" placeholder="—" data-key="${key}" style="text-align:center;padding:3px 16px 3px 2px;width:100%"><button class="stat-clr" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:13px;width:16px">×</button></div><div class="stat-val" id="v7-${key}">—</div><div class="stat-half" id="h-${key}">—</div><div class="stat-fifth" id="f-${key}">—</div><div></div>`;
     wrap.appendChild(row);
     const inp=row.querySelector("input"),clr=row.querySelector(".stat-clr");
     inp.addEventListener("input",e=>{const v=e.target.value.replace(/[^\d]/g,"");e.target.value=v;vals[key]=v;clr.style.display=v?"block":"none";updateStats();});
@@ -615,7 +615,7 @@ function buildDerivedRows(){
   const wrap=document.getElementById("derived-rows");wrap.innerHTML="";
   [{key:"hp",label:"HP",jp:"耐久力"},{key:"mp",label:"MP",jp:"魔力"},{key:"san",label:"SAN",jp:"正気度"}].forEach(({key,label,jp})=>{
     const row=document.createElement("div");row.className="stat-row derived-row";
-    row.innerHTML=`<div class="stat-name"><strong>${label}</strong><em>${jp}</em></div><div style="position:relative"><input type="number" min="0" id="di-${key}" placeholder="${calcAuto(key)||'自動'}" value="${ov[key]}" style="text-align:center;padding:3px 16px 3px 2px;width:100%"><button class="stat-clr" id="dc-${key}" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:10px;width:16px;display:${ov[key]?'block':'none'}">×</button></div><div class="stat-val" id="dv-${key}" style="font-size:11px;color:var(--text3)">${ov[key]||calcAuto(key)||"—"}</div><div class="stat-half" id="dh-${key}">—</div><div class="stat-fifth" id="df-${key}">—</div><div></div>`;
+    row.innerHTML=`<div class="stat-name"><strong>${label}</strong><em>${jp}</em></div><div style="position:relative"><input type="number" min="0" id="di-${key}" placeholder="${calcAuto(key)||'自動'}" value="${ov[key]}" style="text-align:center;padding:3px 16px 3px 2px;width:100%"><button class="stat-clr" id="dc-${key}" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:13px;width:16px;display:${ov[key]?'block':'none'}">×</button></div><div class="stat-val" id="dv-${key}" style="font-size:14px;color:var(--text3)">${ov[key]||calcAuto(key)||"—"}</div><div class="stat-half" id="dh-${key}">—</div><div class="stat-fifth" id="df-${key}">—</div><div></div>`;
     wrap.appendChild(row);
     const inp=document.getElementById("di-"+key),clr=document.getElementById("dc-"+key);
     inp.addEventListener("input",e=>{ov[key]=e.target.value;clr.style.display=e.target.value?"block":"none";updDerived(key);updateDice();updatePreviewSelect();});
@@ -698,19 +698,19 @@ const WEAPONS=[["素手","1d3"],["短剣","1d4"],["棍棒","1d6"],["槍","1d6"],
 function makeDiceBlock(name,value){
   const half=Math.floor(value/2),fifth=Math.floor(value/5);
   const cmdN=ccCmd(name,value),cmdH=ccCmd(name,half),cmdE=ccCmd(name,fifth);
-  return`<div class="dice-block"><div class="dice-block-name">${esc(name)} <span style="font-size:8px;color:var(--text3);font-weight:400">${value}</span></div><div class="dice-main-row"><button class="cmd-chip chip-n" data-cmd="${escA(cmdN)}">${esc(cmdN)}</button></div><div class="dice-sub-row"><div><div class="dice-sub-label">ハード(${half})</div><button class="cmd-chip chip-h" data-cmd="${escA(cmdH)}">${esc(cmdH)}</button></div><div><div class="dice-sub-label">イクスト(${fifth})</div><button class="cmd-chip chip-e" data-cmd="${escA(cmdE)}">${esc(cmdE)}</button></div></div></div>`;
+  return`<div class="dice-block"><div class="dice-block-name">${esc(name)} <span style="font-size:11px;color:var(--text3);font-weight:400">${value}</span></div><div class="dice-main-row"><button class="cmd-chip chip-n" data-cmd="${escA(cmdN)}">${esc(cmdN)}</button></div><div class="dice-sub-row"><div><div class="dice-sub-label">ハード(${half})</div><button class="cmd-chip chip-h" data-cmd="${escA(cmdH)}">${esc(cmdH)}</button></div><div><div class="dice-sub-label">イクスト(${fifth})</div><button class="cmd-chip chip-e" data-cmd="${escA(cmdE)}">${esc(cmdE)}</button></div></div></div>`;
 }
 function makeDmgSection(strV,sizV){
   const str=strV*5,siz=sizV*5,total=str+siz,db=getDB(total);
-  if(!db.cmd)return`<div class="dice-block"><div class="dice-block-name">DB <span class="db-badge">STR+SIZ=${total} → ${db.label}</span></div><div style="font-size:9px;color:var(--text3)">ダメージボーナスなし（${db.label}）</div></div>`;
-  let wh=`<div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:3px 0 2px">武器＋DB</div><div class="weapon-grid"><div><div class="weapon-row-lbl">DB単体</div><button class="cmd-chip" data-cmd="${escA(db.cmd)}">${esc(db.cmd)}</button></div>`;
+  if(!db.cmd)return`<div class="dice-block"><div class="dice-block-name">DB <span class="db-badge">STR+SIZ=${total} → ${db.label}</span></div><div style="font-size:12px;color:var(--text3)">ダメージボーナスなし（${db.label}）</div></div>`;
+  let wh=`<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:3px 0 2px">武器＋DB</div><div class="weapon-grid"><div><div class="weapon-row-lbl">DB単体</div><button class="cmd-chip" data-cmd="${escA(db.cmd)}">${esc(db.cmd)}</button></div>`;
   WEAPONS.forEach(([wn,wd])=>{const c=`${wd}+${db.cmd}`;wh+=`<div><div class="weapon-row-lbl">${esc(wn)}</div><button class="cmd-chip" data-cmd="${escA(c)}">${esc(c)}</button></div>`;});
   wh+="</div>";
   const bn=parseInt(db.build)||0;
-  let bh="";if(bn>0){bh=`<div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:4px 0 2px">ビルド${db.build}</div><div class="weapon-grid"><div><div class="weapon-row-lbl">ボーナス1</div><button class="cmd-chip" data-cmd="2d100KH">2d100KH</button></div><div><div class="weapon-row-lbl">ボーナス2</div><button class="cmd-chip" data-cmd="3d100KH">3d100KH</button></div><div><div class="weapon-row-lbl">ペナ1</div><button class="cmd-chip" data-cmd="2d100KL">2d100KL</button></div><div><div class="weapon-row-lbl">ペナ2</div><button class="cmd-chip" data-cmd="3d100KL">3d100KL</button></div></div>`;}
+  let bh="";if(bn>0){bh=`<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:4px 0 2px">ビルド${db.build}</div><div class="weapon-grid"><div><div class="weapon-row-lbl">ボーナス1</div><button class="cmd-chip" data-cmd="2d100KH">2d100KH</button></div><div><div class="weapon-row-lbl">ボーナス2</div><button class="cmd-chip" data-cmd="3d100KH">3d100KH</button></div><div><div class="weapon-row-lbl">ペナ1</div><button class="cmd-chip" data-cmd="2d100KL">2d100KL</button></div><div><div class="weapon-row-lbl">ペナ2</div><button class="cmd-chip" data-cmd="3d100KL">3d100KL</button></div></div>`;}
   return`<div class="dice-block"><div class="dice-block-name">ダメージ <span class="db-badge">DB: ${db.label}</span></div>${wh}${bh}</div>`;
 }
-function secLabel(t){return`<div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:5px 0 2px">${t}</div>`;}
+function secLabel(t){return`<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:5px 0 2px">${t}</div>`;}
 function updateDice(){
   const aStats=STATS.filter(({key})=>(parseInt(vals[key])||0)>0);
   const aDerived=[{l:"HP",v:getEff("hp")},{l:"MP",v:getEff("mp")},{l:"SAN",v:getEff("san")}].filter(d=>d.v>0);
@@ -755,12 +755,12 @@ function renderPreviewFromValues(name,value){
   const tbl=document.createElement("div");tbl.className="preview-table";
   [{cls:"normal",lbl:"通常",val:value,cmd:ccCmd(name,value)},{cls:"hard",lbl:"ハード",val:half,cmd:ccCmd(name,half)},{cls:"extreme",lbl:"イクストリーム",val:fifth,cmd:ccCmd(name,fifth)}].forEach(function(d){
     const cell=document.createElement("div");cell.className="preview-cell "+d.cls;cell.style.cursor="pointer";
-    cell.innerHTML='<div class="preview-cell-label">'+d.lbl+'</div><div class="preview-cell-val">'+d.val+'</div><div class="preview-cell-sub" style="font-size:8px;color:var(--text3)">タップでコピー</div>';
+    cell.innerHTML='<div class="preview-cell-label">'+d.lbl+'</div><div class="preview-cell-val">'+d.val+'</div><div class="preview-cell-sub" style="font-size:11px;color:var(--text3)">タップでコピー</div>';
     cell.addEventListener("click",function(){navigator.clipboard.writeText(d.cmd).then(function(){const sub=cell.querySelector(".preview-cell-sub");sub.textContent="コピーしました ✓";cell.style.borderColor="var(--success)";setTimeout(function(){sub.textContent="タップでコピー";cell.style.borderColor="";},1400);addHistory(d.cmd);});});
     tbl.appendChild(cell);
   });
   result.innerHTML="";result.appendChild(tbl);
-  const hint=document.createElement("div");hint.style.cssText="font-size:9px;color:var(--text3);text-align:center;margin:4px 0";hint.textContent=name;result.appendChild(hint);
+  const hint=document.createElement("div");hint.style.cssText="font-size:12px;color:var(--text3);text-align:center;margin:4px 0";hint.textContent=name;result.appendChild(hint);
 }
 function trigPreview(){setTimeout(renderPreview,0);}
 document.getElementById("preview-select").addEventListener("change",()=>{previewManualActive=false;document.getElementById("preview-manual-name").value="";document.getElementById("preview-manual-val").value="";renderPreview();});
@@ -783,7 +783,7 @@ document.getElementById("btn-opp").addEventListener("click",()=>{
 let hpList=[];
 function renderHpList(){
   const wrap=document.getElementById("hp-list");
-  if(!hpList.length){wrap.innerHTML=`<div style="font-size:10px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div>`;return;}
+  if(!hpList.length){wrap.innerHTML=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div>`;return;}
   wrap.innerHTML=hpList.map((h,i)=>{const pct=Math.max(0,h.cur/h.max*100),col=pct>50?"#1a9e72":pct>25?"#d09028":"#c03030";return`<div class="hp-item"><span class="hp-name">${esc(h.name)}</span><div class="hp-bar-wrap"><div class="hp-bar" style="width:${pct}%;background:${col}"></div></div><span class="hp-nums" style="color:${col}">${h.cur}/${h.max}</span><div class="hp-btns"><button class="hp-btn" data-i="${i}" data-d="-1">−</button><button class="hp-btn" data-i="${i}" data-d="1">＋</button><button class="hp-btn" data-i="${i}" data-d="del" style="color:var(--text3)">✕</button></div></div>`;}).join("");
   wrap.querySelectorAll(".hp-btn").forEach(btn=>btn.addEventListener("click",e=>{const i=+e.currentTarget.dataset.i,d=e.currentTarget.dataset.d;if(d==="del")hpList.splice(i,1);else hpList[i].cur=Math.max(0,Math.min(hpList[i].max,hpList[i].cur+parseInt(d)));renderHpList();saveKp();}));
 }
@@ -792,7 +792,7 @@ document.getElementById("btn-hp-clear").addEventListener("click",()=>{if(confirm
 let initList=[],initTurn=0;
 function renderInitList(){
   const wrap=document.getElementById("init-list");
-  if(!initList.length){wrap.innerHTML=`<div style="font-size:10px;color:var(--text3);text-align:center;padding:4px">参加者を追加してください</div>`;return;}
+  if(!initList.length){wrap.innerHTML=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">参加者を追加してください</div>`;return;}
   wrap.innerHTML=initList.map((it,i)=>`<div class="init-item${i===initTurn?" active":""}"><span class="init-val">${it.dex}</span><span class="init-name">${esc(it.name)}${i===initTurn?" ◀":""}</span><button class="init-del" data-i="${i}">✕</button></div>`).join("");
   wrap.querySelectorAll(".init-del").forEach(btn=>btn.addEventListener("click",e=>{const i=+e.currentTarget.dataset.i;initList.splice(i,1);if(initTurn>=initList.length)initTurn=0;renderInitList();saveKp();}));
 }
@@ -826,7 +826,7 @@ function updateBalanceResult(){
   else if(ratio<1.3){verdict="🟢 ほぼ互角";vc="var(--success)";fill=50;}
   else if(ratio<2){verdict="🔵 PC優勢";vc="var(--accent)";fill=Math.min(90,Math.round(ratio*50));}
   else{verdict="⚪ PC圧勝 — リスク低";vc="var(--text3)";fill=95;}
-  res.innerHTML=`<div class="balance-summary"><div class="balance-label"><span>PC HP:${pcHp} D:${pcDmg}</span><span>NPC HP:${npcHp} D:${npcDmg}</span></div><div class="balance-meter"><div class="balance-meter-fill" style="width:${fill}%;background:${vc}"></div></div><div style="font-size:8px;color:var(--text3);display:flex;justify-content:space-between"><span>NPC倒す≒${rkn===99?"∞":rkn}R</span><span>PC倒される≒${rkp===99?"∞":rkp}R</span></div><div class="balance-verdict" style="color:${vc}">${verdict}</div><div style="font-size:8px;color:var(--text3);margin-top:2px;text-align:center">回避・技能は考慮しない概算</div></div>`;
+  res.innerHTML=`<div class="balance-summary"><div class="balance-label"><span>PC HP:${pcHp} D:${pcDmg}</span><span>NPC HP:${npcHp} D:${npcDmg}</span></div><div class="balance-meter"><div class="balance-meter-fill" style="width:${fill}%;background:${vc}"></div></div><div style="font-size:11px;color:var(--text3);display:flex;justify-content:space-between"><span>NPC倒す≒${rkn===99?"∞":rkn}R</span><span>PC倒される≒${rkp===99?"∞":rkp}R</span></div><div class="balance-verdict" style="color:${vc}">${verdict}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;text-align:center">回避・技能は考慮しない概算</div></div>`;
 }
 document.getElementById("btn-bal-pc-add").addEventListener("click",()=>{const name=document.getElementById("bal-pc-name").value.trim()||"PC",hp=parseInt(document.getElementById("bal-pc-hp").value)||10,dmg=parseInt(document.getElementById("bal-pc-dmg").value)||0;balPc.push({name,hp,dmg});document.getElementById("bal-pc-name").value="";document.getElementById("bal-pc-hp").value="";document.getElementById("bal-pc-dmg").value="";renderBalList(balPc,"balance-pc-list","pc");updateBalanceResult();});
 document.getElementById("btn-bal-npc-add").addEventListener("click",()=>{const name=document.getElementById("bal-npc-name").value.trim()||"NPC",hp=parseInt(document.getElementById("bal-npc-hp").value)||10,dmg=parseInt(document.getElementById("bal-npc-dmg").value)||0;balNpc.push({name,hp,dmg});document.getElementById("bal-npc-name").value="";document.getElementById("bal-npc-hp").value="";document.getElementById("bal-npc-dmg").value="";renderBalList(balNpc,"balance-npc-list","npc");updateBalanceResult();});
@@ -890,10 +890,10 @@ function initSanSelects(){
 function renderBeingList(){
   const wrap=document.getElementById("being-list-wrap");if(!wrap)return;wrap.innerHTML="";
   const all=getAllBeings();
-  const hdr=document.createElement("div");hdr.style.cssText="display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;padding:0 3px 3px;font-size:9px;color:var(--text3);font-weight:700;border-bottom:0.5px solid var(--border);margin-bottom:3px";hdr.innerHTML="<span>生物名</span><span style='text-align:center'>成</span><span style='text-align:center'>失</span><span></span>";wrap.appendChild(hdr);
+  const hdr=document.createElement("div");hdr.style.cssText="display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;padding:0 3px 3px;font-size:12px;color:var(--text3);font-weight:700;border-bottom:0.5px solid var(--border);margin-bottom:3px";hdr.innerHTML="<span>生物名</span><span style='text-align:center'>成</span><span style='text-align:center'>失</span><span></span>";wrap.appendChild(hdr);
   all.forEach(function(b,i){
     const row=document.createElement("div");row.className="being-row"+(b.custom?" custom-row":"");row.title="クリックで選択";
-    const n=document.createElement("span");n.style.cssText="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px";n.textContent=b.name;
+    const n=document.createElement("span");n.style.cssText="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px";n.textContent=b.name;
     const sv=document.createElement("span");sv.className="being-s";sv.textContent=b.s;
     const fv=document.createElement("span");fv.className="being-f";fv.textContent=b.f;
     const del=document.createElement("button");del.className="being-del";del.textContent="×";
@@ -908,12 +908,12 @@ function renderBeingList(){
 function buildSpellRef(){
   const wrap=document.getElementById("spell-ref-list");if(!wrap)return;wrap.innerHTML="";
   const allSpells=getAllSpells();
-  if(customSpells.length){const lbl=document.createElement("div");lbl.style.cssText="font-size:8px;color:var(--text3);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px";lbl.textContent="組み込み（"+SPELL_REF.length+"件）";wrap.appendChild(lbl);}
+  if(customSpells.length){const lbl=document.createElement("div");lbl.style.cssText="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px";lbl.textContent="組み込み（"+SPELL_REF.length+"件）";wrap.appendChild(lbl);}
   allSpells.forEach(function(s,i){
-    if(i===SPELL_REF.length&&customSpells.length){const cDiv=document.createElement("div");cDiv.style.cssText="font-size:8px;color:var(--accent);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:6px 0 3px;padding-top:4px;border-top:0.5px solid var(--border)";cDiv.textContent="カスタム（"+customSpells.length+"件）";wrap.appendChild(cDiv);}
+    if(i===SPELL_REF.length&&customSpells.length){const cDiv=document.createElement("div");cDiv.style.cssText="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:6px 0 3px;padding-top:4px;border-top:0.5px solid var(--border)";cDiv.textContent="カスタム（"+customSpells.length+"件）";wrap.appendChild(cDiv);}
     const item=document.createElement("div");item.className="spell-ref-item"+(s.custom?" custom-spell":"");item.title="クリックで選択に追加";
     const nm=document.createElement("div");nm.className="spell-ref-name";nm.textContent=s.name;
-    if(s.custom){const delBtn=document.createElement("button");delBtn.style.cssText="float:right;background:none;border:none;cursor:pointer;color:var(--danger);font-size:10px;padding:0 0 0 4px";delBtn.textContent="×";delBtn.addEventListener("click",function(e){e.stopPropagation();const ci=i-SPELL_REF.length;customSpells.splice(ci,1);saveMythosCloud();buildSpellRef();populateSanSelects();showToast("削除しました");});nm.appendChild(delBtn);}
+    if(s.custom){const delBtn=document.createElement("button");delBtn.style.cssText="float:right;background:none;border:none;cursor:pointer;color:var(--danger);font-size:13px;padding:0 0 0 4px";delBtn.textContent="×";delBtn.addEventListener("click",function(e){e.stopPropagation();const ci=i-SPELL_REF.length;customSpells.splice(ci,1);saveMythosCloud();buildSpellRef();populateSanSelects();showToast("削除しました");});nm.appendChild(delBtn);}
     const mt=document.createElement("div");mt.className="spell-ref-meta";mt.textContent="MP: "+s.cost+(s.san&&s.san!=="0/?"?" ／ SAN成/失: "+s.san:"")+(s.time&&s.time!=="—"?" ／ 時間: "+s.time:"");
     const dc=document.createElement("div");dc.className="spell-ref-desc";dc.textContent=s.desc;
     item.append(nm,mt,dc);
@@ -932,16 +932,16 @@ function initMythosGenBtn(){
     targets.forEach(function(t){
       const chkCmd=curSan!=="?"?"CC<="+curSan+" 【"+t.name+"・SAN判定】":"CC<=XX 【"+t.name+"・SAN判定】";
       const block=document.createElement("div");block.style.cssText="margin-bottom:6px;padding-bottom:6px;border-bottom:0.5px solid var(--border)";
-      block.innerHTML="<div style='font-size:10px;font-weight:700;margin-bottom:2px'>"+esc(t.name)+"</div>判定: <code>"+esc(chkCmd)+"</code>"+(t.s?"<br>成功時損失: <code>"+esc(t.s)+"</code>":"")+(t.f?"<br>失敗時損失: <code>"+esc(t.f)+"</code>":"");
+      block.innerHTML="<div style='font-size:13px;font-weight:700;margin-bottom:2px'>"+esc(t.name)+"</div>判定: <code>"+esc(chkCmd)+"</code>"+(t.s?"<br>成功時損失: <code>"+esc(t.s)+"</code>":"")+(t.f?"<br>失敗時損失: <code>"+esc(t.f)+"</code>":"");
       block.querySelectorAll("code").forEach(function(c){c.style.cursor="pointer";c.addEventListener("click",function(){navigator.clipboard.writeText(c.textContent);addHistory(c.textContent);showToast("コピーしました");});});
       el.appendChild(block);
     });
-    if(curSan==="?"){const hint=document.createElement("div");hint.style.cssText="font-size:9px;color:var(--text3);margin-top:3px";hint.textContent="※KPツール→正気度チェックの現在SANを入力するとコマンドに反映されます";el.appendChild(hint);}
+    if(curSan==="?"){const hint=document.createElement("div");hint.style.cssText="font-size:12px;color:var(--text3);margin-top:3px";hint.textContent="※KPツール→正気度チェックの現在SANを入力するとコマンドに反映されます";el.appendChild(hint);}
   });
 }
 function initMythosSelect(){loadCustomLocal();populateSanSelects();initSanSelects();renderBeingList();buildSpellRef();initMythosGenBtn();}
 function renderMadnessList(list,cid){document.getElementById(cid).innerHTML=list.map(m=>`<div class="madness-item"><span class="madness-num">${m.id}.</span><span class="madness-title">${esc(m.title)}</span><span class="madness-desc">${esc(m.desc)}</span></div>`).join("");}
-function randMad(list,cid){const m=list[Math.floor(Math.random()*list.length)];document.getElementById(cid).innerHTML=`<div style="font-size:9px;color:var(--text3);margin-bottom:2px">🎲 ${m.id}番</div><div style="font-weight:700;font-size:12px;margin-bottom:2px">${esc(m.title)}</div><div style="font-size:10px;color:var(--text2);line-height:1.5">${esc(m.desc)}</div>`;}
+function randMad(list,cid){const m=list[Math.floor(Math.random()*list.length)];document.getElementById(cid).innerHTML=`<div style="font-size:12px;color:var(--text3);margin-bottom:2px">🎲 ${m.id}番</div><div style="font-weight:700;font-size:15px;margin-bottom:2px">${esc(m.title)}</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${esc(m.desc)}</div>`;}
 document.getElementById("btn-temp-mad").addEventListener("click",()=>randMad(TEMP_MADNESS,"temp-mad-result"));
 document.getElementById("btn-temp-all").addEventListener("click",()=>renderMadnessList(TEMP_MADNESS,"temp-mad-result"));
 document.getElementById("btn-perm-mad").addEventListener("click",()=>randMad(PERM_MADNESS,"perm-mad-result"));
@@ -950,7 +950,7 @@ let diceHistory=[];
 function addHistory(cmd){diceHistory=diceHistory.filter(h=>h.cmd!==cmd);diceHistory.unshift({cmd,time:new Date()});if(diceHistory.length>30)diceHistory=diceHistory.slice(0,30);renderHistory();localStorage.setItem("coc_dice_history",JSON.stringify(diceHistory.map(h=>({cmd:h.cmd,time:h.time.toISOString()}))));}
 function renderHistory(){
   const wrap=document.getElementById("dice-history-list");
-  if(!diceHistory.length){wrap.innerHTML=`<div style="font-size:10px;color:var(--text3);text-align:center;padding:5px">まだ履歴がありません</div>`;return;}
+  if(!diceHistory.length){wrap.innerHTML=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:5px">まだ履歴がありません</div>`;return;}
   wrap.innerHTML=diceHistory.map(h=>{const now=new Date(),diff=Math.floor((now-h.time)/1000),ts=diff<60?`${diff}s前`:diff<3600?`${Math.floor(diff/60)}m前`:h.time.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});return`<div class="history-item" data-cmd="${escA(h.cmd)}"><span class="history-cmd">${esc(h.cmd)}</span><span class="history-time">${ts}</span><span>📋</span></div>`;}).join("");
   wrap.querySelectorAll(".history-item").forEach(item=>item.addEventListener("click",e=>{const cmd=e.currentTarget.dataset.cmd;navigator.clipboard.writeText(cmd).then(()=>{showToast("コピーしました");addHistory(cmd);});}));
 }
@@ -978,7 +978,7 @@ function loadDataIntoEditor(data){
 function renderSaveList(){
   const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;
   if(!saves.length){wrap.innerHTML=`<p class="save-empty">保存されたデータはありません</p>`;return;}
-  wrap.innerHTML=`<div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">保存済み（${saves.length}件）</div><div class="save-list">${saves.map(sv=>renderSaveCard(sv)).join("")}</div>`;
+  wrap.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">保存済み（${saves.length}件）</div><div class="save-list">${saves.map(sv=>renderSaveCard(sv)).join("")}</div>`;
   wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast(`「${sv.name}」を読み込みました`);});});
   wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",()=>{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast(`「${u.name}」を上書きしました`);});});
   wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm(`「${sv.name}」を削除しますか？`))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("削除しました");});});
@@ -988,7 +988,7 @@ function renderSaveCard(sv){
   const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>`<span class="stat-chip"><strong>${label}</strong> ${parseInt(sv.vals[key])}</span>`).join("");
   const aN=(sv.atkList||[]).filter(a=>a.name).length,sN=(sv.splList||[]).filter(s=>s.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length;
   const dbChip=sv.dmgLabel&&sv.dmgLabel!=="なし"?`<span class="db-chip">DB ${sv.dmgLabel}</span>`:"";
-  return`<div class="save-card"><div class="save-card-head"><div class="save-card-name">${esc(sv.name)}</div><div class="save-card-date">${ds}</div></div><div class="save-card-stats">${chips||'<span style="color:var(--text3)">ステータスなし</span>'}${aN?`<span class="stat-chip">攻撃${aN}</span>`:""}${sN?`<span class="stat-chip">呪文${sN}</span>`:""}${skN?`<span class="stat-chip">技能${skN}</span>`:""}${dbChip}</div><div class="save-card-actions"><button class="btn-pri btn-load" style="font-size:10px;padding:4px 8px" data-id="${sv.id}">読み込む</button><button class="btn-sec btn-update" style="font-size:10px;padding:4px 7px" data-id="${sv.id}">上書き</button><button class="btn-dng btn-delete" data-id="${sv.id}">削除</button></div></div>`;
+  return`<div class="save-card"><div class="save-card-head"><div class="save-card-name">${esc(sv.name)}</div><div class="save-card-date">${ds}</div></div><div class="save-card-stats">${chips||'<span style="color:var(--text3)">ステータスなし</span>'}${aN?`<span class="stat-chip">攻撃${aN}</span>`:""}${sN?`<span class="stat-chip">呪文${sN}</span>`:""}${skN?`<span class="stat-chip">技能${skN}</span>`:""}${dbChip}</div><div class="save-card-actions"><button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="${sv.id}">読み込む</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="${sv.id}">上書き</button><button class="btn-dng btn-delete" data-id="${sv.id}">削除</button></div></div>`;
 }
 document.getElementById("btn-save-current").addEventListener("click",()=>{const d=getCurrentData();writeSaves([d,...currentSaves]);renderSaveList();showToast(`「${d.name}」を保存しました`);});
 async function applyKey(key){
