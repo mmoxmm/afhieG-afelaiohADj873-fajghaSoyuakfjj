@@ -74,17 +74,17 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .acc-arrow.open{transform:rotate(180deg)}
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
-.atk-headers{display:grid;grid-template-columns:1fr 58px 56px 58px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
+.atk-headers{display:grid;grid-template-columns:1fr 52px 52px 52px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
 .atk-headers span:first-child{text-align:left}
-.atk-row{display:grid;grid-template-columns:1fr 58px 56px 58px 22px;gap:3px;align-items:center;margin-bottom:3px}
+.atk-row{display:grid;grid-template-columns:1fr 52px 52px 52px 22px;gap:3px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:5px 6px;font-size:15px;text-align:center}
 .atk-row input:first-child{text-align:left}
 .spl-headers{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3)}
 .spl-row{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;align-items:center;margin-bottom:3px}
 .spl-row input{padding:5px 6px;font-size:15px}
-.sk-headers{display:grid;grid-template-columns:1fr 60px 46px 46px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
+.sk-headers{display:grid;grid-template-columns:1fr 52px 38px 38px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:1fr 60px 46px 46px 22px;gap:3px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:1fr 52px 38px 38px 22px;gap:3px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:5px 6px;font-size:15px;text-align:center}
 .sk-row input:first-child{text-align:left}
 .skill-val{text-align:center;font-size:14px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:5px 2px;border:0.5px solid var(--border)}
@@ -265,7 +265,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .parse-body{padding:7px;display:none}
 .parse-body.open{display:block}
 .parse-result-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:7px;margin-bottom:5px;font-size:13px}
-.cons-row{display:grid;grid-template-columns:1fr 52px 52px 22px;gap:3px;align-items:center;margin-bottom:3px}
+.cons-row{display:grid;grid-template-columns:1fr 40px 40px 22px;gap:3px;align-items:center;margin-bottom:3px}
 .cons-row input{padding:5px 6px;font-size:14px;text-align:center}
 .cons-row input:first-child{text-align:left}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
@@ -322,56 +322,58 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div id="derived-rows"></div>
   <div class="derived-mini" id="derived-mini"></div>
 
-  <div class="accordion" id="acc-cons" style="margin-top:4px">
-    <div class="acc-hd" onclick="toggleAcc('cons')">
-      <div class="acc-hd-left">
-        <span class="acc-title">🎒 消耗品・リソース</span>
-        <span class="acc-badge" id="badge-cons">0</span>
-        <span style="font-size:12px;color:var(--text3);margin-left:3px">弾丸・アイテムなど</span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+    <div class="accordion" id="acc-atk" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
+      <div class="acc-body" id="body-atk">
+        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span>備考</span><span></span></div>
+        <div id="atk-rows"></div><button class="btn-add" id="btn-add-atk">＋ 追加</button>
       </div>
-      <span class="acc-arrow" id="arrow-cons">▼</span>
     </div>
-    <div class="acc-body" id="body-cons">
-      <div style="display:grid;grid-template-columns:1fr 52px 52px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center">
-        <span style="text-align:left">名前</span><span>現在値</span><span>最大値</span><span></span>
+    <div class="accordion" id="acc-cons" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('cons')">
+        <div class="acc-hd-left">
+          <span class="acc-title">🎒 消耗品</span>
+          <span class="acc-badge" id="badge-cons">0</span>
+        </div>
+        <span class="acc-arrow" id="arrow-cons">▼</span>
       </div>
-      <div id="cons-rows"></div>
-      <button class="btn-add" onclick="addConsumable()">＋ 消耗品を追加</button>
+      <div class="acc-body" id="body-cons">
+        <div style="display:grid;grid-template-columns:1fr 40px 40px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center">
+          <span style="text-align:left">名前</span><span>現在</span><span>最大</span><span></span>
+        </div>
+        <div id="cons-rows"></div>
+        <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+      </div>
     </div>
   </div>
-
-  <div class="accordion" id="acc-atk">
-    <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
-    <div class="acc-body" id="body-atk">
-      <div class="atk-headers"><span>名前</span><span>技能%</span><span>ダメージ</span><span>備考</span><span></span></div>
-      <div id="atk-rows"></div><button class="btn-add" id="btn-add-atk">＋ 攻撃を追加</button>
-    </div>
-  </div>
-  <div class="accordion" id="acc-spl" style="margin-top:4px">
-    <div class="acc-hd" onclick="toggleAcc('spl')"><div class="acc-hd-left"><span class="acc-title">呪文</span><span class="acc-badge" id="badge-spl">0</span></div><span class="acc-arrow" id="arrow-spl">▼</span></div>
-    <div class="acc-body" id="body-spl">
-      <div class="spl-headers"><span>呪文名</span><span>MP消費</span><span>効果・メモ</span><span></span></div>
-      <div id="spl-rows"></div><button class="btn-add" id="btn-add-spl">＋ 呪文を追加</button>
-    </div>
-  </div>
-  <div class="accordion" id="acc-sk" style="margin-top:4px">
-    <div class="acc-hd" onclick="toggleAcc('sk')"><div class="acc-hd-left"><span class="acc-title">技能</span><span class="acc-badge" id="badge-sk">0</span></div><span class="acc-arrow" id="arrow-sk">▼</span></div>
-    <div class="acc-body" id="body-sk">
-      <div class="skill-mode-toggle">
-        <span class="sml" id="lbl6" style="font-weight:700;color:var(--text2)">6版入力</span>
-        <label class="toggle-wrap"><input type="checkbox" id="skill-mode-toggle"><span class="toggle-slider"></span></label>
-        <span class="sml" id="lbl7">7版入力</span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+    <div class="accordion" id="acc-sk" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('sk')"><div class="acc-hd-left"><span class="acc-title">🎯 技能</span><span class="acc-badge" id="badge-sk">0</span></div><span class="acc-arrow" id="arrow-sk">▼</span></div>
+      <div class="acc-body" id="body-sk">
+        <div class="skill-mode-toggle">
+          <span class="sml" id="lbl6" style="font-weight:700;color:var(--text2)">6版</span>
+          <label class="toggle-wrap"><input type="checkbox" id="skill-mode-toggle"><span class="toggle-slider"></span></label>
+          <span class="sml" id="lbl7">7版</span>
+        </div>
+        <div class="sk-headers"><span>技能名</span><span id="sk-col-val">値</span><span>1/2</span><span>1/5</span><span></span></div>
+        <div id="sk-rows"></div><button class="btn-add" id="btn-add-sk">＋ 追加</button>
       </div>
-      <div class="sk-headers"><span>技能名</span><span id="sk-col-val">値(6版)</span><span>1/2</span><span>1/5</span><span></span></div>
-      <div id="sk-rows"></div><button class="btn-add" id="btn-add-sk">＋ 技能を追加</button>
+    </div>
+    <div class="accordion" id="acc-spl" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('spl')"><div class="acc-hd-left"><span class="acc-title">✨ 呪文</span><span class="acc-badge" id="badge-spl">0</span></div><span class="acc-arrow" id="arrow-spl">▼</span></div>
+      <div class="acc-body" id="body-spl">
+        <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span></div>
+        <div id="spl-rows"></div><button class="btn-add" id="btn-add-spl">＋ 追加</button>
+      </div>
     </div>
   </div>
   <div class="memo-section" id="acc-memo" style="margin-top:4px">
     <div class="memo-hd" onclick="toggleMemo()">
       <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span><span style="font-size:12px;color:var(--text3);margin-left:3px">装甲・特殊能力など</span></div>
-      <span class="acc-arrow" id="arrow-memo">▼</span>
+      <span class="acc-arrow open" id="arrow-memo">▼</span>
     </div>
-    <div class="memo-body" id="body-memo">
+    <div class="memo-body open" id="body-memo">
       <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
       <div id="memo-rows"></div>
       <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
@@ -756,17 +758,28 @@ function updDerivedMini(){
 function buildMemoRows(){
   const wrap=document.getElementById("memo-rows");wrap.innerHTML="";
   memoList.forEach(m=>{
-    const row=document.createElement("div");row.className="memo-row";
-    const lbl=document.createElement("textarea");lbl.className="memo-label-inp";lbl.placeholder="ラベル（1R, 装甲, etc）";lbl.value=m.label;lbl.rows=1;
-    const content=document.createElement("textarea");content.className="memo-content-inp";content.placeholder="メモ内容...";content.value=m.content;content.rows=1;
-    const btnWrap=document.createElement("div");btnWrap.className="memo-row-btns";
-    const copyBtn=document.createElement("button");copyBtn.className="memo-copy-btn";copyBtn.textContent="📋";
-    const delBtn=document.createElement("button");delBtn.className="memo-del-btn";delBtn.textContent="×";
-    btnWrap.append(copyBtn,delBtn);row.append(lbl,content,btnWrap);wrap.appendChild(row);
+    const row=document.createElement("div");row.className="memo-row";row.style.cssText="display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden";
+    // header row (always visible)
+    const hd=document.createElement("div");hd.style.cssText="display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--bg3);cursor:pointer;min-height:30px";
+    const lbl=document.createElement("textarea");lbl.className="memo-label-inp";lbl.placeholder="ラベル（装甲・特殊etc）";lbl.value=m.label;lbl.rows=1;lbl.style.cssText="flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;cursor:text";
+    const toggleBtn=document.createElement("button");toggleBtn.style.cssText="background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s";toggleBtn.textContent="▼";
+    const copyBtn=document.createElement("button");copyBtn.className="memo-copy-btn";copyBtn.textContent="📋";copyBtn.style.cssText="background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 4px;flex-shrink:0";
+    const delBtn=document.createElement("button");delBtn.className="memo-del-btn";delBtn.textContent="×";delBtn.style.cssText="background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0";
+    hd.append(lbl,toggleBtn,copyBtn,delBtn);
+    // body (collapsible)
+    const bd=document.createElement("div");bd.style.cssText="padding:4px 6px;background:var(--bg2);"+(m._collapsed?"display:none":"display:block");
+    const content=document.createElement("textarea");content.className="memo-content-inp";content.placeholder="メモ内容...";content.value=m.content;content.rows=1;content.style.cssText="width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px";
+    bd.appendChild(content);
+    row.append(hd,bd);wrap.appendChild(row);
+    // toggle collapse
+    const doToggle=()=>{m._collapsed=!m._collapsed;bd.style.display=m._collapsed?"none":"block";toggleBtn.style.transform=m._collapsed?"rotate(-90deg)":"";};
+    toggleBtn.addEventListener("click",e=>{e.stopPropagation();doToggle();});
+    hd.addEventListener("click",e=>{if(e.target===lbl||e.target===copyBtn||e.target===delBtn||e.target===toggleBtn)return;doToggle();});
     lbl.addEventListener("input",()=>{m.label=lbl.value;autoExpand(lbl);updMemoBadge();saveMemoLocal();});
+    lbl.addEventListener("click",e=>e.stopPropagation());
     content.addEventListener("input",()=>{m.content=content.value;autoExpand(content);updMemoBadge();saveMemoLocal();});
-    copyBtn.addEventListener("click",()=>{const txt=(m.label?m.label+"\u3000":"")+( m.content||"");navigator.clipboard.writeText(txt).then(()=>{copyBtn.textContent="✓";copyBtn.classList.add("copied");setTimeout(()=>{copyBtn.textContent="📋";copyBtn.classList.remove("copied");},1200);}).catch(()=>showToast("コピー失敗"));});
-    delBtn.addEventListener("click",()=>{memoList=memoList.filter(x=>x.id!==m.id);buildMemoRows();updMemoBadge();saveMemoLocal();});
+    copyBtn.addEventListener("click",e=>{e.stopPropagation();const txt=(m.label?m.label+"\u3000":"")+( m.content||"");navigator.clipboard.writeText(txt).then(()=>{copyBtn.textContent="✓";copyBtn.classList.add("copied");setTimeout(()=>{copyBtn.textContent="📋";copyBtn.classList.remove("copied");},1200);}).catch(()=>showToast("コピー失敗"));});
+    delBtn.addEventListener("click",e=>{e.stopPropagation();memoList=memoList.filter(x=>x.id!==m.id);buildMemoRows();updMemoBadge();saveMemoLocal();});
     bindAutoExpand(lbl);bindAutoExpand(content);
   });
   updMemoBadge();
@@ -1006,7 +1019,7 @@ function buildCocoforiaJson(){
   if(luck>0||ov.luck)status.push({label:"幸運",value:luck,max:luck});
   consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});
   const params=[];
-  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)params.push({label,value:v*5,max:v*5});});
+  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)params.push({label:label,value:v*5,max:v*5});});
   const cmdLines=[];
   const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
