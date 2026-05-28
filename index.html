@@ -886,11 +886,11 @@ function buildCocoforiaJson(){
   if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
   atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
-  // ★FIX2: correct cocoforia JSON format (must be array with kind/data structure)
-  const obj={kind:"character",data:{name,params,commands:[],status:[]}};
+  // ここふぉりあ最新版: 外側が配列
+  const obj=[{kind:"character",data:{name,params,commands:[],status:[]}}];
   return JSON.stringify(obj,null,2);
 }
-function buildCocoforiaText(){
+  function buildCocoforiaText(){
   const name=document.getElementById("npc-name").value||"NPC";
   const lines=[`【${name}】`,""];
   const statLines=[];
@@ -1018,11 +1018,14 @@ async function cloudGet(key){
     const r=await fetch(`https://kvdb.io/${KVDB}/${key}`);
     if(!r.ok)return null;
     const t=await r.text();
-    if(!t||t.trim()==="")return null;
-    return JSON.parse(t);
+    if(!t||t.trim()===""||t.trim()==="null")return null;
+    try{return JSON.parse(t);}catch{
+      // kvdb sometimes double-encodes; try unwrapping
+      try{return JSON.parse(JSON.parse(t));}catch{return null;}
+    }
   }catch{return null;}
 }
-async function cloudSet(key,d){
+  async function cloudSet(key,d){
   try{
     const r=await fetch(`https://kvdb.io/${KVDB}/${key}`,{
       method:"PUT",
