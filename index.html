@@ -535,13 +535,23 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 <!-- SAVE & EXPORT TAB -->
 <div id="tab-save" style="display:none">
-  <div class="sync-key-block">
-    <div class="sync-key-title">🔑 クラウド共有キー</div>
-    <div class="sync-key-desc">同じキーを入れたデバイス間でNPCデータを共有できます（英数字推奨）。</div>
-    <div class="sync-key-row"><div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="例: trpg-yamada-2024" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div><button class="btn-sync" id="btn-apply-key">適用</button></div>
-    <div class="sync-status" id="sync-status"></div>
+<div class="sync-key-block">
+  <div class="sync-key-title">🔑 クラウド共有キー</div>
+  <div class="sync-key-desc">同じキーを入れたデバイス間でNPCデータを共有できます（英数字推奨）。</div>
+  <div class="sync-key-row">
+    <div class="inp-wrap" id="w-synckey">
+      <input type="text" id="sync-key-input" placeholder="例: trpg-yamada-2024" autocomplete="off" spellcheck="false">
+      <button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button>
+    </div>
+    <button class="btn-sync" id="btn-apply-key">キー設定</button>
   </div>
-
+  <div style="display:flex;gap:4px;margin-top:5px">
+    <button class="btn-sync" id="btn-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ アップロード</button>
+    <button class="btn-sync" id="btn-download" style="flex:1;font-size:13px" disabled>⬇️ ダウンロード</button>
+  </div>
+  <div class="sync-status" id="sync-status"></div>
+</div>
+  
   <!-- COCOFORIA EXPORT -->
   <div class="export-block">
     <div class="export-title">🎮 ここふぉりあ出力</div>
@@ -1185,32 +1195,75 @@ function renderSaveCard(sv){
 }
 document.getElementById("btn-save-current").addEventListener("click",()=>{const d=getCurrentData();writeSaves([d,...currentSaves]);renderSaveList();showToast(`「${d.name}」を保存しました`);});
 async function applyKey(key){
-  syncKey=key.trim();localStorage.setItem(L_KEY,syncKey);
-  if(!syncKey){currentSaves=lSaves();setSyncSt("ローカル保存モード");loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();renderSaveList();return;}
-  setSyncSt("接続中…","ing");
+  syncKey=key.trim();
+  localStorage.setItem(L_KEY,syncKey);
+  const upBtn=document.getElementById("btn-upload"),dlBtn2=document.getElementById("btn-download");
+  if(!syncKey){
+    currentSaves=lSaves();
+    setSyncSt("ローカル保存モード");
+    if(upBtn)upBtn.disabled=true;
+    if(dlBtn2)dlBtn2.disabled=true;
+    loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();renderSaveList();
+    return;
+  }
+  setSyncSt(`キー「${syncKey}」を設定しました`,"ok");
+  if(upBtn)upBtn.disabled=false;
+  if(dlBtn2)dlBtn2.disabled=false;
+  currentSaves=lSaves();
+  renderSaveList();
+  loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();
+}
+
+async function uploadToCloud(){
+  if(!syncKey){showToast("キーを設定してください");return;}
+  setSyncSt("アップロード中…","ing");
+  const saves=lSaves();
+  const ok=await cloudSet(cloudKey(),saves);
+  if(ok){
+    setSyncSt(`✓ アップロード完了（${saves.length}件）`,"ok");
+    showToast("アップロードしました");
+  }else{
+    setSyncSt("⚠ アップロード失敗","err");
+    showToast("アップロード失敗");
+  }
+  // mythosも一緒にアップ
+  if(customBeings.length||customSpells.length){
+    await cloudSet(mythosCloudKey(),{beings:customBeings,spells:customSpells});
+  }
+}
+
+async function downloadFromCloud(){
+  if(!syncKey){showToast("キーを設定してください");return;}
+  setSyncSt("ダウンロード中…","ing");
   const remote=await cloudGet(cloudKey());
   if(remote&&Array.isArray(remote)&&remote.length){
-    const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});merged.sort((a,b)=>b.id-a.id);
-    currentSaves=merged;wSaves(merged);setSyncSt(`✓ 同期完了（${merged.length}件）`,"ok");
+    // ローカルとマージ（IDで重複排除、リモート優先）
+    const local=lSaves();
+    const merged=[...remote];
+    local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});
+    merged.sort((a,b)=>b.id-a.id);
+    currentSaves=merged;wSaves(merged);
+    setSyncSt(`✓ ダウンロード完了（${merged.length}件）`,"ok");
+    showToast(`${merged.length}件取得しました`);
+    renderSaveList();
   }else{
-    currentSaves=lSaves();
-    if(currentSaves.length){await cloudSet(cloudKey(),currentSaves);setSyncSt("✓ ローカルをアップロードしました","ok");}
-    else setSyncSt(`✓ キー「${syncKey}」で接続（データなし）`,"ok");
+    setSyncSt("⚠ クラウドにデータがありません","err");
+    showToast("クラウドにデータなし");
   }
-  renderSaveList();
+  // mythosもダウンロード
   const remoteMythos=await cloudGet(mythosCloudKey());
   if(remoteMythos&&(remoteMythos.beings||remoteMythos.spells)){
     if(remoteMythos.beings)remoteMythos.beings.forEach(rb=>{if(!customBeings.find(lb=>lb.name===rb.name))customBeings.push(rb);});
     if(remoteMythos.spells)remoteMythos.spells.forEach(rs=>{if(!customSpells.find(ls=>ls.name===rs.name))customSpells.push(rs);});
-    saveCustomLocal();
-  }else if(customBeings.length||customSpells.length){await cloudSet(mythosCloudKey(),{beings:customBeings,spells:customSpells});}
-  renderBeingList();buildSpellRef();populateSanSelects();
+    saveCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();
+  }
 }
+
 document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
 document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
-watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
-watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
-
+document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
+document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
+  
 // KP SUB TABS
 function switchKpTab(t){
   document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));
