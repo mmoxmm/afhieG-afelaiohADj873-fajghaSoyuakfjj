@@ -527,23 +527,22 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="sync-status" id="sync-status"></div>
   </div>
 
-  <div class="export-block">
-    <div class="export-title">🎮 ここふぉりあ出力</div>
-    <div style="display:flex;gap:4px;margin-bottom:5px">
-      <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
-      <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
-    </div>
-    <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
-    <div class="export-btn-row">
-      <button class="export-btn" onclick="copyExport()">📋 コピー</button>
-    </div>
-    <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあのルーム盤面（何もない場所）にCtrl+V（iPadは長押し→ペースト）でキャラコマが生成されます。テキストはチャット欄に貼り付け。</div>
+<div class="export-block">
+  <div class="export-title">🎮 ここふぉりあ出力</div>
+  <div style="display:flex;gap:4px;margin-bottom:5px">
+    <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
+    <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
   </div>
-  <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
-  <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
-  <div id="save-list-wrap"></div>
+  <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+  <div class="export-btn-row">
+    <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+    <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
+  </div>
+  <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあのルーム盤面（何もない場所）にCtrl+V（iPadは長押し→ペースト）でキャラコマが生成されます。テキストはチャット欄に貼り付け。</div>
 </div>
-
+<div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
+<div id="save-list-wrap"></div>
+  
 </div></div>
 <div class="toast" id="toast"></div>
 <script>
