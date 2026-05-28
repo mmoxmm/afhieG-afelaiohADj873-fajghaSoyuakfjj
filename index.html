@@ -47,10 +47,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .tabs::-webkit-scrollbar{display:none}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:14px;padding:6px 10px;white-space:nowrap;flex-shrink:0;flex:1;text-align:center}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
-.col-headers{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;padding:0 6px 3px;font-size:12px;color:var(--text3)}
+.col-headers{display:grid;grid-template-columns:54px 44px 1fr 1fr 1fr 18px;gap:3px;padding:0 4px 3px;font-size:11px;color:var(--text3)}
 .col-headers span:not(:first-child){text-align:center}
-.stat-row{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:3px 6px;margin-bottom:2px;border:0.5px solid var(--border)}
-.stat-row.derived-row{background:var(--bg3);border-color:var(--border2)}
+.stat-row{display:grid;grid-template-columns:54px 44px 1fr 1fr 1fr 18px;gap:3px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:3px 4px;margin-bottom:2px;border:0.5px solid var(--border)}
+.stat-row.derived-row{background:var(--bg3);border-color:var(--border2);grid-template-columns:54px 1fr 1fr 1fr 18px}
 .stat-name{display:flex;align-items:baseline;gap:3px}
 .stat-name strong{font-size:15px;font-weight:700}
 .stat-name em{font-size:11px;color:var(--text3);font-style:normal}
@@ -315,12 +315,17 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
   </div>
 
-  <div class="col-headers"><span>能力値</span><span>6版入力</span><span>×5</span><span>1/2</span><span>1/5</span><span></span></div>
-  <div id="stat-rows"></div>
-  <div class="stat-row-div"></div>
-  <div style="font-size:12px;color:var(--text3);padding:0 2px;margin-bottom:3px">派生値（自動 or 手入力で上書き）</div>
-  <div id="derived-rows"></div>
-  <div class="derived-mini" id="derived-mini"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;align-items:start">
+    <div>
+      <div class="col-headers"><span>能力値</span><span>6版</span><span>×5</span><span>½</span><span>⅕</span><span></span></div>
+      <div id="stat-rows"></div>
+    </div>
+    <div>
+      <div class="col-headers" style="grid-template-columns:54px 1fr 1fr 1fr 18px"><span>派生値</span><span style="text-align:center">値</span><span style="text-align:center">½</span><span style="text-align:center">⅕</span><span></span></div>
+      <div id="derived-rows"></div>
+      <div class="derived-mini" id="derived-mini" style="grid-template-columns:1fr 1fr;margin-top:3px"></div>
+    </div>
+  </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
     <div class="accordion" id="acc-atk" style="margin-top:0">
@@ -1018,8 +1023,9 @@ function buildCocoforiaJson(){
   if(san>0||ov.san!=="")status.push({label:"SAN",value:san,max:san});
   if(luck>0||ov.luck)status.push({label:"幸運",value:luck,max:luck});
   consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});
+  // 能力値はparams（固定値表示）とstatus両方に入れる
   const params=[];
-  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)params.push({label:label,value:v*5,max:v*5});});
+  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;params.push({label:label,value:v7,max:v7});}});
   const cmdLines=[];
   const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
@@ -1030,7 +1036,9 @@ function buildCocoforiaJson(){
   });
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{cmdLines.push("CC<="+s.val+" 【"+s.name+"】");});
   memoList.filter(m=>m.label||m.content).forEach(m=>{cmdLines.push((m.label?m.label+"\u3000":"")+m.content);});
-  return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:""}});
+  // ここふぉりあはparams未対応の場合があるのでstatusにも能力値を追加
+  const allStatus=[...status,...params.map(p=>({label:p.label,value:p.value,max:p.max}))];
+  return JSON.stringify({kind:"character",data:{name,status:allStatus,params,commands:cmdLines.join("\n"),memo:""}});
 }
 function buildCocoforiaText(){
   const name=document.getElementById("npc-name").value||"NPC";
