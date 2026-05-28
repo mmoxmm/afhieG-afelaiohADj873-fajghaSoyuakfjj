@@ -890,7 +890,8 @@ function buildCocoforiaJson(){
   atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
   // ここふぉりあ最新版: 外側が配列
-  return JSON.stringify([{kind:"character",data:{name,params,commands:[],status:[]}}],null,2);
+  // 修正版: commandsを空文字列("")に変更し、外側の配列を取り外す
+  return JSON.stringify({kind:"character",data:{name,params,commands:"",status:[]}},null,2);
 }
 function buildCocoforiaText(){
   const name=document.getElementById("npc-name").value||"NPC";
@@ -1136,7 +1137,27 @@ function updGistDisplay(){
   el.textContent=gistId?`Gist ID: ${gistId}`:"";
 }
 async function gistGet(){
-  if(!gistId)return null;
+  // gistId（保存先）を知らない場合は、トークンを使って自動で探しに行く
+  if(!gistId){
+    try{
+      const listRes = await fetch("https://api.github.com/gists",{headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json"}});
+      if(!listRes.ok) return null;
+      const list = await listRes.json();
+      // 説明文が"CoC NPC Tool Data"のものを探す
+      const found = list.find(g => g.description === "CoC NPC Tool Data" && g.files && g.files["coc_saves.json"]);
+      if(found){
+        gistId = found.id;
+        localStorage.setItem(L_GIST, gistId);
+        updGistDisplay();
+      } else {
+        return null;
+      }
+    }catch{
+      return null;
+    }
+  }
+
+  // IDが分かったらデータを取得
   try{
     const r=await fetch(`https://api.github.com/gists/${gistId}`,{headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json"}});
     if(!r.ok)return null;
@@ -1146,40 +1167,7 @@ async function gistGet(){
     return JSON.parse(content);
   }catch{return null;}
 }
-async function gistSet(data){
-  const body={files:{"coc_saves.json":{content:JSON.stringify(data)}}};
-  try{
-    if(gistId){
-      const r=await fetch(`https://api.github.com/gists/${gistId}`,{method:"PATCH",headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
-      return r.ok;
-    }else{
-      const r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify({...body,description:"CoC NPC Tool Data",public:false})});
-      if(!r.ok)return false;
-      const d=await r.json();gistId=d.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();
-      return true;
-    }
-  }catch{return false;}
-}
-async function applyKey(token){
-  syncToken=token.trim();
-  const upBtn=document.getElementById("btn-upload"),dlBtn2=document.getElementById("btn-download");
-  if(!syncToken){
-    localStorage.removeItem(L_KEY);gistId="";
-    currentSaves=lSaves();setSyncSt("トークンなし（ローカル保存のみ）");
-    if(upBtn)upBtn.disabled=true;if(dlBtn2)dlBtn2.disabled=true;
-    loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();renderSaveList();updGistDisplay();
-    return;
-  }
-  localStorage.setItem(L_KEY,syncToken);
-  if(!localStorage.getItem(L_GIST_TS))localStorage.setItem(L_GIST_TS,new Date().toISOString());
-  gistId=localStorage.getItem(L_GIST)||"";
-  checkTokenExpiry();updGistDisplay();
-  if(upBtn)upBtn.disabled=false;if(dlBtn2)dlBtn2.disabled=false;
-  currentSaves=lSaves();renderSaveList();
-  loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();
-  setSyncSt("✓ トークン設定済み。⬆️ か ⬇️ で同期してください","ok");
-}
-async function uploadToCloud(){
+  async function uploadToCloud(){
   if(!syncToken){showToast("トークンを設定してください");return;}
   setSyncSt("アップロード中…","ing");
   const saves=lSaves();
