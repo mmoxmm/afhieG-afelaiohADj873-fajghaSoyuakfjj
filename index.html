@@ -37,7 +37,7 @@ h1{font-size:18px;font-weight:700;margin-bottom:2px}
 input[type=text],input[type=number],textarea,select{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:15px;padding:6px 10px;outline:none;transition:border .15s;-moz-appearance:textfield;width:100%}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--accent)}
-textarea{resize:vertical;min-height:60px;line-height:1.55;font-size:15px}
+textarea{resize:none;line-height:1.55;font-size:15px;overflow:hidden;min-height:36px}
 select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px}
 .inp-wrap{position:relative;display:flex;align-items:center;width:100%}
 .inp-wrap input,.inp-wrap select{flex:1;padding-right:20px}
@@ -45,7 +45,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .inp-wrap.hv .inp-clear{display:block}
 .tabs{display:flex;border-bottom:1px solid var(--border2);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:15px;padding:6px 9px;white-space:nowrap;flex-shrink:0}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:14px;padding:6px 10px;white-space:nowrap;flex-shrink:0;flex:1;text-align:center}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
 .col-headers{display:grid;grid-template-columns:76px 52px 1fr 1fr 1fr 22px;gap:3px;padding:0 6px 3px;font-size:12px;color:var(--text3)}
 .col-headers span:not(:first-child){text-align:center}
@@ -98,6 +98,23 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .toggle-wrap input:checked+.toggle-slider{background:var(--accent)}
 .toggle-wrap input:checked+.toggle-slider:before{transform:translateX(14px)}
 .sml{font-size:13px;color:var(--text3)}
+/* MEMO */
+.memo-section{margin-top:5px;border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
+.memo-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);cursor:pointer;user-select:none;min-height:34px}
+.memo-body{padding:6px;background:var(--bg);display:none}
+.memo-body.open{display:block}
+.memo-row{display:grid;grid-template-columns:90px 1fr 26px;gap:4px;align-items:start;margin-bottom:4px}
+.memo-label-inp{padding:6px 7px;font-size:13px;font-weight:600;border-radius:var(--radius);background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);resize:none;overflow:hidden;min-height:34px;line-height:1.5}
+.memo-content-inp{padding:6px 7px;font-size:13px;border-radius:var(--radius);background:var(--bg2);border:0.5px solid var(--border);color:var(--text);resize:none;overflow:hidden;min-height:34px;line-height:1.5}
+.memo-content-inp:focus{border-color:var(--accent)}
+.memo-label-inp:focus{border-color:var(--accent)}
+.memo-row-btns{display:flex;flex-direction:column;gap:2px;padding-top:3px}
+.memo-copy-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 4px;white-space:nowrap;transition:all .1s}
+.memo-copy-btn.copied{color:var(--success);border-color:var(--success)}
+.memo-del-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px}
+.memo-copy-all{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 8px;margin-bottom:5px;width:100%}
+.memo-copy-all:active{background:var(--bg3)}
+/* DICE */
 .dice-hint{font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:5px;padding:6px 10px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)}
 .dice-hint code{font-family:'SF Mono',Consolas,monospace;background:var(--bg3);padding:0 3px;border-radius:3px;font-size:12px;color:var(--text2)}
 .dice-blocks{display:grid;grid-template-columns:1fr 1fr;gap:3px}
@@ -123,20 +140,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .bonus-row{display:flex;flex-direction:column;gap:2px}
 .bonus-lbl{font-size:11px;color:var(--text3)}
 .bonus-row .cmd-chip{font-size:12px;padding:3px 2px;min-height:32px}
-.ref-2col{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
-.ref-panel{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px}
-.ref-panel-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
-.ref-row{display:flex;align-items:baseline;gap:3px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
-.ref-row:last-child{border-bottom:none}
-.ref-v6{color:var(--text2);flex:1}.ref-v7{font-weight:700;flex:1}.ref-arrow{color:var(--text3);flex-shrink:0}
-.db-compact-row{display:grid;grid-template-columns:1fr 52px;gap:3px;align-items:center;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
-.db-compact-row:last-child{border-bottom:none}
-.db-range{color:var(--text2)}.db-val{font-weight:700;text-align:center}
-.combat-compact{display:flex;flex-direction:column;gap:1px}
-.combat-item{display:flex;align-items:baseline;gap:2px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
-.combat-item:last-child{border-bottom:none}
-.combat-lbl{font-weight:700;min-width:44px;color:var(--text2)}
-.combat-v6{color:var(--text3);flex:1}.combat-v7{font-weight:600;flex:1}
+/* REF in dice tab */
+.ref-inline{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px;margin-top:8px}
+.ref-inline-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
 .preview-block{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px;margin-bottom:5px}
 .preview-block-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
 .preview-header{display:flex;align-items:center;gap:5px;margin-bottom:4px}
@@ -153,6 +159,21 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .preview-cell.normal .preview-cell-val{color:var(--text)}
 .preview-cell.hard .preview-cell-val{color:var(--accent)}
 .preview-cell.extreme .preview-cell-val{color:var(--danger)}
+.ref-2col{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.ref-panel{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px}
+.ref-panel-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.ref-row{display:flex;align-items:baseline;gap:3px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+.ref-row:last-child{border-bottom:none}
+.ref-v6{color:var(--text2);flex:1}.ref-v7{font-weight:700;flex:1}.ref-arrow{color:var(--text3);flex-shrink:0}
+.db-compact-row{display:grid;grid-template-columns:1fr 52px;gap:3px;align-items:center;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+.db-compact-row:last-child{border-bottom:none}
+.db-range{color:var(--text2)}.db-val{font-weight:700;text-align:center}
+.combat-compact{display:flex;flex-direction:column;gap:1px}
+.combat-item{display:flex;align-items:baseline;gap:2px;padding:2px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+.combat-item:last-child{border-bottom:none}
+.combat-lbl{font-weight:700;min-width:44px;color:var(--text2)}
+.combat-v6{color:var(--text3);flex:1}.combat-v7{font-weight:600;flex:1}
+/* KP */
 .full-card{background:var(--bg2);border-radius:var(--radius-lg);padding:7px 8px;border:0.5px solid var(--border);box-shadow:var(--shadow);margin-bottom:5px}
 .kp-card-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
 .kp-row{display:flex;gap:3px;align-items:center;margin-bottom:4px}
@@ -181,11 +202,40 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .btn-sm-sec{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;padding:4px 6px;flex:1;white-space:nowrap}
 .btn-sm-sec:active{background:var(--bg3)}
 .btn-sm-dng{background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:4px 6px;flex:1;white-space:nowrap}
+.balance-row{display:grid;grid-template-columns:1fr 38px 38px 20px;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:3px 5px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px}
+.balance-val{text-align:center;font-size:12px;color:var(--text2)}
+.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px}
+.balance-summary{background:var(--bg2);border-radius:var(--radius);padding:6px 8px;border:0.5px solid var(--border)}
+.balance-meter{height:4px;border-radius:2px;background:var(--bg3);margin:4px 0;overflow:hidden}
+.balance-meter-fill{height:100%;border-radius:2px;transition:width .4s}
+.balance-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between}
+.balance-verdict{font-size:14px;font-weight:700;margin-top:3px;text-align:center}
 .spell-ref-item{background:var(--bg);border-radius:var(--radius);padding:6px 8px;margin-bottom:3px;border:0.5px solid var(--border);cursor:pointer}
 .spell-ref-item.custom-spell{border-left:2px solid var(--accent)}
 .spell-ref-name{font-size:14px;font-weight:700;color:var(--text)}
 .spell-ref-meta{font-size:12px;color:var(--accent);margin:1px 0}
 .spell-ref-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.being-row{display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;align-items:center;padding:2px 3px;border-radius:var(--radius);margin-bottom:2px;background:var(--bg);cursor:pointer;border:0.5px solid var(--border);font-size:13px}
+.being-row:hover{background:var(--bg3)}
+.being-row.custom-row{border-left:2px solid var(--accent)}
+.being-s{text-align:center;color:var(--success);font-weight:700;font-size:13px}
+.being-f{text-align:center;color:var(--danger);font-weight:700;font-size:13px}
+.being-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0}
+.san-chip{display:inline-flex;align-items:center;gap:3px;background:var(--accent);color:#fff;border-radius:4px;padding:2px 7px;font-size:12px;cursor:pointer;margin:2px;font-weight:600}
+.san-chip:active{opacity:.7}
+.san-chip .chip-x{opacity:.7;font-size:13px}
+.madness-item{background:var(--bg);border-radius:var(--radius);padding:4px 7px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px;line-height:1.5}
+.madness-num{font-size:11px;font-weight:700;color:var(--text3);margin-right:3px}
+.madness-title{font-weight:700;color:var(--text);margin-right:3px}
+.madness-desc{color:var(--text2)}
+.history-item{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:2px;cursor:pointer;background:var(--bg)}
+.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-time{font-size:11px;color:var(--text3);white-space:nowrap}
+.custom-add-section{margin-top:6px;border-top:0.5px solid var(--border);padding-top:5px}
+.custom-add-title{font-size:12px;color:var(--text3);margin-bottom:3px;font-weight:700}
+.custom-add-row{display:grid;gap:3px;margin-bottom:2px}
+.custom-add-hint{font-size:11px;color:var(--text3);margin-top:2px}
+/* SAVE & EXPORT */
 .sync-key-block{background:var(--bg2);border-radius:var(--radius-lg);padding:8px;margin-bottom:5px;border:0.5px solid var(--border)}
 .sync-key-title{font-size:13px;font-weight:700;margin-bottom:1px}
 .sync-key-desc{font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.4}
@@ -211,35 +261,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .stat-chip{background:var(--bg3);border-radius:3px;padding:1px 4px;font-size:12px;color:var(--text3);border:0.5px solid var(--border)}
 .stat-chip strong{color:var(--text2)}
 .db-chip{background:var(--warn-bg);color:var(--warn);border:0.5px solid rgba(168,96,16,.25);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'SF Mono',Consolas,monospace;font-weight:700}
-.madness-item{background:var(--bg);border-radius:var(--radius);padding:4px 7px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px;line-height:1.5}
-.madness-num{font-size:11px;font-weight:700;color:var(--text3);margin-right:3px}
-.madness-title{font-weight:700;color:var(--text);margin-right:3px}
-.madness-desc{color:var(--text2)}
-.balance-row{display:grid;grid-template-columns:1fr 38px 38px 20px;gap:3px;align-items:center;background:var(--bg);border-radius:var(--radius);padding:3px 5px;margin-bottom:2px;border:0.5px solid var(--border);font-size:13px}
-.balance-val{text-align:center;font-size:12px;color:var(--text2)}
-.balance-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px}
-.balance-summary{background:var(--bg2);border-radius:var(--radius);padding:6px 8px;border:0.5px solid var(--border)}
-.balance-meter{height:4px;border-radius:2px;background:var(--bg3);margin:4px 0;overflow:hidden}
-.balance-meter-fill{height:100%;border-radius:2px;transition:width .4s}
-.balance-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between}
-.balance-verdict{font-size:14px;font-weight:700;margin-top:3px;text-align:center}
-.history-item{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:2px;cursor:pointer;background:var(--bg)}
-.history-item:active{background:var(--bg3)}
-.san-chip{display:inline-flex;align-items:center;gap:3px;background:var(--accent);color:#fff;border-radius:4px;padding:2px 7px;font-size:12px;cursor:pointer;margin:2px;font-weight:600}
-.san-chip:active{opacity:.7}
-.san-chip .chip-x{opacity:.7;font-size:13px}
-.being-row{display:grid;grid-template-columns:1fr 36px 36px 22px;gap:2px;align-items:center;padding:2px 3px;border-radius:var(--radius);margin-bottom:2px;background:var(--bg);cursor:pointer;border:0.5px solid var(--border);font-size:13px}
-.being-row:hover{background:var(--bg3)}
-.being-row.custom-row{border-left:2px solid var(--accent)}
-.being-s{text-align:center;color:var(--success);font-weight:700;font-size:13px}
-.being-f{text-align:center;color:var(--danger);font-weight:700;font-size:13px}
-.being-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0}
-.history-cmd{font-family:'SF Mono',Consolas,monospace;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.history-time{font-size:11px;color:var(--text3);white-space:nowrap}
-.custom-add-section{margin-top:6px;border-top:0.5px solid var(--border);padding-top:5px}
-.custom-add-title{font-size:12px;color:var(--text3);margin-bottom:3px;font-weight:700}
-.custom-add-row{display:grid;gap:3px;margin-bottom:2px}
-.custom-add-hint{font-size:11px;color:var(--text3);margin-top:2px}
+/* COCOFORIA EXPORT */
+.export-block{background:var(--bg2);border-radius:var(--radius-lg);padding:7px 8px;border:0.5px solid var(--border);margin-bottom:5px}
+.export-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.export-preview{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px;font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--text2);line-height:1.5;max-height:180px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin-bottom:5px;cursor:pointer}
+.export-preview:hover{border-color:var(--accent)}
+.export-btn-row{display:flex;gap:4px}
+.export-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;padding:5px 10px;flex:1}
+.export-btn.sec{background:none;border:0.5px solid var(--border2);color:var(--text2)}
+.export-btn:active{opacity:.8}
+.export-note{font-size:11px;color:var(--text3);margin-top:3px}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:400px){.stat-row,.col-headers{grid-template-columns:62px 46px 1fr 1fr 1fr 20px}.ref-2col{grid-template-columns:1fr}}
@@ -258,15 +289,14 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 </div>
 <div class="app-tabs">
   <div class="tabs">
-    <button class="tab active" data-tab="stats">ステータス</button>
-    <button class="tab" data-tab="dice">ダイス</button>
-    <button class="tab" data-tab="ref">リファレンス</button>
-    <button class="tab" data-tab="kp">KPツール</button>
-    <button class="tab" data-tab="mythos">神話・狂気</button>
+    <button class="tab active" data-tab="stats">📋 ステータス</button>
+    <button class="tab" data-tab="dice">🎲 ダイス</button>
+    <button class="tab" data-tab="kp">🛠 KP支援</button>
     <button class="tab" data-tab="save">💾 保存</button>
   </div>
 </div>
 <div class="app-body"><div class="app-body-inner">
+
 <!-- STATS TAB -->
 <div id="tab-stats">
   <div class="col-headers"><span>能力値</span><span>6版入力</span><span>×5</span><span>1/2</span><span>1/5</span><span></span></div>
@@ -301,12 +331,22 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div id="sk-rows"></div><button class="btn-add" id="btn-add-sk">＋ 技能を追加</button>
     </div>
   </div>
-  <div class="accordion" id="acc-memo" style="margin-top:4px">
-    <div class="acc-hd" onclick="toggleAcc('memo')"><div class="acc-hd-left"><span class="acc-title">その他メモ</span><span style="font-size:12px;color:var(--text3);margin-left:3px">装甲・特殊能力など</span></div><span class="acc-arrow" id="arrow-memo">▼</span></div>
-    <div class="acc-body" id="body-memo"><textarea id="npc-memo" placeholder="装甲・特殊能力など..." style="width:100%"></textarea></div>
+
+  <!-- MEMO section -->
+  <div class="memo-section" id="acc-memo" style="margin-top:4px">
+    <div class="memo-hd" onclick="toggleMemo()">
+      <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span><span style="font-size:12px;color:var(--text3);margin-left:3px">装甲・特殊能力・ターンメモなど</span></div>
+      <span class="acc-arrow" id="arrow-memo">▼</span>
+    </div>
+    <div class="memo-body" id="body-memo">
+      <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
+      <div id="memo-rows"></div>
+      <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
+    </div>
   </div>
 </div>
-<!-- DICE TAB -->
+
+<!-- DICE & JUDGE TAB -->
 <div id="tab-dice" style="display:none">
   <div class="dice-hint">タップでコピー→ここふぉりあへ。<code>CC&lt;=60 【火器】</code> ／ ダメージ: <code>1d8+1D6</code></div>
   <div id="dice-content"></div>
@@ -319,51 +359,62 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="bonus-row"><span class="bonus-lbl">ペナルティ2個</span><button class="cmd-chip bonus-chip" data-cmd="3d100KL">3d100KL</button></div>
     </div>
   </div>
-</div>
-<!-- REF TAB -->
-<div id="tab-ref" style="display:none">
-  <div class="preview-block">
-    <div class="preview-block-title">判定プレビュー</div>
+  <!-- Inline preview -->
+  <div class="ref-inline">
+    <div class="ref-inline-title">🔍 判定プレビュー</div>
     <div class="preview-header"><span class="preview-label">選択：</span><select class="preview-select" id="preview-select"><option value="">── 選択 ──</option></select></div>
     <div class="preview-manual">
       <div><div class="preview-manual-lbl">名称（手動）</div><div class="inp-wrap" id="w-pmn"><input type="text" id="preview-manual-name" placeholder="技能名など..."><button class="inp-clear" onclick="clrInp('preview-manual-name','w-pmn');trigPreview()">×</button></div></div>
       <div><div class="preview-manual-lbl">値（7版%）</div><div class="inp-wrap" id="w-pmv"><input type="number" id="preview-manual-val" min="0" max="999" placeholder="—"><button class="inp-clear" onclick="clrInp('preview-manual-val','w-pmv');trigPreview()">×</button></div></div>
     </div>
-    <div id="preview-result"><p class="preview-empty">セレクトか手動入力で値を指定してください</p></div>
+    <div id="preview-result"><p style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">セレクトか手動入力で値を指定してください</p></div>
   </div>
-  <div class="ref-2col">
-    <div class="ref-panel">
-      <div class="ref-panel-title">難易度変換</div>
-      <div class="ref-row"><span class="ref-v6">×5（通常）</span><span class="ref-arrow">→</span><span class="ref-v7">通常成功</span></div>
-      <div class="ref-row"><span class="ref-v6">×3</span><span class="ref-arrow">→</span><span class="ref-v7">ハード（1/2以下）</span></div>
-      <div class="ref-row"><span class="ref-v6">×1</span><span class="ref-arrow">→</span><span class="ref-v7">イクストリーム（1/5以下）</span></div>
-      <div class="ref-row"><span class="ref-v6">抵抗ロール</span><span class="ref-arrow">→</span><span class="ref-v7">対抗ロール</span></div>
+  <!-- Ref quick tables -->
+  <div class="ref-inline" style="margin-top:6px">
+    <div class="ref-inline-title">📖 変換クイックリファレンス</div>
+    <div class="ref-2col" style="margin-bottom:0">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">難易度変換</div>
+        <div class="ref-row"><span class="ref-v6">×5（通常）</span><span class="ref-arrow">→</span><span class="ref-v7">通常成功</span></div>
+        <div class="ref-row"><span class="ref-v6">×3</span><span class="ref-arrow">→</span><span class="ref-v7">ハード（1/2）</span></div>
+        <div class="ref-row"><span class="ref-v6">×1</span><span class="ref-arrow">→</span><span class="ref-v7">イクスト（1/5）</span></div>
+        <div class="ref-row"><span class="ref-v6">抵抗ロール</span><span class="ref-arrow">→</span><span class="ref-v7">対抗ロール</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">DB表 (STR+SIZ)</div>
+        <div class="db-compact-row"><span class="db-range">2〜64</span><span class="db-val">−2</span></div>
+        <div class="db-compact-row"><span class="db-range">65〜84</span><span class="db-val">−1</span></div>
+        <div class="db-compact-row"><span class="db-range">85〜124</span><span class="db-val">なし</span></div>
+        <div class="db-compact-row"><span class="db-range">125〜164</span><span class="db-val">+1D4</span></div>
+        <div class="db-compact-row"><span class="db-range">165〜204</span><span class="db-val">+1D6</span></div>
+        <div class="db-compact-row"><span class="db-range">205〜284</span><span class="db-val">+2D6</span></div>
+        <div class="db-compact-row"><span class="db-range">285+</span><span class="db-val">+3D6〜</span></div>
+      </div>
     </div>
-    <div class="ref-panel">
-      <div class="ref-panel-title">DB表 (STR+SIZ)</div>
-      <div class="db-compact-row"><span class="db-range">2〜64</span><span class="db-val">−2</span></div>
-      <div class="db-compact-row"><span class="db-range">65〜84</span><span class="db-val">−1</span></div>
-      <div class="db-compact-row"><span class="db-range">85〜124</span><span class="db-val">なし</span></div>
-      <div class="db-compact-row"><span class="db-range">125〜164</span><span class="db-val">+1D4</span></div>
-      <div class="db-compact-row"><span class="db-range">165〜204</span><span class="db-val">+1D6</span></div>
-      <div class="db-compact-row"><span class="db-range">205〜284</span><span class="db-val">+2D6</span></div>
-      <div class="db-compact-row"><span class="db-range">285〜364</span><span class="db-val">+3D6</span></div>
-      <div class="db-compact-row"><span class="db-range">365〜444</span><span class="db-val">+4D6</span></div>
-      <div class="db-compact-row"><span class="db-range">445+</span><span class="db-val">+5D6</span></div>
-    </div>
-  </div>
-  <div class="ref-panel" style="margin-bottom:5px">
-    <div class="ref-panel-title">戦闘ルール変更点（6→7版）</div>
-    <div class="combat-compact">
-      <div class="combat-item"><span class="combat-lbl">回避</span><span class="combat-v6">技能ロールのみ</span><span class="ref-arrow">→</span><span class="combat-v7">攻撃者との対抗ロール</span></div>
-      <div class="combat-item"><span class="combat-lbl">受け流し</span><span class="combat-v6">武器強度で限界</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド差で変動</span></div>
-      <div class="combat-item"><span class="combat-lbl">反撃</span><span class="combat-v6">なし</span><span class="ref-arrow">→</span><span class="combat-v7">受け流し成功時に可</span></div>
-      <div class="combat-item"><span class="combat-lbl">組み付き</span><span class="combat-v6">DEX対抗</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド値使用</span></div>
+    <div style="margin-top:5px">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">戦闘変更点</div>
+      <div class="combat-compact">
+        <div class="combat-item"><span class="combat-lbl">回避</span><span class="combat-v6">技能ロールのみ</span><span class="ref-arrow">→</span><span class="combat-v7">攻撃者との対抗ロール</span></div>
+        <div class="combat-item"><span class="combat-lbl">受け流し</span><span class="combat-v6">武器強度で限界</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド差で変動</span></div>
+        <div class="combat-item"><span class="combat-lbl">組み付き</span><span class="combat-v6">DEX対抗</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド値使用</span></div>
+      </div>
     </div>
   </div>
 </div>
-<!-- KP TOOLS TAB -->
+
+<!-- KP TOOLS TAB (merged KP + Mythos/Madness) -->
 <div id="tab-kp" style="display:none">
+<!-- Sub tabs -->
+<div style="display:flex;gap:2px;margin-bottom:6px;border-bottom:0.5px solid var(--border2)">
+  <button class="tab active" data-kp="combat" onclick="switchKpTab('combat')" style="font-size:13px;padding:4px 8px;flex:none">⚔️ 戦闘</button>
+  <button class="tab" data-kp="san" onclick="switchKpTab('san')" style="font-size:13px;padding:4px 8px;flex:none">🧠 SAN</button>
+  <button class="tab" data-kp="mythos" onclick="switchKpTab('mythos')" style="font-size:13px;padding:4px 8px;flex:none">🐙 神話</button>
+  <button class="tab" data-kp="madness" onclick="switchKpTab('madness')" style="font-size:13px;padding:4px 8px;flex:none">😵 狂気</button>
+  <button class="tab" data-kp="misc" onclick="switchKpTab('misc')" style="font-size:13px;padding:4px 8px;flex:none">📋 雑</button>
+</div>
+
+<!-- combat sub -->
+<div id="kp-combat">
 <div class="full-card">
   <div class="kp-card-title">⚔️ 対抗ロール</div>
   <div class="kp-row"><div class="inp-wrap" id="w-on1" style="flex:3"><input type="text" id="opp-n1" placeholder="技能名 A"><button class="inp-clear" onclick="clrInp('opp-n1','w-on1')">×</button></div><div class="inp-wrap" id="w-ov1" style="flex:2"><input type="number" id="opp-v1" placeholder="値%"><button class="inp-clear" onclick="clrInp('opp-v1','w-ov1')">×</button></div></div>
@@ -377,8 +428,14 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="init-list" id="init-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">参加者を追加してください</div></div>
 </div>
 <div class="full-card">
+  <div class="kp-card-title">❤️ HPトラッカー</div>
+  <div class="kp-row"><div class="inp-wrap" id="w-hpname" style="flex:2"><input type="text" id="hp-name" placeholder="名前"><button class="inp-clear" onclick="clrInp('hp-name','w-hpname')">×</button></div><div class="inp-wrap" id="w-hpmax" style="flex:1"><input type="number" id="hp-max" placeholder="最大HP"><button class="inp-clear" onclick="clrInp('hp-max','w-hpmax')">×</button></div><button class="kp-btn" id="btn-hp-add">追加</button></div>
+  <div class="hp-list" id="hp-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div></div>
+  <button class="btn-add" id="btn-hp-clear" style="margin-top:3px;font-size:12px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
+</div>
+<div class="full-card">
   <div class="kp-card-title">⚖️ 遭遇バランス確認</div>
-  <div style="font-size:12px;color:var(--text3);margin-bottom:4px">PC側とNPC側の戦闘力を比較して難易度を概算します</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:4px">PC側とNPC側の戦闘力を比較して難易度を概算</div>
   <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:2px">PC側</div>
   <div id="balance-pc-list"></div>
   <div class="kp-row" style="margin-top:2px"><div class="inp-wrap" style="flex:2"><input type="text" id="bal-pc-name" placeholder="PC名"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-pc-hp" placeholder="HP"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-pc-dmg" placeholder="DB"></div><button class="kp-btn" id="btn-bal-pc-add">追加</button></div>
@@ -387,28 +444,23 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="kp-row" style="margin-top:2px"><div class="inp-wrap" style="flex:2"><input type="text" id="bal-npc-name" placeholder="NPC名"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-npc-hp" placeholder="HP"></div><div class="inp-wrap" style="flex:1"><input type="number" id="bal-npc-dmg" placeholder="ダメ"></div><button class="kp-btn" id="btn-bal-npc-add">追加</button></div>
   <div id="balance-result" style="margin-top:5px"></div>
 </div>
+</div><!-- /kp-combat -->
+
+<!-- san sub -->
+<div id="kp-san" style="display:none">
 <div class="full-card">
   <div class="kp-card-title">🧠 正気度チェック</div>
   <div class="san-note">損失は固定値（<code>2</code>）またはダイス式（<code>1d6</code>）で入力可</div>
   <div class="kp-row"><div class="inp-wrap" id="w-sancur" style="flex:1"><input type="number" id="san-cur" placeholder="現在SAN" min="0" max="99"><button class="inp-clear" onclick="clrInp('san-cur','w-sancur')">×</button></div><div class="inp-wrap" id="w-sans" style="flex:1"><input type="text" id="san-s" placeholder="成功 例:1d3"><button class="inp-clear" onclick="clrInp('san-s','w-sans')">×</button></div><div class="inp-wrap" id="w-sanf" style="flex:1"><input type="text" id="san-f" placeholder="失敗 例:1d6"><button class="inp-clear" onclick="clrInp('san-f','w-sanf')">×</button></div><button class="kp-btn" id="btn-san">生成</button></div>
   <div class="kp-result" id="san-result">現在SAN・成功時・失敗時の損失値を入れて生成</div>
 </div>
+</div><!-- /kp-san -->
+
+<!-- mythos sub -->
+<div id="kp-mythos" style="display:none">
 <div class="full-card">
-  <div class="kp-card-title">❤️ HPトラッカー</div>
-  <div class="kp-row"><div class="inp-wrap" id="w-hpname" style="flex:2"><input type="text" id="hp-name" placeholder="名前"><button class="inp-clear" onclick="clrInp('hp-name','w-hpname')">×</button></div><div class="inp-wrap" id="w-hpmax" style="flex:1"><input type="number" id="hp-max" placeholder="最大HP"><button class="inp-clear" onclick="clrInp('hp-max','w-hpmax')">×</button></div><button class="kp-btn" id="btn-hp-add">追加</button></div>
-  <div class="hp-list" id="hp-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPCを追加してください</div></div>
-  <button class="btn-add" id="btn-hp-clear" style="margin-top:3px;font-size:12px;color:var(--danger);border-color:var(--danger)">全員クリア</button>
-</div>
-<div class="full-card">
-  <div class="kp-card-title">📝 セッションメモ（自動保存）</div>
-  <textarea id="session-memo" placeholder="自由にメモ..."></textarea>
-</div>
-</div>
-<!-- MYTHOS TAB -->
-<div id="tab-mythos" style="display:none">
-<div class="full-card">
-  <div class="kp-card-title">🐙 神話・呪文 SAN判定コマンド生成</div>
-  <div class="san-note">神話生物・呪文を複数選んでまとめてコマンド生成。損失は直接編集も可。</div>
+  <div class="kp-card-title">🐙 神話・呪文 SAN判定</div>
+  <div class="san-note">神話生物・呪文を選んでコマンド生成</div>
   <div style="display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap">
     <div style="flex:1;min-width:120px"><div style="font-size:12px;color:var(--text3);margin-bottom:2px">① 神話生物</div><select id="san-sel-being" style="width:100%;font-size:15px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
     <div style="flex:1;min-width:120px"><div style="font-size:12px;color:var(--text3);margin-bottom:2px">② 呪文</div><select id="san-sel-spell" style="width:100%;font-size:15px;padding:5px 22px 5px 7px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text)"><option value="">── 選択 ──</option></select></div>
@@ -446,44 +498,77 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
           <input type="text" id="new-spell-san" placeholder="SAN失" style="font-size:14px;padding:4px 4px;text-align:center">
           <button onclick="addCustomSpell()" style="background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:17px;font-weight:700;padding:0">+</button>
         </div>
-        <div class="custom-add-hint">SAN失敗時損失を入力（例: 1d6）。クラウドキー設定時は自動同期。</div>
       </div>
     </div>
   </div>
 </div>
+</div><!-- /kp-mythos -->
+
+<!-- madness sub -->
+<div id="kp-madness" style="display:none">
 <div class="full-card">
-  <div class="kp-card-title">😵 一時的狂気 <span style="font-size:11px;font-weight:400;color:var(--text3)">SAN5点以上一度に失った場合など</span></div>
+  <div class="kp-card-title">😵 一時的狂気</div>
   <div class="btn-row"><button class="btn-sm-sec" id="btn-temp-mad">ランダム 🎲</button><button class="btn-sm-sec" id="btn-temp-all">全一覧</button></div>
   <div class="kp-result" id="temp-mad-result" style="min-height:36px">ボタンを押すと引きます</div>
 </div>
 <div class="full-card">
-  <div class="kp-card-title">🌑 永続的狂気 <span style="font-size:11px;font-weight:400;color:var(--text3)">SAN10点以上など</span></div>
+  <div class="kp-card-title">🌑 永続的狂気</div>
   <div class="btn-row"><button class="btn-sm-sec" id="btn-perm-mad">ランダム 🎲</button><button class="btn-sm-sec" id="btn-perm-all">全一覧</button></div>
   <div class="kp-result" id="perm-mad-result" style="min-height:36px">ボタンを押すと引きます</div>
+</div>
+</div><!-- /kp-madness -->
+
+<!-- misc sub -->
+<div id="kp-misc" style="display:none">
+<div class="full-card">
+  <div class="kp-card-title">📝 セッションメモ（自動保存）</div>
+  <textarea id="session-memo" placeholder="自由にメモ..."></textarea>
 </div>
 <div class="full-card">
   <div class="kp-card-title">📋 コマンド履歴</div>
   <div class="btn-row"><button class="btn-sm-dng" id="btn-history-clear">クリア</button></div>
   <div id="dice-history-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:6px">まだ履歴がありません</div></div>
 </div>
-</div>
-<!-- SAVE TAB -->
+</div><!-- /kp-misc -->
+
+</div><!-- /tab-kp -->
+
+<!-- SAVE & EXPORT TAB -->
 <div id="tab-save" style="display:none">
   <div class="sync-key-block">
     <div class="sync-key-title">🔑 クラウド共有キー</div>
-    <div class="sync-key-desc">同じキーを入れたデバイス間でNPCデータ・神話カスタムデータを共有できます（英数字推奨）。</div>
+    <div class="sync-key-desc">同じキーを入れたデバイス間でNPCデータを共有できます（英数字推奨）。</div>
     <div class="sync-key-row"><div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="例: trpg-yamada-2024" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div><button class="btn-sync" id="btn-apply-key">適用</button></div>
     <div class="sync-status" id="sync-status"></div>
   </div>
+
+  <!-- COCOFORIA EXPORT -->
+  <div class="export-block">
+    <div class="export-title">🎮 ここふぉりあ出力</div>
+    <div style="display:flex;gap:4px;margin-bottom:5px">
+      <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
+      <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
+    </div>
+    <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+    <div class="export-btn-row">
+      <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+    </div>
+    <div class="export-note">※ JSONはここふぉりあのキャラクターパレット→インポートから使用。テキストはチャット欄に貼り付け。</div>
+  </div>
+
   <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
   <div id="save-list-wrap"></div>
 </div>
+
 </div></div>
-<div class="toast" id="toast"></div><script>
+<div class="toast" id="toast"></div>
+<script>
 const STATS=[{key:"str",label:"STR",jp:"筋力"},{key:"con",label:"CON",jp:"体力"},{key:"siz",label:"SIZ",jp:"体格"},{key:"int",label:"INT",jp:"知性"},{key:"pow",label:"POW",jp:"精神力"},{key:"dex",label:"DEX",jp:"敏捷"},{key:"app",label:"APP",jp:"外見"},{key:"edu",label:"EDU",jp:"教育"}];
 const vals={};STATS.forEach(s=>vals[s.key]="");
 const ov={hp:"",mp:"",san:""};
 let skillMode7=false,skList=[{id:0,name:"",val:""}],atkList=[{id:0,name:"",pct:"",dmg:"",note:""}],splList=[{id:0,name:"",mp:"",note:""}],nxtId=1;
+let memoList=[{id:0,label:"",content:""}];
+let exportMode="json";
 
 const MYTHOS_BEINGS=[
   {name:"クトゥルフ（直視）",s:"1",f:"1d10+1"},{name:"クトゥルフ（知識のみ）",s:"1",f:"6"},
@@ -491,79 +576,42 @@ const MYTHOS_BEINGS=[
   {name:"ナイアルラトホテップ",s:"1",f:"8"},{name:"シュブ＝ニグラス",s:"1",f:"8"},
   {name:"アザトース（遠望）",s:"1",f:"1d6+1"},{name:"イタクァ",s:"1",f:"6"},
   {name:"クトゥガ",s:"1",f:"8"},{name:"ザトグア",s:"1",f:"6"},
-  {name:"チャウグナル・ファウグン",s:"1",f:"8"},{name:"ウボ＝サスラ（出会い）",s:"1",f:"1d8"},
-  {name:"ダゴン",s:"1",f:"6"},{name:"ロイガー＆ズハル",s:"1",f:"1d6+1"},
-  {name:"イグ",s:"1",f:"4"},{name:"スター・スポーン",s:"1",f:"8"},
-  {name:"ディープ・ワン（初遭遇）",s:"0",f:"2"},{name:"ディープ・ワン（群れ）",s:"1",f:"1d4+1"},
-  {name:"ショゴス",s:"1",f:"8"},{name:"ビャーカー",s:"0",f:"1d3+1"},
-  {name:"ナイトガウント",s:"0",f:"1d4+1"},{name:"ファイアー・ヴァンパイア",s:"0",f:"1"},
+  {name:"ダゴン",s:"1",f:"6"},{name:"ディープ・ワン（初遭遇）",s:"0",f:"2"},
+  {name:"ディープ・ワン（群れ）",s:"1",f:"1d4+1"},{name:"ショゴス",s:"1",f:"8"},
+  {name:"ビャーカー",s:"0",f:"1d3+1"},{name:"ナイトガウント",s:"0",f:"1d4+1"},
   {name:"フライング・ポリープ",s:"1",f:"1d6+1"},{name:"ハウンド・オブ・ティンダロス",s:"1",f:"1d6+1"},
   {name:"ミ＝ゴ",s:"0",f:"1d4+1"},{name:"老いたる者",s:"0",f:"2"},
-  {name:"チョー＝チョー",s:"0",f:"1"},{name:"ダーク・ヤング（初遭遇）",s:"0",f:"1d6"},
-  {name:"デモン（小型）",s:"0",f:"1d4"},{name:"デモン（大型）",s:"1",f:"1d6+2"},
   {name:"グール（初遭遇）",s:"0",f:"1d4"},{name:"ゾンビ（初遭遇）",s:"0",f:"1d4+1"},
-  {name:"マミー（初遭遇）",s:"0",f:"1d4+1"},{name:"ゴースト（初遭遇）",s:"1",f:"1d3+1"},
-  {name:"スケルトン（初遭遇）",s:"0",f:"1d3"},{name:"ヴァンパイア（遭遇）",s:"0",f:"1d4"},
-  {name:"ワーウルフ（変身中）",s:"0",f:"1d4+1"},{name:"神話的な儀式（目撃）",s:"1",f:"1d4+2"},
-  {name:"魔術師の儀式現場目撃",s:"1",f:"4"},{name:"神話的な死体・遺物（発見）",s:"0",f:"1d3"},
-  {name:"邪神の書物（初読）",s:"1",f:"4"},{name:"クトゥルフ神話典籍（読了）",s:"1d2",f:"1d4+2"},
-  {name:"エルダー・サイン（発見）",s:"1",f:"0"},{name:"神話の真実を知った",s:"1",f:"6"},
+  {name:"ゴースト（初遭遇）",s:"1",f:"1d3+1"},{name:"神話的な儀式（目撃）",s:"1",f:"1d4+2"},
+  {name:"邪神の書物（初読）",s:"1",f:"4"},{name:"神話の真実を知った",s:"1",f:"6"},
 ];
-
 const SPELL_REF=[
-  {name:"コンタクト・ディープ・ワン",cost:"1MP",san:"0/0",sanF:"0",time:"1時間",desc:"深きものと接触し意思疎通を図る。成功すると1d6ターン間の交渉が可能。"},
-  {name:"コンタクト・クトゥルフ",cost:"10MP",san:"1d6/1d10",sanF:"1d10",time:"1時間以上",desc:"ルルイエにてクトゥルフと接触を試みる。大成功以外は正気度消耗が激しい。"},
+  {name:"コンタクト・ディープ・ワン",cost:"1MP",san:"0/0",sanF:"0",time:"1時間",desc:"深きものと接触し意思疎通を図る。"},
+  {name:"コンタクト・クトゥルフ",cost:"10MP",san:"1d6/1d10",sanF:"1d10",time:"1時間以上",desc:"ルルイエにてクトゥルフと接触を試みる。"},
   {name:"コンタクト・ナイアルラトホテップ",cost:"5MP",san:"1d6/1d20",sanF:"1d20",time:"1時間",desc:"這い寄る混沌との接触。応答は気まぐれで危険を伴う。"},
-  {name:"コンタクト・ガスト",cost:"1MP",san:"0/1d3",sanF:"1d3",time:"1ラウンド",desc:"夢の国に棲む小型クリーチャー「ガスト」を呼び出す。"},
-  {name:"サモン/バインド（汎用）",cost:"5〜20MP",san:"種族による",sanF:"?",time:"1時間以上",desc:"神話生物を召喚・束縛する。POW対抗ロール失敗で制御不能。"},
   {name:"サモン・ビャーカー",cost:"5MP",san:"0/1d3",sanF:"1d3",time:"1ラウンド",desc:"ビャーカー1体を召喚。使役には追加MPが必要。"},
   {name:"サモン・ナイトガウント",cost:"3MP",san:"0/1d4",sanF:"1d4",time:"1ラウンド",desc:"ナイトガウントを召喚。顔がなく無音で移動する。"},
-  {name:"サモン・デモン",cost:"10MP+1POW",san:"1d3/2d6",sanF:"2d6",time:"1時間",desc:"悪魔的存在を召喚する高位の呪文。失敗すると術者に反転する。"},
-  {name:"クリエイト・ゾンビ",cost:"1MP+1SAN",san:"1/1d3",sanF:"1d3",time:"1時間",desc:"死体を意志なきゾンビとして再活性化。術者のMPを消費し続ける。"},
-  {name:"ファイアー",cost:"2MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"炎の弾を飛ばす。CC<= POW×5 命中で1d6ダメージ。"},
-  {name:"シュド＝メルの赤い印",cost:"3MP(継続+3MP/R)",san:"0/1d3",sanF:"1d3",time:"1Rの詠唱後発動",desc:"射程内の生きた存在全員から毎ラウンドHP1を奪う。味方も対象。"},
-  {name:"デヴォア",cost:"10MP+1POW",san:"1/1d8",sanF:"1d8",time:"1ラウンド",desc:"対象を別次元へと喰らい消す。POW対抗ロール成功で即死。"},
-  {name:"ウォード",cost:"3MP",san:"0/0",sanF:"0",time:"1時間",desc:"区域を霊的に守護する結界。神話的存在の侵入にPOW対抗ロール。"},
-  {name:"エルダー・サイン（刻印）",cost:"5MP",san:"1/1d4",sanF:"1d4",time:"1日",desc:"強力な封印の印を刻む。クトゥルフ的存在の接近を妨げる。"},
-  {name:"エンチャント・ナイフ",cost:"1MP+1POW",san:"0/0",sanF:"0",time:"1日",desc:"ナイフに魔力を込める。エンチャント済み武器は神話的存在にもダメージを与えられる。"},
-  {name:"エンチャント・ウィスル",cost:"1MP+1POW",san:"0/0",sanF:"0",time:"1日",desc:"笛・管楽器に魔力を込め特定の神話生物を呼び寄せる力を持たせる。"},
-  {name:"ドリーム",cost:"3MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"対象を深い眠りに落とす。POW対抗ロール。1d6時間眠らせる。"},
-  {name:"ホールド・パーソン",cost:"3MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"対象1体を1d6ラウンド動けなくする。POW対抗ロール。"},
-  {name:"ヴィジョン（幻視）",cost:"2MP",san:"0/1",sanF:"1",time:"1ラウンド",desc:"対象に幻覚を見せる。POW対抗ロールで抵抗可能。"},
-  {name:"忘却の呪文",cost:"4MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"対象から直近の記憶を消去する。POW対抗ロールの成功度に依存。"},
-  {name:"精神支配",cost:"5MP",san:"1/1d6",sanF:"1d6",time:"持続",desc:"対象を術者の意のままに操る。各ラウンドMPを消費。長期使用で術者にもSAN損失。"},
-  {name:"クリエイト・ゲート",cost:"10MP+1d6SAN",san:"1d6/2d6",sanF:"2d6",time:"1時間",desc:"別の場所や次元へのゲートを開く。POW対抗ロールで制御。目的地は選べないことも。"},
-  {name:"フラッド",cost:"5MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"大量の水を召喚して区域を水浸しにする。"},
-  {name:"バイ＝アク",cost:"3MP",san:"0/1d3",sanF:"1d3",time:"1ラウンド",desc:"小さな使い魔的存在を召喚し、メッセージ運搬や小作業に使役する。"},
-  {name:"肉体変容（ムタント化）",cost:"1POW永続",san:"1d6/2d6",sanF:"2d6",time:"数時間〜永続",desc:"自身または他者の肉体を神話的に変容させる。一部は不可逆。"},
-  {name:"クリエイト・ドリーム・サイクル",cost:"5MP",san:"1/1d3",sanF:"1d3",time:"一晩",desc:"対象に繰り返す悪夢を植え付ける。毎晩SAN損失と睡眠妨害。"},
-  {name:"ネクロノミコン詠唱",cost:"術式による",san:"1d4/2d6",sanF:"2d6",time:"1時間以上",desc:"禁断の書から特定の呪文を詠唱する。習熟度に応じてリスクが変わる。"},
-  {name:"ルルイエ文書の読解",cost:"1d3MP",san:"1/1d4",sanF:"1d4",time:"1時間",desc:"ルルイエの石板・文書を読み解く。クトゥルフに関する知識を得るが正気度を消耗する。"},
+  {name:"サモン・デモン",cost:"10MP+1POW",san:"1d3/2d6",sanF:"2d6",time:"1時間",desc:"悪魔的存在を召喚する高位の呪文。"},
+  {name:"クリエイト・ゾンビ",cost:"1MP+1SAN",san:"1/1d3",sanF:"1d3",time:"1時間",desc:"死体を意志なきゾンビとして再活性化。"},
+  {name:"ファイアー",cost:"2MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"炎の弾を飛ばす。1d6ダメージ。"},
+  {name:"ウォード",cost:"3MP",san:"0/0",sanF:"0",time:"1時間",desc:"区域を霊的に守護する結界。"},
+  {name:"エルダー・サイン（刻印）",cost:"5MP",san:"1/1d4",sanF:"1d4",time:"1日",desc:"強力な封印の印を刻む。"},
+  {name:"精神支配",cost:"5MP",san:"1/1d6",sanF:"1d6",time:"持続",desc:"対象を術者の意のままに操る。"},
+  {name:"クリエイト・ゲート",cost:"10MP+1d6SAN",san:"1d6/2d6",sanF:"2d6",time:"1時間",desc:"別の場所や次元へのゲートを開く。"},
 ];
-
 const TEMP_MADNESS=[
-  {id:1,title:"健忘症",desc:"直前1d10時間の記憶を失う。自分の名前・仲間すら分からない。"},
-  {id:2,title:"恐怖症",desc:"特定の対象への激しい恐怖。距離を置こうとする。"},
-  {id:3,title:"躁状態",desc:"過度に陽気・饒舌になり危険を顧みず行動する。"},
-  {id:4,title:"幻覚",desc:"遭遇した怪物や恐ろしい光景が見え続ける。"},
-  {id:5,title:"昏睡・気絶",desc:"意識を失い倒れる。ラウンド終了まで無防備状態。"},
-  {id:6,title:"パラノイア",desc:"仲間を含むすべてを疑い信頼できない確信を持つ。"},
-  {id:7,title:"ヒステリー",desc:"叫び・泣き・笑いが止まらずまともに行動できない。"},
-  {id:8,title:"凍りつく",desc:"恐怖で体が動かない。1d10ラウンド行動不能。"},
-  {id:9,title:"逃亡衝動",desc:"とにかく現場から遠ざかろうとする。制御不能な逃走。"},
-  {id:10,title:"転換性障害",desc:"体の一部が一時的に機能しなくなる（手・足・声など）。"},
+  {id:1,title:"健忘症",desc:"直前1d10時間の記憶を失う。"},{id:2,title:"恐怖症",desc:"特定の対象への激しい恐怖。"},
+  {id:3,title:"躁状態",desc:"過度に陽気・饒舌になり危険を顧みず行動する。"},{id:4,title:"幻覚",desc:"遭遇した怪物や恐ろしい光景が見え続ける。"},
+  {id:5,title:"昏睡・気絶",desc:"意識を失い倒れる。ラウンド終了まで無防備状態。"},{id:6,title:"パラノイア",desc:"仲間を含むすべてを疑い信頼できない確信を持つ。"},
+  {id:7,title:"ヒステリー",desc:"叫び・泣き・笑いが止まらずまともに行動できない。"},{id:8,title:"凍りつく",desc:"恐怖で体が動かない。1d10ラウンド行動不能。"},
+  {id:9,title:"逃亡衝動",desc:"とにかく現場から遠ざかろうとする。"},{id:10,title:"転換性障害",desc:"体の一部が一時的に機能しなくなる。"},
 ];
 const PERM_MADNESS=[
-  {id:1,title:"解離性健忘",desc:"特定の記憶・技能・知識が永続的に失われる。"},
-  {id:2,title:"恐怖症（永続）",desc:"特定の対象への制御不能な恐怖。SAN回復後も続く。"},
-  {id:3,title:"強迫観念",desc:"特定の行動を繰り返さずにいられない（手洗い・確認など）。"},
-  {id:4,title:"妄想",desc:"誰かが自分を狙っている・世界が偽物だ等の固定した誤信念。"},
-  {id:5,title:"多重人格",desc:"別の人格が表れ探索者本来の行動を上書きすることがある。"},
-  {id:6,title:"幻覚（慢性）",desc:"神話的な幻視・幻聴が日常的に続く。"},
-  {id:7,title:"マニア",desc:"神話的な何かへの執着（特定の生物・数字・記号など）。"},
-  {id:8,title:"抑鬱",desc:"意欲の著しい低下。POW・INTが半分として扱われる期間がある。"},
-  {id:9,title:"過食・拒食",desc:"食行動の極端な変化。体力・体格への影響が出る可能性。"},
-  {id:10,title:"崩壊",desc:"現実との接触を失い神話の真実を当然として受け入れてしまう。"},
+  {id:1,title:"解離性健忘",desc:"特定の記憶・技能が永続的に失われる。"},{id:2,title:"恐怖症（永続）",desc:"特定の対象への制御不能な恐怖。"},
+  {id:3,title:"強迫観念",desc:"特定の行動を繰り返さずにいられない。"},{id:4,title:"妄想",desc:"固定した誤信念が続く。"},
+  {id:5,title:"多重人格",desc:"別の人格が探索者本来の行動を上書きすることがある。"},{id:6,title:"幻覚（慢性）",desc:"神話的な幻視・幻聴が日常的に続く。"},
+  {id:7,title:"マニア",desc:"神話的な何かへの執着。"},{id:8,title:"抑鬱",desc:"意欲の著しい低下。"},
+  {id:9,title:"過食・拒食",desc:"食行動の極端な変化。"},{id:10,title:"崩壊",desc:"現実との接触を失い神話の真実を受け入れてしまう。"},
 ];
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
@@ -590,7 +638,44 @@ function clrInp(id,wid){const el=document.getElementById(id);if(!el)return;el.va
 function watchInp(el,wrap){const upd=()=>wrap.classList.toggle("hv",el.value.trim()!=="");el.addEventListener("input",upd);upd();}
 function toggleAcc(id){const b=document.getElementById("body-"+id),a=document.getElementById("arrow-"+id);const o=b.classList.toggle("open");a.classList.toggle("open",o);}
 function openAcc(id){document.getElementById("body-"+id).classList.add("open");document.getElementById("arrow-"+id).classList.add("open");}
+function toggleMemo(){const b=document.getElementById("body-memo"),a=document.getElementById("arrow-memo");const o=b.classList.toggle("open");a.classList.toggle("open",o);}
 
+// AUTO-EXPAND TEXTAREA
+function autoExpand(el){el.style.height="auto";el.style.height=Math.max(34,el.scrollHeight)+"px";}
+function bindAutoExpand(el){el.addEventListener("input",()=>autoExpand(el));autoExpand(el);}
+
+// MEMO
+function buildMemoRows(){
+  const wrap=document.getElementById("memo-rows");wrap.innerHTML="";
+  memoList.forEach(m=>{
+    const row=document.createElement("div");row.className="memo-row";
+    const lbl=document.createElement("textarea");lbl.className="memo-label-inp";lbl.placeholder="ラベル（1R, 装甲, etc）";lbl.value=m.label;lbl.rows=1;
+    const content=document.createElement("textarea");content.className="memo-content-inp";content.placeholder="メモ内容...";content.value=m.content;content.rows=1;
+    const btnWrap=document.createElement("div");btnWrap.className="memo-row-btns";
+    const copyBtn=document.createElement("button");copyBtn.className="memo-copy-btn";copyBtn.textContent="📋";copyBtn.title="この行をコピー";
+    const delBtn=document.createElement("button");delBtn.className="memo-del-btn";delBtn.textContent="×";
+    btnWrap.append(copyBtn,delBtn);
+    row.append(lbl,content,btnWrap);wrap.appendChild(row);
+    lbl.addEventListener("input",()=>{m.label=lbl.value;autoExpand(lbl);updMemoBadge();saveMemoLocal();});
+    content.addEventListener("input",()=>{m.content=content.value;autoExpand(content);updMemoBadge();saveMemoLocal();});
+    copyBtn.addEventListener("click",()=>{const txt=(m.label?m.label+"　":"")+(m.content||"");navigator.clipboard.writeText(txt).then(()=>{copyBtn.textContent="✓";copyBtn.classList.add("copied");setTimeout(()=>{copyBtn.textContent="📋";copyBtn.classList.remove("copied");},1200);}).catch(()=>showToast("コピー失敗"));});
+    delBtn.addEventListener("click",()=>{memoList=memoList.filter(x=>x.id!==m.id);buildMemoRows();updMemoBadge();saveMemoLocal();});
+    bindAutoExpand(lbl);bindAutoExpand(content);
+  });
+  updMemoBadge();
+}
+function addMemoRow(){memoList.push({id:nxtId++,label:"",content:""});buildMemoRows();openMemo();}
+function openMemo(){document.getElementById("body-memo").classList.add("open");document.getElementById("arrow-memo").classList.add("open");}
+function updMemoBadge(){document.getElementById("badge-memo").textContent=memoList.filter(m=>m.label||m.content).length;}
+function copyAllMemo(){
+  const lines=memoList.filter(m=>m.label||m.content).map(m=>(m.label?m.label+"　":"")+m.content).join("\n");
+  if(!lines){showToast("メモがありません");return;}
+  navigator.clipboard.writeText(lines).then(()=>showToast("全メモをコピーしました")).catch(()=>showToast("コピー失敗"));
+}
+function saveMemoLocal(){localStorage.setItem("coc_memo_rows",JSON.stringify(memoList));}
+function loadMemoLocal(){try{memoList=JSON.parse(localStorage.getItem("coc_memo_rows")||"[{\"id\":0,\"label\":\"\",\"content\":\"\"}]");}catch{memoList=[{id:0,label:"",content:""}];}}
+
+// STATS
 function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
   STATS.forEach(({key,label,jp})=>{
@@ -618,8 +703,8 @@ function buildDerivedRows(){
     row.innerHTML=`<div class="stat-name"><strong>${label}</strong><em>${jp}</em></div><div style="position:relative"><input type="number" min="0" id="di-${key}" placeholder="${calcAuto(key)||'自動'}" value="${ov[key]}" style="text-align:center;padding:3px 16px 3px 2px;width:100%"><button class="stat-clr" id="dc-${key}" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:13px;width:16px;display:${ov[key]?'block':'none'}">×</button></div><div class="stat-val" id="dv-${key}" style="font-size:14px;color:var(--text3)">${ov[key]||calcAuto(key)||"—"}</div><div class="stat-half" id="dh-${key}">—</div><div class="stat-fifth" id="df-${key}">—</div><div></div>`;
     wrap.appendChild(row);
     const inp=document.getElementById("di-"+key),clr=document.getElementById("dc-"+key);
-    inp.addEventListener("input",e=>{ov[key]=e.target.value;clr.style.display=e.target.value?"block":"none";updDerived(key);updateDice();updatePreviewSelect();});
-    clr.addEventListener("click",()=>{inp.value="";ov[key]="";clr.style.display="none";updDerived(key);updateDice();updatePreviewSelect();});
+    inp.addEventListener("input",e=>{ov[key]=e.target.value;clr.style.display=e.target.value?"block":"none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
+    clr.addEventListener("click",()=>{inp.value="";ov[key]="";clr.style.display="none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
   });
 }
 function updDerived(k){
@@ -632,7 +717,7 @@ function updDerived(k){
 function updateStats(){
   STATS.forEach(({key})=>{const raw=parseInt(vals[key])||0,v7=raw*5;document.getElementById("v7-"+key).textContent=v7?v7:"—";document.getElementById("h-"+key).textContent=v7?Math.floor(v7/2):"—";document.getElementById("f-"+key).textContent=v7?Math.floor(v7/5):"—";});
   ["hp","mp","san"].forEach(k=>{if(!ov[k])updDerived(k);else{const a=calcAuto(k);const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=a||"自動";}});
-  updDerivedMini();updateDice();updatePreviewSelect();
+  updDerivedMini();updateDice();updatePreviewSelect();updateExport();
 }
 function updDerivedMini(){
   const str=(parseInt(vals.str)||0)*5,siz=(parseInt(vals.siz)||0)*5,dex=(parseInt(vals.dex)||0)*5;
@@ -640,6 +725,8 @@ function updDerivedMini(){
   const any=STATS.some(s=>vals[s.key]!=="");
   document.getElementById("derived-mini").innerHTML=any?[{l:"HP",v:hp||"—",d:"(CON+SIZ)÷10"},{l:"MP",v:mp||"—",d:"=POW"},{l:"SAN",v:san||"—",d:"=POW×5"},{l:"DB",v:(str+siz)?db.label:"—",d:"STR+SIZ"},{l:"MOV",v:getMOV(str,dex,siz),d:""}].map(m=>`<div class="metric"><div class="metric-label">${m.l}</div><div class="metric-val">${m.v}</div><div class="metric-desc">${m.d}</div></div>`).join(""):"";
 }
+
+// ATTACKS
 function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
   atkList.forEach(a=>{
@@ -653,6 +740,8 @@ function buildAtkRows(){
 }
 function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
 document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:"",dmg:"",note:""});buildAtkRows();openAcc("atk");});
+
+// SPELLS
 function buildSplRows(){
   const wrap=document.getElementById("spl-rows");wrap.innerHTML="";
   splList.forEach(s=>{
@@ -666,6 +755,8 @@ function buildSplRows(){
 }
 function updSplBadge(){document.getElementById("badge-spl").textContent=splList.filter(s=>s.name).length;}
 document.getElementById("btn-add-spl").addEventListener("click",()=>{splList.push({id:nxtId++,name:"",mp:"",note:""});buildSplRows();openAcc("spl");});
+
+// SKILLS
 function buildSkRows(){
   const wrap=document.getElementById("sk-rows");wrap.innerHTML="";
   document.getElementById("sk-col-val").textContent=skillMode7?"値(7版)":"値(6版)";
@@ -682,8 +773,8 @@ function buildSkRows(){
 function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).length;}
 document.getElementById("skill-mode-toggle").addEventListener("change",e=>{skillMode7=e.target.checked;document.getElementById("lbl6").style.fontWeight=skillMode7?"400":"700";document.getElementById("lbl6").style.color=skillMode7?"var(--text3)":"var(--text2)";document.getElementById("lbl7").style.fontWeight=skillMode7?"700":"400";document.getElementById("lbl7").style.color=skillMode7?"var(--text2)":"var(--text3)";buildSkRows();updateDice();updatePreviewSelect();});
 document.getElementById("btn-add-sk").addEventListener("click",()=>{skList.push({id:nxtId++,name:"",val:""});buildSkRows();openAcc("sk");});
-let memoTimer=null;
-document.getElementById("npc-memo").addEventListener("input",()=>{clearTimeout(memoTimer);memoTimer=setTimeout(()=>localStorage.setItem("coc_npc_memo",document.getElementById("npc-memo").value),600);});
+
+// RESET
 function fullReset(){
   if(!confirm("全データをリセットしますか？"))return;
   document.getElementById("npc-name").value="";document.getElementById("w-npcname").classList.remove("hv");
@@ -691,9 +782,11 @@ function fullReset(){
   document.querySelectorAll("#stat-rows input[data-key]").forEach(inp=>{inp.value="";inp.parentElement.querySelector(".stat-clr").style.display="none";});
   ov.hp=ov.mp=ov.san="";
   ["hp","mp","san"].forEach(k=>{const inp=document.getElementById("di-"+k);if(inp)inp.value="";const clr=document.getElementById("dc-"+k);if(clr)clr.style.display="none";});
-  skList=[{id:0,name:"",val:""}];atkList=[{id:0,name:"",pct:"",dmg:"",note:""}];splList=[{id:0,name:"",mp:"",note:""}];nxtId=1;
-  buildSkRows();buildAtkRows();buildSplRows();updateStats();showToast("リセットしました");
+  skList=[{id:0,name:"",val:""}];atkList=[{id:0,name:"",pct:"",dmg:"",note:""}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:""}];nxtId=1;
+  buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStats();showToast("リセットしました");
 }
+
+// DICE (attacks FIRST)
 const WEAPONS=[["素手","1d3"],["短剣","1d4"],["棍棒","1d6"],["槍","1d6"],["大剣","1d8"],["斧","1d6"],["ライフル","2d6"],["拳銃","1d8"]];
 function makeDiceBlock(name,value){
   const half=Math.floor(value/2),fifth=Math.floor(value/5);
@@ -712,22 +805,25 @@ function makeDmgSection(strV,sizV){
 }
 function secLabel(t){return`<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:5px 0 2px">${t}</div>`;}
 function updateDice(){
+  const aAtk=atkList.filter(a=>a.name&&(parseInt(a.pct)||0)>0);
   const aStats=STATS.filter(({key})=>(parseInt(vals[key])||0)>0);
   const aDerived=[{l:"HP",v:getEff("hp")},{l:"MP",v:getEff("mp")},{l:"SAN",v:getEff("san")}].filter(d=>d.v>0);
-  const aAtk=atkList.filter(a=>a.name&&(parseInt(a.pct)||0)>0);
   const aSk=skList.filter(s=>s.name&&(parseInt(s.val)||0)>0);
   const strV=parseInt(vals.str)||0,sizV=parseInt(vals.siz)||0,hasDmg=strV>0||sizV>0;
   const cont=document.getElementById("dice-content");
   if(!aStats.length&&!aDerived.length&&!aAtk.length&&!aSk.length&&!hasDmg){cont.innerHTML=`<p class="dice-empty">ステータスか技能を入力してください</p>`;return;}
   let html="";
-  if(aStats.length){html+=secLabel("能力値")+'<div class="dice-blocks">';aStats.forEach(({key,label})=>html+=makeDiceBlock(label,(parseInt(vals[key])||0)*5));html+="</div>";}
-  if(aDerived.length){html+=secLabel("派生値")+'<div class="dice-blocks">';aDerived.forEach(d=>html+=makeDiceBlock(d.l,d.v));html+="</div>";}
-  if(hasDmg){html+=secLabel("ダメージ・DB")+'<div class="dice-blocks">'+makeDmgSection(strV,sizV)+"</div>";}
-  if(aAtk.length){html+=secLabel("攻撃")+'<div class="dice-blocks">';aAtk.forEach(a=>html+=makeDiceBlock(a.name,parseInt(a.pct)||0));html+="</div>";}
-  if(aSk.length){html+=secLabel("技能")+'<div class="dice-blocks">';aSk.forEach(s=>html+=makeDiceBlock(s.name,parseInt(s.val)||0));html+="</div>";}
+  // ATTACKS FIRST
+  if(aAtk.length){html+=secLabel("🗡️ 攻撃")+'<div class="dice-blocks">';aAtk.forEach(a=>html+=makeDiceBlock(a.name,parseInt(a.pct)||0));html+="</div>";}
+  if(hasDmg){html+=secLabel("💥 ダメージ・DB")+'<div class="dice-blocks">'+makeDmgSection(strV,sizV)+"</div>";}
+  if(aSk.length){html+=secLabel("🎯 技能")+'<div class="dice-blocks">';aSk.forEach(s=>html+=makeDiceBlock(s.name,parseInt(s.val)||0));html+="</div>";}
+  if(aStats.length){html+=secLabel("📊 能力値")+'<div class="dice-blocks">';aStats.forEach(({key,label})=>html+=makeDiceBlock(label,(parseInt(vals[key])||0)*5));html+="</div>";}
+  if(aDerived.length){html+=secLabel("❤️ 派生値")+'<div class="dice-blocks">';aDerived.forEach(d=>html+=makeDiceBlock(d.l,d.v));html+="</div>";}
   cont.innerHTML=html;bindCopy(cont);
 }
 document.querySelectorAll(".bonus-chip").forEach(btn=>btn.addEventListener("click",e=>{copyText(e.currentTarget.dataset.cmd,e.currentTarget);addHistory(e.currentTarget.dataset.cmd);}));
+
+// PREVIEW
 let previewManualActive=false;
 function getAllOptions(){
   const opts=[];
@@ -746,17 +842,17 @@ function renderPreview(){
   const sel=document.getElementById("preview-select"),manVal=parseInt(document.getElementById("preview-manual-val").value)||0,manName=document.getElementById("preview-manual-name").value.trim();
   if(previewManualActive&&manVal>0){renderPreviewFromValues(manName||"技能",manVal);return;}
   if(sel.value!==""){const opts=getAllOptions(),o=opts[parseInt(sel.value)];if(o){renderPreviewFromValues(o.label,o.value);return;}}
-  document.getElementById("preview-result").innerHTML='<p class="preview-empty">セレクトか手動入力で値を指定してください</p>';
+  document.getElementById("preview-result").innerHTML='<p style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">セレクトか手動入力で値を指定してください</p>';
 }
 function renderPreviewFromValues(name,value){
   const result=document.getElementById("preview-result");
-  if(!value||value<=0){result.innerHTML='<p class="preview-empty">セレクトか手動入力で値を指定してください</p>';return;}
+  if(!value||value<=0){result.innerHTML='<p style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">値を指定してください</p>';return;}
   const half=Math.floor(value/2),fifth=Math.floor(value/5);
   const tbl=document.createElement("div");tbl.className="preview-table";
   [{cls:"normal",lbl:"通常",val:value,cmd:ccCmd(name,value)},{cls:"hard",lbl:"ハード",val:half,cmd:ccCmd(name,half)},{cls:"extreme",lbl:"イクストリーム",val:fifth,cmd:ccCmd(name,fifth)}].forEach(function(d){
     const cell=document.createElement("div");cell.className="preview-cell "+d.cls;cell.style.cursor="pointer";
-    cell.innerHTML='<div class="preview-cell-label">'+d.lbl+'</div><div class="preview-cell-val">'+d.val+'</div><div class="preview-cell-sub" style="font-size:11px;color:var(--text3)">タップでコピー</div>';
-    cell.addEventListener("click",function(){navigator.clipboard.writeText(d.cmd).then(function(){const sub=cell.querySelector(".preview-cell-sub");sub.textContent="コピーしました ✓";cell.style.borderColor="var(--success)";setTimeout(function(){sub.textContent="タップでコピー";cell.style.borderColor="";},1400);addHistory(d.cmd);});});
+    cell.innerHTML='<div class="preview-cell-label">'+d.lbl+'</div><div class="preview-cell-val">'+d.val+'</div><div class="preview-cell-sub">タップでコピー</div>';
+    cell.addEventListener("click",function(){navigator.clipboard.writeText(d.cmd).then(function(){const sub=cell.querySelector(".preview-cell-sub");sub.textContent="コピー ✓";cell.style.borderColor="var(--success)";setTimeout(function(){sub.textContent="タップでコピー";cell.style.borderColor="";},1400);addHistory(d.cmd);});});
     tbl.appendChild(cell);
   });
   result.innerHTML="";result.appendChild(tbl);
@@ -766,6 +862,64 @@ function trigPreview(){setTimeout(renderPreview,0);}
 document.getElementById("preview-select").addEventListener("change",()=>{previewManualActive=false;document.getElementById("preview-manual-name").value="";document.getElementById("preview-manual-val").value="";renderPreview();});
 document.getElementById("preview-manual-name").addEventListener("input",()=>{previewManualActive=true;document.getElementById("preview-select").value="";renderPreview();});
 document.getElementById("preview-manual-val").addEventListener("input",()=>{previewManualActive=true;document.getElementById("preview-select").value="";renderPreview();});
+
+// COCOFORIA EXPORT
+function setExportMode(mode){
+  exportMode=mode;
+  document.getElementById("exp-btn-json").className="export-btn"+(mode==="json"?"":" sec");
+  document.getElementById("exp-btn-text").className="export-btn"+(mode==="text"?"":" sec");
+  updateExport();
+}
+function buildCocoforiaJson(){
+  const name=document.getElementById("npc-name").value||"NPC";
+  const params=[];
+  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;params.push({label,value:String(v7),max:String(v7)});}});
+  const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
+  if(hp>0)params.push({label:"HP",value:String(hp),max:String(hp)});
+  if(mp>0)params.push({label:"MP",value:String(mp),max:String(mp)});
+  if(san>0)params.push({label:"SAN",value:String(san),max:String(san)});
+  const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
+  if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
+  atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
+  skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
+  const obj={kind:"character",data:{name,params,commands:[],status:[]}};
+  return JSON.stringify(obj,null,2);
+}
+function buildCocoforiaText(){
+  const name=document.getElementById("npc-name").value||"NPC";
+  const lines=[`【${name}】`,""];
+  const statLines=[];
+  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)statLines.push(`${label}:${v*5}`);});
+  const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
+  if(hp>0)statLines.push(`HP:${hp}`);
+  if(mp>0)statLines.push(`MP:${mp}`);
+  if(san>0)statLines.push(`SAN:${san}`);
+  if(statLines.length)lines.push("■ 能力値",statLines.join(" / "),"");
+  const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
+  if(strV+sizV>0){const db=getDB(strV+sizV);lines.push(`DB: ${db.label} / ビルド: ${db.build}` ,"");}
+  const atksFull=atkList.filter(a=>a.name);
+  if(atksFull.length){lines.push("■ 攻撃");atksFull.forEach(a=>{lines.push(`${a.name}: ${a.pct?a.pct+"%":""} ${a.dmg?"ダメ:"+a.dmg:""} ${a.note?a.note:""}`.trim());});lines.push("");}
+  const sks=skList.filter(s=>s.name&&(parseInt(s.val)||0)>0);
+  if(sks.length){lines.push("■ 技能");sks.forEach(s=>{lines.push(`${s.name}: ${s.val}%`);});lines.push("");}
+  const splsFull=splList.filter(s=>s.name);
+  if(splsFull.length){lines.push("■ 呪文");splsFull.forEach(s=>{lines.push(`${s.name} ${s.mp?s.mp:""}${s.note?" / "+s.note:""}`.trim());});lines.push("");}
+  const memos=memoList.filter(m=>m.label||m.content);
+  if(memos.length){lines.push("■ メモ");memos.forEach(m=>{lines.push((m.label?m.label+"　":"")+m.content);});lines.push("");}
+  return lines.join("\n").trim();
+}
+function updateExport(){
+  const el=document.getElementById("export-preview");if(!el)return;
+  const anyData=STATS.some(s=>vals[s.key]!="")||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&parseInt(s.val)>0);
+  if(!anyData){el.textContent="（ステータスを入力すると出力されます）";return;}
+  el.textContent=exportMode==="json"?buildCocoforiaJson():buildCocoforiaText();
+}
+function copyExport(){
+  const el=document.getElementById("export-preview");if(!el)return;
+  const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
+  navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));
+}
+
+// KP TOOLS
 document.getElementById("btn-san").addEventListener("click",()=>{
   const cur=parseInt(document.getElementById("san-cur").value)||0,s=document.getElementById("san-s").value.trim(),f=document.getElementById("san-f").value.trim();
   if(!s&&!f){document.getElementById("san-result").textContent="損失値を入力してください";return;}
@@ -807,7 +961,6 @@ function loadKp(){
   try{hpList=JSON.parse(localStorage.getItem("coc_kp_hp")||"[]");}catch{hpList=[];}
   try{const s=JSON.parse(localStorage.getItem("coc_kp_init")||"{}");initList=s.list||[];initTurn=s.turn||0;}catch{initList=[];initTurn=0;}
   try{document.getElementById("session-memo").value=localStorage.getItem("coc_memo")||"";}catch{}
-  try{document.getElementById("npc-memo").value=localStorage.getItem("coc_npc_memo")||"";}catch{}
   renderHpList();renderInitList();
 }
 let balPc=[],balNpc=[];
@@ -830,8 +983,15 @@ function updateBalanceResult(){
 }
 document.getElementById("btn-bal-pc-add").addEventListener("click",()=>{const name=document.getElementById("bal-pc-name").value.trim()||"PC",hp=parseInt(document.getElementById("bal-pc-hp").value)||10,dmg=parseInt(document.getElementById("bal-pc-dmg").value)||0;balPc.push({name,hp,dmg});document.getElementById("bal-pc-name").value="";document.getElementById("bal-pc-hp").value="";document.getElementById("bal-pc-dmg").value="";renderBalList(balPc,"balance-pc-list","pc");updateBalanceResult();});
 document.getElementById("btn-bal-npc-add").addEventListener("click",()=>{const name=document.getElementById("bal-npc-name").value.trim()||"NPC",hp=parseInt(document.getElementById("bal-npc-hp").value)||10,dmg=parseInt(document.getElementById("bal-npc-dmg").value)||0;balNpc.push({name,hp,dmg});document.getElementById("bal-npc-name").value="";document.getElementById("bal-npc-hp").value="";document.getElementById("bal-npc-dmg").value="";renderBalList(balNpc,"balance-npc-list","npc");updateBalanceResult();});
+
+// MYTHOS
+let customBeings=[],customSpells=[];
+function loadCustomLocal(){
+  try{customBeings=JSON.parse(localStorage.getItem("coc_custom_beings")||"[]");}catch{customBeings=[];}
+  try{customSpells=JSON.parse(localStorage.getItem("coc_custom_spells")||"[]");}catch{customSpells=[];}
+}
+function saveCustomLocal(){localStorage.setItem("coc_custom_beings",JSON.stringify(customBeings));localStorage.setItem("coc_custom_spells",JSON.stringify(customSpells));}
 const KVDB="8D9cJG8dPfTmqCmPXD2R5e";
-const L_SAVES="coc_saves_local",L_KEY="coc_synckey";
 let syncKey="",currentSaves=[];
 function setSyncSt(msg,cls=""){const el=document.getElementById("sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 function setMythosSt(msg,cls=""){const el=document.getElementById("mythos-sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
@@ -839,15 +999,10 @@ function cloudKey(){return`coc_npc_${syncKey.replace(/[^a-zA-Z0-9_-]/g,"_")}`;}
 function mythosCloudKey(){return`coc_mythos_${syncKey.replace(/[^a-zA-Z0-9_-]/g,"_")}`;}
 async function cloudGet(key){try{const r=await fetch(`https://kvdb.io/${KVDB}/${key}`);if(!r.ok)return null;const t=await r.text();return t?JSON.parse(t):null;}catch{return null;}}
 async function cloudSet(key,d){try{const r=await fetch(`https://kvdb.io/${KVDB}/${key}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return r.ok;}catch{return false;}}
+const L_SAVES="coc_saves_local",L_KEY="coc_synckey";
 function lSaves(){try{return JSON.parse(localStorage.getItem(L_SAVES)||"[]");}catch{return[];}}
 function wSaves(l){localStorage.setItem(L_SAVES,JSON.stringify(l));}
 function writeSaves(l){currentSaves=l;wSaves(l);if(syncKey)cloudSet(cloudKey(),l).catch(()=>{});}
-let customBeings=[],customSpells=[];
-function loadCustomLocal(){
-  try{customBeings=JSON.parse(localStorage.getItem("coc_custom_beings")||"[]");}catch{customBeings=[];}
-  try{customSpells=JSON.parse(localStorage.getItem("coc_custom_spells")||"[]");}catch{customSpells=[];}
-}
-function saveCustomLocal(){localStorage.setItem("coc_custom_beings",JSON.stringify(customBeings));localStorage.setItem("coc_custom_spells",JSON.stringify(customSpells));}
 function saveMythosCloud(){
   saveCustomLocal();
   if(syncKey){cloudSet(mythosCloudKey(),{beings:customBeings,spells:customSpells}).then(ok=>setMythosSt(ok?"✓ 同期完了":"⚠ 同期失敗",ok?"ok":"err")).catch(()=>setMythosSt("⚠ 同期失敗","err"));}
@@ -908,13 +1063,12 @@ function renderBeingList(){
 function buildSpellRef(){
   const wrap=document.getElementById("spell-ref-list");if(!wrap)return;wrap.innerHTML="";
   const allSpells=getAllSpells();
-  if(customSpells.length){const lbl=document.createElement("div");lbl.style.cssText="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px";lbl.textContent="組み込み（"+SPELL_REF.length+"件）";wrap.appendChild(lbl);}
   allSpells.forEach(function(s,i){
-    if(i===SPELL_REF.length&&customSpells.length){const cDiv=document.createElement("div");cDiv.style.cssText="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:6px 0 3px;padding-top:4px;border-top:0.5px solid var(--border)";cDiv.textContent="カスタム（"+customSpells.length+"件）";wrap.appendChild(cDiv);}
-    const item=document.createElement("div");item.className="spell-ref-item"+(s.custom?" custom-spell":"");item.title="クリックで選択に追加";
+    if(i===SPELL_REF.length&&customSpells.length){const cDiv=document.createElement("div");cDiv.style.cssText="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:6px 0 3px;padding-top:4px;border-top:0.5px solid var(--border)";cDiv.textContent="カスタム";wrap.appendChild(cDiv);}
+    const item=document.createElement("div");item.className="spell-ref-item"+(s.custom?" custom-spell":"");
     const nm=document.createElement("div");nm.className="spell-ref-name";nm.textContent=s.name;
     if(s.custom){const delBtn=document.createElement("button");delBtn.style.cssText="float:right;background:none;border:none;cursor:pointer;color:var(--danger);font-size:13px;padding:0 0 0 4px";delBtn.textContent="×";delBtn.addEventListener("click",function(e){e.stopPropagation();const ci=i-SPELL_REF.length;customSpells.splice(ci,1);saveMythosCloud();buildSpellRef();populateSanSelects();showToast("削除しました");});nm.appendChild(delBtn);}
-    const mt=document.createElement("div");mt.className="spell-ref-meta";mt.textContent="MP: "+s.cost+(s.san&&s.san!=="0/?"?" ／ SAN成/失: "+s.san:"")+(s.time&&s.time!=="—"?" ／ 時間: "+s.time:"");
+    const mt=document.createElement("div");mt.className="spell-ref-meta";mt.textContent="MP: "+s.cost+(s.san&&s.san!=="0/?"?" ／ SAN: "+s.san:"");
     const dc=document.createElement("div");dc.className="spell-ref-desc";dc.textContent=s.desc;
     item.append(nm,mt,dc);
     item.addEventListener("click",function(){const sanF=s.sanF||(s.san?s.san.split("/")[1]:"?");if(!sanSelected.find(function(x){return x.name===s.name&&x.type==="spell";})){sanSelected.push({name:s.name,s:"0",f:sanF,type:"spell"});renderSanChips();}document.getElementById("mythos-name-custom").value=s.name;document.getElementById("mythos-san-s").value="0";document.getElementById("mythos-san-f").value=sanF;showToast(s.name+" を選択しました");});
@@ -936,7 +1090,6 @@ function initMythosGenBtn(){
       block.querySelectorAll("code").forEach(function(c){c.style.cursor="pointer";c.addEventListener("click",function(){navigator.clipboard.writeText(c.textContent);addHistory(c.textContent);showToast("コピーしました");});});
       el.appendChild(block);
     });
-    if(curSan==="?"){const hint=document.createElement("div");hint.style.cssText="font-size:12px;color:var(--text3);margin-top:3px";hint.textContent="※KPツール→正気度チェックの現在SANを入力するとコマンドに反映されます";el.appendChild(hint);}
   });
 }
 function initMythosSelect(){loadCustomLocal();populateSanSelects();initSanSelects();renderBeingList();buildSpellRef();initMythosGenBtn();}
@@ -946,6 +1099,8 @@ document.getElementById("btn-temp-mad").addEventListener("click",()=>randMad(TEM
 document.getElementById("btn-temp-all").addEventListener("click",()=>renderMadnessList(TEMP_MADNESS,"temp-mad-result"));
 document.getElementById("btn-perm-mad").addEventListener("click",()=>randMad(PERM_MADNESS,"perm-mad-result"));
 document.getElementById("btn-perm-all").addEventListener("click",()=>renderMadnessList(PERM_MADNESS,"perm-mad-result"));
+
+// HISTORY
 let diceHistory=[];
 function addHistory(cmd){diceHistory=diceHistory.filter(h=>h.cmd!==cmd);diceHistory.unshift({cmd,time:new Date()});if(diceHistory.length>30)diceHistory=diceHistory.slice(0,30);renderHistory();localStorage.setItem("coc_dice_history",JSON.stringify(diceHistory.map(h=>({cmd:h.cmd,time:h.time.toISOString()}))));}
 function renderHistory(){
@@ -956,9 +1111,11 @@ function renderHistory(){
 }
 document.getElementById("btn-history-clear").addEventListener("click",()=>{if(confirm("履歴をクリア？")){diceHistory=[];renderHistory();localStorage.removeItem("coc_dice_history");}});
 function loadHistory(){try{const h=JSON.parse(localStorage.getItem("coc_dice_history")||"[]");diceHistory=h.map(i=>({cmd:i.cmd,time:new Date(i.time)}));renderHistory();}catch{diceHistory=[];}}
+
+// SAVE
 function getCurrentData(){
   const strV=parseInt(vals.str)||0,sizV=parseInt(vals.siz)||0,db=(strV||sizV)?getDB((strV*5)+(sizV*5)):null;
-  return{id:Date.now(),name:document.getElementById("npc-name").value||"（名称なし）",savedAt:new Date().toISOString(),vals:{...vals},ov:{...ov},skList:JSON.parse(JSON.stringify(skList)),atkList:JSON.parse(JSON.stringify(atkList)),splList:JSON.parse(JSON.stringify(splList)),skillMode7,memo:document.getElementById("npc-memo").value,dmgLabel:db?db.label:null,build:db?db.build:null};
+  return{id:Date.now(),name:document.getElementById("npc-name").value||"（名称なし）",savedAt:new Date().toISOString(),vals:{...vals},ov:{...ov},skList:JSON.parse(JSON.stringify(skList)),atkList:JSON.parse(JSON.stringify(atkList)),splList:JSON.parse(JSON.stringify(splList)),memoList:JSON.parse(JSON.stringify(memoList)),skillMode7,dmgLabel:db?db.label:null,build:db?db.build:null};
 }
 function loadDataIntoEditor(data){
   document.getElementById("npc-name").value=data.name==="（名称なし）"?"":data.name;document.getElementById("w-npcname").classList.toggle("hv",!!document.getElementById("npc-name").value);
@@ -966,14 +1123,14 @@ function loadDataIntoEditor(data){
   document.querySelectorAll("#stat-rows input[data-key]").forEach(inp=>{inp.value=vals[inp.dataset.key];inp.parentElement.querySelector(".stat-clr").style.display=inp.value?"block":"none";});
   if(data.ov)Object.assign(ov,data.ov);else{ov.hp=ov.mp=ov.san="";}
   ["hp","mp","san"].forEach(k=>{const inp=document.getElementById("di-"+k);if(inp)inp.value=ov[k]||"";const clr=document.getElementById("dc-"+k);if(clr)clr.style.display=ov[k]?"block":"none";});
-  skList=data.skList||[{id:0,name:"",val:""}];atkList=data.atkList||[{id:0,name:"",pct:"",dmg:"",note:""}];splList=data.splList||[{id:0,name:"",mp:"",note:""}];
-  nxtId=Math.max(...[...skList,...atkList,...splList].map(x=>x.id+1),1);
+  skList=data.skList||[{id:0,name:"",val:""}];atkList=data.atkList||[{id:0,name:"",pct:"",dmg:"",note:""}];splList=data.splList||[{id:0,name:"",mp:"",note:""}];memoList=data.memoList||[{id:0,label:"",content:""}];
+  nxtId=Math.max(...[...skList,...atkList,...splList,...memoList].map(x=>x.id+1),1);
   skillMode7=data.skillMode7||false;document.getElementById("skill-mode-toggle").checked=skillMode7;
   document.getElementById("lbl6").style.fontWeight=skillMode7?"400":"700";document.getElementById("lbl6").style.color=skillMode7?"var(--text3)":"var(--text2)";
   document.getElementById("lbl7").style.fontWeight=skillMode7?"700":"400";document.getElementById("lbl7").style.color=skillMode7?"var(--text2)":"var(--text3)";
-  document.getElementById("npc-memo").value=data.memo||"";
-  buildSkRows();buildAtkRows();buildSplRows();updateStats();
+  buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStats();
   if(atkList.some(a=>a.name))openAcc("atk");if(splList.some(s=>s.name))openAcc("spl");if(skList.some(s=>s.name&&(parseInt(s.val)||0)>0))openAcc("sk");
+  if(memoList.some(m=>m.label||m.content))openMemo();
 }
 function renderSaveList(){
   const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;
@@ -998,7 +1155,7 @@ async function applyKey(key){
   const remote=await cloudGet(cloudKey());
   if(remote&&Array.isArray(remote)&&remote.length){
     const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});merged.sort((a,b)=>b.id-a.id);
-    currentSaves=merged;wSaves(merged);setSyncSt(`✓ NPCデータ同期完了（${merged.length}件）`,"ok");
+    currentSaves=merged;wSaves(merged);setSyncSt(`✓ 同期完了（${merged.length}件）`,"ok");
   }else{
     currentSaves=lSaves();
     if(currentSaves.length){await cloudSet(cloudKey(),currentSaves);setSyncSt("✓ ローカルをアップロードしました","ok");}
@@ -1012,21 +1169,32 @@ async function applyKey(key){
     saveCustomLocal();
   }else if(customBeings.length||customSpells.length){await cloudSet(mythosCloudKey(),{beings:customBeings,spells:customSpells});}
   renderBeingList();buildSpellRef();populateSanSelects();
-  if(remoteMythos)setMythosSt("✓ 神話データ同期完了","ok");
 }
 document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
 document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
-function switchTab(t){
-  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
-  ["stats","dice","ref","kp","mythos","save"].forEach(id=>{document.getElementById("tab-"+id).style.display=id===t?"":"none";});
-  if(t==="ref")updatePreviewSelect();if(t==="save")renderSaveList();
+
+// KP SUB TABS
+function switchKpTab(t){
+  document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));
+  ["combat","san","mythos","madness","misc"].forEach(id=>{document.getElementById("kp-"+id).style.display=id===t?"":"none";});
 }
-document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+
+// MAIN TAB SWITCH
+function switchTab(t){
+  document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  ["stats","dice","kp","save"].forEach(id=>{document.getElementById("tab-"+id).style.display=id===t?"":"none";});
+  if(t==="save"){renderSaveList();updateExport();}
+  if(t==="dice"){updatePreviewSelect();}
+}
+document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+
+// INIT
 const savedKey=localStorage.getItem(L_KEY)||"";
 if(savedKey){document.getElementById("sync-key-input").value=savedKey;applyKey(savedKey);}else{currentSaves=lSaves();loadCustomLocal();}
-buildStatRows();buildSkRows();buildAtkRows();buildSplRows();updateStats();loadKp();initMythosSelect();loadHistory();
+loadMemoLocal();
+buildStatRows();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStats();loadKp();initMythosSelect();loadHistory();
 </script>
 </body>
 </html>
