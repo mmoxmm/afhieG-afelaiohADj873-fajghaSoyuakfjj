@@ -898,10 +898,9 @@ function buildCocoforiaJson(){
       memo:""
     }
   };
-  return JSON.stringify(obj); // 改行なし・1行が必須
+ return JSON.stringify(obj); // 改行なし・1行が必須
 }
-  }function buildCocoforiaText(){
-  const name=document.getElementById("npc-name").value||"NPC";
+function buildCocoforiaText(){  const name=document.getElementById("npc-name").value||"NPC";
   const lines=[`【${name}】`,""];
   const statLines=[];
   STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)statLines.push(`${label}:${v*5}`);});
