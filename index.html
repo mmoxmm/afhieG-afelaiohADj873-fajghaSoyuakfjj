@@ -536,9 +536,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
     <div class="export-btn-row">
       <button class="export-btn" onclick="copyExport()">📋 コピー</button>
-      <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()">⬇️ JSONダウンロード</button>
     </div>
-    <div class="export-note">※ JSONは「⬇️ JSONダウンロード」で保存し、ここふぉりあのキャラクターパレット →「インポート」→ ファイル選択で読み込み。テキストはチャット欄に貼り付け。</div>
+    <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあのルーム盤面（何もない場所）にCtrl+V（iPadは長押し→ペースト）でキャラコマが生成されます。テキストはチャット欄に貼り付け。</div>
   </div>
 
   <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
@@ -890,17 +889,19 @@ function buildCocoforiaJson(){
   atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
 
-  // ここふぉりあ キャラクターパレット形式（配列ラップ）
-  return JSON.stringify([{
+  // ここふぉりあ形式: オブジェクト単体・改行なし・1行
+  const obj={
     kind:"character",
     data:{
       name,
-      params,
-      commands:[],
-      status:[]
+      status:params.map(p=>({label:p.label,value:Number(p.value)||p.value,max:Number(p.max)||p.max})),
+      commands:"",
+      memo:""
     }
-  }],null,2);
-}function buildCocoforiaText(){
+  };
+  return JSON.stringify(obj); // 改行なし・1行が必須
+}
+  }function buildCocoforiaText(){
   const name=document.getElementById("npc-name").value||"NPC";
   const lines=[`【${name}】`,""];
   const statLines=[];
@@ -928,10 +929,29 @@ function updateExport(){
 }
 function copyExport(){
   const el=document.getElementById("export-preview");if(!el)return;
-  const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
-  navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));
+  if(exportMode==="json"){
+    const anyData=STATS.some(s=>vals[s.key]!="")||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&parseInt(s.val)>0);
+    if(!anyData){showToast("データがありません");return;}
+    // コピーは改行なし1行、表示は整形版
+    const name=document.getElementById("npc-name").value||"NPC";
+    const params=[];
+    STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;params.push({label,value:v7,max:v7});}});
+    const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
+    if(hp>0)params.push({label:"HP",value:hp,max:hp});
+    if(mp>0)params.push({label:"MP",value:mp,max:mp});
+    if(san>0)params.push({label:"SAN",value:san,max:san});
+    const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
+    if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
+    atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
+    skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:parseInt(s.val),max:parseInt(s.val)});});
+    const obj={kind:"character",data:{name,status:params,commands:"",memo:""}};
+    navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！ここふぉりあの盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));
+  }else{
+    const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
+    navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));
+  }
 }
-function downloadExport(){
+  function downloadExport(){
   const el=document.getElementById("export-preview");if(!el)return;
   const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
   const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");
