@@ -889,11 +889,18 @@ function buildCocoforiaJson(){
   if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
   atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
-  // ここふぉりあ最新版: 外側が配列
-  // 修正版: commandsを空文字列("")に変更し、外側の配列を取り外す
-  return JSON.stringify({kind:"character",data:{name,params,commands:"",status:[]}},null,2);
-}
-function buildCocoforiaText(){
+
+  // ここふぉりあ キャラクターパレット形式（配列ラップ）
+  return JSON.stringify([{
+    kind:"character",
+    data:{
+      name,
+      params,
+      commands:[],
+      status:[]
+    }
+  }],null,2);
+}function buildCocoforiaText(){
   const name=document.getElementById("npc-name").value||"NPC";
   const lines=[`【${name}】`,""];
   const statLines=[];
@@ -1123,6 +1130,55 @@ function loadHistory(){try{const h=JSON.parse(localStorage.getItem("coc_dice_his
 function setSyncSt(msg,cls=""){const el=document.getElementById("sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 function setMythosSt(msg,cls=""){const el=document.getElementById("mythos-sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 
+async function applyKey(token){
+  token=(token||"").trim();
+  if(!token){setSyncSt("トークンを入力してください","err");return;}
+  syncToken=token;
+  localStorage.setItem(L_KEY,token);
+  localStorage.setItem(L_GIST_TS,new Date().toISOString());
+  document.getElementById("btn-upload").disabled=false;
+  document.getElementById("btn-download").disabled=false;
+  setSyncSt("トークンを確認中…","ing");
+  // 疎通確認
+  try{
+    const r=await fetch("https://api.github.com/user",{headers:{"Authorization":`token ${token}`,"Accept":"application/vnd.github.v3+json"}});
+    if(r.ok){
+      const u=await r.json();
+      setSyncSt(`✓ 認証OK（${u.login}）`,"ok");
+      // 既存Gist IDをローカルから復元
+      gistId=localStorage.getItem(L_GIST)||"";
+      updGistDisplay();
+      currentSaves=lSaves();
+      loadCustomLocal();
+      renderBeingList();buildSpellRef();populateSanSelects();
+      renderSaveList();
+      checkTokenExpiry();
+    }else{
+      syncToken="";setSyncSt("⚠ 認証失敗。トークンを確認してください","err");
+      document.getElementById("btn-upload").disabled=true;
+      document.getElementById("btn-download").disabled=true;
+    }
+  }catch{
+    syncToken="";setSyncSt("⚠ ネットワークエラー","err");
+  }
+}
+async function gistSet(payload){
+  const content=JSON.stringify(payload,null,2);
+  const body={description:"CoC NPC Tool Data",public:false,files:{"coc_saves.json":{content}}};
+  try{
+    let r;
+    if(gistId){
+      r=await fetch(`https://api.github.com/gists/${gistId}`,{method:"PATCH",headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    }else{
+      r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":`token ${syncToken}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    }
+    if(!r.ok)return false;
+    const d=await r.json();
+    gistId=d.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();
+    return true;
+  }catch{return false;}
+}
+  
 function checkTokenExpiry(){
   const ts=localStorage.getItem(L_GIST_TS);if(!ts)return;
   const saved=new Date(ts),now=new Date(),diffDays=Math.floor((now-saved)/(1000*60*60*24));
