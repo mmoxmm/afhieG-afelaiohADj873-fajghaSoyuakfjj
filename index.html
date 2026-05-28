@@ -552,8 +552,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
     <div class="export-btn-row">
       <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+      <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:inline-flex;align-items:center;justify-content:center;gap:3px">⬇️ JSONダウンロード</button>
     </div>
-    <div class="export-note">※ JSONはここふぉりあのキャラクターパレット→インポートから使用。テキストはチャット欄に貼り付け。</div>
+    <div class="export-note">※ JSONは「⬇️ JSONダウンロード」で保存し、ここふぉりあのキャラクターパレット →「インポート」→ ファイル選択で読み込み。テキストはチャット欄に貼り付け。</div>
   </div>
 
   <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
@@ -868,6 +869,9 @@ function setExportMode(mode){
   exportMode=mode;
   document.getElementById("exp-btn-json").className="export-btn"+(mode==="json"?"":" sec");
   document.getElementById("exp-btn-text").className="export-btn"+(mode==="text"?"":" sec");
+  // ★FIX3: show download button only in JSON mode
+  const dlBtn=document.getElementById("btn-dl-json");
+  if(dlBtn)dlBtn.style.display=mode==="json"?"inline-flex":"none";
   updateExport();
 }
 function buildCocoforiaJson(){
@@ -882,6 +886,7 @@ function buildCocoforiaJson(){
   if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
   atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
+  // ★FIX2: correct cocoforia JSON format (must be array with kind/data structure)
   const obj={kind:"character",data:{name,params,commands:[],status:[]}};
   return JSON.stringify(obj,null,2);
 }
@@ -917,6 +922,16 @@ function copyExport(){
   const el=document.getElementById("export-preview");if(!el)return;
   const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
   navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));
+}
+// ★FIX2: download JSON as file for cocoforia import
+function downloadExport(){
+  const el=document.getElementById("export-preview");if(!el)return;
+  const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
+  const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");
+  const blob=new Blob([txt],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+".json";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);showToast("ダウンロードしました");
 }
 
 // KP TOOLS
@@ -997,8 +1012,26 @@ function setSyncSt(msg,cls=""){const el=document.getElementById("sync-status");i
 function setMythosSt(msg,cls=""){const el=document.getElementById("mythos-sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 function cloudKey(){return`coc_npc_${syncKey.replace(/[^a-zA-Z0-9_-]/g,"_")}`;}
 function mythosCloudKey(){return`coc_mythos_${syncKey.replace(/[^a-zA-Z0-9_-]/g,"_")}`;}
-async function cloudGet(key){try{const r=await fetch(`https://kvdb.io/${KVDB}/${key}`);if(!r.ok)return null;const t=await r.text();return t?JSON.parse(t):null;}catch{return null;}}
-async function cloudSet(key,d){try{const r=await fetch(`https://kvdb.io/${KVDB}/${key}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return r.ok;}catch{return false;}}
+// ★FIX1: kvdb.io requires text/plain Content-Type, not application/json
+async function cloudGet(key){
+  try{
+    const r=await fetch(`https://kvdb.io/${KVDB}/${key}`);
+    if(!r.ok)return null;
+    const t=await r.text();
+    if(!t||t.trim()==="")return null;
+    return JSON.parse(t);
+  }catch{return null;}
+}
+async function cloudSet(key,d){
+  try{
+    const r=await fetch(`https://kvdb.io/${KVDB}/${key}`,{
+      method:"PUT",
+      headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify(d)
+    });
+    return r.ok;
+  }catch{return false;}
+}
 const L_SAVES="coc_saves_local",L_KEY="coc_synckey";
 function lSaves(){try{return JSON.parse(localStorage.getItem(L_SAVES)||"[]");}catch{return[];}}
 function wSaves(l){localStorage.setItem(L_SAVES,JSON.stringify(l));}
