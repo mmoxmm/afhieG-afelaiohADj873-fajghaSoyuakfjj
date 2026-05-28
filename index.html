@@ -877,30 +877,61 @@ function setExportMode(mode){
 }
 function buildCocoforiaJson(){
   const name=document.getElementById("npc-name").value||"NPC";
-  const params=[];
-  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;params.push({label,value:String(v7),max:String(v7)});}});
-  const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
-  if(hp>0)params.push({label:"HP",value:String(hp),max:String(hp)});
-  if(mp>0)params.push({label:"MP",value:String(mp),max:String(mp)});
-  if(san>0)params.push({label:"SAN",value:String(san),max:String(san)});
-  const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
-  if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
-  atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
-  skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:s.val,max:s.val});});
 
-  // ここふぉりあ形式: オブジェクト単体・改行なし・1行
+  // ステータス（HP/MP/SAN/能力値）
+  const status=[];
+  STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;status.push({label,value:v7,max:v7});}});
+  const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
+  if(hp>0)status.push({label:"HP",value:hp,max:hp});
+  if(mp>0)status.push({label:"MP",value:mp,max:mp});
+  if(san>0)status.push({label:"SAN",value:san,max:san});
+
+  // DB計算
+  const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  if(db)status.push({label:"DB",value:db.label,max:db.label});
+
+  // パラメータ（技能%）
+  const params=[];
+  skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:parseInt(s.val),max:parseInt(s.val)});});
+
+  // チャットパレット（攻撃＋技能＋メモ）
+  const cmdLines=[];
+
+  // 攻撃：CC<=値+DB 【攻撃名】、ダメージ行も追加
+  atkList.filter(a=>a.name&&(parseInt(a.pct)||0)>0).forEach(a=>{
+    const pct=parseInt(a.pct)||0;
+    const dbPart=(db&&db.cmd)?"+"+db.cmd:"";
+    cmdLines.push(`CC<=${pct} 【${a.name}】`);
+    if(a.dmg){
+      const dmgLine=db&&db.cmd?`${a.dmg}${dbPart}`:`${a.dmg}`;
+      cmdLines.push(`${dmgLine} 【${a.name}ダメージ】`);
+    }
+  });
+
+  // 技能
+  skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{
+    cmdLines.push(`CC<=${s.val} 【${s.name}】`);
+  });
+
+  // メモ
+  memoList.filter(m=>m.label||m.content).forEach(m=>{
+    cmdLines.push((m.label?m.label+"　":"")+m.content);
+  });
+
   const obj={
     kind:"character",
     data:{
       name,
-      status:params.map(p=>({label:p.label,value:Number(p.value)||p.value,max:Number(p.max)||p.max})),
-      commands:"",
+      status,
+      params,
+      commands:cmdLines.join("\n"),
       memo:""
     }
   };
- return JSON.stringify(obj); // 改行なし・1行が必須
+  return JSON.stringify(obj);
 }
-function buildCocoforiaText(){  const name=document.getElementById("npc-name").value||"NPC";
+  function buildCocoforiaText(){  const name=document.getElementById("npc-name").value||"NPC";
   const lines=[`【${name}】`,""];
   const statLines=[];
   STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0)statLines.push(`${label}:${v*5}`);});
@@ -930,19 +961,7 @@ function copyExport(){
   if(exportMode==="json"){
     const anyData=STATS.some(s=>vals[s.key]!="")||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&parseInt(s.val)>0);
     if(!anyData){showToast("データがありません");return;}
-    // コピーは改行なし1行、表示は整形版
-    const name=document.getElementById("npc-name").value||"NPC";
-    const params=[];
-    STATS.forEach(({key,label})=>{const v=parseInt(vals[key])||0;if(v>0){const v7=v*5;params.push({label,value:v7,max:v7});}});
-    const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san");
-    if(hp>0)params.push({label:"HP",value:hp,max:hp});
-    if(mp>0)params.push({label:"MP",value:mp,max:mp});
-    if(san>0)params.push({label:"SAN",value:san,max:san});
-    const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
-    if(strV+sizV>0){const db=getDB(strV+sizV);params.push({label:"DB",value:db.label,max:db.label});}
-    atkList.filter(a=>a.name).forEach(a=>{params.push({label:a.name,value:a.pct||"",max:a.pct||""});});
-    skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{params.push({label:s.name,value:parseInt(s.val),max:parseInt(s.val)});});
-    const obj={kind:"character",data:{name,status:params,commands:"",memo:""}};
+    const obj=JSON.parse(buildCocoforiaJson());
     navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！ここふぉりあの盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));
   }else{
     const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}
@@ -1301,7 +1320,7 @@ function renderSaveList(){
   if(!saves.length){wrap.innerHTML=`<p class="save-empty">保存されたデータはありません</p>`;return;}
   wrap.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">保存済み（${saves.length}件）</div><div class="save-list">${saves.map(sv=>renderSaveCard(sv)).join("")}</div>`;
   wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast(`「${sv.name}」を読み込みました`);});});
-  wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",()=>{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast(`「${u.name}」を上書きしました`);});});
+  wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast(`「${u.name}」を上書きしました`);if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに同期しました":"⚠ 同期失敗",ok?"ok":"err");}});});
   wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm(`「${sv.name}」を削除しますか？`))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("削除しました");});});
 }
 function renderSaveCard(sv){
@@ -1311,10 +1330,11 @@ function renderSaveCard(sv){
   const dbChip=sv.dmgLabel&&sv.dmgLabel!=="なし"?`<span class="db-chip">DB ${sv.dmgLabel}</span>`:"";
   return`<div class="save-card"><div class="save-card-head"><div class="save-card-name">${esc(sv.name)}</div><div class="save-card-date">${ds}</div></div><div class="save-card-stats">${chips||'<span style="color:var(--text3)">ステータスなし</span>'}${aN?`<span class="stat-chip">攻撃${aN}</span>`:""}${sN?`<span class="stat-chip">呪文${sN}</span>`:""}${skN?`<span class="stat-chip">技能${skN}</span>`:""}${dbChip}</div><div class="save-card-actions"><button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="${sv.id}">読み込む</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="${sv.id}">上書き</button><button class="btn-dng btn-delete" data-id="${sv.id}">削除</button></div></div>`;
 }
-document.getElementById("btn-save-current").addEventListener("click",()=>{
+document.getElementById("btn-save-current").addEventListener("click",async()=>{
   const d=getCurrentData();writeSaves([d,...currentSaves]);renderSaveList();showToast(`「${d.name}」を保存しました`);
+  if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに同期しました":"⚠ 同期失敗",ok?"ok":"err");}
 });
-
+  
 // ===== TAB SWITCHING =====
 function switchKpTab(t){
   document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));
