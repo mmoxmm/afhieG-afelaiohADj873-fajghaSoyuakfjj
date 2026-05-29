@@ -48,8 +48,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .tabs::-webkit-scrollbar{display:none}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:14px;padding:6px 10px;white-space:nowrap;flex-shrink:0;flex:1;text-align:center}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
-
-/* ===== STAT GRID ===== */
 .stat-grid-wrap{display:grid;grid-template-columns:58px 44px 1fr 1fr 1fr;gap:2px}
 .sg-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .sg-col-hd:first-child{text-align:left}
@@ -64,9 +62,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .sg-val{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:17px;font-weight:700;color:var(--text)}
 .sg-half{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:14px;color:var(--text2)}
 .sg-fifth{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:13px;color:var(--text3)}
-
-/* ===== DERIVED GRID (修正: 5列に変更) ===== */
-/* ラベル | 手動上書き入力 | 有効値 | ½ | ⅕ */
 .dv-grid-wrap{display:grid;grid-template-columns:56px 46px 40px 1fr 1fr;gap:2px}
 .dv-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .dv-col-hd:first-child{text-align:left}
@@ -81,16 +76,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .dv-val{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:16px;font-weight:700;color:var(--text)}
 .dv-half{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:14px;color:var(--text2)}
 .dv-fifth{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:13px;color:var(--text3)}
-
 .panel-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;padding-left:1px}
-
-/* derived mini */
 .derived-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:4px}
 .metric{background:var(--bg2);border-radius:var(--radius);padding:5px 3px;text-align:center;border:0.5px solid var(--border)}
 .metric-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
 .metric-val{font-size:15px;font-weight:700}
 .metric-desc{font-size:9px;color:var(--text3)}
-
 .accordion{margin-top:5px;border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
 .acc-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);cursor:pointer;user-select:none;min-height:34px}
 .acc-hd-left{display:flex;align-items:center;gap:5px}
@@ -100,9 +91,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .acc-arrow.open{transform:rotate(180deg)}
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
-.atk-headers{display:grid;grid-template-columns:1fr 52px 52px 52px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
+/* ★ PATCHED: atk grid now 6 columns with DB checkbox */
+.atk-headers{display:grid;grid-template-columns:1fr 52px 52px 38px 52px 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3);text-align:center}
 .atk-headers span:first-child{text-align:left}
-.atk-row{display:grid;grid-template-columns:1fr 52px 52px 52px 22px;gap:3px;align-items:center;margin-bottom:3px}
+.atk-row{display:grid;grid-template-columns:1fr 52px 52px 38px 52px 22px;gap:3px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:5px 6px;font-size:15px;text-align:center}
 .atk-row input:first-child{text-align:left}
 .spl-headers{display:grid;grid-template-columns:1fr 54px 1fr 22px;gap:3px;padding:0 2px 3px;font-size:12px;color:var(--text3)}
@@ -287,7 +279,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .cons-row{display:grid;grid-template-columns:1fr 40px 40px 22px;gap:3px;align-items:center;margin-bottom:3px}
 .cons-row input{padding:5px 6px;font-size:14px;text-align:center}
 .cons-row input:first-child{text-align:left}
-/* ===== メモ行の出力先トグル ===== */
 .memo-dest-toggle{display:flex;gap:3px;margin-top:3px;flex-shrink:0}
 .memo-dest-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:10px;padding:1px 4px;line-height:1.4;white-space:nowrap;transition:all .1s}
 .memo-dest-btn.active-memo{border-color:var(--accent);color:var(--accent);background:rgba(40,85,160,.08)}
@@ -339,7 +330,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start;margin-top:2px">
-    <!-- 左: 能力値 -->
     <div>
       <div class="panel-label">能力値（6版）</div>
       <div class="stat-grid-wrap" id="stat-grid-header">
@@ -351,10 +341,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <div class="stat-grid-wrap" id="stat-rows"></div>
     </div>
-    <!-- 右: 派生値 -->
     <div>
       <div class="panel-label">派生値</div>
-      <!-- 修正: 5列ヘッダー -->
       <div class="dv-grid-wrap" id="dv-grid-header">
         <div class="dv-col-hd"></div>
         <div class="dv-col-hd" style="font-size:10px">上書き</div>
@@ -371,7 +359,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="accordion" id="acc-atk" style="margin-top:0">
       <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
       <div class="acc-body" id="body-atk">
-        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span>備考</span><span></span></div>
+        <!-- ★ PATCHED: Added DB column header -->
+        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span style="color:var(--warn)">DB</span><span>備考</span><span></span></div>
         <div id="atk-rows"></div><button class="btn-add" id="btn-add-atk">＋ 追加</button>
       </div>
     </div>
@@ -422,6 +411,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
   </div>
 </div>
+
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
   <div class="dice-hint">タップでコピー→ここふぉりあへ。<code>CC&lt;=60 【火器】</code> ／ ダメージ: <code>1d8+1D6</code></div>
@@ -621,12 +611,20 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
     <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
   </div>
+  <!-- ★ PATCHED: DB両方生成トグル -->
+  <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
+      <input type="checkbox" id="chk-both-db" onchange="updateExport()" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+      DB付き/なし両方生成
+    </label>
+    <span style="font-size:11px;color:var(--text3)">攻撃欄でDBチェックした行のみ適用</span>
+  </div>
   <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
   <div class="export-btn-row">
     <button class="export-btn" onclick="copyExport()">📋 コピー</button>
     <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
   </div>
-  <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。能力値はパラメータ欄、HP/MP/SAN等はステータス欄に入ります。<br>※ メモの出力先は各メモ行の「メモ」「パレ」ボタンで切替可（メモ=キャラクターメモ欄、パレ=チャットパレット）。</div>
+  <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。<br>※ 攻撃欄「DB」列にチェックした攻撃のみDBをコマンドに付与。「DB付き/なし両方生成」でDB無し版も同時に生成。<br>※ メモの出力先は各メモ行の「メモ」「パレ」ボタンで切替可（デフォルト：チャパレ）。</div>
 </div>
 <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
 <div id="save-list-wrap"></div>
@@ -680,9 +678,12 @@ const WEAPONS=[["素手","1d3"],["短剣","1d4"],["棍棒","1d6"],["槍","1d6"],
 
 const vals={};STATS.forEach(s=>vals[s.key]="");
 const ov={hp:"",mp:"",san:"",luck:""};
-let skillMode7=false,skList=[{id:0,name:"",val:""}],atkList=[{id:0,name:"",pct:"",dmg:"",note:""}],splList=[{id:0,name:"",mp:"",note:""}],nxtId=1;
-// メモ: dest = "memo"(キャラクターメモ欄) | "cmd"(チャットパレット) | "both"
-let memoList=[{id:0,label:"",content:"",dest:"memo"}];
+let skillMode7=false,skList=[{id:0,name:"",val:""}];
+// ★ PATCHED: useDB:false added to default
+let atkList=[{id:0,name:"",pct:"",dmg:"",note:"",useDB:false}];
+let splList=[{id:0,name:"",mp:"",note:""}],nxtId=1;
+// ★ PATCHED: default dest changed to "cmd" (チャパレ)
+let memoList=[{id:0,label:"",content:"",dest:"cmd"}];
 let consumables=[];
 let parsedData=null;
 let exportMode="json";
@@ -710,15 +711,7 @@ function toggleParse(){const b=document.getElementById("body-parse"),a=document.
 function openParse(){document.getElementById("body-parse").classList.add("open");document.getElementById("arrow-parse").classList.add("open");}
 function autoExpand(el){el.style.height="auto";el.style.height=Math.max(34,el.scrollHeight)+"px";}
 function bindAutoExpand(el){el.addEventListener("input",()=>autoExpand(el));autoExpand(el);}
-
-// ===== メモのautoExpand: DOMが見えてから実行 =====
-function reExpandAllMemos(){
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      document.querySelectorAll("#memo-rows textarea").forEach(autoExpand);
-    });
-  });
-}
+function reExpandAllMemos(){requestAnimationFrame(()=>{requestAnimationFrame(()=>{document.querySelectorAll("#memo-rows textarea").forEach(autoExpand);});});}
 
 function ccCmd(n,v){return"CC<="+v+" 【"+n+"】"}
 function lSaves(){try{return JSON.parse(localStorage.getItem(L_SAVES)||"[]");}catch{return[];}}
@@ -727,7 +720,8 @@ function writeSaves(l){currentSaves=l;wSaves(l);}
 function loadCustomLocal(){try{customBeings=JSON.parse(localStorage.getItem("coc_custom_beings")||"[]");}catch{customBeings=[];}try{customSpells=JSON.parse(localStorage.getItem("coc_custom_spells")||"[]");}catch{customSpells=[];}}
 function saveCustomLocal(){localStorage.setItem("coc_custom_beings",JSON.stringify(customBeings));localStorage.setItem("coc_custom_spells",JSON.stringify(customSpells));}
 function saveMemoLocal(){localStorage.setItem("coc_memo_rows",JSON.stringify(memoList));}
-function loadMemoLocal(){try{const raw=JSON.parse(localStorage.getItem("coc_memo_rows")||'null');if(raw)memoList=raw.map(m=>({...m,dest:m.dest||"memo"}));else memoList=[{id:0,label:"",content:"",dest:"memo"}];}catch{memoList=[{id:0,label:"",content:"",dest:"memo"}];}}
+// ★ PATCHED: default dest is now "cmd" everywhere in loadMemoLocal
+function loadMemoLocal(){try{const raw=JSON.parse(localStorage.getItem("coc_memo_rows")||'null');if(raw)memoList=raw.map(m=>({...m,dest:m.dest||"cmd"}));else memoList=[{id:0,label:"",content:"",dest:"cmd"}];}catch{memoList=[{id:0,label:"",content:"",dest:"cmd"}];}}
 
 function getDB(t){
   if(t<=64)return{label:"-2",build:"-2",cmd:null};if(t<=84)return{label:"-1",build:"-1",cmd:null};
@@ -740,7 +734,6 @@ function getMOV(s,d,sz){if(!s&&!d&&!sz)return"—";if(s<sz&&d<sz)return"7";if(s>
 function calcAuto(k){const con=(parseInt(vals.con)||0)*5,siz=(parseInt(vals.siz)||0)*5,pow=parseInt(vals.pow)||0;if(k==="hp")return(con+siz)?String(Math.floor((con+siz)/10)):"";if(k==="mp")return pow?String(pow):"";if(k==="san")return pow?String(pow*5):"";if(k==="luck")return pow?String(pow*5):"";return"";}
 function getEff(k){return ov[k]!==undefined&&ov[k]!==""?parseInt(ov[k])||0:parseInt(calcAuto(k))||0;}
 
-// ===== STAT GRID =====
 function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
   STATS.forEach(({key,label,jp})=>{
@@ -760,42 +753,26 @@ function buildStatRows(){
   buildDerivedRows();
 }
 
-// ===== DERIVED GRID (修正: 5列 — ラベル|上書き入力|有効値|½|⅕) =====
 function buildDerivedRows(){
   const wrap=document.getElementById("derived-rows");wrap.innerHTML="";
   [{key:"hp",label:"HP",jp:"耐久力"},{key:"mp",label:"MP",jp:"魔力"},{key:"san",label:"SAN",jp:"正気度"},{key:"luck",label:"幸運",jp:"LUK"}].forEach(({key,label,jp})=>{
     const lc=document.createElement("div");lc.className="dv-label";
     lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
-
-    // 上書き入力セル
     const ic=document.createElement("div");ic.className="dv-inp-cell";
     const inp=document.createElement("input");inp.type="number";inp.min="0";inp.className="dv-inp";inp.id="di-"+key;inp.value=ov[key];inp.placeholder=calcAuto(key)||"自動";
     const clr=document.createElement("button");clr.className="dv-clr";clr.id="dc-"+key;clr.textContent="×";clr.style.display=ov[key]?"block":"none";
     ic.append(inp,clr);
-
-    // 有効値表示セル (3列目)
     const vd=document.createElement("div");vd.className="dv-val";vd.id="dv-"+key;
     const effNow=ov[key]?parseInt(ov[key])||0:parseInt(calcAuto(key))||0;
     vd.textContent=effNow||"—";
-
-    // ½ (4列目)
     const hd=document.createElement("div");hd.className="dv-half";hd.id="dh-"+key;hd.textContent=effNow?Math.floor(effNow/2):"—";
-
-    // ⅕ (5列目)
     const fd=document.createElement("div");fd.className="dv-fifth";fd.id="df-"+key;fd.textContent=effNow?Math.floor(effNow/5):"—";
-
     wrap.append(lc,ic,vd,hd,fd);
     inp.addEventListener("input",e=>{ov[key]=e.target.value;clr.style.display=e.target.value?"block":"none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
     clr.addEventListener("click",()=>{inp.value="";ov[key]="";clr.style.display="none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
   });
 }
-function updDerived(k){
-  const v=getEff(k),auto=calcAuto(k);
-  const vd=document.getElementById("dv-"+k);if(vd)vd.textContent=v||"—";
-  const hd=document.getElementById("dh-"+k);if(hd)hd.textContent=v?Math.floor(v/2):"—";
-  const fd=document.getElementById("df-"+k);if(fd)fd.textContent=v?Math.floor(v/5):"—";
-  const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=auto||"自動";
-}
+function updDerived(k){const v=getEff(k),auto=calcAuto(k);const vd=document.getElementById("dv-"+k);if(vd)vd.textContent=v||"—";const hd=document.getElementById("dh-"+k);if(hd)hd.textContent=v?Math.floor(v/2):"—";const fd=document.getElementById("df-"+k);if(fd)fd.textContent=v?Math.floor(v/5):"—";const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=auto||"自動";}
 function updateStats(){
   STATS.forEach(({key})=>{const raw=parseInt(vals[key])||0,v7=raw*5;const vc=document.getElementById("v7-"+key);if(vc)vc.textContent=v7?v7:"—";const hc=document.getElementById("h-"+key);if(hc)hc.textContent=v7?Math.floor(v7/2):"—";const fc=document.getElementById("f-"+key);if(fc)fc.textContent=v7?Math.floor(v7/5):"—";});
   ["hp","mp","san","luck"].forEach(k=>{if(!ov[k])updDerived(k);else{const a=calcAuto(k);const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=a||"自動";}});
@@ -811,42 +788,29 @@ function updDerivedMini(){
   ].map(m=>'<div class="metric"><div class="metric-label">'+m.l+'</div><div class="metric-val">'+m.v+'</div><div class="metric-desc">'+m.d+'</div></div>').join(""):"";
 }
 
-// ===== MEMO ROWS (出力先トグル付き) =====
 function buildMemoRows(){
   const wrap=document.getElementById("memo-rows");wrap.innerHTML="";
   memoList.forEach(m=>{
-    if(!m.dest)m.dest="memo";
+    if(!m.dest)m.dest="cmd";
     const row=document.createElement("div");row.style.cssText="display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden";
     const hd=document.createElement("div");hd.style.cssText="display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--bg3);cursor:pointer;min-height:30px";
     const lbl=document.createElement("textarea");lbl.placeholder="ラベル（装甲・特殊etc）";lbl.value=m.label;lbl.rows=1;lbl.style.cssText="flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;cursor:text;resize:none;overflow:hidden;outline:none;color:var(--text)";
     const toggleBtn=document.createElement("button");toggleBtn.style.cssText="background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s";toggleBtn.textContent="▼";
-
-    // 出力先トグルボタン
     const destRow=document.createElement("div");destRow.className="memo-dest-toggle";
     const btnMemo=document.createElement("button");btnMemo.className="memo-dest-btn"+(m.dest==="memo"?" active-memo":"");btnMemo.textContent="メモ";btnMemo.title="キャラクターメモ欄に出力";
     const btnCmd=document.createElement("button");btnCmd.className="memo-dest-btn"+(m.dest==="cmd"?" active-cmd":"");btnCmd.textContent="パレ";btnCmd.title="チャットパレットに出力";
     const btnBoth=document.createElement("button");btnBoth.className="memo-dest-btn"+(m.dest==="both"?" active-memo":"");btnBoth.textContent="両方";btnBoth.title="両方に出力";
     destRow.append(btnMemo,btnCmd,btnBoth);
-
     const copyBtn=document.createElement("button");copyBtn.className="memo-copy-btn";copyBtn.textContent="📋";copyBtn.style.cssText="flex-shrink:0";
     const delBtn=document.createElement("button");delBtn.textContent="×";delBtn.style.cssText="background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0";
     hd.append(lbl,toggleBtn,destRow,copyBtn,delBtn);
     const bd=document.createElement("div");bd.style.cssText="padding:4px 6px;background:var(--bg2);"+(m._collapsed?"display:none":"display:block");
     const content=document.createElement("textarea");content.placeholder="メモ内容...";content.value=m.content;content.rows=1;content.style.cssText="width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px;resize:none;overflow:hidden;outline:none;color:var(--text)";
     bd.appendChild(content);row.append(hd,bd);wrap.appendChild(row);
-
-    // 出力先ボタンのイベント
-    const setDest=(d)=>{
-      m.dest=d;
-      btnMemo.className="memo-dest-btn"+(d==="memo"||d==="both"?" active-memo":"");
-      btnCmd.className="memo-dest-btn"+(d==="cmd"||d==="both"?" active-cmd":"");
-      btnBoth.className="memo-dest-btn"+(d==="both"?" active-memo":"");
-      saveMemoLocal();updateExport();
-    };
+    const setDest=(d)=>{m.dest=d;btnMemo.className="memo-dest-btn"+(d==="memo"||d==="both"?" active-memo":"");btnCmd.className="memo-dest-btn"+(d==="cmd"||d==="both"?" active-cmd":"");btnBoth.className="memo-dest-btn"+(d==="both"?" active-memo":"");saveMemoLocal();updateExport();};
     btnMemo.addEventListener("click",e=>{e.stopPropagation();setDest("memo");});
     btnCmd.addEventListener("click",e=>{e.stopPropagation();setDest("cmd");});
     btnBoth.addEventListener("click",e=>{e.stopPropagation();setDest("both");});
-
     const doToggle=()=>{m._collapsed=!m._collapsed;bd.style.display=m._collapsed?"none":"block";toggleBtn.style.transform=m._collapsed?"rotate(-90deg)":"";if(!m._collapsed)reExpandAllMemos();};
     toggleBtn.addEventListener("click",e=>{e.stopPropagation();doToggle();});
     hd.addEventListener("click",e=>{if(e.target===lbl||e.target===copyBtn||e.target===delBtn||e.target===toggleBtn||destRow.contains(e.target))return;doToggle();});
@@ -859,7 +823,8 @@ function buildMemoRows(){
   });
   updMemoBadge();
 }
-function addMemoRow(){memoList.push({id:nxtId++,label:"",content:"",dest:"memo"});buildMemoRows();openMemo();}
+// ★ PATCHED: default dest is "cmd" (チャパレ)
+function addMemoRow(){memoList.push({id:nxtId++,label:"",content:"",dest:"cmd"});buildMemoRows();openMemo();}
 function updMemoBadge(){document.getElementById("badge-memo").textContent=memoList.filter(m=>m.label||m.content).length;}
 function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=>(m.label?m.label+"\u3000":"")+m.content).join("\n");if(!lines){showToast("メモがありません");return;}navigator.clipboard.writeText(lines).then(()=>showToast("全メモをコピーしました")).catch(()=>showToast("コピー失敗"));}
 
@@ -867,15 +832,18 @@ function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
   atkList.forEach(a=>{
     const row=document.createElement("div");row.className="atk-row";
-    row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name)+'" data-aid="'+a.id+'" data-f="name"><input type="number" placeholder="30" value="'+a.pct+'" data-aid="'+a.id+'" data-f="pct" style="text-align:center"><input type="text" placeholder="1d8" value="'+a.dmg+'" data-aid="'+a.id+'" data-f="dmg" style="text-align:center"><input type="text" placeholder="備考..." value="'+esc(a.note)+'" data-aid="'+a.id+'" data-f="note"><button class="btn-remove" data-aid="'+a.id+'">×</button>';
+    // ★ PATCHED: DB checkbox added between dmg and note columns
+    row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name)+'" data-aid="'+a.id+'" data-f="name"><input type="number" placeholder="30" value="'+a.pct+'" data-aid="'+a.id+'" data-f="pct" style="text-align:center"><input type="text" placeholder="1d8" value="'+a.dmg+'" data-aid="'+a.id+'" data-f="dmg" style="text-align:center"><label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px"><input type="checkbox" '+(a.useDB?'checked':'')+' data-aid="'+a.id+'" data-f="useDB" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">DB</label><input type="text" placeholder="備考..." value="'+esc(a.note)+'" data-aid="'+a.id+'" data-f="note"><button class="btn-remove" data-aid="'+a.id+'">×</button>';
     wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.aid,f=e.target.dataset.f;atkList=atkList.map(x=>x.id===id?{...x,[f]:e.target.value}:x);updAtkBadge();if(f==="pct"||f==="dmg"||f==="name")updateDice();}));
+    // ★ PATCHED: checkbox uses "change" event, others use "input"
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener(inp.type==="checkbox"?"change":"input",e=>{const id=+e.target.dataset.aid,f=e.target.dataset.f;const val=e.target.type==="checkbox"?e.target.checked:e.target.value;atkList=atkList.map(x=>x.id===id?{...x,[f]:val}:x);updAtkBadge();if(f==="pct"||f==="dmg"||f==="name"||f==="useDB")updateDice();}));
     row.querySelector(".btn-remove").addEventListener("click",e=>{const id=+e.target.dataset.aid;if(atkList.length>1){atkList=atkList.filter(x=>x.id!==id);buildAtkRows();updateDice();}});
   });
   updAtkBadge();
 }
 function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
-document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:"",dmg:"",note:""});buildAtkRows();openAcc("atk");});
+// ★ PATCHED: useDB:false in new row
+document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:"",dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");});
 
 function buildSplRows(){
   const wrap=document.getElementById("spl-rows");wrap.innerHTML="";
@@ -957,8 +925,9 @@ function applyParsed(){
   if(p.hp!==null){ov.hp=String(p.hp);const inp=document.getElementById("di-hp");if(inp){inp.value=p.hp;document.getElementById("dc-hp").style.display="block";}}
   if(p.mp!==null){ov.mp=String(p.mp);const inp=document.getElementById("di-mp");if(inp){inp.value=p.mp;document.getElementById("dc-mp").style.display="block";}}
   if(p.san!==null){ov.san=String(p.san);const inp=document.getElementById("di-san");if(inp){inp.value=p.san;document.getElementById("dc-san").style.display="block";}}
-  if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>atkList.push({id:nxtId++,name:a.name,pct:a.pct,dmg:a.dmg,note:""}));if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:"",dmg:"",note:""}];buildAtkRows();openAcc("atk");}
-  if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"memo"}));buildMemoRows();openMemo();saveMemoLocal();}
+  if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>atkList.push({id:nxtId++,name:a.name,pct:a.pct,dmg:a.dmg,note:"",useDB:false}));if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:"",dmg:"",note:"",useDB:false}];buildAtkRows();openAcc("atk");}
+  // ★ PATCHED: parsed memos default to "cmd"
+  if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"}));buildMemoRows();openMemo();saveMemoLocal();}
   updateStats();clearParse();showToast("解析データを適用しました ✓");
 }
 function fullReset(){
@@ -968,7 +937,7 @@ function fullReset(){
   document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{inp.value="";const clr=inp.parentElement.querySelector(".sg-clr");if(clr)clr.style.display="none";});
   ov.hp=ov.mp=ov.san=ov.luck="";
   ["hp","mp","san","luck"].forEach(k=>{const inp=document.getElementById("di-"+k);if(inp)inp.value="";const clr=document.getElementById("dc-"+k);if(clr)clr.style.display="none";});
-  skList=[{id:0,name:"",val:""}];atkList=[{id:0,name:"",pct:"",dmg:"",note:""}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:"",dest:"memo"}];
+  skList=[{id:0,name:"",val:""}];atkList=[{id:0,name:"",pct:"",dmg:"",note:"",useDB:false}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:"",dest:"cmd"}];
   consumables=[];buildConsumableRows();clearParse();nxtId=1;
   buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStats();showToast("リセットしました");
 }
@@ -1006,15 +975,11 @@ function setExportMode(mode){
   updateExport();
 }
 
-// ===== ここふぉりあJSON出力 (修正版) =====
-// params: 能力値のみ（max不要、整数value）
-// status: 派生値 + 消耗品（重複なし）
-// memo: dest="memo"または"both"のメモをまとめる
-// commands: ダイスコマンド + dest="cmd"または"both"のメモ
+// ★★★ PATCHED: buildCocoforiaJson - params.value is now String, DB only on checked attacks ★★★
 function buildCocoforiaJson(){
   const name=document.getElementById("npc-name").value||"NPC";
 
-  // status: 派生値 + 消耗品のみ（能力値はparams側）
+  // status: 派生値 + 消耗品
   const status=[];
   const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
   if(hp>0||ov.hp!=="")status.push({label:"HP",value:hp,max:hp});
@@ -1026,25 +991,37 @@ function buildCocoforiaJson(){
     status.push({label:c.label,value:cur,max:max||cur});
   });
 
-  // params: 能力値のみ（7版=6版×5、整数、maxなし）
+  // ★ PATCHED: params value is String(v7) not v7
   const params=[];
   STATS.forEach(({key,label})=>{
     const raw=parseInt(vals[key])||0;
     if(raw>0){
       const v7=raw*5;
-      params.push({label:label,value:v7});
+      params.push({label:label,value:String(v7)});
     }
   });
 
-  // commands: ダイスコマンド
+  // ★ PATCHED: DB付きコマンド生成ロジック
   const cmdLines=[];
   const strV=(parseInt(vals.str)||0)*5,sizV=(parseInt(vals.siz)||0)*5;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   if(db&&db.cmd){cmdLines.push(db.cmd+" 【ダメージボーナス】");}
+  const genBothDB=document.getElementById("chk-both-db")?.checked||false;
   atkList.filter(a=>a.name&&(parseInt(a.pct)||0)>0).forEach(a=>{
     const pct=parseInt(a.pct)||0;
     cmdLines.push("CC<="+pct+" 【"+a.name+"】");
-    if(a.dmg){const dmgLine=(db&&db.cmd)?a.dmg+"+"+db.cmd:a.dmg;cmdLines.push(dmgLine+" 【"+a.name+"ダメージ】");}
+    if(a.dmg){
+      if(a.useDB&&db&&db.cmd){
+        if(genBothDB){
+          cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");
+          cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");
+        }else{
+          cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
+        }
+      }else{
+        cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+      }
+    }
   });
   skList.filter(s=>s.name&&(parseInt(s.val)||0)>0).forEach(s=>{
     cmdLines.push("CC<="+s.val+" 【"+s.name+"】");
@@ -1054,7 +1031,7 @@ function buildCocoforiaJson(){
     cmdLines.push((m.label?m.label+"\u3000":"")+m.content);
   });
 
-  // memo: dest="memo"または"both"のメモをキャラクターメモ欄へ
+  // memo: dest="memo"または"both"のメモ
   const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?m.label+"　":"")+m.content);
   const memoText=memoLines.join("\n");
 
@@ -1149,10 +1126,10 @@ function loadDataIntoEditor(data){
   ov.hp="";ov.mp="";ov.san="";ov.luck="";if(data.ov)Object.assign(ov,data.ov);
   ["hp","mp","san","luck"].forEach(k=>{const inp=document.getElementById("di-"+k);if(inp)inp.value=ov[k]||"";const clr=document.getElementById("dc-"+k);if(clr)clr.style.display=ov[k]?"block":"none";});
   skList=data.skList||[{id:0,name:"",val:""}];
-  atkList=data.atkList||[{id:0,name:"",pct:"",dmg:"",note:""}];
+  // ★ PATCHED: useDB defaults for old saves that don't have the field
+  atkList=(data.atkList||[{id:0,name:"",pct:"",dmg:"",note:"",useDB:false}]).map(a=>({useDB:false,...a}));
   splList=data.splList||[{id:0,name:"",mp:"",note:""}];
-  // memoListはdestフィールドを補完
-  memoList=(data.memoList||[{id:0,label:"",content:"",dest:"memo"}]).map(m=>({...m,dest:m.dest||"memo"}));
+  memoList=(data.memoList||[{id:0,label:"",content:"",dest:"cmd"}]).map(m=>({...m,dest:m.dest||"cmd"}));
   consumables=data.consumables||[];
   nxtId=Math.max(...[...skList,...atkList,...splList,...memoList,...consumables].map(x=>x.id+1),1);
   skillMode7=data.skillMode7||false;document.getElementById("skill-mode-toggle").checked=skillMode7;
@@ -1163,7 +1140,6 @@ function loadDataIntoEditor(data){
   if(skList.some(s=>s.name&&(parseInt(s.val)||0)>0))openAcc("sk");
   if(memoList.some(m=>m.label||m.content))openMemo();
   if(consumables.some(c=>c.label))openAcc("cons");
-  // メモのtextareaをDOMレンダリング後に再計算
   reExpandAllMemos();
 }
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">保存されたデータはありません</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">保存済み（'+saves.length+'件）</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv)).join("")+'</div>';wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("「"+sv.name+"」を読み込みました");});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast("「"+u.name+"」を上書きしました");if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに同期しました":"⚠ 同期失敗",ok?"ok":"err");}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("「"+sv.name+"」を削除しますか？"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("削除しました");});});}
