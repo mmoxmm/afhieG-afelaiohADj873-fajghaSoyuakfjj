@@ -340,12 +340,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <div id="tab-stats">
   <div class="parse-block">
     <div class="parse-hd" onclick="toggleParse()">
-      <div class="acc-hd-left"><span class="acc-title">📋 NPCテキスト自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">能力値・攻撃・技能を一括適用</span></div>
+      <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">能力値・攻撃・技能を一括適用 / ここふぉりあJSON逆変換</span></div>
       <span class="acc-arrow" id="arrow-parse">▼</span>
     </div>
     <div class="parse-body" id="body-parse">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">シナリオのNPCステータスをコピペして解析。能力値・HP・攻撃・技能をすべて自動適用します。</div>
-      <textarea id="parse-input" placeholder="例）STR:12　CON:14　POW:13　DEX:10&#10;耐久力:13　装甲：2ポイントの鱗&#10;噛みつき 30％ 1d8　／　回避 45%" style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">シナリオのNPCステータスをコピペして解析。能力値・HP・攻撃・技能を自動適用します。<br>ここふぉりあのキャラコマJSONをそのまま貼り付けて逆変換も可能です。</div>
+      <textarea id="parse-input" placeholder="例）STR:12 CON:14 POW:13&#10;噛みつき 30% 1d8 / 回避 45%&#10;&#10;またはここふぉりあJSONをそのまま貼り付け" style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
       <div style="display:flex;gap:4px;margin-top:4px">
         <button onclick="runParse()" style="flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:7px;font-weight:700">🔍 解析して適用</button>
         <button onclick="clearParse()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:13px;padding:7px 10px;font-family:inherit">クリア</button>
@@ -633,22 +633,34 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <!-- 共有ページ -->
   <div id="save-page-shared" style="display:none">
     <div class="sync-key-block" style="border-color:rgba(26,158,114,.4)">
-      <div class="sync-key-title" style="color:var(--success)">👥 共有データ読み込み（読み込み専用）</div>
-      <div class="sync-key-desc">共有Gist IDまたはURLを入力して読み込みます。公開Gistはトークン不要。読み込んだデータは個人リストに「共有」バッジ付きで追加されます。</div>
-      <div class="sync-key-row">
-        <div class="inp-wrap" id="w-shared-gist"><input type="text" id="shared-gist-input" placeholder="Gist ID または https://gist.github.com/..." autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-gist-input','w-shared-gist')">×</button></div>
-        <button class="btn-sync" id="btn-load-shared" style="background:var(--success)">読込</button>
+      <div class="sync-key-title" style="color:var(--success)">👥 共有クラウド設定</div>
+      <div class="sync-key-desc">共有用GistへのToken（gistスコープ）とGist IDを設定します。セッションメンバーと同じToken・GistIDを設定することで、共同編集・保存が可能です。</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">① 共有用 GitHub Token</div>
+      <div class="sync-key-row" style="margin-bottom:4px">
+        <div class="inp-wrap" id="w-stoken"><input type="text" id="shared-token-input" placeholder="ghp_xxxx... （共有用）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-token-input','w-stoken')">×</button></div>
+        <button class="btn-sync" id="btn-apply-stoken" style="background:var(--success)">設定</button>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">② 共有Gist ID（任意）</div>
+      <div class="sync-key-row" style="margin-bottom:4px">
+        <div class="inp-wrap" id="w-sgist"><input type="text" id="shared-gist-id-input" placeholder="既存のGist IDを入力（空欄=新規作成）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-gist-id-input','w-sgist')">×</button></div>
+        <button class="btn-sync" id="btn-set-sgist">確定</button>
+      </div>
+      <div id="shared-gist-display" style="font-size:11px;color:var(--text3);margin-bottom:3px"></div>
+      <div style="display:flex;gap:4px;margin-top:4px">
+        <button class="btn-sync" id="btn-shared-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ 共有にアップ</button>
+        <button class="btn-sync" id="btn-shared-download" style="flex:1;font-size:13px" disabled>⬇️ 共有から取得</button>
       </div>
       <div class="sync-status" id="shared-sync-status"></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6">
-        <strong style="color:var(--text2)">共有の仕組み：</strong><br>
-        ① 共有したい人がトークン設定→アップロード（個人ページ）<br>
-        ② 「Gist ID」をコピーして相手に送る<br>
-        ③ 受け取った人がこのページにIDを貼り付けて読込<br>
-        ④ 読み込まれたデータは個人リストに「共有」バッジ付きで追加
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.7;background:var(--bg3);border-radius:var(--radius);padding:6px 8px">
+        <strong style="color:var(--text2)">使い方</strong><br>
+        ① 共有したいメンバー全員が同じTokenとGistIDを設定<br>
+        ② 「現在のデータを保存」→ 保存先を「共有」に選択<br>
+        ③ 「⬆️ 共有にアップ」で同期<br>
+        ④ 他のメンバーは「⬇️ 共有から取得」でデータを受け取れる
       </div>
     </div>
-    <div id="shared-list-wrap"><p class="save-empty">まだ共有データを読み込んでいません</p></div>
+    <div class="save-toolbar"><button class="btn-pri" id="btn-save-shared-current" style="background:var(--success)">現在のデータを共有に保存</button></div>
+    <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
   </div>
 
   <!-- 出力ページ -->
@@ -705,7 +717,8 @@ let diceHistory=[];
 let sanSelected=[];
 let previewManualActive=false;
 let currentSavePage="personal";
-const L_SAVES="coc_v4_saves",L_KEY="coc_gist_token",L_GIST="coc_gist_id",L_GIST_TS="coc_gist_token_ts";
+let sharedToken="",sharedGistId="";
+const L_SAVES="coc_v4_saves",L_KEY="coc_gist_token",L_GIST="coc_gist_id",L_GIST_TS="coc_gist_token_ts",L_STOKEN="coc_shared_token",L_SGIST="coc_shared_gist_id";
 
 // ===== ユーティリティ =====
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
@@ -752,7 +765,7 @@ function setInputMode(mode){
   document.getElementById("btn-mode-7").classList.toggle("active",mode===7);
   document.getElementById("mode-hint").textContent=mode===6?"6版値→7版%に自動変換":"7版%を直接入力";
   document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";
-  document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"½";
+  document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";
   document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{
     const k=inp.dataset.key,v=vals[k]||0;
     inp.value=v>0?(mode===6?Math.round(v/5):v):"";
@@ -797,7 +810,13 @@ function updateStatDisplay(){
     const v7=vals[key]||0;
     const ce=document.getElementById("v-conv-"+key),he=document.getElementById("v-h-"+key),fe=document.getElementById("v-f-"+key);
     if(inputMode===6){if(ce)ce.textContent=v7||"—";if(he)he.textContent=v7?Math.floor(v7/2):"—";if(fe)fe.textContent=v7?Math.floor(v7/5):"—";}
-    else{if(ce)ce.textContent=v7?Math.floor(v7/2):"—";if(he)he.textContent=v7?Math.floor(v7/5):"—";if(fe)fe.textContent="";}
+    else{
+      // 7版モード: col3=6版参考値(薄色), col4=½, col5=⅕
+      const v6ref=v7?Math.round(v7/5):0;
+      if(ce){ce.textContent=v6ref||"—";ce.style.fontSize="13px";ce.style.color="var(--text3)";}
+      if(he)he.textContent=v7?Math.floor(v7/2):"—";
+      if(fe)fe.textContent=v7?Math.floor(v7/5):"—";
+    }
   });
   ["hp","mp","san","luck"].forEach(k=>{if(!ovManual[k])updDerived(k);else{const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=calcAuto(k)||"自動";}});
   updDerivedMini();updateDice();updatePreviewSelect();updateExport();
@@ -974,6 +993,58 @@ function updConsBadge(){document.getElementById("badge-cons").textContent=consum
 
 // ===== 解析 =====
 function normalizeNpcText(t){return t.replace(/[Ａ-Ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[ａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[：]/g,':').replace(/[＋]/g,'+').replace(/[－−]/g,'-').replace(/[　]/g,' ').replace(/[％%]/g,'%').replace(/[／]/g,'/').replace(/[（]/g,'(').replace(/[）]/g,')').replace(/[。]/g,'.');}
+function tryParseCocoforiaJSON(text){
+  // ここふぉりあJSON逆変換
+  let obj;
+  try{obj=JSON.parse(text.trim());}catch{return null;}
+  if(!obj||obj.kind!=="character"||!obj.data)return null;
+  const d=obj.data;
+  const r={stats:{},hp:null,mp:null,san:null,luck:null,attacks:[],skills:[],memos:[]};
+  // params -> vals (7版%値として読み込み)
+  if(Array.isArray(d.params)){
+    d.params.forEach(p=>{
+      const lbl=(p.label||"").toUpperCase();const v=parseInt(p.value)||0;
+      if(!v)return;
+      const k=STATS.find(s=>s.label===lbl||s.key===lbl.toLowerCase());
+      if(k)r.stats[k.key]=Math.round(v/5);// 7版%→6版値に戻す（内部でまた×5する）
+    });
+  }
+  // status -> HP/MP/SAN/幸運/消耗品
+  if(Array.isArray(d.status)){
+    d.status.forEach(s=>{
+      const lbl=(s.label||"");const v=parseInt(s.value)||0;
+      if(lbl==="HP")r.hp=v;else if(lbl==="MP")r.mp=v;
+      else if(lbl==="SAN")r.san=v;else if(lbl==="幸運")r.luck=v;
+    });
+  }
+  // commands -> 攻撃・技能に逆変換
+  if(d.commands){
+    const lines=d.commands.split("\n");
+    lines.forEach(line=>{
+      // CC<=XX 【名前】 形式
+      const m=line.match(/CC<=\s*(\d+)\s*[【\[](.+?)[】\]]/);
+      if(m){
+        const pct=parseInt(m[1]),name=m[2].replace(/ダメージ.*$/,"").trim();
+        if(pct>0&&name&&!name.includes("SAN")){
+          // ダメージ行があれば攻撃、なければ技能
+          const dmgLine=lines.find(l=>l.includes("【"+name+"ダメージ"))||lines.find(l=>l.match(/[dD]\d+/)&&l.includes(name));
+          const dmgM=dmgLine?dmgLine.match(/^([^【]+)/):null;
+          if(dmgM||lines.some(l=>l.includes("【"+name+"ダメージ"))){
+            const dmgVal=dmgM?dmgM[1].trim().replace(/\+[^+]+ダメ.*/,"").trim():"";
+            if(!r.attacks.find(a=>a.name===name))r.attacks.push({name,pct:String(pct),dmg:dmgVal});
+          }else{
+            if(!r.skills.find(s=>s.name===name))r.skills.push({name,val:pct});
+          }
+        }
+      }
+    });
+  }
+  // memo -> メモ
+  if(d.memo){const lines=d.memo.split("\n").filter(l=>l.trim());lines.forEach(l=>{const parts=l.split(/[　\s]{1,3}/);r.memos.push({label:parts[0]||"",content:parts.slice(1).join(" ")||l});});}
+  // キャラ名をNPC名フィールドに
+  if(d.name){r._characterName=d.name;}
+  return r;
+}
 function parseNpcText(text){
   const t=normalizeNpcText(text);
   const r={stats:{},hp:null,mp:null,san:null,attacks:[],skills:[],memos:[]};
@@ -987,11 +1058,25 @@ function parseNpcText(text){
   while((m=sr.exec(t))!==null){const n=m[1].trim();if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>14)continue;if(r.attacks.find(a=>a.name===n))continue;if(!r.skills.find(s=>s.name===n))r.skills.push({name:n,val:parseInt(m[2])});}
   const dbM=t.match(/ダメージボーナス\s*[:= ]?\s*([+\-]\s*(?:\d+[dD]\d+|\d+))/i);if(dbM)r.memos.push({label:'DB',content:dbM[1].replace(/\s/g,'')});
   const aM=text.match(/装甲[：:]\s*([^。\n]{1,50})/);if(aM&&aM[1].trim())r.memos.push({label:'装甲',content:aM[1].trim()});
+  // 名前推定：最初の行にSTR/CON等のキーワードがなければ名前候補とみなす
+  const lines2=text.trim().split(/\n/);
+  for(const line of lines2){
+    const l=line.trim();if(!l)continue;
+    // 統計値っぽい行・空行・装甲行はスキップ
+    if(/STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|装甲|耐久/i.test(l))break;
+    if(/\d+[dD]\d+|\d+[%％]/.test(l))break;
+    // 短い行（20文字以内）で記号が少なければ名前候補
+    if(l.length<=30&&!/[:：=＝]/.test(l)&&l.length>0){r._characterName=l.replace(/^[【《「＜<]|[】》」＞>]$/g,"").trim();break;}
+  }
   return r;
 }
 function runParse(){
   const text=document.getElementById("parse-input").value.trim();if(!text){showToast("テキストを入力してください");return;}
-  openParse();const p=parseNpcText(text);
+  openParse();
+  // ここふぉりあJSON検出
+  let p=null;
+  if(text.trim().startsWith("{")){p=tryParseCocoforiaJSON(text);}
+  if(!p)p=parseNpcText(text);
   const hasAny=Object.keys(p.stats).length>0||p.hp!==null||p.attacks.length>0||p.skills.length>0||p.memos.length>0;
   const el=document.getElementById("parse-result");el.style.display="block";
   if(!hasAny){el.innerHTML='<div style="color:var(--danger);font-size:13px;padding:7px;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);line-height:1.5">認識できませんでした。</div>';return;}
@@ -1000,13 +1085,17 @@ function runParse(){
 }
 function clearParse(){document.getElementById("parse-input").value="";const el=document.getElementById("parse-result");el.style.display="none";el.innerHTML="";}
 function applyParsed(p){
-  Object.keys(p.stats).forEach(key=>{const v6=p.stats[key];vals[key]=v6*5;const inp=document.querySelector('.sg-inp[data-key="'+key+'"]');if(inp){inp.value=inputMode===6?v6:v6*5;inp.parentElement.querySelector(".sg-clr").style.display="block";}});
+  Object.keys(p.stats).forEach(key=>{const v6=p.stats[key],newV7=v6*5;if((vals[key]||0)===newV7)return;// 同じ値はスキップ
+vals[key]=newV7;const inp=document.querySelector('.sg-inp[data-key="'+key+'"]');if(inp){inp.value=inputMode===6?v6:newV7;inp.parentElement.querySelector(".sg-clr").style.display="block";}});
   if(p.hp!==null){ov.hp=p.hp;ovManual.hp=true;const i=document.getElementById("di-hp");if(i){i.value=p.hp;document.getElementById("dc-hp").style.display="block";}}
   if(p.mp!==null){ov.mp=p.mp;ovManual.mp=true;const i=document.getElementById("di-mp");if(i){i.value=p.mp;document.getElementById("dc-mp").style.display="block";}}
   if(p.san!==null){ov.san=p.san;ovManual.san=true;const i=document.getElementById("di-san");if(i){i.value=p.san;document.getElementById("dc-san").style.display="block";}}
-  if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:"",useDB:false}));if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];buildAtkRows();openAcc("atk");}
-  if(p.skills.length){skList=skList.filter(s=>s.name&&(s.val||0)>0);p.skills.forEach(s=>skList.push({id:nxtId++,name:s.name,val:s.val}));if(!skList.length)skList=[{id:nxtId++,name:"",val:0}];buildSkRows();openAcc("sk");}
-  if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"}));buildMemoRows();openMemo();saveMemoLocal();}
+  if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>{if(!atkList.find(x=>x.name===a.name))atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:"",useDB:false});});if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];buildAtkRows();openAcc("atk");}
+  if(p.skills.length){skList=skList.filter(s=>s.name&&(s.val||0)>0);p.skills.forEach(s=>{if(!skList.find(x=>x.name===s.name))skList.push({id:nxtId++,name:s.name,val:s.val});});if(!skList.length)skList=[{id:nxtId++,name:"",val:0}];buildSkRows();openAcc("sk");}
+  if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>{if(!memoList.find(x=>x.label===m.label&&x.content===m.content))memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"});});buildMemoRows();openMemo();saveMemoLocal();}
+  if(p._characterName&&!document.getElementById("npc-name").value){document.getElementById("npc-name").value=p._characterName;document.getElementById("w-npcname").classList.add("hv");}
+  // luck
+  if(p.luck!=null){ov.luck=p.luck;ovManual.luck=true;const i=document.getElementById("di-luck");if(i){i.value=p.luck;const c=document.getElementById("dc-luck");if(c)c.style.display="block";}}
   updateStatDisplay();
 }
 function fullReset(){
@@ -1065,9 +1154,9 @@ function buildCocoforiaJson(){
   const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
   if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"幸運",value:luck,max:luck});
   consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});
-  const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:v});});
+  const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});
   const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;
-  if(db&&db.cmd)cmdLines.push(db.cmd+" 【ダメージボーナス】");
+  if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" 【ダメージボーナス】");
   const genBoth=document.getElementById("chk-both-db")?.checked||false;
   atkList.filter(a=>a.name&&(a.pct||0)>0).forEach(a=>{cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");if(a.dmg){if(a.useDB&&db&&db.cmd){if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");}else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");}});
   skList.filter(s=>s.name&&(s.val||0)>0).forEach(s=>cmdLines.push("CC<="+(s.val)+" 【"+s.name+"】"));
@@ -1152,25 +1241,94 @@ async function gistGet(overrideId){
 }
 async function uploadToCloud(){if(!syncToken){showToast("トークンを設定してください");return;}setSyncSt("アップロード中…","ing");const ok=await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells}});if(ok){setSyncSt("✓ アップロード完了（"+lSaves().length+"件）","ok");showToast("アップロードしました");}else{setSyncSt("⚠ アップロード失敗","err");showToast("アップロード失敗");}}
 async function downloadFromCloud(){if(!syncToken){showToast("トークンを設定してください");return;}setSyncSt("ダウンロード中…","ing");const data=await gistGet();if(!data){setSyncSt("⚠ データなし","err");showToast("データなし");return;}const remote=data.saves||[];if(remote.length){const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});merged.sort((a,b)=>b.id-a.id);currentSaves=merged;wSaves(merged);setSyncSt("✓ ダウンロード完了（"+merged.length+"件）","ok");showToast(merged.length+"件取得しました");if(currentSavePage==="personal")renderSaveList();}else setSyncSt("⚠ クラウドにデータがありません","err");const rm=data.mythos;if(rm){if(rm.beings)rm.beings.forEach(rb=>{if(!customBeings.find(lb=>lb.name===rb.name))customBeings.push(rb);});if(rm.spells)rm.spells.forEach(rs=>{if(!customSpells.find(ls=>ls.name===rs.name))customSpells.push(rs);});saveCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();}}
+// ===== 共有Gist機能 =====
+function lSharedSaves(){try{return JSON.parse(localStorage.getItem("coc_v4_shared_saves")||"[]");}catch{return[];}}
+function wSharedSaves(l){localStorage.setItem("coc_v4_shared_saves",JSON.stringify(l));}
+function updSharedGistDisplay(){const el=document.getElementById("shared-gist-display");if(el)el.textContent=sharedGistId?"共有Gist ID: "+sharedGistId:"";}
+
+async function applySharedKey(token){
+  token=(token||"").trim();if(!token){setSharedSt("トークンを入力してください","err");return;}
+  sharedToken=token;localStorage.setItem(L_STOKEN,token);
+  document.getElementById("btn-shared-upload").disabled=false;
+  document.getElementById("btn-shared-download").disabled=false;
+  setSharedSt("トークンを確認中…","ing");
+  try{const r=await fetch("https://api.github.com/user",{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});
+    if(r.ok){const u=await r.json();setSharedSt("✓ 認証OK（"+u.login+"）","ok");sharedGistId=localStorage.getItem(L_SGIST)||"";updSharedGistDisplay();}
+    else{sharedToken="";setSharedSt("⚠ 認証失敗","err");document.getElementById("btn-shared-upload").disabled=true;document.getElementById("btn-shared-download").disabled=true;}}
+  catch{sharedToken="";setSharedSt("⚠ ネットワークエラー","err");}
+}
+
+async function sharedGistSet(payload){
+  const content=JSON.stringify(payload,null,2);
+  const body={description:"CoC NPC Tool Shared Data",public:false,files:{"coc_shared.json":{content}}};
+  try{let r;
+    if(sharedGistId){r=await fetch("https://api.github.com/gists/"+sharedGistId,{method:"PATCH",headers:{"Authorization":"token "+sharedToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});}
+    else{r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":"token "+sharedToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});}
+    if(!r.ok)return false;const d=await r.json();sharedGistId=d.id;localStorage.setItem(L_SGIST,sharedGistId);updSharedGistDisplay();return true;}
+  catch{return false;}
+}
+
+async function sharedGistGet(){
+  if(!sharedGistId)return null;
+  try{const headers={"Accept":"application/vnd.github.v3+json"};
+    if(sharedToken)headers["Authorization"]="token "+sharedToken;
+    const r=await fetch("https://api.github.com/gists/"+sharedGistId,{headers});
+    if(!r.ok)return null;const d=await r.json();
+    const content=d.files?.["coc_shared.json"]?.content;if(!content)return null;
+    return JSON.parse(content);}
+  catch{return null;}
+}
+
+async function uploadToShared(){
+  if(!sharedToken){showToast("共有トークンを設定してください");return;}
+  setSharedSt("アップロード中…","ing");
+  const saves=lSharedSaves();
+  const ok=await sharedGistSet({saves});
+  if(ok){setSharedSt("✓ 共有にアップロード完了（"+saves.length+"件）","ok");showToast("共有にアップロードしました");}
+  else{setSharedSt("⚠ アップロード失敗","err");showToast("アップロード失敗");}
+}
+
+async function downloadFromShared(){
+  if(!sharedToken){showToast("共有トークンを設定してください");return;}
+  if(!sharedGistId){setSharedSt("⚠ 共有Gist IDを設定してください","err");return;}
+  setSharedSt("ダウンロード中…","ing");
+  const data=await sharedGistGet();
+  if(!data){setSharedSt("⚠ データなし","err");showToast("データなし");return;}
+  const remote=data.saves||[];
+  if(remote.length){
+    const local=lSharedSaves(),merged=[...remote];
+    local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});
+    merged.sort((a,b)=>b.id-a.id);wSharedSaves(merged);
+    setSharedSt("✓ ダウンロード完了（"+merged.length+"件）","ok");
+    showToast(merged.length+"件取得しました");renderSharedList();}
+  else setSharedSt("⚠ クラウドにデータがありません","err");
+}
+
+function setSharedGistId(){
+  const raw=document.getElementById("shared-gist-id-input").value.trim();
+  if(!raw){setSharedSt("Gist IDを入力してください","err");return;}
+  const m=raw.match(/([a-f0-9]{20,40})/i);
+  if(!m){setSharedSt("⚠ 有効なGist IDが見つかりません","err");return;}
+  sharedGistId=m[1];localStorage.setItem(L_SGIST,sharedGistId);
+  updSharedGistDisplay();setSharedSt("✓ Gist ID設定済み","ok");showToast("Gist IDを設定しました");
+}
+
 async function loadSharedGist(){
-  const raw=document.getElementById("shared-gist-input").value.trim();if(!raw){setSharedSt("GistのIDかURLを入力してください","err");return;}
-  const idMatch=raw.match(/([a-f0-9]{20,40})/i);if(!idMatch){setSharedSt("⚠ 有効なGist IDが見つかりません","err");return;}
-  const id=idMatch[1];setSharedSt("読み込み中…","ing");
-  const data=await gistGet(id);if(!data){setSharedSt("⚠ 読み込み失敗。IDを確認するかトークンを設定してください","err");return;}
-  const remote=data.saves||[];if(!remote.length){setSharedSt("⚠ 保存データが見つかりませんでした","err");return;}
-  const local=lSaves();const merged=[...local];let added=0;
-  remote.forEach(r=>{if(!merged.find(l=>l.id===r.id)){merged.push({...r,_shared:true});added++;}});
-  merged.sort((a,b)=>b.id-a.id);currentSaves=merged;wSaves(merged);
-  setSharedSt("✓ "+added+"件追加しました","ok");showToast(added+"件の共有データを読み込みました");
-  if(currentSavePage==="personal")renderSaveList();
-  renderSharedList();
+  // 後方互換用（旧コード呼び出し対応、実際は使わない）
 }
 document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
 document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
 document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
 document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
-document.getElementById("btn-load-shared").addEventListener("click",loadSharedGist);
-watchInp(document.getElementById("shared-gist-input"),document.getElementById("w-shared-gist"));
+// 共有タブ
+document.getElementById("btn-apply-stoken").addEventListener("click",()=>applySharedKey(document.getElementById("shared-token-input").value));
+document.getElementById("shared-token-input").addEventListener("keydown",e=>{if(e.key==="Enter")applySharedKey(document.getElementById("shared-token-input").value);});
+document.getElementById("btn-set-sgist").addEventListener("click",setSharedGistId);
+document.getElementById("shared-gist-id-input").addEventListener("keydown",e=>{if(e.key==="Enter")setSharedGistId();});
+document.getElementById("btn-shared-upload").addEventListener("click",uploadToShared);
+document.getElementById("btn-shared-download").addEventListener("click",downloadFromShared);
+watchInp(document.getElementById("shared-token-input"),document.getElementById("w-stoken"));
+watchInp(document.getElementById("shared-gist-id-input"),document.getElementById("w-sgist"));
 
 // ===== セーブ/ロード =====
 function getCurrentData(){const strV=vals.str||0,sizV=vals.siz||0,db=(strV||sizV)?getDB(strV+sizV):null;return{id:Date.now(),name:document.getElementById("npc-name").value||"（名称なし）",savedAt:new Date().toISOString(),vals:{...vals},ov:{...ov},ovManual:{...ovManual},skList:JSON.parse(JSON.stringify(skList)),atkList:JSON.parse(JSON.stringify(atkList)),splList:JSON.parse(JSON.stringify(splList)),memoList:JSON.parse(JSON.stringify(memoList)),consumables:JSON.parse(JSON.stringify(consumables)),dmgLabel:db?db.label:null,build:db?db.build:null};}
@@ -1220,12 +1378,42 @@ function renderSaveList(){
 }
 function renderSharedList(){
   const wrap=document.getElementById("shared-list-wrap");
-  const shared=currentSaves.filter(s=>s._shared);
-  if(!shared.length){wrap.innerHTML='<p class="save-empty">まだ共有データを読み込んでいません<br><span style="font-size:12px;color:var(--text3)">上の欄にGist IDを入力して読み込んでください</span></p>';return;}
-  wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">読み込んだ共有データ（'+shared.length+'件）</div><div class="save-list">'+shared.map(sv=>renderSaveCard(sv,true)).join("")+'</div>';
-  bindSaveListEvents(wrap);
+  const shared=lSharedSaves();
+  if(!shared.length){wrap.innerHTML='<p class="save-empty">共有データがありません<br><span style="font-size:12px;color:var(--text3)">「現在のデータを共有に保存」または「共有から取得」でデータが追加されます</span></p>';return;}
+  wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">共有データ（'+shared.length+'件）</div><div class="save-list">'+shared.map(sv=>renderSaveCard(sv,true)).join("")+'</div>';
+  // 共有リストのイベント（読み込みのみ、削除は個人のみ）
+  wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("「"+sv.name+"」を読み込みました");});});
+  wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};shared[idx]=u;wSharedSaves(shared);renderSharedList();showToast("「"+u.name+"」を上書きしました");if(sharedToken){setSharedSt("同期中…","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"✓ 共有に同期しました":"⚠ 同期失敗",ok?"ok":"err");}});});
+  wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("「"+sv.name+"」を共有リストから削除しますか？"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("削除しました");});});
 }
-document.getElementById("btn-save-current").addEventListener("click",async()=>{const d=getCurrentData();writeSaves([d,...currentSaves]);renderSaveList();showToast("「"+d.name+"」を保存しました");if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに同期しました":"⚠ 同期失敗",ok?"ok":"err");}});
+async function saveDataTo(dest){
+  const d=getCurrentData();
+  if(dest==="personal"){
+    writeSaves([d,...currentSaves]);
+    if(currentSavePage==="personal")renderSaveList();
+    showToast("「"+d.name+"」を個人に保存しました");
+    if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに同期しました":"⚠ 同期失敗",ok?"ok":"err");}
+  }else if(dest==="shared"){
+    const shared=lSharedSaves();wSharedSaves([d,...shared]);
+    if(currentSavePage==="shared")renderSharedList();
+    showToast("「"+d.name+"」を共有に保存しました");
+    if(sharedToken){setSharedSt("同期中…","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"✓ 共有に同期しました":"⚠ 同期失敗",ok?"ok":"err");}
+  }
+}
+function showSaveDestPicker(){
+  const hasShared=!!sharedToken;
+  if(!hasShared){saveDataTo("personal");return;}
+  // 両方設定済み→選択ポップアップ
+  const overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";
+  overlay.innerHTML='<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">保存先を選択</div><button id="sp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">👤 個人に保存</button><button id="sp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">👥 共有に保存</button><button id="sp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">キャンセル</button></div>';
+  document.body.appendChild(overlay);
+  document.getElementById("sp-personal").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("personal");});
+  document.getElementById("sp-shared").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("shared");});
+  document.getElementById("sp-cancel").addEventListener("click",()=>document.body.removeChild(overlay));
+}
+document.getElementById("btn-save-current").addEventListener("click",showSaveDestPicker);
+document.getElementById("btn-save-shared-current").addEventListener("click",()=>saveDataTo("shared"));
 
 // ===== タブ切り替え =====
 function switchKpTab(t){document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));["combat","san","mythos","madness","misc"].forEach(id=>{document.getElementById("kp-"+id).style.display=id===t?"":"none";});}
@@ -1245,6 +1433,12 @@ const savedInput=document.getElementById("sync-key-input");
 if(savedToken&&savedInput){savedInput.value=savedToken;applyKey(savedToken);}
 else{currentSaves=lSaves();loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();}
 checkTokenExpiry();
+// 共有Token初期化
+const savedSToken=localStorage.getItem(L_STOKEN)||"";
+const savedSInput=document.getElementById("shared-token-input");
+if(savedSToken&&savedSInput){savedSInput.value=savedSToken;applySharedKey(savedSToken);}
+const savedSGist=localStorage.getItem(L_SGIST)||"";
+if(savedSGist){sharedGistId=savedSGist;updSharedGistDisplay();const sgi=document.getElementById("shared-gist-id-input");if(sgi)sgi.value=savedSGist;document.getElementById("btn-shared-upload").disabled=!savedSToken;document.getElementById("btn-shared-download").disabled=!savedSToken;}
 </script>
 </body>
 </html>
