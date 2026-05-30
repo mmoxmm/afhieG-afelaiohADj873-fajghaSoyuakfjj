@@ -747,31 +747,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
   </div>
 </div>
-  
-  <!-- 出力ページ -->
-  <div id="save-page-export" style="display:none">
-    <div class="export-block">
-      <div class="export-title">🎮 ここふぉりあ出力</div>
-      <div style="display:flex;gap:4px;margin-bottom:5px">
-        <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
-        <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
-          <input type="checkbox" id="chk-both-db" onchange="updateExport()" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
-          DB付き/なし両方生成
-        </label>
-        <span style="font-size:11px;color:var(--text3)">攻撃欄DBチェック行のみ適用</span>
-      </div>
-      <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
-      <div class="export-btn-row">
-        <button class="export-btn" onclick="copyExport()">📋 コピー</button>
-        <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
-      </div>
-      <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。<br>※ メモの「メモ」＝キャラクターメモ欄、「パレ」＝チャットパレット、「なし」＝出力しない。</div>
-    </div>
-  </div>
-</div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -1630,7 +1605,15 @@ document.getElementById("btn-save-shared-current").addEventListener("click",()=>
 
 // ===== タブ切り替え =====
 function switchKpTab(t){document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));["combat","san","mythos","madness","misc"].forEach(id=>{document.getElementById("kp-"+id).style.display=id===t?"":"none";});}
-function switchTab(t){document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));["stats","dice","kp","save"].forEach(id=>{document.getElementById("tab-"+id).style.display=id===t?"":"none";});if(t==="save"){if(currentSavePage==="personal")renderSaveList();else if(currentSavePage==="export")updateExport();else if(currentSavePage==="shared")renderSharedList();}if(t==="dice"){updatePreviewSelect();updateDice();}}
+function switchTab(t){
+  document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  ["stats","dice","kp","save"].forEach(id=>{document.getElementById("tab-"+id).style.display=id===t?"":"none";});
+  if(t==="save"){
+    if(currentSavePage==="personal"){renderSaveList();updateExport();}
+    else if(currentSavePage==="shared"){renderSharedList();updateExport();}
+  }
+  if(t==="dice"){updatePreviewSelect();updateDice();}
+}
 document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
