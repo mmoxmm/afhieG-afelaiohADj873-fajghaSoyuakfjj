@@ -1069,59 +1069,58 @@ function updConsBadge(){document.getElementById("badge-cons").textContent=consum
 
 // ===== 解析 =====
 function normalizeNpcText(t){return t.replace(/[Ａ-Ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[ａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[：]/g,':').replace(/[＋]/g,'+').replace(/[－−]/g,'-').replace(/[　]/g,' ').replace(/[％%]/g,'%').replace(/[／]/g,'/').replace(/[（]/g,'(').replace(/[）]/g,')').replace(/[。]/g,'.');}
-/* function tryParseCocoforiaJSON(text){
+// function tryParseCocoforiaJSON(text){
   // ここふぉりあJSON逆変換
-  let obj;
-  try{obj=JSON.parse(text.trim());}catch{return null;}
-  if(!obj||obj.kind!=="character"||!obj.data)return null;
-  const d=obj.data;
-  const r={stats:{},hp:null,mp:null,san:null,luck:null,attacks:[],skills:[],memos:[]};
+ // let obj;
+// try{obj=JSON.parse(text.trim());}catch{return null;}
+//  if(!obj||obj.kind!=="character"||!obj.data)return null;
+//  const d=obj.data;
+//  const r={stats:{},hp:null,mp:null,san:null,luck:null,attacks:[],skills:[],memos:[]};
   // params -> vals (7版%値として読み込み)
-  if(Array.isArray(d.params)){
-    d.params.forEach(p=>{
-      const lbl=(p.label||"").toUpperCase();const v=parseInt(p.value)||0;
-      if(!v)return;
-      const k=STATS.find(s=>s.label===lbl||s.key===lbl.toLowerCase());
-      if(k)r.stats[k.key]=Math.round(v/5);// 7版%→6版値に戻す（内部でまた×5する）
-    });
-  }
+//  if(Array.isArray(d.params)){
+//    d.params.forEach(p=>{
+//      const lbl=(p.label||"").toUpperCase();const v=parseInt(p.value)||0;
+//      if(!v)return;
+//      const k=STATS.find(s=>s.label===lbl||s.key===lbl.toLowerCase());
+//      if(k)r.stats[k.key]=Math.round(v/5);// 7版%→6版値に戻す（内部でまた×5する）
+//    });
+//  }
   // status -> HP/MP/SAN/幸運/消耗品
-  if(Array.isArray(d.status)){
-    d.status.forEach(s=>{
-      const lbl=(s.label||"");const v=parseInt(s.value)||0;
-      if(lbl==="HP")r.hp=v;else if(lbl==="MP")r.mp=v;
-      else if(lbl==="SAN")r.san=v;else if(lbl==="幸運")r.luck=v;
-    });
-  }
+//  if(Array.isArray(d.status)){
+ //   d.status.forEach(s=>{
+//      const lbl=(s.label||"");const v=parseInt(s.value)||0;
+//      if(lbl==="HP")r.hp=v;else if(lbl==="MP")r.mp=v;
+//      else if(lbl==="SAN")r.san=v;else if(lbl==="幸運")r.luck=v;
+//    });
+//  }
   // commands -> 攻撃・技能に逆変換
-  if(d.commands){
-    const lines=d.commands.split("\n");
-    lines.forEach(line=>{
+//  if(d.commands){
+//    const lines=d.commands.split("\n");
+//    lines.forEach(line=>{
       // CC<=XX 【名前】 形式
-      const m=line.match(/CC<=\s*(\d+)\s*[【\[](.+?)[】\]]/);
-      if(m){
-        const pct=parseInt(m[1]),name=m[2].replace(/ダメージ.*$/,"").trim();
-        if(pct>0&&name&&!name.includes("SAN")){
+//      const m=line.match(/CC<=\s*(\d+)\s*[【\[](.+?)[】\]]/);
+//      if(m){
+//        const pct=parseInt(m[1]),name=m[2].replace(/ダメージ.*$/,"").trim();
+//        if(pct>0&&name&&!name.includes("SAN")){
           // ダメージ行があれば攻撃、なければ技能
-          const dmgLine=lines.find(l=>l.includes("【"+name+"ダメージ"))||lines.find(l=>l.match(/[dD]\d+/)&&l.includes(name));
-          const dmgM=dmgLine?dmgLine.match(/^([^【]+)/):null;
-          if(dmgM||lines.some(l=>l.includes("【"+name+"ダメージ"))){
-            const dmgVal=dmgM?dmgM[1].trim().replace(/\+[^+]+ダメ.*/,"").trim():"";
-            if(!r.attacks.find(a=>a.name===name))r.attacks.push({name,pct:String(pct),dmg:dmgVal});
-          }else{
-            if(!r.skills.find(s=>s.name===name))r.skills.push({name,val:pct});
-          }
-        }
-      }
-    });
-  }
+//          const dmgLine=lines.find(l=>l.includes("【"+name+"ダメージ"))||lines.find(l=>l.match(/[dD]\d+/)&&l.includes(name));
+//          const dmgM=dmgLine?dmgLine.match(/^([^【]+)/):null;
+//          if(dmgM||lines.some(l=>l.includes("【"+name+"ダメージ"))){
+//            const dmgVal=dmgM?dmgM[1].trim().replace(/\+[^+]+ダメ.*/,"").trim():"";
+//            if(!r.attacks.find(a=>a.name===name))r.attacks.push({name,pct:String(pct),dmg:dmgVal});
+//          }else{
+//            if(!r.skills.find(s=>s.name===name))r.skills.push({name,val:pct});
+//          }
+//        }
+//      }
+//    });
+//  }
   // memo -> メモ
-  if(d.memo){const lines=d.memo.split("\n").filter(l=>l.trim());lines.forEach(l=>{const parts=l.split(/[　\s]{1,3}/);r.memos.push({label:parts[0]||"",content:parts.slice(1).join(" ")||l});});}
+//  if(d.memo){const lines=d.memo.split("\n").filter(l=>l.trim());lines.forEach(l=>{const parts=l.split(/[　\s]{1,3}/);r.memos.push({label:parts[0]||"",content:parts.slice(1).join(" ")||l});});}
   // キャラ名をNPC名フィールドに
-  if(d.name){r._characterName=d.name;}
-  return r;
-} 
-*/
+//  if(d.name){r._characterName=d.name;}
+//  return r;
+// } 
   
 function parseNpcText(text){
   const t=normalizeNpcText(text);
