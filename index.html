@@ -53,21 +53,20 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .save-page-btn{flex:1;background:none;border:none;border-radius:6px;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 8px;transition:all .2s;text-align:center}
 .save-page-btn.active{background:var(--bg);color:var(--text);box-shadow:var(--shadow)}
 /* ステータスグリッド */
-.stat-grid-wrap{display:grid;grid-template-columns:58px 44px 1fr 1fr 1fr;gap:2px}
+.stat-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
 .sg-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .sg-col-hd:first-child{text-align:left}
 .sg-label{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:var(--cell-h);padding:0 2px 0 0}
 .sg-label strong{font-size:15px;font-weight:700;line-height:1.15}
 .sg-label em{font-size:10px;color:var(--text3);font-style:normal;line-height:1.2;margin-top:1px}
-.sg-inp-cell{position:relative;display:flex;align-items:center;height:var(--cell-h)}
-.sg-inp{width:100%;height:34px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:15px;font-weight:700;text-align:center;padding:0 16px 0 3px;outline:none;transition:border .15s;-moz-appearance:textfield}
+.sg-inp-cell{position:relative;display:flex;align-items:center;height:var(--cell-h);min-width:0}
+.sg-inp{width:100%;height:34px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:15px;font-weight:700;text-align:center;padding:0 18px 0 5px;outline:none;transition:background .2s,border-color .2s;-moz-appearance:textfield}
 .sg-inp::-webkit-inner-spin-button,.sg-inp::-webkit-outer-spin-button{-webkit-appearance:none}
 .sg-inp:focus{border-color:var(--accent);background:var(--bg)}
 .sg-clr{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;line-height:1;padding:1px 2px;display:none}
 .sg-conv{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:17px;font-weight:700;color:var(--text)}
 .sg-half{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:14px;color:var(--text2)}
-.sg-fifth{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:13px;color:var(--text3)}
-/* 派生値グリッド（能力値と同じ5列） */
+.sg-fifth{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:13px;color:var(--text3)}/* 派生値グリッド（能力値と同じ5列） */
 .dv-grid-wrap{display:grid;grid-template-columns:58px 44px 1fr 1fr 1fr;gap:2px}
 .dv-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .dv-col-hd:first-child{text-align:left}
@@ -311,6 +310,18 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .shared-badge{font-size:10px;background:var(--success);color:#fff;border-radius:3px;padding:1px 4px;margin-left:3px;font-weight:700}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+/* ===== 修正追加CSS ===== */
+/* 能力値グリッド列幅調整（入力欄を広く、間隔詰め） */
+.stat-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
+.dv-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
+/* 入力欄を少し広く */
+.sg-inp{padding:0 18px 0 5px;min-width:0}
+.sg-inp-cell{min-width:0}
+/* 7版モードの遷移アニメ */
+.sg-inp{transition:background .2s,border-color .2s}
+/* 保存タブアコーディオン内のsync-key-block余白を除去 */
+#body-sync-personal .sync-key-block,
+#body-sync-shared .sync-key-block{border:none;background:none;padding:0;margin:0}
 </style>
 </head><body>
 <div class="app-header">
@@ -356,9 +367,14 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start;margin-top:2px">
     <div>
       <div class="panel-label">能力値</div>
-      <div class="stat-grid-wrap">
-        <div class="sg-col-hd"></div><div class="sg-col-hd" id="sg-hd-inp">6版</div><div class="sg-col-hd" id="sg-hd-conv">7版%</div><div class="sg-col-hd">½</div><div class="sg-col-hd">⅕</div>
-      </div>
+      <!-- 既存の sg-col-hd 4つ目・5つ目を変更 -->
+<div class="stat-grid-wrap">
+  <div class="sg-col-hd"></div>
+  <div class="sg-col-hd" id="sg-hd-inp">6版</div>
+  <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
+  <div class="sg-col-hd" id="sg-col-hd-h">½(H)</div>
+  <div class="sg-col-hd" id="sg-col-hd-e">⅕(E)</div>
+</div>
       <div class="stat-grid-wrap" id="stat-rows"></div>
     </div>
     <div>
@@ -602,67 +618,136 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 <!-- SAVE TAB -->
 <div id="tab-save" style="display:none">
-  <!-- ページ切り替えバー -->
   <div class="save-page-bar">
     <button class="save-page-btn active" id="spb-personal" onclick="switchSavePage('personal')">👤 個人</button>
     <button class="save-page-btn" id="spb-shared" onclick="switchSavePage('shared')">👥 共有</button>
-    <button class="save-page-btn" id="spb-export" onclick="switchSavePage('export')">🎮 出力</button>
   </div>
 
   <!-- 個人ページ -->
   <div id="save-page-personal">
-    <div class="sync-key-block">
-      <div class="sync-key-title">☁️ 個人クラウド同期（GitHub Gist）</div>
-      <div class="sync-key-desc">GitHub Personal Access Token（gistスコープ）でデバイス間データ共有。</div>
-      <div id="token-expired-warn" style="display:none;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);padding:6px 9px;font-size:12px;color:var(--danger);margin-bottom:6px;line-height:1.6"></div>
-      <div class="sync-key-row">
-        <div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="ghp_xxxx... を入力" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div>
-        <button class="btn-sync" id="btn-apply-key">設定</button>
+    <!-- クラウド同期（折りたたみ） -->
+    <div class="accordion" style="margin-top:0;margin-bottom:5px">
+      <div class="acc-hd" onclick="toggleAcc('sync-personal')">
+        <div class="acc-hd-left">
+          <span class="acc-title">☁️ 個人クラウド同期（GitHub Gist）</span>
+          <span id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span>
+        </div>
+        <span class="acc-arrow" id="arrow-sync-personal">▼</span>
       </div>
-      <div style="display:flex;gap:4px;margin-top:5px">
-        <button class="btn-sync" id="btn-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ アップロード</button>
-        <button class="btn-sync" id="btn-download" style="flex:1;font-size:13px" disabled>⬇️ ダウンロード</button>
+      <div class="acc-body" id="body-sync-personal">
+        <div class="sync-key-block" style="border:none;padding:0;margin-bottom:0;background:none">
+          <div class="sync-key-desc">GitHub Personal Access Token（gistスコープ）でデバイス間データ共有。</div>
+          <div id="token-expired-warn" style="display:none;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);padding:6px 9px;font-size:12px;color:var(--danger);margin-bottom:6px;line-height:1.6"></div>
+          <div class="sync-key-row">
+            <div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="ghp_xxxx... を入力" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div>
+            <button class="btn-sync" id="btn-apply-key">設定</button>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:5px">
+            <button class="btn-sync" id="btn-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ アップロード</button>
+            <button class="btn-sync" id="btn-download" style="flex:1;font-size:13px" disabled>⬇️ ダウンロード</button>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5" id="gist-id-display"></div>
+          <div class="sync-status" id="sync-status"></div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5" id="gist-id-display"></div>
-      <div class="sync-status" id="sync-status"></div>
     </div>
+
+    <!-- 出力セクション（個人タブ内） -->
+    <div class="accordion" style="margin-top:0;margin-bottom:5px">
+      <div class="acc-hd" onclick="toggleAcc('export-personal')">
+        <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
+        <span class="acc-arrow" id="arrow-export-personal">▼</span>
+      </div>
+      <div class="acc-body" id="body-export-personal">
+        <div style="display:flex;gap:4px;margin-bottom:5px">
+          <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
+          <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
+            <input type="checkbox" id="chk-both-db" onchange="updateExport()" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            DB付き/なし両方生成
+          </label>
+          <span style="font-size:11px;color:var(--text3)">攻撃欄DBチェック行のみ適用</span>
+        </div>
+        <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+        <div class="export-btn-row">
+          <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+          <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
+        </div>
+        <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。<br>※ メモの「メモ」＝キャラクターメモ欄、「パレ」＝チャットパレット、「なし」＝出力しない。</div>
+      </div>
+    </div>
+
     <div class="save-toolbar"><button class="btn-pri" id="btn-save-current">現在のデータを保存</button></div>
     <div id="save-list-wrap"></div>
   </div>
 
   <!-- 共有ページ -->
   <div id="save-page-shared" style="display:none">
-    <div class="sync-key-block" style="border-color:rgba(26,158,114,.4)">
-      <div class="sync-key-title" style="color:var(--success)">👥 共有クラウド設定</div>
-      <div class="sync-key-desc">共有用GistへのToken（gistスコープ）とGist IDを設定します。セッションメンバーと同じToken・GistIDを設定することで、共同編集・保存が可能です。</div>
-      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">① 共有用 GitHub Token</div>
-      <div class="sync-key-row" style="margin-bottom:4px">
-        <div class="inp-wrap" id="w-stoken"><input type="text" id="shared-token-input" placeholder="ghp_xxxx... （共有用）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-token-input','w-stoken')">×</button></div>
-        <button class="btn-sync" id="btn-apply-stoken" style="background:var(--success)">設定</button>
+    <!-- 共有クラウド同期（折りたたみ） -->
+    <div class="accordion" style="margin-top:0;margin-bottom:5px;border-color:rgba(26,158,114,.4)">
+      <div class="acc-hd" onclick="toggleAcc('sync-shared')" style="background:rgba(26,158,114,.06)">
+        <div class="acc-hd-left">
+          <span class="acc-title" style="color:var(--success)">👥 共有クラウド設定</span>
+          <span id="shared-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span>
+        </div>
+        <span class="acc-arrow" id="arrow-sync-shared">▼</span>
       </div>
-      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">② 共有Gist ID（任意）</div>
-      <div class="sync-key-row" style="margin-bottom:4px">
-        <div class="inp-wrap" id="w-sgist"><input type="text" id="shared-gist-id-input" placeholder="既存のGist IDを入力（空欄=新規作成）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-gist-id-input','w-sgist')">×</button></div>
-        <button class="btn-sync" id="btn-set-sgist">確定</button>
-      </div>
-      <div id="shared-gist-display" style="font-size:11px;color:var(--text3);margin-bottom:3px"></div>
-      <div style="display:flex;gap:4px;margin-top:4px">
-        <button class="btn-sync" id="btn-shared-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ 共有にアップ</button>
-        <button class="btn-sync" id="btn-shared-download" style="flex:1;font-size:13px" disabled>⬇️ 共有から取得</button>
-      </div>
-      <div class="sync-status" id="shared-sync-status"></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.7;background:var(--bg3);border-radius:var(--radius);padding:6px 8px">
-        <strong style="color:var(--text2)">使い方</strong><br>
-        ① 共有したいメンバー全員が同じTokenとGistIDを設定<br>
-        ② 「現在のデータを保存」→ 保存先を「共有」に選択<br>
-        ③ 「⬆️ 共有にアップ」で同期<br>
-        ④ 他のメンバーは「⬇️ 共有から取得」でデータを受け取れる
+      <div class="acc-body" id="body-sync-shared">
+        <div style="background:none;border:none;padding:0">
+          <div class="sync-key-desc">共有用GistへのToken（gistスコープ）とGist IDを設定します。セッションメンバーと同じToken・GistIDを設定することで、共同編集・保存が可能です。</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">① 共有用 GitHub Token</div>
+          <div class="sync-key-row" style="margin-bottom:4px">
+            <div class="inp-wrap" id="w-stoken"><input type="text" id="shared-token-input" placeholder="ghp_xxxx... （共有用）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-token-input','w-stoken')">×</button></div>
+            <button class="btn-sync" id="btn-apply-stoken" style="background:var(--success)">設定</button>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">② 共有Gist ID（任意）</div>
+          <div class="sync-key-row" style="margin-bottom:4px">
+            <div class="inp-wrap" id="w-sgist"><input type="text" id="shared-gist-id-input" placeholder="既存のGist IDを入力（空欄=新規作成）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-gist-id-input','w-sgist')">×</button></div>
+            <button class="btn-sync" id="btn-set-sgist">確定</button>
+          </div>
+          <div id="shared-gist-display" style="font-size:11px;color:var(--text3);margin-bottom:3px"></div>
+          <div style="display:flex;gap:4px;margin-top:4px">
+            <button class="btn-sync" id="btn-shared-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ 共有にアップ</button>
+            <button class="btn-sync" id="btn-shared-download" style="flex:1;font-size:13px" disabled>⬇️ 共有から取得</button>
+          </div>
+          <div class="sync-status" id="shared-sync-status"></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.7;background:var(--bg3);border-radius:var(--radius);padding:6px 8px">
+            <strong style="color:var(--text2)">使い方</strong><br>
+            ① 共有したいメンバー全員が同じTokenとGistIDを設定<br>
+            ② 「現在のデータを保存」→ 保存先を「共有」に選択<br>
+            ③ 「⬆️ 共有にアップ」で同期<br>
+            ④ 他のメンバーは「⬇️ 共有から取得」でデータを受け取れる
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 出力セクション（共有タブ内） -->
+    <div class="accordion" style="margin-top:0;margin-bottom:5px">
+      <div class="acc-hd" onclick="toggleAcc('export-shared')">
+        <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
+        <span class="acc-arrow" id="arrow-export-shared">▼</span>
+      </div>
+      <div class="acc-body" id="body-export-shared">
+        <div style="display:flex;gap:4px;margin-bottom:5px">
+          <button onclick="setExportMode('json')" class="export-btn" style="font-size:12px" id="exp-btn-json2">キャラパレJSON</button>
+          <button onclick="setExportMode('text')" class="export-btn sec" style="font-size:12px" id="exp-btn-text2">チャット用テキスト</button>
+        </div>
+        <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+        <div class="export-btn-row">
+          <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+        </div>
+        <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V でキャラコマ生成。</div>
+      </div>
+    </div>
+
     <div class="save-toolbar"><button class="btn-pri" id="btn-save-shared-current" style="background:var(--success)">現在のデータを共有に保存</button></div>
     <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
   </div>
-
+</div>
+  
   <!-- 出力ページ -->
   <div id="save-page-export" style="display:none">
     <div class="export-block">
@@ -749,15 +834,14 @@ function loadMemoLocal(){try{const r=JSON.parse(localStorage.getItem("coc_v4_mem
 // ===== 保存タブ ページ切替 =====
 function switchSavePage(page){
   currentSavePage=page;
-  ["personal","shared","export"].forEach(p=>{
+  ["personal","shared"].forEach(p=>{
     document.getElementById("save-page-"+p).style.display=p===page?"":"none";
     document.getElementById("spb-"+p).classList.toggle("active",p===page);
   });
-  if(page==="personal")renderSaveList();
-  if(page==="export")updateExport();
-  if(page==="shared")renderSharedList();
+  if(page==="personal"){renderSaveList();updateExport();}
+  if(page==="shared"){renderSharedList();updateExport();}
 }
-
+  
 // ===== 入力モード =====
 function setInputMode(mode){
   inputMode=mode;
@@ -766,15 +850,19 @@ function setInputMode(mode){
   document.getElementById("mode-hint").textContent=mode===6?"6版値→7版%に自動変換":"7版%を直接入力";
   document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";
   document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";
+  // 入力欄の色を7版モードで青みがかった背景に
+  const isV7=mode===7;
   document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{
     const k=inp.dataset.key,v=vals[k]||0;
     inp.value=v>0?(mode===6?Math.round(v/5):v):"";
     inp.placeholder=mode===6?"6版値":"7版%";
     inp.max=mode===6?99:999;
+    inp.style.background=isV7?"rgba(40,85,160,0.10)":"";
+    inp.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";
   });
   updateStatDisplay();
 }
-
+  
 // ===== DB計算 =====
 function getDB(t){
   if(t<=64)return{label:"-2",build:"-2",cmd:null};if(t<=84)return{label:"-1",build:"-1",cmd:null};
@@ -790,10 +878,16 @@ function getEff(k){return ovManual[k]?ov[k]:calcAuto(k);}
 // ===== 能力値グリッド =====
 function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
+  // ヘッダーのH/Eも更新
+  const hH=document.getElementById("sg-col-hd-h");
+  const hE=document.getElementById("sg-col-hd-e");
+  if(hH)hH.textContent="½(H)";
+  if(hE)hE.textContent="⅕(E)";
   STATS.forEach(({key,label,jp})=>{
     const lc=document.createElement("div");lc.className="sg-label";lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
     const ic=document.createElement("div");ic.className="sg-inp-cell";
     const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6版値":"7版%";inp.className="sg-inp";inp.dataset.key=key;
+    if(inputMode===7){inp.style.background="rgba(40,85,160,0.10)";inp.style.borderColor="rgba(40,85,160,0.35)";}
     const clr=document.createElement("button");clr.className="sg-clr";clr.textContent="×";
     ic.append(inp,clr);
     const convEl=document.createElement("div");convEl.className="sg-conv";convEl.id="v-conv-"+key;convEl.textContent="—";
@@ -805,7 +899,7 @@ function buildStatRows(){
   });
   buildDerivedRows();
 }
-function updateStatDisplay(){
+  function updateStatDisplay(){
   STATS.forEach(({key})=>{
     const v7=vals[key]||0;
     const ce=document.getElementById("v-conv-"+key),he=document.getElementById("v-h-"+key),fe=document.getElementById("v-f-"+key);
@@ -1047,58 +1141,166 @@ function tryParseCocoforiaJSON(text){
 }
 function parseNpcText(text){
   const t=normalizeNpcText(text);
-  const r={stats:{},hp:null,mp:null,san:null,attacks:[],skills:[],memos:[]};
-  ['STR','CON','SIZ','INT','POW','DEX','APP','EDU'].forEach(key=>{const m=t.match(new RegExp(key+'\\s*[:= ]?\\s*(\\d+)','i'));if(m)r.stats[key.toLowerCase()]=parseInt(m[1]);});
+  const r={stats:{},hp:null,mp:null,san:null,luck:null,attacks:[],skills:[],memos:[]};
+
+  // 能力値（6版値 or 7版%どちらでも）
+  ['STR','CON','SIZ','INT','POW','DEX','APP','EDU'].forEach(key=>{
+    const m=t.match(new RegExp(key+'\\s*[:= ]?\\s*(\\d+)','i'));
+    if(m)r.stats[key.toLowerCase()]=parseInt(m[1]);
+  });
+
   const hM=t.match(/(?:耐久力|HP)\s*[:= ]?\s*(\d+)/i);if(hM)r.hp=parseInt(hM[1]);
   const sM=t.match(/SAN\s*[:= ]?\s*(\d+)/i);if(sM)r.san=parseInt(sM[1]);
   const mM=t.match(/(?:MP|魔力)\s*[:= ]?\s*(\d+)/i);if(mM)r.mp=parseInt(mM[1]);
-  const ar=/([^\s\d%(\n][^\n%(]{0,13}?)\s+(\d{1,3})%\s+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)*)/g;
-  let m;while((m=ar.exec(t))!==null){const n=m[1].trim();if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>15)continue;if(!r.attacks.find(a=>a.name===n))r.attacks.push({name:n,pct:m[2],dmg:m[3]});}
-  const sr=/([^\s\d%(\n][^\n%(]{1,12}?)\s+(\d{1,3})%/g;
-  while((m=sr.exec(t))!==null){const n=m[1].trim();if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>14)continue;if(r.attacks.find(a=>a.name===n))continue;if(!r.skills.find(s=>s.name===n))r.skills.push({name:n,val:parseInt(m[2])});}
-  const dbM=t.match(/ダメージボーナス\s*[:= ]?\s*([+\-]\s*(?:\d+[dD]\d+|\d+))/i);if(dbM)r.memos.push({label:'DB',content:dbM[1].replace(/\s/g,'')});
-  const aM=text.match(/装甲[：:]\s*([^。\n]{1,50})/);if(aM&&aM[1].trim())r.memos.push({label:'装甲',content:aM[1].trim()});
-  // 名前推定：最初の行にSTR/CON等のキーワードがなければ名前候補とみなす
+  const lM=t.match(/(?:幸運|LUK|LUCK)\s*[:= ]?\s*(\d+)/i);if(lM)r.luck=parseInt(lM[1]);
+
+  // ======= 攻撃解析（強化版） =======
+  // 形式A: 武器名[タブ/スペース]+技能名[タブ/スペース]+ダメージ式（db/DB含む）
+  // 形式B: 技能名 XX% ダメージ式
+  // 形式C: タブ区切り縦並び「技能名\t値」の後に武器行
+
+  // まず技能値マップを作る（名前→値）
+  const skillMap={};
+  // 技能値行のパターン: 「名前\t数字」 or 「名前 数字%」
+  const skillLineRe=/^(.+?)[\t　 ]+(\d{1,3})\s*%?\s*$/gm;
+  let sm;
+  while((sm=skillLineRe.exec(t))!==null){
+    const n=sm[1].trim();
+    const v=parseInt(sm[2]);
+    if(n&&v>0&&n.length<=20&&!/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB)$/i.test(n)){
+      skillMap[n]=v;
+    }
+  }
+
+  // 武器行パターン: 武器名[タブ]+技能名（括弧含む）[タブ]+ダメージ式
+  // ダメージ式はdb/DB/+(db/2)なども許容
+  const atkLineRe=/^([^\t\n]+?)\t+([^\t\n]+?)\t+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)?(?:\+\s*(?:db|DB)(?:\/\s*\d+)?)?)\s*$/gm;
+  const foundAtkNames=new Set();
+  let am;
+  while((am=atkLineRe.exec(t))!==null){
+    const weaponName=am[1].trim().replace(/©︎|©/g,"").trim();
+    const skillName=am[2].trim();
+    const dmgRaw=am[3].trim().replace(/\bdb\b/gi,"DB");
+    if(!weaponName||!skillName)continue;
+    // 技能名からパーセント値を引く
+    const pct=skillMap[skillName]||0;
+    if(weaponName&&!r.attacks.find(a=>a.name===weaponName)){
+      r.attacks.push({name:weaponName,pct:String(pct),dmg:dmgRaw,note:pct?"":" ※技能値不明"});
+      foundAtkNames.add(skillName);
+    }
+  }
+
+  // 形式B: 技能名 XX% ダメージ式（インライン）
+  const arB=/([^\s\d%(\n©©︎][^\n%(]{0,13}?)\s+(\d{1,3})%\s+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)*)/g;
+  let mb;
+  while((mb=arB.exec(t))!==null){
+    const n=mb[1].trim();
+    if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>15)continue;
+    if(!r.attacks.find(a=>a.name===n))r.attacks.push({name:n,pct:mb[2],dmg:mb[3]});
+    foundAtkNames.add(n);
+  }
+
+  // 技能（skillMapから、攻撃に使われていないもの）
+  Object.entries(skillMap).forEach(([name,val])=>{
+    if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(name))return;
+    // 攻撃の技能名として使われているものも技能として追加（回避等）
+    if(!r.skills.find(s=>s.name===name))r.skills.push({name,val});
+  });
+
+  // 技能 形式B残り（インライン XX%形式、ダメージなし）
+  const srB=/([^\s\d%(\n©©︎][^\n%(]{1,12}?)\s+(\d{1,3})%/g;
+  let ms;
+  while((ms=srB.exec(t))!==null){
+    const n=ms[1].trim();
+    if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>14)continue;
+    if(r.attacks.find(a=>a.name===n))continue;
+    if(!r.skills.find(s=>s.name===n))r.skills.push({name:n,val:parseInt(ms[2])});
+  }
+
+  const dbM=t.match(/ダメージボーナス\s*[:= ]?\s*([+\-]\s*(?:\d+[dD]\d+|\d+))/i);
+  if(dbM)r.memos.push({label:'DB',content:dbM[1].replace(/\s/g,'')});
+  const aM=text.match(/装甲[：:]\s*([^。\n]{1,50})/);
+  if(aM&&aM[1].trim())r.memos.push({label:'装甲',content:aM[1].trim()});
+
+  // 名前推定
   const lines2=text.trim().split(/\n/);
   for(const line of lines2){
     const l=line.trim();if(!l)continue;
-    // 統計値っぽい行・空行・装甲行はスキップ
     if(/STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|装甲|耐久/i.test(l))break;
     if(/\d+[dD]\d+|\d+[%％]/.test(l))break;
-    // 短い行（20文字以内）で記号が少なければ名前候補
     if(l.length<=30&&!/[:：=＝]/.test(l)&&l.length>0){r._characterName=l.replace(/^[【《「＜<]|[】》」＞>]$/g,"").trim();break;}
   }
   return r;
 }
-function runParse(){
-  const text=document.getElementById("parse-input").value.trim();if(!text){showToast("テキストを入力してください");return;}
+ function runParse(){
+  const text=document.getElementById("parse-input").value.trim();
+  if(!text){showToast("テキストを入力してください");return;}
   openParse();
-  // ここふぉりあJSON検出
+  // 解析パネルの色を現在モードに合わせる
+  const parseBody=document.getElementById("body-parse");
+  if(parseBody){
+    parseBody.style.borderTop=inputMode===7?"2px solid rgba(40,85,160,0.4)":"";
+  }
   let p=null;
   if(text.trim().startsWith("{")){p=tryParseCocoforiaJSON(text);}
   if(!p)p=parseNpcText(text);
   const hasAny=Object.keys(p.stats).length>0||p.hp!==null||p.attacks.length>0||p.skills.length>0||p.memos.length>0;
   const el=document.getElementById("parse-result");el.style.display="block";
-  if(!hasAny){el.innerHTML='<div style="color:var(--danger);font-size:13px;padding:7px;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);line-height:1.5">認識できませんでした。</div>';return;}
-  applyParsed(p);el.innerHTML='<div class="parse-result-box" style="color:var(--success);font-size:12px">✅ 解析して適用しました</div>';
-  setTimeout(()=>{el.style.display="none";document.getElementById("body-parse").classList.remove("open");document.getElementById("arrow-parse").classList.remove("open");},1500);
+  if(!hasAny){
+    el.innerHTML='<div style="color:var(--danger);font-size:13px;padding:7px;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);line-height:1.5">認識できませんでした。</div>';
+    return;
+  }
+  applyParsed(p);
+  const isV7=inputMode===7;
+  el.innerHTML='<div class="parse-result-box" style="color:var(--success);font-size:12px;'+(isV7?'background:rgba(40,85,160,0.08);border:0.5px solid rgba(40,85,160,0.3);':'')+'">✅ 解析して適用しました'+(isV7?' <span style="color:var(--accent);font-size:11px">（7版モードで適用）</span>':'')+'</div>';
+  setTimeout(()=>{
+    el.style.display="none";
+    document.getElementById("body-parse").classList.remove("open");
+    document.getElementById("arrow-parse").classList.remove("open");
+  },1500);
 }
 function clearParse(){document.getElementById("parse-input").value="";const el=document.getElementById("parse-result");el.style.display="none";el.innerHTML="";}
 function applyParsed(p){
-  Object.keys(p.stats).forEach(key=>{const v6=p.stats[key],newV7=v6*5;if((vals[key]||0)===newV7)return;// 同じ値はスキップ
-vals[key]=newV7;const inp=document.querySelector('.sg-inp[data-key="'+key+'"]');if(inp){inp.value=inputMode===6?v6:newV7;inp.parentElement.querySelector(".sg-clr").style.display="block";}});
+  Object.keys(p.stats).forEach(key=>{
+    const rawVal=p.stats[key];
+    // 7版モード時はそのまま%値、6版モード時は×5して%値に
+    const newV7=inputMode===7?rawVal:rawVal*5;
+    if((vals[key]||0)===newV7)return;
+    vals[key]=newV7;
+    const inp=document.querySelector('.sg-inp[data-key="'+key+'"]');
+    if(inp){
+      inp.value=inputMode===6?rawVal:newV7;
+      inp.parentElement.querySelector(".sg-clr").style.display="block";
+    }
+  });
   if(p.hp!==null){ov.hp=p.hp;ovManual.hp=true;const i=document.getElementById("di-hp");if(i){i.value=p.hp;document.getElementById("dc-hp").style.display="block";}}
   if(p.mp!==null){ov.mp=p.mp;ovManual.mp=true;const i=document.getElementById("di-mp");if(i){i.value=p.mp;document.getElementById("dc-mp").style.display="block";}}
   if(p.san!==null){ov.san=p.san;ovManual.san=true;const i=document.getElementById("di-san");if(i){i.value=p.san;document.getElementById("dc-san").style.display="block";}}
-  if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>{if(!atkList.find(x=>x.name===a.name))atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:"",useDB:false});});if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];buildAtkRows();openAcc("atk");}
-  if(p.skills.length){skList=skList.filter(s=>s.name&&(s.val||0)>0);p.skills.forEach(s=>{if(!skList.find(x=>x.name===s.name))skList.push({id:nxtId++,name:s.name,val:s.val});});if(!skList.length)skList=[{id:nxtId++,name:"",val:0}];buildSkRows();openAcc("sk");}
-  if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>{if(!memoList.find(x=>x.label===m.label&&x.content===m.content))memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"});});buildMemoRows();openMemo();saveMemoLocal();}
-  if(p._characterName&&!document.getElementById("npc-name").value){document.getElementById("npc-name").value=p._characterName;document.getElementById("w-npcname").classList.add("hv");}
-  // luck
   if(p.luck!=null){ov.luck=p.luck;ovManual.luck=true;const i=document.getElementById("di-luck");if(i){i.value=p.luck;const c=document.getElementById("dc-luck");if(c)c.style.display="block";}}
+  if(p.attacks.length){
+    atkList=atkList.filter(a=>a.name);
+    p.attacks.forEach(a=>{if(!atkList.find(x=>x.name===a.name))atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:false});});
+    if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];
+    buildAtkRows();openAcc("atk");
+  }
+  if(p.skills.length){
+    skList=skList.filter(s=>s.name&&(s.val||0)>0);
+    p.skills.forEach(s=>{if(!skList.find(x=>x.name===s.name))skList.push({id:nxtId++,name:s.name,val:s.val});});
+    if(!skList.length)skList=[{id:nxtId++,name:"",val:0}];
+    buildSkRows();openAcc("sk");
+  }
+  if(p.memos.length){
+    memoList=memoList.filter(m=>m.label||m.content);
+    p.memos.forEach(m=>{if(!memoList.find(x=>x.label===m.label&&x.content===m.content))memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"});});
+    buildMemoRows();openMemo();saveMemoLocal();
+  }
+  if(p._characterName&&!document.getElementById("npc-name").value){
+    document.getElementById("npc-name").value=p._characterName;
+    document.getElementById("w-npcname").classList.add("hv");
+  }
   updateStatDisplay();
 }
-function fullReset(){
+  function fullReset(){
   if(!confirm("全データをリセットしますか？"))return;
   document.getElementById("npc-name").value="";document.getElementById("w-npcname").classList.remove("hv");
   STATS.forEach(({key})=>{vals[key]=0;});
@@ -1178,7 +1380,18 @@ function buildCocoforiaText(){
   const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("■ メモ");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}
   return lines.join("\n").trim();
 }
-function updateExport(){const el=document.getElementById("export-preview");if(!el)return;const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0)||consumables.some(c=>c.label);if(!any){el.textContent="（ステータスを入力すると出力されます）";return;}el.textContent=exportMode==="json"?buildCocoforiaJson():buildCocoforiaText();}
+function updateExport(){
+  const el=document.getElementById("export-preview");
+  const el2=document.getElementById("export-preview2");
+  const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0)||consumables.some(c=>c.label);
+  const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"（ステータスを入力すると出力されます）";
+  if(el)el.textContent=txt;
+  if(el2)el2.textContent=txt;
+  // 共有タブのボタン同期
+  const j2=document.getElementById("exp-btn-json2"),t2=document.getElementById("exp-btn-text2");
+  if(j2)j2.className="export-btn"+(exportMode==="json"?"":" sec");
+  if(t2)t2.className="export-btn"+(exportMode==="text"?"":" sec");
+} 
 function copyExport(){const el=document.getElementById("export-preview");if(!el)return;if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("データがありません");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));}else{const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));}}
 function downloadExport(){const el=document.getElementById("export-preview");if(!el)return;const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");const blob=new Blob([txt],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+".json";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);showToast("ダウンロードしました");}
 
