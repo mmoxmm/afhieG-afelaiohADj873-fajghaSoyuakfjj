@@ -825,7 +825,6 @@ function setInputMode(mode){
   document.getElementById("mode-hint").textContent=mode===6?"6版値→7版%に自動変換":"7版%を直接入力";
   document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";
   document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";
-  // 入力欄の色を7版モードで青みがかった背景に
   const isV7=mode===7;
   document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{
     const k=inp.dataset.key,v=vals[k]||0;
@@ -835,6 +834,12 @@ function setInputMode(mode){
     inp.style.background=isV7?"rgba(40,85,160,0.10)":"";
     inp.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";
   });
+  // 7版時：解析欄のテキストエリアも青くする
+  const parseInput=document.getElementById("parse-input");
+  if(parseInput){
+    parseInput.style.background=isV7?"rgba(40,85,160,0.07)":"";
+    parseInput.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";
+  }
   updateStatDisplay();
 }
   
@@ -853,7 +858,6 @@ function getEff(k){return ovManual[k]?ov[k]:calcAuto(k);}
 // ===== 能力値グリッド =====
 function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
-  // ヘッダーのH/Eも更新
   const hH=document.getElementById("sg-col-hd-h");
   const hE=document.getElementById("sg-col-hd-e");
   if(hH)hH.textContent="½(H)";
@@ -861,7 +865,10 @@ function buildStatRows(){
   STATS.forEach(({key,label,jp})=>{
     const lc=document.createElement("div");lc.className="sg-label";lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
     const ic=document.createElement("div");ic.className="sg-inp-cell";
-    const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6版値":"7版%";inp.className="sg-inp";inp.dataset.key=key;
+    const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6版":"7版%";inp.className="sg-inp";inp.dataset.key=key;
+    // placeholder見切れ防止：padding-rightを最小限にしてplaceholderを表示
+    inp.style.paddingRight="20px";
+    inp.style.fontSize="14px";
     if(inputMode===7){inp.style.background="rgba(40,85,160,0.10)";inp.style.borderColor="rgba(40,85,160,0.35)";}
     const clr=document.createElement("button");clr.className="sg-clr";clr.textContent="×";
     ic.append(inp,clr);
@@ -1118,7 +1125,6 @@ function parseNpcText(text){
   const t=normalizeNpcText(text);
   const r={stats:{},hp:null,mp:null,san:null,luck:null,attacks:[],skills:[],memos:[]};
 
-  // 能力値（6版値 or 7版%どちらでも）
   ['STR','CON','SIZ','INT','POW','DEX','APP','EDU'].forEach(key=>{
     const m=t.match(new RegExp(key+'\\s*[:= ]?\\s*(\\d+)','i'));
     if(m)r.stats[key.toLowerCase()]=parseInt(m[1]);
@@ -1129,14 +1135,7 @@ function parseNpcText(text){
   const mM=t.match(/(?:MP|魔力)\s*[:= ]?\s*(\d+)/i);if(mM)r.mp=parseInt(mM[1]);
   const lM=t.match(/(?:幸運|LUK|LUCK)\s*[:= ]?\s*(\d+)/i);if(lM)r.luck=parseInt(lM[1]);
 
-  // ======= 攻撃解析（強化版） =======
-  // 形式A: 武器名[タブ/スペース]+技能名[タブ/スペース]+ダメージ式（db/DB含む）
-  // 形式B: 技能名 XX% ダメージ式
-  // 形式C: タブ区切り縦並び「技能名\t値」の後に武器行
-
-  // まず技能値マップを作る（名前→値）
   const skillMap={};
-  // 技能値行のパターン: 「名前\t数字」 or 「名前 数字%」
   const skillLineRe=/^(.+?)[\t　 ]+(\d{1,3})\s*%?\s*$/gm;
   let sm;
   while((sm=skillLineRe.exec(t))!==null){
@@ -1147,42 +1146,47 @@ function parseNpcText(text){
     }
   }
 
-  // 武器行パターン: 武器名[タブ]+技能名（括弧含む）[タブ]+ダメージ式
-  // ダメージ式はdb/DB/+(db/2)なども許容
+  // DBパターン: +db, +DB, +dB, +(db), +(DB) などを検出する関数
+  function stripDB(dmgRaw){
+    // +DB, +db, +(DB), +(db) 等を除去しuseDBをtrueで返す
+    const dbPattern=/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*(?:\/\s*\d+)?\s*\)?/g;
+    const hasDB=dbPattern.test(dmgRaw);
+    const dmgStripped=dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*(?:\/\s*\d+)?\s*\)?/g,"").trim();
+    return{dmg:dmgStripped,useDB:hasDB};
+  }
+
   const atkLineRe=/^([^\t\n]+?)\t+([^\t\n]+?)\t+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)?(?:\+\s*(?:db|DB)(?:\/\s*\d+)?)?)\s*$/gm;
   const foundAtkNames=new Set();
   let am;
   while((am=atkLineRe.exec(t))!==null){
     const weaponName=am[1].trim().replace(/©︎|©/g,"").trim();
     const skillName=am[2].trim();
-    const dmgRaw=am[3].trim().replace(/\bdb\b/gi,"DB");
+    const dmgRaw=am[3].trim();
     if(!weaponName||!skillName)continue;
-    // 技能名からパーセント値を引く
     const pct=skillMap[skillName]||0;
+    const {dmg,useDB}=stripDB(dmgRaw);
     if(weaponName&&!r.attacks.find(a=>a.name===weaponName)){
-      r.attacks.push({name:weaponName,pct:String(pct),dmg:dmgRaw,note:pct?"":" ※技能値不明"});
+      r.attacks.push({name:weaponName,pct:String(pct),dmg,useDB,note:""});
       foundAtkNames.add(skillName);
     }
   }
 
-  // 形式B: 技能名 XX% ダメージ式（インライン）
-  const arB=/([^\s\d%(\n©©︎][^\n%(]{0,13}?)\s+(\d{1,3})%\s+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)*)/g;
+  const arB=/([^\s\d%(\n©©︎][^\n%(]{0,13}?)\s+(\d{1,3})%\s+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?(?:\+\s*(?:db|DB)(?:\/\s*\d+)?)?)*)/g;
   let mb;
   while((mb=arB.exec(t))!==null){
     const n=mb[1].trim();
     if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n)||n.length>15)continue;
-    if(!r.attacks.find(a=>a.name===n))r.attacks.push({name:n,pct:mb[2],dmg:mb[3]});
+    const dmgRaw=mb[3];
+    const {dmg,useDB}=stripDB(dmgRaw);
+    if(!r.attacks.find(a=>a.name===n))r.attacks.push({name:n,pct:mb[2],dmg,useDB,note:""});
     foundAtkNames.add(n);
   }
 
-  // 技能（skillMapから、攻撃に使われていないもの）
   Object.entries(skillMap).forEach(([name,val])=>{
     if(/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(name))return;
-    // 攻撃の技能名として使われているものも技能として追加（回避等）
     if(!r.skills.find(s=>s.name===name))r.skills.push({name,val});
   });
 
-  // 技能 形式B残り（インライン XX%形式、ダメージなし）
   const srB=/([^\s\d%(\n©©︎][^\n%(]{1,12}?)\s+(\d{1,3})%/g;
   let ms;
   while((ms=srB.exec(t))!==null){
@@ -1197,7 +1201,6 @@ function parseNpcText(text){
   const aM=text.match(/装甲[：:]\s*([^。\n]{1,50})/);
   if(aM&&aM[1].trim())r.memos.push({label:'装甲',content:aM[1].trim()});
 
-  // 名前推定
   const lines2=text.trim().split(/\n/);
   for(const line of lines2){
     const l=line.trim();if(!l)continue;
@@ -1207,7 +1210,7 @@ function parseNpcText(text){
   }
   return r;
 }
- function runParse(){
+  function runParse(){
   const text=document.getElementById("parse-input").value.trim();
   if(!text){showToast("テキストを入力してください");return;}
   openParse();
@@ -1238,7 +1241,6 @@ function clearParse(){document.getElementById("parse-input").value="";const el=d
 function applyParsed(p){
   Object.keys(p.stats).forEach(key=>{
     const rawVal=p.stats[key];
-    // 7版モード時はそのまま%値、6版モード時は×5して%値に
     const newV7=inputMode===7?rawVal:rawVal*5;
     if((vals[key]||0)===newV7)return;
     vals[key]=newV7;
@@ -1254,7 +1256,12 @@ function applyParsed(p){
   if(p.luck!=null){ov.luck=p.luck;ovManual.luck=true;const i=document.getElementById("di-luck");if(i){i.value=p.luck;const c=document.getElementById("dc-luck");if(c)c.style.display="block";}}
   if(p.attacks.length){
     atkList=atkList.filter(a=>a.name);
-    p.attacks.forEach(a=>{if(!atkList.find(x=>x.name===a.name))atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:false});});
+    p.attacks.forEach(a=>{
+      if(!atkList.find(x=>x.name===a.name)){
+        // useDBフラグを引き継ぐ
+        atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:!!a.useDB});
+      }
+    });
     if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];
     buildAtkRows();openAcc("atk");
   }
@@ -1287,7 +1294,23 @@ function applyParsed(p){
 }
 
 // ===== ダイスタブ =====
-function makeDiceBlock(name,value){const h=Math.floor(value/2),f=Math.floor(value/5),cN=ccCmd(name,value),cH=ccCmd(name,h),cE=ccCmd(name,f);return'<div class="dice-block"><div class="dice-block-name">'+esc(name)+' <span style="font-size:11px;color:var(--text3);font-weight:400">'+value+'</span></div><div class="dice-main-row"><button class="cmd-chip chip-n" data-cmd="'+escA(cN)+'">'+esc(cN)+'</button></div><div class="dice-sub-row"><div><div class="dice-sub-label">ハード('+h+')</div><button class="cmd-chip chip-h" data-cmd="'+escA(cH)+'">'+esc(cH)+'</button></div><div><div class="dice-sub-label">イクスト('+f+')</div><button class="cmd-chip chip-e" data-cmd="'+escA(cE)+'">'+esc(cE)+'</button></div></div></div>';}
+function makeDiceBlock(name,value){
+  const h=Math.floor(value/2),f=Math.floor(value/5),cN=ccCmd(name,value),cH=ccCmd(name,h),cE=ccCmd(name,f);
+  return'<div class="dice-block">'+
+    '<div class="dice-block-name">'+esc(name)+' <span style="font-size:11px;color:var(--text3);font-weight:400">'+value+'</span></div>'+
+    '<div class="dice-main-row"><button class="cmd-chip chip-n" data-cmd="'+escA(cN)+'">'+esc(cN)+'</button></div>'+
+    '<div class="dice-sub-row">'+
+      '<div style="display:flex;flex-direction:column;align-items:center">'+
+        '<div class="dice-sub-label" style="text-align:center">ハード('+h+')</div>'+
+        '<button class="cmd-chip chip-h" data-cmd="'+escA(cH)+'" style="width:100%">'+esc(cH)+'</button>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;align-items:center">'+
+        '<div class="dice-sub-label" style="text-align:center">イクストリーム('+f+')</div>'+
+        '<button class="cmd-chip chip-e" data-cmd="'+escA(cE)+'" style="width:100%">'+esc(cE)+'</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
 function makeDmgBlock(strV,sizV){
   const total=strV+sizV,db=getDB(total);if(!db.cmd)return null;
   let wh='<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:3px 0 2px">武器＋DB</div><div class="weapon-grid"><div><div class="weapon-row-lbl">DB単体</div><button class="cmd-chip" data-cmd="'+escA(db.cmd)+'">'+esc(db.cmd)+'</button></div>';
@@ -1547,10 +1570,31 @@ function renderSaveCard(sv,isShared){
   const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;
   const dbChip=sv.dmgLabel&&sv.dmgLabel!=="なし"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";
   const badge=sv._shared?'<span class="shared-badge">共有</span>':"";
-  const actions=isShared?'<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'">読み込む</button>':'<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'">読み込む</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'">上書き</button><button class="btn-dng btn-delete" data-id="'+sv.id+'">削除</button>';
+  // 個人・共有どちらも上書き・削除ボタンを表示
+  const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">読み込む</button>'+
+    '<button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">上書き</button>'+
+    '<button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">削除</button>';
   return'<div class="save-card"><div class="save-card-head"><div class="save-card-name">'+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">ステータスなし</span>')+(aN?'<span class="stat-chip">攻撃'+aN+'</span>':"")+(skN?'<span class="stat-chip">技能'+skN+'</span>':"")+(cN?'<span class="stat-chip">消耗品'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';
 }
-function bindSaveListEvents(wrap){
+  function renderSharedList(){
+  const wrap=document.getElementById("shared-list-wrap");
+  const shared=lSharedSaves();
+  if(!shared.length){wrap.innerHTML='<p class="save-empty">共有データがありません<br><span style="font-size:12px;color:var(--text3)">「現在のデータを共有に保存」または「共有から取得」でデータが追加されます</span></p>';return;}
+  wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">共有データ（'+shared.length+'件）</div><div class="save-list">'+shared.map(sv=>renderSaveCard(sv,true)).join("")+'</div>';
+  wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("「"+sv.name+"」を読み込みました");});});
+  wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{
+    const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;
+    const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};
+    shared[idx]=u;wSharedSaves(shared);renderSharedList();showToast("「"+u.name+"」を上書きしました");
+    if(sharedToken){setSharedSt("同期中…","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"✓ 共有に同期しました":"⚠ 同期失敗",ok?"ok":"err");}
+  });});
+  wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{
+    const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;
+    if(!confirm("「"+sv.name+"」を共有リストから削除しますか？"))return;
+    wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("削除しました");
+  });});
+}
+  function bindSaveListEvents(wrap){
   wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("「"+sv.name+"」を読み込みました");});});
   wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast("「"+u.name+"」を上書きしました");if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ 同期しました":"⚠ 同期失敗",ok?"ok":"err");}});});
   wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("「"+sv.name+"」を削除しますか？"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("削除しました");});});
