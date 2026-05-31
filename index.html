@@ -1404,8 +1404,17 @@ document.getElementById("btn-add-sk").addEventListener("click",()=>{
     rm.addEventListener("click",()=>{if(splList.length>1){splList=splList.filter(x=>x.id!==s.id);buildSplRows();}});
     bindDnD(row,splList,idx,buildSplRows);
   });
-  updSplBadge();
+function updSplBadge(){
+  const n=splList.filter(s=>s.name).length;
+  const el=document.getElementById("badge-spl");if(el)el.textContent=n;
+  const el2=document.getElementById("badge-spl2");if(el2)el2.textContent=n;
 }
+}
+
+document.getElementById("btn-add-spl").addEventListener("click",()=>{
+  splList.push({id:nxtId++,name:"",mp:"",note:""});
+  buildSplRows();
+});
   
   // ===== 消耗品 =====
 function buildConsumableRows(){
