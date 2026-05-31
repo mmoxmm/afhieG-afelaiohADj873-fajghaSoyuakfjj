@@ -1216,6 +1216,7 @@ function buildAtkRows(){
   atkList.forEach((a,idx)=>{
     if(a._sep){
       const row=document.createElement("div");
+      
       row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
       row.dataset.dnd=idx;
       const dh=makeHandle();
@@ -1749,11 +1750,16 @@ function makeDmgBlock(strV,sizV){
 }
 function secLabel(t){return'<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:5px 0 2px">'+t+'</div>';}
 function updateDice(){
+  const cont=document.getElementById("dice-content");
+  const dba=document.getElementById("dmg-bonus-area");
+  const dbw=document.getElementById("dmg-block-wrap");
+  const bss=document.getElementById("bonus-block-standalone");
+  // 要素がなければ何もしない（メモタブに移行済みのため）
+  if(!cont)return;
   const aA=atkList.filter(a=>a.name&&(a.pct||0)>0),aS=STATS.filter(({key})=>(vals[key]||0)>0);
   const aD=[{l:"HP",v:getEff("hp")},{l:"MP",v:getEff("mp")},{l:"SAN",v:getEff("san")},{l:"幸運",v:getEff("luck")}].filter(d=>d.v>0);
   const aSk=skList.filter(s=>s.name&&(s.val||0)>0);
   const strV=vals.str||0,sizV=vals.siz||0,hasDmg=strV>0||sizV>0;
-  const cont=document.getElementById("dice-content"),dba=document.getElementById("dmg-bonus-area"),dbw=document.getElementById("dmg-block-wrap"),bss=document.getElementById("bonus-block-standalone");
   if(!aS.length&&!aD.length&&!aA.length&&!aSk.length&&!hasDmg){cont.innerHTML='<p class="dice-empty">ステータスか技能を入力してください</p>';dba.style.display="none";bss.style.display="";return;}
   let html="";
   if(aA.length){html+=secLabel("🗡️ 攻撃")+'<div class="dice-blocks">';aA.forEach(a=>html+=makeDiceBlock(a.name,a.pct||0));html+="</div>";}
@@ -1764,7 +1770,7 @@ function updateDice(){
   if(hasDmg){const dh=makeDmgBlock(strV,sizV);if(dh){dbw.innerHTML=dh;bindCopy(dbw);dba.style.display="grid";bss.style.display="none";}else{dbw.innerHTML='<div class="dice-block"><div class="dice-block-name">DB <span class="db-badge">'+getDB(strV+sizV).label+'</span></div><div style="font-size:12px;color:var(--text3)">ダメージボーナスなし</div></div>';dba.style.display="grid";bss.style.display="none";}}
   else{dba.style.display="none";bss.style.display="";}
 }
-document.querySelectorAll(".bonus-chip").forEach(btn=>btn.addEventListener("click",e=>{copyText(e.currentTarget.dataset.cmd,e.currentTarget);addHistory(e.currentTarget.dataset.cmd);}));
+  document.querySelectorAll(".bonus-chip").forEach(btn=>btn.addEventListener("click",e=>{copyText(e.currentTarget.dataset.cmd,e.currentTarget);addHistory(e.currentTarget.dataset.cmd);}));
 
 // ===== 判定プレビュー =====
 function getAllOptions(){const opts=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)opts.push({label,value:v});});[{k:"hp",l:"HP"},{k:"mp",l:"MP"},{k:"san",l:"SAN"},{k:"luck",l:"幸運"}].forEach(({k,l})=>{const v=getEff(k);if(v>0)opts.push({label:l,value:v});});atkList.forEach(a=>{if(a.name&&(a.pct||0)>0)opts.push({label:a.name,value:a.pct});});skList.forEach(s=>{if(s.name&&(s.val||0)>0)opts.push({label:s.name,value:s.val});});return opts;}
@@ -2356,9 +2362,9 @@ function switchTab(t){
     if(currentSavePage==="personal"){renderSaveList();updateExport();}
     else if(currentSavePage==="shared"){renderSharedList();updateExport();}
   }
-  if(t==="dice"){updatePreviewSelect();updateDice();}
+  // dice タブはメモ/履歴に変更済みなので updateDice() 呼び出しを削除
 }
-document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+  document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
   
