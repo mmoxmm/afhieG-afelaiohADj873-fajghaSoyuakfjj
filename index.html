@@ -331,6 +331,55 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 /* 保存タブアコーディオン内のsync-key-block余白を除去 */
 #body-sync-personal .sync-key-block,
 #body-sync-shared .sync-key-block{border:none;background:none;padding:0;margin:0}
+
+/* H/E色分け */
+.sg-half { color: #c03030 !important; }
+.sg-fifth { color: #2855a0 !important; }
+.dv-half { color: #c03030 !important; }
+.dv-fifth { color: #2855a0 !important; }
+.sg-half, .sg-fifth, .dv-half, .dv-fifth {
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .1s;
+}
+.sg-half:hover, .sg-fifth:hover, .dv-half:hover, .dv-fifth:hover {
+  background: var(--bg3);
+}
+/* 能力値名称クリック */
+.sg-label { cursor: pointer; border-radius: 3px; transition: background .1s; }
+.sg-label:hover { background: var(--bg3); }
+.dv-label { cursor: pointer; border-radius: 3px; transition: background .1s; }
+.dv-label:hover { background: var(--bg3); }
+/* DB丸ボタン */
+.db-cycle-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--border2);
+  background: var(--bg2); color: var(--text3);
+  cursor: pointer; font-family: inherit; font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s; line-height: 1.1; text-align: center;
+  padding: 0;
+}
+.db-cycle-btn.db-none { border-color: var(--border2); color: var(--text3); }
+.db-cycle-btn.db-full { border-color: var(--warn); color: var(--warn); background: var(--warn-bg); }
+.db-cycle-btn.db-half { border-color: var(--accent); color: var(--accent); background: rgba(40,85,160,.10); }
+.db-cycle-btn.db-custom { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+.db-custom-inp {
+  width: 44px; height: 26px; font-size: 11px; padding: 0 3px;
+  background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 3px;
+  color: var(--text); font-family: 'SF Mono', Consolas, monospace;
+  text-align: center; outline: none; display: none;
+}
+.db-custom-inp.show { display: block; }
+/* 攻撃・技能行📋 */
+.row-copy-btn {
+  background: none; border: none; cursor: pointer; color: var(--text3);
+  font-size: 13px; padding: 1px 3px; flex-shrink: 0; line-height: 1;
+  border-radius: 3px; transition: color .1s;
+}
+.row-copy-btn:hover { color: var(--success); }
+.row-copy-btn.copied { color: var(--success); }
+
 </style>
 </head><body>
 <div class="app-header">
@@ -349,7 +398,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <div class="app-tabs">
   <div class="tabs">
     <button class="tab active" data-tab="stats">📋 ステータス</button>
-    <button class="tab" data-tab="dice">🎲 ダイス</button>
+    <button class="tab" data-tab="dice">📝 メモ/履歴</button>
     <button class="tab" data-tab="kp">🛠 KP支援</button>
     <button class="tab" data-tab="save">💾 保存</button>
   </div>
@@ -411,11 +460,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div style="font-size:12px;color:var(--text3);margin-bottom:4px">行をドラッグで並び替え可。左：技能系 / 右：攻撃・ダメージ系</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能・メモ</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能</div>
       <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
     </div>
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃・ダメージ</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・ダメージ・メモ</div>
       <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
     </div>
   </div>
@@ -434,7 +483,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <span class="acc-arrow" id="arrow-atk">▼</span>
       </div>
       <div class="acc-body" id="body-atk">
-        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span style="color:var(--warn)">DB</span><span>備考</span><span></span><span></span></div>
         <div id="atk-rows"></div>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
@@ -444,10 +492,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
 
     <div class="accordion" id="acc-cons" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('cons')">
-        <div class="acc-hd-left"><span class="acc-title">🎒 消耗品・呪文</span><span class="acc-badge" id="badge-cons">0</span><span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span></div>
-        <span class="acc-arrow" id="arrow-cons">▼</span>
-      </div>
       <div class="acc-body" id="body-cons">
         <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
           <button class="sk-spl-tab active" data-cstab="cons" onclick="switchConsSplTab('cons')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
@@ -498,75 +542,51 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
     </div>
   </div><!-- /技能・メモ 2カラム ここまで -->
-
+<!-- 変換リファレンス（ステータスタブ下部） -->
+<div class="ref-inline" style="margin-top:6px">
+  <div class="ref-inline-title">📖 変換クイックリファレンス</div>
+  <div class="ref-2col" style="margin-bottom:0">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">難易度変換</div>
+      <div class="ref-row"><span class="ref-v6">×5（通常）</span><span class="ref-arrow">→</span><span class="ref-v7">通常成功</span></div>
+      <div class="ref-row"><span class="ref-v6">×3</span><span class="ref-arrow">→</span><span class="ref-v7">ハード（1/2）</span></div>
+      <div class="ref-row"><span class="ref-v6">×1</span><span class="ref-arrow">→</span><span class="ref-v7">イクスト（1/5）</span></div>
+      <div class="ref-row"><span class="ref-v6">抵抗ロール</span><span class="ref-arrow">→</span><span class="ref-v7">対抗ロール</span></div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">DB表 (STR+SIZ)</div>
+      <div class="db-compact-row"><span class="db-range">2〜64</span><span class="db-val">−2</span></div>
+      <div class="db-compact-row"><span class="db-range">65〜84</span><span class="db-val">−1</span></div>
+      <div class="db-compact-row"><span class="db-range">85〜124</span><span class="db-val">なし</span></div>
+      <div class="db-compact-row"><span class="db-range">125〜164</span><span class="db-val">+1D4</span></div>
+      <div class="db-compact-row"><span class="db-range">165〜204</span><span class="db-val">+1D6</span></div>
+      <div class="db-compact-row"><span class="db-range">205〜284</span><span class="db-val">+2D6</span></div>
+      <div class="db-compact-row"><span class="db-range">285+</span><span class="db-val">+3D6〜</span></div>
+    </div>
+  </div>
+  <div style="margin-top:5px">
+    <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">戦闘変更点</div>
+    <div class="combat-compact">
+      <div class="combat-item"><span class="combat-lbl">回避</span><span class="combat-v6">技能ロールのみ</span><span class="ref-arrow">→</span><span class="combat-v7">攻撃者との対抗ロール</span></div>
+      <div class="combat-item"><span class="combat-lbl">受け流し</span><span class="combat-v6">武器強度で限界</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド差で変動</span></div>
+      <div class="combat-item"><span class="combat-lbl">組み付き</span><span class="combat-v6">DEX対抗</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド値使用</span></div>
+    </div>
+  </div>
+</div>
 </div><!-- /tab-stats ここまで -->
   
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
-  <div class="ref-inline" style="margin-top:0">
-    <div class="ref-inline-title">🔍 判定プレビュー</div>
-    <div class="preview-header"><span class="preview-label">選択：</span><select class="preview-select" id="preview-select"><option value="">── 選択 ──</option></select></div>
-    <div class="preview-manual">
-      <div><div class="preview-manual-lbl">名称（手動）</div><div class="inp-wrap" id="w-pmn"><input type="text" id="preview-manual-name" placeholder="技能名など..."><button class="inp-clear" onclick="clrInp('preview-manual-name','w-pmn');trigPreview()">×</button></div></div>
-      <div><div class="preview-manual-lbl">値（7版%）</div><div class="inp-wrap" id="w-pmv"><input type="number" id="preview-manual-val" min="0" max="999" placeholder="—"><button class="inp-clear" onclick="clrInp('preview-manual-val','w-pmv');trigPreview()">×</button></div></div>
-    </div>
-    <div id="preview-result"><p style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">セレクトか手動入力で値を指定してください</p></div>
+  <div class="full-card" style="margin-bottom:5px">
+    <div class="kp-card-title">📝 雑メモ（自動保存）</div>
+    <textarea id="session-memo-dice" placeholder="自由にメモ...&#10;&#10;ダイスコマンド例:&#10;CC&lt;=60 【火器】&#10;1d8+1D6"></textarea>
   </div>
-  <div class="dice-hint" style="margin-top:6px">タップでコピー→ココフォリアへ。<code>CC&lt;=60 【火器】</code> ／ ダメ: <code>1d8+1D6</code></div>
-  <div id="dice-content"></div>
-  <div class="dmg-bonus-row" id="dmg-bonus-area" style="display:none">
-    <div id="dmg-block-wrap"></div>
-    <div class="bonus-block">
-      <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px">ボーナス/ペナルティ</div>
-      <div class="bonus-grid">
-        <div class="bonus-row"><span class="bonus-lbl">ボーナス1</span><button class="cmd-chip bonus-chip" data-cmd="2d100KH">2d100KH</button></div>
-        <div class="bonus-row"><span class="bonus-lbl">ボーナス2</span><button class="cmd-chip bonus-chip" data-cmd="3d100KH">3d100KH</button></div>
-        <div class="bonus-row"><span class="bonus-lbl">ペナルティ1</span><button class="cmd-chip bonus-chip" data-cmd="2d100KL">2d100KL</button></div>
-        <div class="bonus-row"><span class="bonus-lbl">ペナルティ2</span><button class="cmd-chip bonus-chip" data-cmd="3d100KL">3d100KL</button></div>
-      </div>
-    </div>
-  </div>
-  <div id="bonus-block-standalone" class="bonus-block" style="margin-top:4px">
-    <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px">汎用ボーナス・ペナルティ</div>
-    <div class="bonus-grid">
-      <div class="bonus-row"><span class="bonus-lbl">ボーナス1個</span><button class="cmd-chip bonus-chip" data-cmd="2d100KH">2d100KH</button></div>
-      <div class="bonus-row"><span class="bonus-lbl">ボーナス2個</span><button class="cmd-chip bonus-chip" data-cmd="3d100KH">3d100KH</button></div>
-      <div class="bonus-row"><span class="bonus-lbl">ペナルティ1個</span><button class="cmd-chip bonus-chip" data-cmd="2d100KL">2d100KL</button></div>
-      <div class="bonus-row"><span class="bonus-lbl">ペナルティ2個</span><button class="cmd-chip bonus-chip" data-cmd="3d100KL">3d100KL</button></div>
-    </div>
-  </div>
-  <div class="ref-inline" style="margin-top:6px">
-    <div class="ref-inline-title">📖 変換クイックリファレンス</div>
-    <div class="ref-2col" style="margin-bottom:0">
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">難易度変換</div>
-        <div class="ref-row"><span class="ref-v6">×5（通常）</span><span class="ref-arrow">→</span><span class="ref-v7">通常成功</span></div>
-        <div class="ref-row"><span class="ref-v6">×3</span><span class="ref-arrow">→</span><span class="ref-v7">ハード（1/2）</span></div>
-        <div class="ref-row"><span class="ref-v6">×1</span><span class="ref-arrow">→</span><span class="ref-v7">イクスト（1/5）</span></div>
-        <div class="ref-row"><span class="ref-v6">抵抗ロール</span><span class="ref-arrow">→</span><span class="ref-v7">対抗ロール</span></div>
-      </div>
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">DB表 (STR+SIZ)</div>
-        <div class="db-compact-row"><span class="db-range">2〜64</span><span class="db-val">−2</span></div>
-        <div class="db-compact-row"><span class="db-range">65〜84</span><span class="db-val">−1</span></div>
-        <div class="db-compact-row"><span class="db-range">85〜124</span><span class="db-val">なし</span></div>
-        <div class="db-compact-row"><span class="db-range">125〜164</span><span class="db-val">+1D4</span></div>
-        <div class="db-compact-row"><span class="db-range">165〜204</span><span class="db-val">+1D6</span></div>
-        <div class="db-compact-row"><span class="db-range">205〜284</span><span class="db-val">+2D6</span></div>
-        <div class="db-compact-row"><span class="db-range">285+</span><span class="db-val">+3D6〜</span></div>
-      </div>
-    </div>
-    <div style="margin-top:5px">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:3px">戦闘変更点</div>
-      <div class="combat-compact">
-        <div class="combat-item"><span class="combat-lbl">回避</span><span class="combat-v6">技能ロールのみ</span><span class="ref-arrow">→</span><span class="combat-v7">攻撃者との対抗ロール</span></div>
-        <div class="combat-item"><span class="combat-lbl">受け流し</span><span class="combat-v6">武器強度で限界</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド差で変動</span></div>
-        <div class="combat-item"><span class="combat-lbl">組み付き</span><span class="combat-v6">DEX対抗</span><span class="ref-arrow">→</span><span class="combat-v7">ビルド値使用</span></div>
-      </div>
-    </div>
+  <div class="full-card">
+    <div class="kp-card-title">📋 コマンド履歴</div>
+    <div class="btn-row"><button class="btn-sm-dng" id="btn-history-clear-dice">クリア</button></div>
+    <div id="dice-history-list-dice"></div>
   </div>
 </div>
-
 <!-- KP TAB -->
 <div id="tab-kp" style="display:none">
 <div style="display:flex;gap:2px;margin-bottom:6px;border-bottom:0.5px solid var(--border2)">
@@ -683,6 +703,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="btn-row"><button class="btn-sm-dng" id="btn-history-clear">クリア</button></div>
     <div id="dice-history-list"><div style="font-size:13px;color:var(--text3);text-align:center;padding:6px">まだ履歴がありません</div></div>
   </div>
+  
 </div>
 </div>
 
@@ -946,15 +967,29 @@ function buildStatRows(){
   const wrap=document.getElementById("stat-rows");wrap.innerHTML="";
   const hH=document.getElementById("sg-col-hd-h");
   const hE=document.getElementById("sg-col-hd-e");
-  if(hH)hH.textContent="½(H)";
-  if(hE)hE.textContent="⅕(E)";
+  if(hH){hH.textContent="½(H)";hH.style.color="#c03030";}
+  if(hE){hE.textContent="⅕(E)";hE.style.color="#2855a0";}
   STATS.forEach(({key,label,jp})=>{
-    const lc=document.createElement("div");lc.className="sg-label";lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
+    const lc=document.createElement("div");
+    lc.className="sg-label";
+    lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
+    lc.title="クリックでコピー";
+    lc.addEventListener("click",()=>{
+      const v7=vals[key]||0;if(!v7)return;
+      const cmd=ccCmd(label,v7);
+      navigator.clipboard.writeText(cmd).then(()=>{
+        lc.style.background="var(--success-bg)";
+        setTimeout(()=>lc.style.background="",700);
+        addHistory(cmd);
+        showToast("コピー: "+cmd);
+      });
+    });
     const ic=document.createElement("div");ic.className="sg-inp-cell";
-    const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6版":"7版%";inp.className="sg-inp";inp.dataset.key=key;
-    // placeholder見切れ防止：padding-rightを最小限にしてplaceholderを表示
-    inp.style.paddingRight="20px";
-    inp.style.fontSize="14px";
+    const inp=document.createElement("input");
+    inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;
+    inp.placeholder=inputMode===6?"6版":"7版%";
+    inp.className="sg-inp";inp.dataset.key=key;
+    inp.style.paddingRight="20px";inp.style.fontSize="14px";
     if(inputMode===7){inp.style.background="rgba(40,85,160,0.10)";inp.style.borderColor="rgba(40,85,160,0.35)";}
     const clr=document.createElement("button");clr.className="sg-clr";clr.textContent="×";
     ic.append(inp,clr);
@@ -962,13 +997,17 @@ function buildStatRows(){
     const hEl=document.createElement("div");hEl.className="sg-half";hEl.id="v-h-"+key;hEl.textContent="—";
     const fEl=document.createElement("div");fEl.className="sg-fifth";fEl.id="v-f-"+key;fEl.textContent="—";
     wrap.append(lc,ic,convEl,hEl,fEl);
-    inp.addEventListener("input",e=>{const raw=parseInt(e.target.value)||0;clr.style.display=raw>0?"block":"none";vals[key]=inputMode===6?raw*5:raw;updateStatDisplay();});
+    inp.addEventListener("input",e=>{
+      const raw=parseInt(e.target.value)||0;
+      clr.style.display=raw>0?"block":"none";
+      vals[key]=inputMode===6?raw*5:raw;
+      updateStatDisplay();
+    });
     clr.addEventListener("click",()=>{inp.value="";vals[key]=0;clr.style.display="none";updateStatDisplay();});
   });
   buildDerivedRows();
 }
-// 変更後
-function makeClickCopy(el, cmd, val){
+function makeClickCopy(el, cmd, val, colorClass){
   if(!val){el.textContent="—";el.style.cursor="";el.onclick=null;return;}
   el.textContent=val;
   el.style.cursor="pointer";
@@ -977,13 +1016,17 @@ function makeClickCopy(el, cmd, val){
     navigator.clipboard.writeText(cmd).then(()=>{
       const orig=el.textContent;
       el.textContent="✓";
+      const origColor=el.style.color;
       el.style.color="var(--success)";
-      setTimeout(()=>{el.textContent=orig;el.style.color="";},900);
+      setTimeout(()=>{
+        el.textContent=orig;
+        el.style.color=origColor||"";
+      },900);
       addHistory(cmd);
     });
   };
 }
-
+  
 function updateStatDisplay(){
   STATS.forEach(({key,label})=>{
     const v7=vals[key]||0;
@@ -991,25 +1034,50 @@ function updateStatDisplay(){
     if(inputMode===6){
       const hv=v7?Math.floor(v7/2):0, fv=v7?Math.floor(v7/5):0;
       if(ce)makeClickCopy(ce, ccCmd(label,v7), v7||null);
-      if(he)makeClickCopy(he, ccCmd(label,hv), hv||null);
-      if(fe)makeClickCopy(fe, ccCmd(label,fv), fv||null);
+      if(he){
+        makeClickCopy(he, ccCmd(label,hv), hv||null);
+        he.style.color=hv?"#c03030":"";
+      }
+      if(fe){
+        makeClickCopy(fe, ccCmd(label,fv), fv||null);
+        fe.style.color=fv?"#2855a0":"";
+      }
     } else {
       const v6ref=v7?Math.round(v7/5):0;
       const hv=v7?Math.floor(v7/2):0, fv=v7?Math.floor(v7/5):0;
       if(ce){ce.textContent=v6ref||"—";ce.style.fontSize="13px";ce.style.color="var(--text3)";ce.style.cursor="";}
-      if(he)makeClickCopy(he, ccCmd(label,hv), hv||null);
-      if(fe)makeClickCopy(fe, ccCmd(label,fv), fv||null);
+      if(he){
+        makeClickCopy(he, ccCmd(label,hv), hv||null);
+        he.style.color=hv?"#c03030":"";
+      }
+      if(fe){
+        makeClickCopy(fe, ccCmd(label,fv), fv||null);
+        fe.style.color=fv?"#2855a0":"";
+      }
     }
   });
   ["hp","mp","san","luck"].forEach(k=>{if(!ovManual[k])updDerived(k);else{const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=calcAuto(k)||"自動";}});
   updDerivedMini();updateDice();updatePreviewSelect();updateExport();
 }
-
+  
 // ===== 派生値グリッド =====
 function buildDerivedRows(){
   const wrap=document.getElementById("derived-rows");wrap.innerHTML="";
   [{key:"hp",label:"HP",jp:"耐久力"},{key:"mp",label:"MP",jp:"魔力"},{key:"san",label:"SAN",jp:"正気度"},{key:"luck",label:"幸運",jp:"LUK"}].forEach(({key,label,jp})=>{
-    const lc=document.createElement("div");lc.className="dv-label";lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
+    const lc=document.createElement("div");lc.className="dv-label";
+    lc.innerHTML='<strong>'+label+'</strong><em>'+jp+'</em>';
+    lc.title="クリックでコピー";
+    lc.style.cursor="pointer";
+    lc.addEventListener("click",()=>{
+      const v=getEff(key);if(!v)return;
+      const cmd=ccCmd(label,v);
+      navigator.clipboard.writeText(cmd).then(()=>{
+        lc.style.background="var(--success-bg)";
+        setTimeout(()=>lc.style.background="",700);
+        addHistory(cmd);
+        showToast("コピー: "+cmd);
+      });
+    });
     const ic=document.createElement("div");ic.className="dv-inp-cell";
     const inp=document.createElement("input");inp.type="number";inp.min="0";inp.className="dv-inp";inp.id="di-"+key;
     const ea=calcAuto(key);inp.placeholder=ea||"自動";if(ovManual[key])inp.value=ov[key]||"";
@@ -1024,7 +1092,6 @@ function buildDerivedRows(){
     clr.addEventListener("click",()=>{inp.value="";ov[key]=0;ovManual[key]=false;clr.style.display="none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
   });
 }
-// 変更後
 const DERIVED_LABELS={hp:"HP",mp:"MP",san:"SAN",luck:"幸運"};
 function updDerived(k){
   const v=getEff(k),a=calcAuto(k),lbl=DERIVED_LABELS[k]||k;
@@ -1032,13 +1099,13 @@ function updDerived(k){
   const vd=document.getElementById("dv-"+k);
   if(vd)makeClickCopy(vd, ccCmd(lbl,v), v||null);
   const hd=document.getElementById("dh-"+k);
-  if(hd)makeClickCopy(hd, ccCmd(lbl,hv), hv||null);
+  if(hd){makeClickCopy(hd, ccCmd(lbl,hv), hv||null);hd.style.color=hv?"#c03030":"";}
   const fd=document.getElementById("df-"+k);
-  if(fd)makeClickCopy(fd, ccCmd(lbl,fv), fv||null);
+  if(fd){makeClickCopy(fd, ccCmd(lbl,fv), fv||null);fd.style.color=fv?"#2855a0":"";}
   const inp=document.getElementById("di-"+k);
   if(inp)inp.placeholder=a||"自動";
 }
-function updDerivedMini(){
+  function updDerivedMini(){
   const str=vals.str||0,siz=vals.siz||0,dex=vals.dex||0,db=getDB(str+siz);
   const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
   const any=STATS.some(s=>(vals[s.key]||0)>0);
@@ -1114,6 +1181,38 @@ function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=
 // ===== 攻撃 =====
 function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
+  // DBの状態サイクル: false → true → "half" → カスタム文字列
+  function getDbState(useDB){
+    if(!useDB||useDB===false)return"none";
+    if(useDB===true)return"full";
+    if(useDB==="half")return"half";
+    return"custom";
+  }
+  function nextDbState(cur){
+    if(cur==="none")return"full";
+    if(cur==="full")return"half";
+    if(cur==="half")return"none";
+    return"none";
+  }
+  function dbBtnLabel(state,customVal){
+    if(state==="none")return"DB\nなし";
+    if(state==="full")return"DB";
+    if(state==="half")return"DB\n/2";
+    return customVal||"手動";
+  }
+  function dbBtnClass(state){
+    if(state==="none")return"db-cycle-btn db-none";
+    if(state==="full")return"db-cycle-btn db-full";
+    if(state==="half")return"db-cycle-btn db-half";
+    return"db-cycle-btn db-custom";
+  }
+  function stateToUseDB(state,customVal){
+    if(state==="none")return false;
+    if(state==="full")return true;
+    if(state==="half")return"half";
+    return customVal||false;
+  }
+
   atkList.forEach((a,idx)=>{
     if(a._sep){
       const row=document.createElement("div");
@@ -1130,96 +1229,127 @@ function buildAtkRows(){
       bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
       return;
     }
-    const row=document.createElement("div");row.className="atk-row";row.dataset.dnd=idx;
-    row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name||"")+'" data-aid="'+a.id+'" data-f="name">'+
-      '<input type="number" placeholder="30" value="'+(a.pct||"")+'" data-aid="'+a.id+'" data-f="pct">'+
-      '<input type="text" placeholder="1d8" value="'+esc(a.dmg||"")+'" data-aid="'+a.id+'" data-f="dmg">'+
-      '<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px">'+
-        '<select data-aid="'+a.id+'" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:42px;-webkit-appearance:none;text-align:center">'+
-          '<option value="false"'+(!a.useDB?' selected':'')+'>なし</option>'+
-          '<option value="true"'+(a.useDB===true?' selected':'')+'>DB</option>'+
-          '<option value="half"'+(a.useDB==="half"?' selected':'')+'>DB/2</option>'+
-        '</select>'+
-      '</label>'+
-      '<input type="text" placeholder="備考" value="'+esc(a.note||"")+'" data-aid="'+a.id+'" data-f="note">';
+
+    // DBの現在状態を判定
+    let dbState=getDbState(a.useDB);
+    let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";
+
+    const row=document.createElement("div");
+    row.style.cssText="display:grid;grid-template-columns:1fr 46px 1fr 32px 36px 22px 22px;gap:2px;align-items:center;margin-bottom:3px;";
+    row.dataset.dnd=idx;
+
+    // 名前
+    const nameInp=document.createElement("input");
+    nameInp.type="text";nameInp.placeholder="噛みつき";nameInp.value=a.name||"";
+    nameInp.style.cssText="padding:4px 4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+
+    // %
+    const pctInp=document.createElement("input");
+    pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";
+    pctInp.style.cssText="padding:4px 4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+
+    // ダメージ
+    const dmgInp=document.createElement("input");
+    dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";
+    dmgInp.style.cssText="padding:4px 4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+
+    // DB丸ボタン
+    const dbBtn=document.createElement("button");
+    dbBtn.className=dbBtnClass(dbState);
+    dbBtn.style.cssText+="white-space:pre-line;";
+    dbBtn.textContent=dbBtnLabel(dbState,customDbVal);
+    dbBtn.title="タップで切替 / 長押しでカスタム入力";
+
+    // カスタムDB入力欄
+    const dbCustomInp=document.createElement("input");
+    dbCustomInp.type="text";dbCustomInp.placeholder="+1d4";
+    dbCustomInp.className="db-custom-inp"+(dbState==="custom"?" show":"");
+    dbCustomInp.value=customDbVal;
+    dbCustomInp.title="例: +1d4  +2  +1d6";
+
+    // DB丸ボタンのラッパー（ボタン＋入力を縦積み）
+    const dbWrap=document.createElement("div");
+    dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";
+    dbWrap.append(dbBtn,dbCustomInp);
+
+    // 📋コピーボタン
+    const cpBtn=document.createElement("button");
+    cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
+    cpBtn.title="攻撃コマンドをコピー";
+
+    // ドラッグハンドル
     const dh=makeHandle();
+    // 削除ボタン
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(dh,rm);
-    row.querySelectorAll("input,select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
-      const id=+e.target.dataset.aid,f=e.target.dataset.f;
-      let v;
-      if(f==="useDB"){const raw=e.target.value;v=raw==="half"?"half":raw==="true";}
-      else{v=e.target.value;}
-      atkList=atkList.map(x=>x.id===id?{...x,[f]:v}:x);
-      updAtkBadge();
-      if(["pct","dmg","name","useDB"].includes(f)){updateDice();updateExport();renderPalettePreview();}
-    }));
+
+    row.append(nameInp,pctInp,dmgInp,dbWrap,cpBtn,dh,rm);
+    wrap.appendChild(row);
+
+    // DB丸ボタン クリック（サイクル）
+    let pressTimer=null;
+    dbBtn.addEventListener("pointerdown",()=>{
+      pressTimer=setTimeout(()=>{
+        pressTimer=null;
+        dbState="custom";
+        dbBtn.className=dbBtnClass(dbState);
+        dbBtn.textContent=dbBtnLabel(dbState,customDbVal);
+        dbCustomInp.classList.add("show");
+        dbCustomInp.focus();
+        updateAtkItem();
+      },600);
+    });
+    dbBtn.addEventListener("pointerup",()=>{
+      if(pressTimer!==null){
+        clearTimeout(pressTimer);pressTimer=null;
+        if(dbState!=="custom"){
+          dbState=nextDbState(dbState);
+          dbBtn.className=dbBtnClass(dbState);
+          dbBtn.textContent=dbBtnLabel(dbState,customDbVal);
+          dbCustomInp.classList.toggle("show",dbState==="custom");
+          updateAtkItem();
+        }
+      }
+    });
+    dbBtn.addEventListener("pointercancel",()=>{clearTimeout(pressTimer);pressTimer=null;});
+
+    dbCustomInp.addEventListener("input",e=>{
+      customDbVal=e.target.value;
+      dbBtn.textContent=dbBtnLabel("custom",customDbVal);
+      updateAtkItem();
+    });
+
+    function updateAtkItem(){
+      const udb=stateToUseDB(dbState,customDbVal);
+      atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);
+      updateDice();updateExport();renderPalettePreview();updAtkBadge();
+    }
+
+    nameInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,name:e.target.value}:x);updAtkBadge();updateDice();updateExport();renderPalettePreview();});
+    pctInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,pct:parseInt(e.target.value)||0}:x);updateDice();updateExport();renderPalettePreview();});
+    dmgInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,dmg:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
+
+    // 📋コピー
+    cpBtn.addEventListener("click",()=>{
+      const at=atkList.find(x=>x.id===a.id);if(!at||!at.name)return;
+      const strV=vals.str||0,sizV=vals.siz||0,db=(strV+sizV>0)?getDB(strV+sizV):null;
+      const lines=[];
+      lines.push(ccCmd(at.name,at.pct||0));
+      if(at.dmg){
+        if(at.useDB==="half"&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+"/2"+" 【"+at.name+"ダメージ】");
+        else if(at.useDB===true&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+" 【"+at.name+"ダメージ】");
+        else if(typeof at.useDB==="string"&&at.useDB!=="half")lines.push(at.dmg+"+"+at.useDB+" 【"+at.name+"ダメージ】");
+        else lines.push(at.dmg+" 【"+at.name+"ダメージ】");
+      }
+      const txt=lines.join("\n");
+      navigator.clipboard.writeText(txt).then(()=>{cpBtn.textContent="✓";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="📋";cpBtn.classList.remove("copied");},1200);addHistory(txt);});
+    });
+
     rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();renderPalettePreview();}});
     bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
-    wrap.appendChild(row);
   });
   updAtkBadge();
 }
-
-function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
-
-document.getElementById("btn-add-atk").addEventListener("click",()=>{
-  atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
-  buildAtkRows();openAcc("atk");
-});
-
-function addAtkSep(){
-  atkList.push({id:nxtId++,_sep:true,label:""});
-  buildAtkRows();openAcc("atk");
-}
-
-function addSkSep(){
-  skList.push({id:nxtId++,_sep:true,label:""});
-  buildSkRows();
-}
-  
-// ===== 技能 =====
-function buildSkRows(){
-  const wrap=document.getElementById("sk-rows");wrap.innerHTML="";
-  skList.forEach((sk,idx)=>{
-    if(sk._sep){
-      const row=document.createElement("div");
-      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
-      row.dataset.dnd=idx;
-      const dh=makeHandle();
-      const inp=document.createElement("input");
-      inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=sk.label||"";
-      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
-      inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
-      const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
-      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-      rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updateExport();renderPalettePreview();});
-      row.append(inp,ud,dh,rm);
-      wrap.appendChild(row);
-      bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
-      return;
-    }
-    const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;
-    const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;
-    row.innerHTML='<input type="text" placeholder="技能名..." value="'+esc(sk.name||"")+'" data-sid="'+sk.id+'" data-f="name"><input type="number" min="0" max="999" placeholder="—" value="'+(sk.val||"")+'" data-sid="'+sk.id+'" data-f="val"><div class="skill-val">'+(h!=null?h:"—")+'</div><div class="skill-val">'+(f!=null?f:"—")+'</div>';
-    const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
-    const dh=makeHandle();
-    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(ud,dh,rm);
-    wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
-      const id=+e.target.dataset.sid,f=e.target.dataset.f;
-      const v=f==="val"?parseInt(e.target.value)||0:e.target.value;
-      skList=skList.map(x=>x.id===id?{...x,[f]:v}:x);
-      if(f==="val")buildSkRows();
-      updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();
-    }));
-    rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();}});
-    bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
-  });
-  updSkBadge();
-}
-function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
+  function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
 
 document.getElementById("btn-add-sk").addEventListener("click",()=>{
   skList.push({id:nxtId++,name:"",val:0});
@@ -1227,27 +1357,43 @@ document.getElementById("btn-add-sk").addEventListener("click",()=>{
 });
   
 // ===== 呪文 =====
-function buildSplRows(){
+  function buildSplRows(){
   const wrap=document.getElementById("spl-rows");wrap.innerHTML="";
   splList.forEach((s,idx)=>{
-    const row=document.createElement("div");row.className="spl-row";row.dataset.dnd=idx;
-    row.innerHTML='<input type="text" placeholder="呪文名..." value="'+esc(s.name||"")+'" data-sid="'+s.id+'" data-f="name"><input type="text" placeholder="3MP" value="'+esc(s.mp||"")+'" data-sid="'+s.id+'" data-f="mp"><input type="text" placeholder="効果..." value="'+esc(s.note||"")+'" data-sid="'+s.id+'" data-f="note">';
-   const ud = makeSortUD(splList, idx, buildSplRows); 
-   const dh = makeHandle();
-   const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-row.append(ud, dh, rm);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.sid,f=e.target.dataset.f;splList=splList.map(x=>x.id===id?{...x,[f]:e.target.value}:x);updSplBadge();}));
+    const row=document.createElement("div");
+    row.style.cssText="display:grid;grid-template-columns:1fr 48px 1fr 22px 22px 22px;gap:2px;align-items:center;margin-bottom:3px;";
+    row.dataset.dnd=idx;
+
+    const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="呪文名...";nameInp.value=s.name||"";
+    nameInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    const mpInp=document.createElement("input");mpInp.type="text";mpInp.placeholder="3MP";mpInp.value=s.mp||"";
+    mpInp.style.cssText="padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    const noteInp=document.createElement("input");noteInp.type="text";noteInp.placeholder="効果...";noteInp.value=s.note||"";
+    noteInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+
+    const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";cpBtn.title="呪文情報をコピー";
+
+    const ud=makeSortUD(splList,idx,buildSplRows);
+    const dh=makeHandle();
+    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+
+    row.append(nameInp,mpInp,noteInp,cpBtn,dh,rm);
+    wrap.appendChild(row);
+
+    nameInp.addEventListener("input",e=>{splList=splList.map(x=>x.id===s.id?{...x,name:e.target.value}:x);updSplBadge();});
+    mpInp.addEventListener("input",e=>{splList=splList.map(x=>x.id===s.id?{...x,mp:e.target.value}:x);updSplBadge();});
+    noteInp.addEventListener("input",e=>{splList=splList.map(x=>x.id===s.id?{...x,note:e.target.value}:x);updSplBadge();});
+
+    cpBtn.addEventListener("click",()=>{
+      const sp=splList.find(x=>x.id===s.id);if(!sp||!sp.name)return;
+      const txt=sp.name+(sp.mp?" ("+sp.mp+")":"")+(sp.note?" / "+sp.note:"");
+      navigator.clipboard.writeText(txt).then(()=>{cpBtn.textContent="✓";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="📋";cpBtn.classList.remove("copied");},1200);});
+    });
     rm.addEventListener("click",()=>{if(splList.length>1){splList=splList.filter(x=>x.id!==s.id);buildSplRows();}});
-    bindDnD(row, splList, idx, buildSplRows);
+    bindDnD(row,splList,idx,buildSplRows);
   });
   updSplBadge();
 }
-function updSplBadge(){document.getElementById("badge-spl").textContent=splList.filter(s=>s.name).length;}
-
-document.getElementById("btn-add-spl").addEventListener("click",()=>{
-  splList.push({id:nxtId++,name:"",mp:"",note:""});
-  buildSplRows();
-});
   
   // ===== 消耗品 =====
 function buildConsumableRows(){
@@ -1272,6 +1418,73 @@ bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); })
 function addConsumable(){consumables.push({id:nxtId++,label:"",cur:"",max:""});buildConsumableRows();openAcc("cons");}
 function updConsBadge(){document.getElementById("badge-cons").textContent=consumables.filter(c=>c.label).length;}
 
+function buildSkRows(){
+  const wrap=document.getElementById("sk-rows");wrap.innerHTML="";
+  skList.forEach((sk,idx)=>{
+    if(sk._sep){
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+      row.dataset.dnd=idx;
+      const dh=makeHandle();
+      const inp=document.createElement("input");
+      inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=sk.label||"";
+      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
+      inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
+      const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+      rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      row.append(inp,ud,dh,rm);
+      wrap.appendChild(row);
+      bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      return;
+    }
+    const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;
+    const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;
+
+    // 技能名
+    const nameInp=document.createElement("input");
+    nameInp.type="text";nameInp.placeholder="技能名...";nameInp.value=sk.name||"";
+    nameInp.dataset.sid=sk.id;nameInp.dataset.f="name";
+    // 値
+    const valInp=document.createElement("input");
+    valInp.type="number";valInp.min="0";valInp.max="999";valInp.placeholder="—";valInp.value=sk.val||"";
+    valInp.dataset.sid=sk.id;valInp.dataset.f="val";
+    // ½ ⅕
+    const hDiv=document.createElement("div");hDiv.className="skill-val";hDiv.textContent=h!=null?h:"—";
+    const fDiv=document.createElement("div");fDiv.className="skill-val";fDiv.textContent=f!=null?f:"—";
+    // 📋
+    const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";cpBtn.title="技能コマンドをコピー";
+
+    const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
+    const dh=makeHandle();
+    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+
+    row.append(nameInp,valInp,hDiv,fDiv,cpBtn,ud,dh,rm);
+    wrap.appendChild(row);
+
+    nameInp.addEventListener("input",e=>{
+      skList=skList.map(x=>x.id===+e.target.dataset.sid?{...x,name:e.target.value}:x);
+      updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();
+    });
+    valInp.addEventListener("input",e=>{
+      const nv=parseInt(e.target.value)||0;
+      skList=skList.map(x=>x.id===+e.target.dataset.sid?{...x,val:nv}:x);
+      buildSkRows();updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();
+    });
+    cpBtn.addEventListener("click",()=>{
+      const s=skList.find(x=>x.id===sk.id);if(!s||!s.name)return;
+      const cmd=ccCmd(s.name,s.val||0);
+      navigator.clipboard.writeText(cmd).then(()=>{cpBtn.textContent="✓";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="📋";cpBtn.classList.remove("copied");},1200);addHistory(cmd);});
+    });
+    rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();}});
+    bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
+  });
+  updSkBadge();
+}
+
+  
+
+  
 // ===== 解析 =====
 function normalizeNpcText(t){return t.replace(/[Ａ-Ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[ａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[：]/g,':').replace(/[＋]/g,'+').replace(/[－−]/g,'-').replace(/[　]/g,' ').replace(/[％%]/g,'%').replace(/[／]/g,'/').replace(/[（]/g,'(').replace(/[）]/g,')').replace(/[。]/g,'.');}
 // function tryParseCocoforiaJSON(text){
@@ -1508,7 +1721,7 @@ function applyParsed(p){
   skList=[{id:0,name:"",val:0}];atkList=[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:"",dest:"cmd"}];consumables=[];nxtId=1;
   buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStatDisplay();showToast("リセットしました");
 }
-
+  
 // ===== ダイスタブ =====
 function makeDiceBlock(name,value){
   const h=Math.floor(value/2),f=Math.floor(value/5),cN=ccCmd(name,value),cH=ccCmd(name,h),cE=ccCmd(name,f);
@@ -1704,6 +1917,8 @@ function getPaletteLines() {
     if (!a.name || (a.pct || 0) <= 0) return;
     cmdLines.push({ text: "CC<=" + a.pct + " 【" + a.name + "】", key: "atk_" + a.id });
     if (a.dmg) {
+      // カスタムDB対応
+      const isCustom = typeof a.useDB === "string" && a.useDB !== "half" && a.useDB !== "false";
       if (a.useDB === "half" && db && db.cmd) {
         const halfCmd = db.cmd + "/2";
         if (genBoth) {
@@ -1712,28 +1927,37 @@ function getPaletteLines() {
         } else {
           cmdLines.push({ text: a.dmg + "+" + halfCmd + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
         }
-      } else if (a.useDB && db && db.cmd) {
+      } else if (a.useDB === true && db && db.cmd) {
         if (genBoth) {
           cmdLines.push({ text: a.dmg + " 【" + a.name + "ダメージ（DBなし）】", key: "dmg_n_" + a.id });
           cmdLines.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ（DB込み）】", key: "dmg_h_" + a.id });
         } else {
           cmdLines.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
         }
+      } else if (isCustom) {
+        cmdLines.push({ text: a.dmg + a.useDB + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
       } else {
         cmdLines.push({ text: a.dmg + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
       }
     }
   });
+  // 呪文を右列（攻撃側）に追加
+  splList.forEach(s => {
+    if (!s.name) return;
+    const txt = s.name + (s.mp ? " (MP:" + s.mp + ")" : "") + (s.note ? " / " + s.note : "");
+    cmdLines.push({ text: txt, key: "spl_" + s.id });
+  });
+  // メモを右列に
+  memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
+    .forEach(m => cmdLines.push({ text: (m.label ? m.label + "\u3000" : "") + m.content, key: "memo_" + m.id }));
+  // 技能を左列用に
   skList.forEach(s => {
     if (s._sep) { cmdLines.push({ text: s.label || "━━━", key: "ssep_" + s.id, isSep: true }); return; }
     if (!s.name || (s.val || 0) <= 0) return;
     cmdLines.push({ text: "CC<=" + s.val + " 【" + s.name + "】", key: "sk_" + s.id });
   });
-  memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
-    .forEach(m => cmdLines.push({ text: (m.label ? m.label + "\u3000" : "") + m.content, key: "memo_" + m.id }));
   return cmdLines;
 }
-
 // 変更後（全体差し替え）
 function renderPalettePreview() {
   const wrapSk = document.getElementById("palette-sortable-sk");
@@ -1742,21 +1966,21 @@ function renderPalettePreview() {
 
   const lines = getPaletteLines();
 
-  // 技能・メモ系とそれ以外で分類
+  // 左: 技能のみ / 右: 攻撃・ダメージ・メモ・呪文
   const skLines = lines.filter(l =>
-    l.key.startsWith("sk_") || l.key.startsWith("ssep_") || l.key.startsWith("memo_")
+    l.key.startsWith("sk_") || l.key.startsWith("ssep_")
   );
   const atkLines = lines.filter(l =>
-    !l.key.startsWith("sk_") && !l.key.startsWith("ssep_") && !l.key.startsWith("memo_")
+    !l.key.startsWith("sk_") && !l.key.startsWith("ssep_")
   );
 
-  function renderCol(wrap, colLines) {
+  function renderCol(wrap, colLines, emptyMsg) {
     if (!colLines.length) {
-      wrap.innerHTML = '<div style="color:var(--text3);padding:4px 2px;font-size:12px">なし</div>';
+      wrap.innerHTML = '<div style="color:var(--text3);padding:4px 2px;font-size:12px">'+emptyMsg+'</div>';
       return;
     }
     wrap.innerHTML = "";
-    colLines.forEach((line, idx) => {
+    colLines.forEach((line) => {
       const row = document.createElement("div");
       row.dataset.key = line.key;
       row.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 2px;border-radius:3px;margin-bottom:1px;" + (line.isSep ? "opacity:.5;" : "");
@@ -1780,10 +2004,10 @@ function renderPalettePreview() {
     });
   }
 
-  renderCol(wrapSk, skLines);
-  renderCol(wrapAtk, atkLines);
+  renderCol(wrapSk, skLines, "技能なし");
+  renderCol(wrapAtk, atkLines, "攻撃・メモなし");
 }
-
+  
 function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("並び順をリセットしました"); }
   
 function copyPalettePreview() {
@@ -1843,10 +2067,52 @@ document.getElementById("btn-perm-all").addEventListener("click",()=>renderMadne
 
 // ===== 履歴 =====
 function addHistory(cmd){diceHistory=diceHistory.filter(h=>h.cmd!==cmd);diceHistory.unshift({cmd,time:new Date()});if(diceHistory.length>30)diceHistory=diceHistory.slice(0,30);renderHistory();localStorage.setItem("coc_dice_history",JSON.stringify(diceHistory.map(h=>({cmd:h.cmd,time:h.time.toISOString()}))));}
-function renderHistory(){const w=document.getElementById("dice-history-list");if(!diceHistory.length){w.innerHTML='<div style="font-size:13px;color:var(--text3);text-align:center;padding:5px">まだ履歴がありません</div>';return;}w.innerHTML=diceHistory.map(h=>{const now=new Date(),diff=Math.floor((now-h.time)/1000),ts=diff<60?diff+"s前":diff<3600?Math.floor(diff/60)+"m前":h.time.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});return'<div class="history-item" data-cmd="'+escA(h.cmd)+'"><span class="history-cmd">'+esc(h.cmd)+'</span><span class="history-time">'+ts+'</span><span>📋</span></div>';}).join("");w.querySelectorAll(".history-item").forEach(item=>item.addEventListener("click",e=>{const cmd=e.currentTarget.dataset.cmd;navigator.clipboard.writeText(cmd).then(()=>{showToast("コピーしました");addHistory(cmd);});}));}
-document.getElementById("btn-history-clear").addEventListener("click",()=>{if(confirm("履歴をクリア？")){diceHistory=[];renderHistory();localStorage.removeItem("coc_dice_history");}});
-function loadHistory(){try{const h=JSON.parse(localStorage.getItem("coc_dice_history")||"[]");diceHistory=h.map(i=>({cmd:i.cmd,time:new Date(i.time)}));renderHistory();}catch{diceHistory=[];}}
+function renderHistory(){
+  function renderInto(wid){
+    const w=document.getElementById(wid);if(!w)return;
+    if(!diceHistory.length){w.innerHTML='<div style="font-size:13px;color:var(--text3);text-align:center;padding:5px">まだ履歴がありません</div>';return;}
+    w.innerHTML=diceHistory.map(h=>{
+      const now=new Date(),diff=Math.floor((now-h.time)/1000),ts=diff<60?diff+"s前":diff<3600?Math.floor(diff/60)+"m前":h.time.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+      return'<div class="history-item" data-cmd="'+escA(h.cmd)+'"><span class="history-cmd">'+esc(h.cmd)+'</span><span class="history-time">'+ts+'</span><span>📋</span></div>';
+    }).join("");
+    w.querySelectorAll(".history-item").forEach(item=>item.addEventListener("click",e=>{
+      const cmd=e.currentTarget.dataset.cmd;
+      navigator.clipboard.writeText(cmd).then(()=>{showToast("コピーしました");addHistory(cmd);});
+    }));
+  }
+  renderInto("dice-history-list");     // KP支援タブ
+  renderInto("dice-history-list-dice"); // ダイス（メモ）タブ
+}
+  function loadHistory(){try{const h=JSON.parse(localStorage.getItem("coc_dice_history")||"[]");diceHistory=h.map(i=>({cmd:i.cmd,time:new Date(i.time)}));renderHistory();}catch{diceHistory=[];}}
+// ダイスタブのメモ欄を同期
+const sessionMemoDice = document.getElementById("session-memo-dice");
+if(sessionMemoDice){
+  sessionMemoDice.value = localStorage.getItem("coc_memo") || "";
+  bindAutoExpand(sessionMemoDice);
+  let memoTimer3 = null;
+  sessionMemoDice.addEventListener("input", () => {
+    clearTimeout(memoTimer3);
+    memoTimer3 = setTimeout(() => {
+      const v = sessionMemoDice.value;
+      localStorage.setItem("coc_memo", v);
+      const orig = document.getElementById("session-memo");
+      if(orig) orig.value = v;
+    }, 600);
+  });
+}
 
+// ダイスタブの履歴クリアボタン
+const histClrDice = document.getElementById("btn-history-clear-dice");
+if(histClrDice){
+  histClrDice.addEventListener("click", () => {
+    if(confirm("履歴をクリア？")){
+      diceHistory = [];
+      renderHistory();
+      localStorage.removeItem("coc_dice_history");
+    }
+  });
+}
+  
 // ===== クラウド同期 =====
 function setSyncSt(msg,cls=""){const el=document.getElementById("sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 function setSharedSt(msg,cls=""){const el=document.getElementById("shared-sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
