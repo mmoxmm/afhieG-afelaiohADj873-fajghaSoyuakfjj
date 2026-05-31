@@ -351,12 +351,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <div id="tab-stats">
   <div class="parse-block">
     <div class="parse-hd" onclick="toggleParse()">
-      <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">能力値・攻撃・技能を一括適用 / ここふぉりあJSON逆変換</span></div>
+      <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">能力値・攻撃・技能を一括適用</span></div>
       <span class="acc-arrow" id="arrow-parse">▼</span>
     </div>
     <div class="parse-body" id="body-parse">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">シナリオのNPCステータスをコピペして解析。能力値・HP・攻撃・技能を自動適用します。<br>ここふぉりあのキャラコマJSONをそのまま貼り付けて逆変換も可能です。</div>
-      <textarea id="parse-input" placeholder="例）STR:12 CON:14 POW:13&#10;噛みつき 30% 1d8 / 回避 45%&#10;&#10;またはここふぉりあJSONをそのまま貼り付け" style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">シナリオのNPCステータスをコピペして解析。能力値・HP・攻撃・技能を自動適用します。</div>
+      <textarea id="parse-input" placeholder="例）STR:12 CON:14 POW:13&#10;噛みつき 30% 1d8 / 回避 45%&#10;&#10;またはこここフォリアJSONをそのまま貼り付け" style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
       <div style="display:flex;gap:4px;margin-top:4px">
         <button onclick="runParse()" style="flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:7px;font-weight:700">🔍 解析して適用</button>
         <button onclick="clearParse()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:13px;padding:7px 10px;font-family:inherit">クリア</button>
@@ -364,17 +364,18 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div id="parse-result" style="display:none;margin-top:5px"></div>
     </div>
   </div>
+
+  <!-- 能力値・派生値 2カラム -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
       <div class="panel-label">能力値</div>
-      <!-- 既存の sg-col-hd 4つ目・5つ目を変更 -->
-<div class="stat-grid-wrap">
-  <div class="sg-col-hd"></div>
-  <div class="sg-col-hd" id="sg-hd-inp">6版</div>
-  <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
-  <div class="sg-col-hd" id="sg-col-hd-h">½(H)</div>
-  <div class="sg-col-hd" id="sg-col-hd-e">⅕(E)</div>
-</div>
+      <div class="stat-grid-wrap">
+        <div class="sg-col-hd"></div>
+        <div class="sg-col-hd" id="sg-hd-inp">6版</div>
+        <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
+        <div class="sg-col-hd" id="sg-col-hd-h">½(H)</div>
+        <div class="sg-col-hd" id="sg-col-hd-e">⅕(E)</div>
+      </div>
       <div class="stat-grid-wrap" id="stat-rows"></div>
     </div>
     <div>
@@ -386,8 +387,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="derived-mini" id="derived-mini" style="grid-template-columns:1fr 1fr;margin-top:4px"></div>
     </div>
   </div>
-  <!-- パレットプレビュー（攻撃・消耗品の上に移動） -->
-  <div class="accordion" id="acc-palette" style="margin-top:4px;margin-bottom:0">
+
+  <!-- パレットプレビュー -->
+  <div class="accordion" id="acc-palette" style="margin-top:4px">
     <div class="acc-hd" onclick="toggleAcc('palette')">
       <div class="acc-hd-left">
         <span class="acc-title">🎮 パレットプレビュー</span>
@@ -395,47 +397,59 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <span class="acc-arrow" id="arrow-palette">▼</span>
     </div>
-   <div class="acc-body" id="body-palette">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">ここふぉりあのチャットパレット用コマンド一覧（行をドラッグで並び替え可）</div>
+    <div class="acc-body" id="body-palette">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">こここフォリアのチャットパレット用コマンド一覧（行をドラッグで並び替え可）</div>
       <div id="palette-sortable" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
       <div style="display:flex;gap:3px;margin-top:3px">
-        <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 パレットをコピー</button>
+        <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋</button>
         <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button>
       </div>
-   </div>
+    </div>
   </div>
+
+  <!-- 攻撃・消耗品 2カラム -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
     <div class="accordion" id="acc-atk" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
+      <div class="acc-hd" onclick="toggleAcc('atk')">
+        <div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div>
+        <span class="acc-arrow" id="arrow-atk">▼</span>
+      </div>
       <div class="acc-body" id="body-atk">
-        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span style="color:var(--warn)">DB</span><span>備考</span><span></span><span></span><span></span></div>
+        <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span style="color:var(--warn)">DB</span><span>備考</span><span></span><span></span></div>
         <div id="atk-rows"></div>
-<div style="display:flex;gap:3px;margin-top:3px">
-  <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
-  <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px">━ 区切り</button>
-</div>
+        <div style="display:flex;gap:3px;margin-top:3px">
+          <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
+          <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+        </div>
       </div>
     </div>
-   <div class="accordion" id="acc-cons" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('cons')"><div class="acc-hd-left"><span class="acc-title">🎒 消耗品・呪文</span><span class="acc-badge" id="badge-cons">0</span><span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span></div><span class="acc-arrow" id="arrow-cons">▼</span></div>
+
+    <div class="accordion" id="acc-cons" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('cons')">
+        <div class="acc-hd-left"><span class="acc-title">🎒 消耗品・呪文</span><span class="acc-badge" id="badge-cons">0</span><span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span></div>
+        <span class="acc-arrow" id="arrow-cons">▼</span>
+      </div>
       <div class="acc-body" id="body-cons">
         <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
           <button class="sk-spl-tab active" data-cstab="cons" onclick="switchConsSplTab('cons')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
           <button class="sk-spl-tab" data-cstab="spl" onclick="switchConsSplTab('spl')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">✨ 呪文 <span id="badge-spl" class="acc-badge" style="background:var(--success)">0</span></button>
         </div>
         <div id="panel-cons">
-          <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span><span></span></div>
-          <div id="cons-rows"></div><button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+          <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
+          <div id="cons-rows"></div>
+          <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
         </div>
         <div id="panel-spl-inner" style="display:none">
-          <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span><span></span></div>
+          <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span></div>
           <div id="spl-rows"></div>
           <button class="btn-add" id="btn-add-spl">＋ 追加</button>
         </div>
       </div>
     </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
-    <!-- 技能 -->
+  </div><!-- /攻撃・消耗品 2カラム ここまで -->
+
+  <!-- 技能・メモ 2カラム -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
     <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);min-height:34px">
         <div style="display:flex;align-items:center;gap:5px">
@@ -452,7 +466,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         </div>
       </div>
     </div>
-    <!-- メモ -->
+
     <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
       <div class="memo-hd" onclick="toggleMemo()" style="padding:5px 9px;background:var(--bg2);min-height:34px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
         <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span></div>
@@ -464,8 +478,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
       </div>
     </div>
-  </div>
+  </div><!-- /技能・メモ 2カラム ここまで -->
 
+</div><!-- /tab-stats ここまで -->
+  
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
   <div class="ref-inline" style="margin-top:0">
@@ -477,7 +493,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
     <div id="preview-result"><p style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">セレクトか手動入力で値を指定してください</p></div>
   </div>
-  <div class="dice-hint" style="margin-top:6px">タップでコピー→ここふぉりあへ。<code>CC&lt;=60 【火器】</code> ／ ダメ: <code>1d8+1D6</code></div>
+  <div class="dice-hint" style="margin-top:6px">タップでコピー→こココフォリアへ。<code>CC&lt;=60 【火器】</code> ／ ダメ: <code>1d8+1D6</code></div>
   <div id="dice-content"></div>
   <div class="dmg-bonus-row" id="dmg-bonus-area" style="display:none">
     <div id="dmg-block-wrap"></div>
@@ -690,7 +706,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <!-- 出力セクション（個人タブ内） -->
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('export-personal')">
-        <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
+        <div class="acc-hd-left"><span class="acc-title">🎮 こココフォリア出力</span></div>
         <span class="acc-arrow" id="arrow-export-personal">▼</span>
       </div>
       <div class="acc-body" id="body-export-personal">
@@ -710,7 +726,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
           <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
         </div>
-        <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。<br>※ メモの「メモ」＝キャラクターメモ欄、「パレ」＝チャットパレット、「なし」＝出力しない。</div>
+        <div class="export-note">※ JSONは「📋 コピー」→ こココフォリアの盤面にCtrl+V（iPadは長押し→ペースト）でキャラコマ生成。<br>※ メモの「メモ」＝キャラクターメモ欄、「パレ」＝チャットパレット、「なし」＝出力しない。</div>
       </div>
     </div>
 
@@ -761,7 +777,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <!-- 出力セクション（共有タブ内） -->
 <div class="accordion" style="margin-top:0;margin-bottom:5px">
   <div class="acc-hd" onclick="toggleAcc('export-shared')">
-    <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
+    <div class="acc-hd-left"><span class="acc-title">🎮 こココフォリア出力</span></div>
     <span class="acc-arrow" id="arrow-export-shared">▼</span>
   </div>
   <div class="acc-body" id="body-export-shared">
@@ -780,7 +796,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="export-btn-row">
       <button class="export-btn" onclick="copyExport()">📋 コピー</button>
     </div>
-    <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V でキャラコマ生成。</div>
+    <div class="export-note">※ JSONは「📋 コピー」→ こココフォリアの盤面にCtrl+V でキャラコマ生成。</div>
   </div>
 </div>
     <div class="save-toolbar"><button class="btn-pri" id="btn-save-shared-current" style="background:var(--success)">現在のデータを共有に保存</button></div>
@@ -1196,7 +1212,7 @@ function updConsBadge(){document.getElementById("badge-cons").textContent=consum
 // ===== 解析 =====
 function normalizeNpcText(t){return t.replace(/[Ａ-Ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[ａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[：]/g,':').replace(/[＋]/g,'+').replace(/[－−]/g,'-').replace(/[　]/g,' ').replace(/[％%]/g,'%').replace(/[／]/g,'/').replace(/[（]/g,'(').replace(/[）]/g,')').replace(/[。]/g,'.');}
 // function tryParseCocoforiaJSON(text){
-  // ここふぉりあJSON逆変換
+  // ココフォリアJSON逆変換
  // let obj;
 // try{obj=JSON.parse(text.trim());}catch{return null;}
 //  if(!obj||obj.kind!=="character"||!obj.data)return null;
