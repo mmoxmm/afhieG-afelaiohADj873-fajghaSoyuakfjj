@@ -490,17 +490,33 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
     </div>
 
-  <div class="accordion" id="acc-cons" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('cons')">
-        <div class="acc-hd-left">
-          <span class="acc-title">🎒 消耗・呪文</span>
-          <span class="acc-badge" id="badge-cons">0</span>
-          <span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span>
-        </div>
-        <span class="acc-arrow" id="arrow-cons">▼</span>
+ <div class="accordion" id="acc-cons" style="margin-top:0">
+    <div class="acc-hd" onclick="toggleAcc('cons')">
+      <div class="acc-hd-left">
+        <span class="acc-title">🎒 消耗・呪文</span>
+        <span class="acc-badge" id="badge-cons">0</span>
+        <span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span>
       </div>
-    <div id="panel-cons">
-          <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
+      <span class="acc-arrow" id="arrow-cons">▼</span>
+    </div>
+    <div class="acc-body" id="body-cons">
+      <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
+        <button data-cstab="cons" onclick="switchConsSplTab('cons')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
+        <button data-cstab="spl" onclick="switchConsSplTab('spl')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">✨ 呪文 <span id="badge-spl2" class="acc-badge" style="background:var(--success)">0</span></button>
+      </div>
+      <div id="panel-cons">
+        <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
+        <div id="cons-rows"></div>
+        <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+      </div>
+      <div id="panel-spl-inner" style="display:none">
+        <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span></div>
+        <div id="spl-rows"></div>
+        <button class="btn-add" id="btn-add-spl">＋ 追加</button>
+      </div>
+    </div>
+  </div>
+    <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
           <div id="cons-rows"></div>
           <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
         </div>
@@ -1180,10 +1196,10 @@ function addMemoRow(){memoList.push({id:nxtId++,label:"",content:"",dest:"cmd"})
 function updMemoBadge(){document.getElementById("badge-memo").textContent=memoList.filter(m=>m.label||m.content).length;}
 function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=>(m.label?m.label+"\u3000":"")+m.content).join("\n");if(!lines){showToast("メモがありません");return;}navigator.clipboard.writeText(lines).then(()=>showToast("全メモをコピーしました")).catch(()=>showToast("コピー失敗"));}
 
-// ===== 攻撃 =====
+// ===== 攻撃 =====// 
 function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
-  // DBの状態サイクル: false → true → "half" → カスタム文字列
+ 
   function getDbState(useDB){
     if(!useDB||useDB===false)return"none";
     if(useDB===true)return"full";
@@ -1218,7 +1234,6 @@ function buildAtkRows(){
   atkList.forEach((a,idx)=>{
     if(a._sep){
       const row=document.createElement("div");
-      
       row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
       row.dataset.dnd=idx;
       const dh=makeHandle();
@@ -1233,7 +1248,6 @@ function buildAtkRows(){
       return;
     }
 
-    // DBの現在状態を判定
     let dbState=getDbState(a.useDB);
     let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";
 
@@ -1241,54 +1255,56 @@ function buildAtkRows(){
     row.style.cssText="display:grid;grid-template-columns:1fr 46px 1fr 32px 36px 22px 22px;gap:2px;align-items:center;margin-bottom:3px;";
     row.dataset.dnd=idx;
 
-    // 名前
     const nameInp=document.createElement("input");
     nameInp.type="text";nameInp.placeholder="噛みつき";nameInp.value=a.name||"";
     nameInp.style.cssText="padding:4px 4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
 
-    // %
     const pctInp=document.createElement("input");
     pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";
     pctInp.style.cssText="padding:4px 4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
 
-    // ダメージ
     const dmgInp=document.createElement("input");
     dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";
     dmgInp.style.cssText="padding:4px 4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
 
-    // DB丸ボタン
     const dbBtn=document.createElement("button");
     dbBtn.className=dbBtnClass(dbState);
     dbBtn.style.cssText+="white-space:pre-line;";
     dbBtn.textContent=dbBtnLabel(dbState,customDbVal);
     dbBtn.title="タップで切替 / 長押しでカスタム入力";
 
-    // カスタムDB入力欄
     const dbCustomInp=document.createElement("input");
     dbCustomInp.type="text";dbCustomInp.placeholder="+1d4";
     dbCustomInp.className="db-custom-inp"+(dbState==="custom"?" show":"");
     dbCustomInp.value=customDbVal;
     dbCustomInp.title="例: +1d4  +2  +1d6";
 
-    // DB丸ボタンのラッパー（ボタン＋入力を縦積み）
     const dbWrap=document.createElement("div");
     dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";
     dbWrap.append(dbBtn,dbCustomInp);
 
-    // 📋コピーボタン
     const cpBtn=document.createElement("button");
     cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
     cpBtn.title="攻撃コマンドをコピー";
 
-    // ドラッグハンドル
     const dh=makeHandle();
-    // 削除ボタン
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
 
     row.append(nameInp,pctInp,dmgInp,dbWrap,cpBtn,dh,rm);
     wrap.appendChild(row);
 
-    // DB丸ボタン クリック（サイクル）
+    // 攻撃追加・区切りボタンのリスナー
+   document.getElementById("btn-add-atk").addEventListener("click",()=>{
+   atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
+   buildAtkRows();openAcc("atk");
+});
+    
+    function updateAtkItem(){
+      const udb=stateToUseDB(dbState,customDbVal);
+      atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);
+      updateDice();updateExport();renderPalettePreview();updAtkBadge();
+    }
+
     let pressTimer=null;
     dbBtn.addEventListener("pointerdown",()=>{
       pressTimer=setTimeout(()=>{
@@ -1319,32 +1335,12 @@ function buildAtkRows(){
       customDbVal=e.target.value;
       dbBtn.textContent=dbBtnLabel("custom",customDbVal);
       updateAtkItem();
-      document.getElementById("btn-add-atk").addEventListener("click",()=>{
     });
-
-// 攻撃追加・区切りボタンのリスナー（初回1回だけ登録）
-(function(){
-  const btnAdd=document.getElementById("btn-add-atk");
-  if(btnAdd&&!btnAdd._bound){
-    btnAdd._bound=true;
-    btnAdd.addEventListener("click",()=>{
-      atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
-      buildAtkRows();openAcc("atk");
-    });
-  }
-})();
-      
-    function updateAtkItem(){
-      const udb=stateToUseDB(dbState,customDbVal);
-      atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);
-      updateDice();updateExport();renderPalettePreview();updAtkBadge();
-    }
 
     nameInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,name:e.target.value}:x);updAtkBadge();updateDice();updateExport();renderPalettePreview();});
     pctInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,pct:parseInt(e.target.value)||0}:x);updateDice();updateExport();renderPalettePreview();});
     dmgInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,dmg:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
 
-    // 📋コピー
     cpBtn.addEventListener("click",()=>{
       const at=atkList.find(x=>x.id===a.id);if(!at||!at.name)return;
       const strV=vals.str||0,sizV=vals.siz||0,db=(strV+sizV>0)?getDB(strV+sizV):null;
@@ -1432,7 +1428,11 @@ bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); })
   updConsBadge();
 }
 function addConsumable(){consumables.push({id:nxtId++,label:"",cur:"",max:""});buildConsumableRows();openAcc("cons");}
-function updConsBadge(){document.getElementById("badge-cons").textContent=consumables.filter(c=>c.label).length;}
+function updConsBadge(){
+  const n=consumables.filter(c=>c.label).length;
+  const el=document.getElementById("badge-cons");if(el)el.textContent=n;
+  const el2=document.getElementById("badge-cons2");if(el2)el2.textContent=n;
+}
 
 function buildSkRows(){
   const wrap=document.getElementById("sk-rows");wrap.innerHTML="";
