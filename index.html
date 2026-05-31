@@ -317,9 +317,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .dv-grid-wrap{display:grid;grid-template-columns:54px 1fr 1fr 46px 42px;gap:3px;padding-left:2px}
 /* 入力欄：4桁収まるよう */
 .sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
-.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0
+/* 変更後（セミコロン追加） */
+.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
 .sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-start;padding-left:2px}
-/* 能力値エリアと派生値エリアの間隔 */
+  /* 能力値エリアと派生値エリアの間隔 */
   /* 7版モードの遷移アニメ */
 .sg-inp{transition:background .2s,border-color .2s}
 /* H/Eヘッダー左寄せ */
@@ -1115,7 +1116,6 @@ function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
   atkList.forEach((a,idx)=>{
     if(a._sep){
-      // 区切り線
       const row=document.createElement("div");
       row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
       row.dataset.dnd=idx;
@@ -1124,29 +1124,28 @@ function buildAtkRows(){
       inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=a.label||"";
       inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
       inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
-      const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
       const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
       rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();updateExport();renderPalettePreview();});
-      row.append(dh,inp,ud,rm);wrap.appendChild(row);
+      row.append(dh,inp,rm);wrap.appendChild(row);
       bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
       return;
     }
     const row=document.createElement("div");row.className="atk-row";row.dataset.dnd=idx;
-  row.innerHTML = '<input type="text" placeholder="噛みつき" value="' + esc(a.name || "") + '" data-aid="' + a.id + '" data-f="name">' +
-      '<input type="number" placeholder="30" value="' + (a.pct || "") + '" data-aid="' + a.id + '" data-f="pct">' +
-      '<input type="text" placeholder="1d8" value="' + esc(a.dmg || "") + '" data-aid="' + a.id + '" data-f="dmg">' +
-      '<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px">' +
-        '<select data-aid="' + a.id + '" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:42px;-webkit-appearance:none;text-align:center">' +
-          '<option value="false"' + (!a.useDB ? ' selected' : '') + '>なし</option>' +
-          '<option value="true"' + (a.useDB === true ? ' selected' : '') + '>DB</option>' +
-          '<option value="half"' + (a.useDB === "half" ? ' selected' : '') + '>DB/2</option>' +
-        '</select>' +
-      '</label>' +
-      '<input type="text" placeholder="備考" value="' + esc(a.note || "") + '" data-aid="' + a.id + '" data-f="note">';
-    const dh = makeHandle();
-    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-    row.append(dh, rm);
-    row.querySelectorAll("input, select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
+    row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name||"")+'" data-aid="'+a.id+'" data-f="name">'+
+      '<input type="number" placeholder="30" value="'+(a.pct||"")+'" data-aid="'+a.id+'" data-f="pct">'+
+      '<input type="text" placeholder="1d8" value="'+esc(a.dmg||"")+'" data-aid="'+a.id+'" data-f="dmg">'+
+      '<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px">'+
+        '<select data-aid="'+a.id+'" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:42px;-webkit-appearance:none;text-align:center">'+
+          '<option value="false"'+(!a.useDB?' selected':'')+'>なし</option>'+
+          '<option value="true"'+(a.useDB===true?' selected':'')+'>DB</option>'+
+          '<option value="half"'+(a.useDB==="half"?' selected':'')+'>DB/2</option>'+
+        '</select>'+
+      '</label>'+
+      '<input type="text" placeholder="備考" value="'+esc(a.note||"")+'" data-aid="'+a.id+'" data-f="note">';
+    const dh=makeHandle();
+    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+    row.append(dh,rm);
+    row.querySelectorAll("input,select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
       const id=+e.target.dataset.aid,f=e.target.dataset.f;
       let v;
       if(f==="useDB"){const raw=e.target.value;v=raw==="half"?"half":raw==="true";}
@@ -1157,24 +1156,26 @@ function buildAtkRows(){
     }));
     rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();renderPalettePreview();}});
     bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
+    wrap.appendChild(row);
   });
   updAtkBadge();
 }
-  function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
-// 既存の btn-add-atk リスナーを置き換え
-// 変更後（body-atkに委譲）
-document.getElementById("body-atk").addEventListener("click",e=>{
-  const t=e.target;
-  if(t.id==="btn-add-atk"){atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");}
+
+function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
+
+document.getElementById("btn-add-atk").addEventListener("click",()=>{
+  atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
+  buildAtkRows();openAcc("atk");
 });
-// 区切り追加ボタン（HTMLに追加が必要）
+
 function addAtkSep(){
   atkList.push({id:nxtId++,_sep:true,label:""});
   buildAtkRows();openAcc("atk");
 }
+
 function addSkSep(){
   skList.push({id:nxtId++,_sep:true,label:""});
-  buildSkRows();openAcc("sk");
+  buildSkRows();
 }
   
 // ===== 技能 =====
@@ -1219,11 +1220,12 @@ function buildSkRows(){
   updSkBadge();
 }
 function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
-// 変更後
-document.getElementById("sk-rows").parentElement.addEventListener("click",e=>{
-  if(e.target.id==="btn-add-sk"){skList.push({id:nxtId++,name:"",val:0});buildSkRows();}
-});
 
+document.getElementById("btn-add-sk").addEventListener("click",()=>{
+  skList.push({id:nxtId++,name:"",val:0});
+  buildSkRows();
+});
+  
 // ===== 呪文 =====
 function buildSplRows(){
   const wrap=document.getElementById("spl-rows");wrap.innerHTML="";
@@ -1241,11 +1243,13 @@ row.append(ud, dh, rm);
   updSplBadge();
 }
 function updSplBadge(){document.getElementById("badge-spl").textContent=splList.filter(s=>s.name).length;}
-// 変更後
-document.getElementById("panel-spl-inner").addEventListener("click",e=>{
-  if(e.target.id==="btn-add-spl"){splList.push({id:nxtId++,name:"",mp:"",note:""});buildSplRows();}
+
+document.getElementById("btn-add-spl").addEventListener("click",()=>{
+  splList.push({id:nxtId++,name:"",mp:"",note:""});
+  buildSplRows();
 });
-// ===== 消耗品 =====
+  
+  // ===== 消耗品 =====
 function buildConsumableRows(){
   const wrap=document.getElementById("cons-rows");wrap.innerHTML="";
   consumables.forEach((c,idx)=>{
@@ -1780,13 +1784,6 @@ function renderPalettePreview() {
   renderCol(wrapAtk, atkLines);
 }
 
-function copyPalettePreview() {
-  const lines = getPaletteLines();
-  const txt = lines.map(l => l.text).join("\n");
-  if (!txt) { showToast("データがありません"); return; }
-  navigator.clipboard.writeText(txt).then(() => showToast("パレットをコピーしました")).catch(() => showToast("コピー失敗"));
-}
-
 function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("並び順をリセットしました"); }
   
 function copyPalettePreview() {
@@ -1971,14 +1968,18 @@ function loadDataIntoEditor(data){
   memoList=(data.memoList||[{id:0,label:"",content:"",dest:"cmd"}]).map(m=>({...m,dest:m.dest||"cmd"}));
   consumables=data.consumables||[];
   const allIds=[...skList,...atkList,...splList,...memoList,...consumables].map(x=>Number(x.id)||0).filter(id=>id>0);
-nxtId=allIds.length?Math.max(...allIds)+1:1;
-  // 変更後（openAccをbuild直後に移動）
-buildAtkRows();if(atkList.some(a=>a.name))openAcc("atk");
-buildSkRows();if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
-buildSplRows();buildMemoRows();buildConsumableRows();updateStatDisplay();
-  if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
-  if(memoList.some(m=>m.label||m.content))openMemo();if(consumables.some(c=>c.label))openAcc("cons");
-  reExpandAllMemos();
+nxtId=allIds.length?Math.max(...allIds)+1:1;// 変更後（重複削除・整理）
+buildAtkRows();
+if(atkList.some(a=>a.name))openAcc("atk");
+buildSkRows();
+if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
+buildSplRows();
+buildMemoRows();
+buildConsumableRows();
+updateStatDisplay();
+if(memoList.some(m=>m.label||m.content))openMemo();
+if(consumables.some(c=>c.label))openAcc("cons");
+reExpandAllMemos();
 }
 function renderSaveCard(sv,isShared){
   const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");
