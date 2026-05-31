@@ -317,11 +317,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .dv-grid-wrap{display:grid;grid-template-columns:54px 1fr 1fr 46px 42px;gap:3px;padding-left:2px}
 /* 入力欄：4桁収まるよう */
 .sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
-.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
-.sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-start;padding-left:4px}
+.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0
+.sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-start;padding-left:2px}
 /* 能力値エリアと派生値エリアの間隔 */
   /* 7版モードの遷移アニメ */
 .sg-inp{transition:background .2s,border-color .2s}
+/* H/Eヘッダー左寄せ */
+.sg-col-hd:nth-child(4),
+.sg-col-hd:nth-child(5),
+.dv-col-hd:nth-child(4),
+.dv-col-hd:nth-child(5){text-align:left;padding-left:2px}
 /* 保存タブアコーディオン内のsync-key-block余白を除去 */
 #body-sync-personal .sync-key-block,
 #body-sync-shared .sync-key-block{border:none;background:none;padding:0;margin:0}
@@ -414,8 +419,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
   </div>
   <div style="display:flex;gap:3px;margin-top:3px">
-    <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 全コピー</button>
-    <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button>
+    <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋</button>
+    <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button></div>
   </div>
 </div>
 
