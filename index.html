@@ -56,7 +56,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .stat-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
 .sg-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .sg-col-hd:first-child{text-align:left}
-.sg-label{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:var(--cell-h);padding:0 2px 0 0}
+/* 変更後 */
+.sg-label{display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--cell-h);padding:0 2px 0 0;text-align:center}
+.dv-label{display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--cell-h);padding:0 2px 0 0;text-align:center}
 .sg-label strong{font-size:15px;font-weight:700;line-height:1.15}
 .sg-label em{font-size:10px;color:var(--text3);font-style:normal;line-height:1.2;margin-top:1px}
 .sg-inp-cell{position:relative;display:flex;align-items:center;height:var(--cell-h);min-width:0}
@@ -316,7 +318,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 /* 入力欄：4桁収まるよう */
 .sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
 .dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
-.sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-end;padding-right:4px}
+.sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-start;padding-left:4px}
 /* 能力値エリアと派生値エリアの間隔 */
   /* 7版モードの遷移アニメ */
 .sg-inp{transition:background .2s,border-color .2s}
@@ -398,16 +400,26 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <span class="acc-arrow" id="arrow-palette">▼</span>
     </div>
-    <div class="acc-body" id="body-palette">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">こここフォリアのチャットパレット用コマンド一覧（行をドラッグで並び替え可）</div>
-      <div id="palette-sortable" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
-      <div style="display:flex;gap:3px;margin-top:3px">
-        <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋</button>
-        <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button>
-      </div>
+   <!-- 変更後 -->
+<div class="acc-body" id="body-palette">
+  <div style="font-size:12px;color:var(--text3);margin-bottom:4px">行をドラッグで並び替え可。左：技能系 / 右：攻撃・ダメージ系</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能・メモ</div>
+      <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃・ダメージ</div>
+      <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
     </div>
   </div>
+  <div style="display:flex;gap:3px;margin-top:3px">
+    <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 全コピー</button>
+    <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button>
+  </div>
+</div>
 
+    
   <!-- 攻撃・消耗品 2カラム -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
     <div class="accordion" id="acc-atk" style="margin-top:0">
@@ -949,17 +961,38 @@ function buildStatRows(){
   });
   buildDerivedRows();
 }
-  function updateStatDisplay(){
-  STATS.forEach(({key})=>{
+// 変更後
+function makeClickCopy(el, cmd, val){
+  if(!val){el.textContent="—";el.style.cursor="";el.onclick=null;return;}
+  el.textContent=val;
+  el.style.cursor="pointer";
+  el.style.transition="color .1s";
+  el.onclick=()=>{
+    navigator.clipboard.writeText(cmd).then(()=>{
+      const orig=el.textContent;
+      el.textContent="✓";
+      el.style.color="var(--success)";
+      setTimeout(()=>{el.textContent=orig;el.style.color="";},900);
+      addHistory(cmd);
+    });
+  };
+}
+
+function updateStatDisplay(){
+  STATS.forEach(({key,label})=>{
     const v7=vals[key]||0;
     const ce=document.getElementById("v-conv-"+key),he=document.getElementById("v-h-"+key),fe=document.getElementById("v-f-"+key);
-    if(inputMode===6){if(ce)ce.textContent=v7||"—";if(he)he.textContent=v7?Math.floor(v7/2):"—";if(fe)fe.textContent=v7?Math.floor(v7/5):"—";}
-    else{
-      // 7版モード: col3=6版参考値(薄色), col4=½, col5=⅕
+    if(inputMode===6){
+      const hv=v7?Math.floor(v7/2):0, fv=v7?Math.floor(v7/5):0;
+      if(ce)makeClickCopy(ce, ccCmd(label,v7), v7||null);
+      if(he)makeClickCopy(he, ccCmd(label,hv), hv||null);
+      if(fe)makeClickCopy(fe, ccCmd(label,fv), fv||null);
+    } else {
       const v6ref=v7?Math.round(v7/5):0;
-      if(ce){ce.textContent=v6ref||"—";ce.style.fontSize="13px";ce.style.color="var(--text3)";}
-      if(he)he.textContent=v7?Math.floor(v7/2):"—";
-      if(fe)fe.textContent=v7?Math.floor(v7/5):"—";
+      const hv=v7?Math.floor(v7/2):0, fv=v7?Math.floor(v7/5):0;
+      if(ce){ce.textContent=v6ref||"—";ce.style.fontSize="13px";ce.style.color="var(--text3)";ce.style.cursor="";}
+      if(he)makeClickCopy(he, ccCmd(label,hv), hv||null);
+      if(fe)makeClickCopy(fe, ccCmd(label,fv), fv||null);
     }
   });
   ["hp","mp","san","luck"].forEach(k=>{if(!ovManual[k])updDerived(k);else{const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=calcAuto(k)||"自動";}});
@@ -985,7 +1018,20 @@ function buildDerivedRows(){
     clr.addEventListener("click",()=>{inp.value="";ov[key]=0;ovManual[key]=false;clr.style.display="none";updDerived(key);updateDice();updatePreviewSelect();updateExport();});
   });
 }
-function updDerived(k){const v=getEff(k),a=calcAuto(k);const vd=document.getElementById("dv-"+k);if(vd)vd.textContent=v||"—";const hd=document.getElementById("dh-"+k);if(hd)hd.textContent=v?Math.floor(v/2):"—";const fd=document.getElementById("df-"+k);if(fd)fd.textContent=v?Math.floor(v/5):"—";const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=a||"自動";}
+// 変更後
+const DERIVED_LABELS={hp:"HP",mp:"MP",san:"SAN",luck:"幸運"};
+function updDerived(k){
+  const v=getEff(k),a=calcAuto(k),lbl=DERIVED_LABELS[k]||k;
+  const hv=v?Math.floor(v/2):0, fv=v?Math.floor(v/5):0;
+  const vd=document.getElementById("dv-"+k);
+  if(vd)makeClickCopy(vd, ccCmd(lbl,v), v||null);
+  const hd=document.getElementById("dh-"+k);
+  if(hd)makeClickCopy(hd, ccCmd(lbl,hv), hv||null);
+  const fd=document.getElementById("df-"+k);
+  if(fd)makeClickCopy(fd, ccCmd(lbl,fv), fv||null);
+  const inp=document.getElementById("di-"+k);
+  if(inp)inp.placeholder=a||"自動";
+}
 function updDerivedMini(){
   const str=vals.str||0,siz=vals.siz||0,dex=vals.dex||0,db=getDB(str+siz);
   const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
@@ -1111,14 +1157,12 @@ function buildAtkRows(){
 }
   function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
 // 既存の btn-add-atk リスナーを置き換え
-// 変更後（イベント委譲でbody-atkに委ねる）
+// 変更後（body-atkに委譲）
 document.getElementById("body-atk").addEventListener("click",e=>{
-  if(e.target.id==="btn-add-atk"){
-    atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
-    buildAtkRows();openAcc("atk");
-  }
+  const t=e.target;
+  if(t.id==="btn-add-atk"){atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");}
 });
-  // 区切り追加ボタン（HTMLに追加が必要）
+// 区切り追加ボタン（HTMLに追加が必要）
 function addAtkSep(){
   atkList.push({id:nxtId++,_sep:true,label:""});
   buildAtkRows();openAcc("atk");
@@ -1681,75 +1725,65 @@ function getPaletteLines() {
   return cmdLines;
 }
 
+// 変更後（全体差し替え）
 function renderPalettePreview() {
-  const wrap = document.getElementById("palette-sortable");
-  const legacyEl = document.getElementById("palette-preview");
+  const wrapSk = document.getElementById("palette-sortable-sk");
+  const wrapAtk = document.getElementById("palette-sortable-atk");
+  if(!wrapSk||!wrapAtk) return;
+
   const lines = getPaletteLines();
-  if (!lines.length) {
-    if (wrap) wrap.innerHTML = '<div style="color:var(--text3);padding:4px 2px">（ステータスか技能を入力してください）</div>';
-    if (legacyEl) legacyEl.textContent = "（ステータスか技能を入力してください）";
-    return;
-  }
-  // カスタム順が設定されていれば適用
-  let ordered = lines;
-  if (paletteCustomOrder) {
-    const keyMap = Object.fromEntries(lines.map(l => [l.key, l]));
-    const reordered = paletteCustomOrder.filter(k => keyMap[k]).map(k => keyMap[k]);
-    const newItems = lines.filter(l => !paletteCustomOrder.includes(l.key));
-    ordered = [...reordered, ...newItems];
-  }
-  if (!wrap) {
-    if (legacyEl) legacyEl.textContent = ordered.map(l => l.text).join("\n");
-    return;
-  }
-  wrap.innerHTML = "";
-  ordered.forEach((line, idx) => {
-    const row = document.createElement("div");
-    row.dataset.key = line.key;
-    row.dataset.idx = idx;
-    row.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 2px;border-radius:3px;margin-bottom:1px;cursor:default;" + (line.isSep ? "opacity:.5;" : "");
-    const handle = document.createElement("span");
-    handle.textContent = "⠿";
-    handle.style.cssText = "cursor:grab;color:var(--text3);font-size:14px;flex-shrink:0;touch-action:none;user-select:none;padding:0 2px";
-    const txt = document.createElement("span");
-    txt.textContent = line.text;
-    txt.style.cssText = "flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:" + (line.isSep ? "var(--text3)" : "var(--text2)");
-    const cpBtn = document.createElement("button");
-    cpBtn.textContent = "📋";
-    cpBtn.style.cssText = "background:none;border:none;cursor:pointer;font-size:11px;padding:1px 3px;flex-shrink:0;color:var(--text3)";
-    cpBtn.addEventListener("click", e => { e.stopPropagation(); navigator.clipboard.writeText(line.text).then(() => { cpBtn.textContent = "✓"; setTimeout(() => cpBtn.textContent = "📋", 1000); addHistory(line.text); }); });
-    row.append(handle, txt, cpBtn);
-    wrap.appendChild(row);
-    // ドラッグ並び替え
-    let startY = 0;
-    handle.addEventListener("pointerdown", e => {
-      e.preventDefault(); handle.setPointerCapture(e.pointerId); startY = e.clientY;
-      const allRows = [...wrap.querySelectorAll("[data-key]")];
-      row.style.background = "var(--bg3)";
-      function mv(ev) { allRows.forEach(r => r.style.borderTop = ""); const target = allRows.find(r => r !== row && Math.abs(ev.clientY - r.getBoundingClientRect().top) < 18); if (target) target.style.borderTop = "2px solid var(--accent)"; }
-      function up(ev) {
-        handle.removeEventListener("pointermove", mv);
-        row.style.background = "";
-        allRows.forEach(r => r.style.borderTop = "");
-        if (Math.abs(ev.clientY - startY) < 4) return;
-        let toIdx = idx;
-        allRows.forEach((r, ri) => { if (r !== row && Math.abs(ev.clientY - r.getBoundingClientRect().top) < 18) toIdx = ri; });
-        if (toIdx === idx) return;
-        const keys = ordered.map(l => l.key);
-        const [moved] = keys.splice(idx, 1); keys.splice(toIdx, 0, moved);
-        paletteCustomOrder = keys;
-        renderPalettePreview();
-      }
-      handle.addEventListener("pointermove", mv);
-      handle.addEventListener("pointerup", up, { once: true });
+
+  // 技能・メモ系とそれ以外で分類
+  const skLines = lines.filter(l =>
+    l.key.startsWith("sk_") || l.key.startsWith("ssep_") || l.key.startsWith("memo_")
+  );
+  const atkLines = lines.filter(l =>
+    !l.key.startsWith("sk_") && !l.key.startsWith("ssep_") && !l.key.startsWith("memo_")
+  );
+
+  function renderCol(wrap, colLines) {
+    if (!colLines.length) {
+      wrap.innerHTML = '<div style="color:var(--text3);padding:4px 2px;font-size:12px">なし</div>';
+      return;
+    }
+    wrap.innerHTML = "";
+    colLines.forEach((line, idx) => {
+      const row = document.createElement("div");
+      row.dataset.key = line.key;
+      row.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 2px;border-radius:3px;margin-bottom:1px;" + (line.isSep ? "opacity:.5;" : "");
+      const handle = document.createElement("span");
+      handle.textContent = "⠿";
+      handle.style.cssText = "cursor:grab;color:var(--text3);font-size:14px;flex-shrink:0;touch-action:none;user-select:none;padding:0 2px";
+      const txt = document.createElement("span");
+      txt.textContent = line.text;
+      txt.style.cssText = "flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:" + (line.isSep ? "var(--text3)" : "var(--text2)");
+      const cpBtn = document.createElement("button");
+      cpBtn.textContent = "📋";
+      cpBtn.style.cssText = "background:none;border:none;cursor:pointer;font-size:11px;padding:1px 3px;flex-shrink:0;color:var(--text3)";
+      cpBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(line.text).then(() => {
+          cpBtn.textContent = "✓"; setTimeout(() => cpBtn.textContent = "📋", 1000); addHistory(line.text);
+        });
+      });
+      row.append(handle, txt, cpBtn);
+      wrap.appendChild(row);
     });
-  });
-  // legacy pre にも同期
-  if (legacyEl) legacyEl.textContent = ordered.map(l => l.text).join("\n");
+  }
+
+  renderCol(wrapSk, skLines);
+  renderCol(wrapAtk, atkLines);
+}
+
+function copyPalettePreview() {
+  const lines = getPaletteLines();
+  const txt = lines.map(l => l.text).join("\n");
+  if (!txt) { showToast("データがありません"); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast("パレットをコピーしました")).catch(() => showToast("コピー失敗"));
 }
 
 function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("並び順をリセットしました"); }
-
+  
 function copyPalettePreview() {
   const lines = getPaletteLines();
   let ordered = lines;
@@ -1933,8 +1967,10 @@ function loadDataIntoEditor(data){
   consumables=data.consumables||[];
   const allIds=[...skList,...atkList,...splList,...memoList,...consumables].map(x=>Number(x.id)||0).filter(id=>id>0);
 nxtId=allIds.length?Math.max(...allIds)+1:1;
-  buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();buildConsumableRows();updateStatDisplay();
-  if(atkList.some(a=>a.name))openAcc("atk");
+  // 変更後（openAccをbuild直後に移動）
+buildAtkRows();if(atkList.some(a=>a.name))openAcc("atk");
+buildSkRows();if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
+buildSplRows();buildMemoRows();buildConsumableRows();updateStatDisplay();
   if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
   if(memoList.some(m=>m.label||m.content))openMemo();if(consumables.some(c=>c.label))openAcc("cons");
   reExpandAllMemos();
