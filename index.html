@@ -416,51 +416,55 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 </div>
       </div>
     </div>
-    <div class="accordion" id="acc-cons" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('cons')"><div class="acc-hd-left"><span class="acc-title">🎒 消耗品</span><span class="acc-badge" id="badge-cons">0</span></div><span class="acc-arrow" id="arrow-cons">▼</span></div>
+   <div class="accordion" id="acc-cons" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('cons')"><div class="acc-hd-left"><span class="acc-title">🎒 消耗品・呪文</span><span class="acc-badge" id="badge-cons">0</span><span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span></div><span class="acc-arrow" id="arrow-cons">▼</span></div>
       <div class="acc-body" id="body-cons">
-        <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span><span></span></div>
-        <div id="cons-rows"></div><button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+        <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
+          <button class="sk-spl-tab active" data-cstab="cons" onclick="switchConsSplTab('cons')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
+          <button class="sk-spl-tab" data-cstab="spl" onclick="switchConsSplTab('spl')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">✨ 呪文 <span id="badge-spl" class="acc-badge" style="background:var(--success)">0</span></button>
+        </div>
+        <div id="panel-cons">
+          <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span><span></span></div>
+          <div id="cons-rows"></div><button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+        </div>
+        <div id="panel-spl-inner" style="display:none">
+          <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span><span></span></div>
+          <div id="spl-rows"></div>
+          <button class="btn-add" id="btn-add-spl">＋ 追加</button>
+        </div>
+      </div>
+    </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+    <!-- 技能 -->
+    <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);min-height:34px">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:14px;font-weight:700;color:var(--text2)">🎯 技能</span>
+          <span class="acc-badge" id="badge-sk">0</span>
+        </div>
+      </div>
+      <div style="padding:7px;background:var(--bg)">
+        <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
+        <div id="sk-rows"></div>
+        <div style="display:flex;gap:3px;margin-top:3px">
+          <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
+          <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+        </div>
+      </div>
+    </div>
+    <!-- メモ -->
+    <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
+      <div class="memo-hd" onclick="toggleMemo()" style="padding:5px 9px;background:var(--bg2);min-height:34px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
+        <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span></div>
+        <span class="acc-arrow open" id="arrow-memo">▼</span>
+      </div>
+      <div class="memo-body open" id="body-memo" style="padding:6px;background:var(--bg)">
+        <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
+        <div id="memo-rows"></div>
+        <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
       </div>
     </div>
   </div>
- <div style="margin-top:4px;border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
-    <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2)">
-      <button class="sk-spl-tab active" data-sktab="sk" onclick="switchSkSplTab('sk')"
-        style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 4px;display:flex;align-items:center;justify-content:center;gap:4px">
-        🎯 技能 <span class="acc-badge" id="badge-sk">0</span>
-      </button>
-      <button class="sk-spl-tab" data-sktab="spl" onclick="switchSkSplTab('spl')"
-        style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 4px;display:flex;align-items:center;justify-content:center;gap:4px">
-        ✨ 呪文 <span class="acc-badge" id="badge-spl">0</span>
-      </button>
-    </div>
-    <div id="panel-sk" style="padding:7px;background:var(--bg)">
-      <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
-      <div id="sk-rows"></div>
-      <div style="display:flex;gap:3px;margin-top:3px">
-        <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
-        <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
-      </div>
-    </div>
-    <div id="panel-spl" style="display:none;padding:7px;background:var(--bg)">
-      <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span><span></span></div>
-      <div id="spl-rows"></div>
-      <button class="btn-add" id="btn-add-spl">＋ 追加</button>
-    </div>
-  </div>
-  <div class="memo-section" style="margin-top:4px">
-    <div class="memo-hd" onclick="toggleMemo()">
-      <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span><span style="font-size:12px;color:var(--text3);margin-left:3px">装甲・特殊能力など</span></div>
-      <span class="acc-arrow open" id="arrow-memo">▼</span>
-    </div>
-    <div class="memo-body open" id="body-memo">
-      <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
-      <div id="memo-rows"></div>
-      <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
-    </div>
-  </div>
-</div>
 
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
@@ -816,6 +820,16 @@ let currentSavePage="personal";
 let sharedToken="",sharedGistId="";
 const L_SAVES="coc_v4_saves",L_KEY="coc_gist_token",L_GIST="coc_gist_id",L_GIST_TS="coc_gist_token_ts",L_STOKEN="coc_shared_token",L_SGIST="coc_shared_gist_id";
 
+function switchConsSplTab(tab){
+  document.querySelectorAll("[data-cstab]").forEach(b=>{
+    const isActive=b.dataset.cstab===tab;
+    b.style.borderBottomColor=isActive?"var(--accent)":"transparent";
+    b.style.color=isActive?"var(--text)":"var(--text3)";
+  });
+  document.getElementById("panel-cons").style.display=tab==="cons"?"":"none";
+  document.getElementById("panel-spl-inner").style.display=tab==="spl"?"":"none";
+}
+  
 // ===== ユーティリティ =====
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function escA(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;")}
@@ -1106,9 +1120,11 @@ function buildSkRows(){
       inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=sk.label||"";
       inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
       inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
-      const dh = makeHandle();
-      const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-    row.append(dh, rm);
+      const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+      rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      row.append(inp,ud,dh,rm);
+      wrap.appendChild(row);
       bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
       return;
     }
@@ -1118,7 +1134,8 @@ function buildSkRows(){
     const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
     const dh=makeHandle();
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(ud,dh,rm);wrap.appendChild(row);
+    row.append(ud,dh,rm);
+    wrap.appendChild(row);
     row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
       const id=+e.target.dataset.sid,f=e.target.dataset.f;
       const v=f==="val"?parseInt(e.target.value)||0:e.target.value;
@@ -1131,7 +1148,7 @@ function buildSkRows(){
   });
   updSkBadge();
 }
-  function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
+function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
 document.getElementById("btn-add-sk").addEventListener("click",()=>{skList.push({id:nxtId++,name:"",val:0});buildSkRows();openAcc("sk");});
 
 // ===== 呪文 =====
@@ -1140,9 +1157,10 @@ function buildSplRows(){
   splList.forEach((s,idx)=>{
     const row=document.createElement("div");row.className="spl-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="呪文名..." value="'+esc(s.name||"")+'" data-sid="'+s.id+'" data-f="name"><input type="text" placeholder="3MP" value="'+esc(s.mp||"")+'" data-sid="'+s.id+'" data-f="mp"><input type="text" placeholder="効果..." value="'+esc(s.note||"")+'" data-sid="'+s.id+'" data-f="note">';
-    const dh = makeHandle();
-    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-    row.append(ud, dh, rm);
+   const ud = makeSortUD(splList, idx, buildSplRows); 
+   const dh = makeHandle();
+   const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+row.append(ud, dh, rm);
     row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.sid,f=e.target.dataset.f;splList=splList.map(x=>x.id===id?{...x,[f]:e.target.value}:x);updSplBadge();}));
     rm.addEventListener("click",()=>{if(splList.length>1){splList=splList.filter(x=>x.id!==s.id);buildSplRows();}});
     bindDnD(row, splList, idx, buildSplRows);
@@ -1159,11 +1177,17 @@ function buildConsumableRows(){
     const row=document.createElement("div");row.className="cons-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="弾丸・アイテム" value="'+esc(c.label||"")+'" data-cid="'+c.id+'" data-f="label"><input type="number" placeholder="現在" value="'+(c.cur||"")+'" data-cid="'+c.id+'" data-f="cur"><input type="number" placeholder="最大" value="'+(c.max||"")+'" data-cid="'+c.id+'" data-f="max">';
     const ud=makeSortUD(consumables,idx,()=>{buildConsumableRows();updateExport();});
-  const dh = makeHandle();
-    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-    row.append(dh, rm);
-    bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); });
-  });
+const dh = makeHandle();
+const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+row.append(ud, dh, rm);                      // ← ud を追加
+wrap.appendChild(row);                       // ← 追加
+row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
+  const id=+e.target.dataset.cid,f=e.target.dataset.f;
+  consumables=consumables.map(x=>x.id===id?{...x,[f]:e.target.value}:x);
+  updConsBadge();updateExport();
+}));                                         // ← 追加
+rm.addEventListener("click",()=>{consumables=consumables.filter(x=>x.id!==c.id);buildConsumableRows();updateExport();}); // ← 追加
+bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); });  });
   updConsBadge();
 }
 function addConsumable(){consumables.push({id:nxtId++,label:"",cur:"",max:""});buildConsumableRows();openAcc("cons");}
@@ -1884,7 +1908,7 @@ function loadDataIntoEditor(data){
   const allIds=[...skList,...atkList,...splList,...memoList,...consumables].map(x=>Number(x.id)||0).filter(id=>id>0);
 nxtId=allIds.length?Math.max(...allIds)+1:1;
   buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();buildConsumableRows();updateStatDisplay();
-  if(atkList.some(a=>a.name))openAcc("atk");if(splList.some(s=>s.name))openAcc("spl");
+  if(atkList.some(a=>a.name))openAcc("atk");
   if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
   if(memoList.some(m=>m.label||m.content))openMemo();if(consumables.some(c=>c.label))openAcc("cons");
   reExpandAllMemos();
