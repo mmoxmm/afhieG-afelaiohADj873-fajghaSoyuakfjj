@@ -310,12 +310,13 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 /* ===== 修正追加CSS ===== */
-/* 能力値グリッド：入力欄を広く、列間バランス改善 */
-.stat-grid-wrap{display:grid;grid-template-columns:58px 1fr 1fr 44px 40px;gap:3px}
-.dv-grid-wrap{display:grid;grid-template-columns:58px 1fr 1fr 44px 40px;gap:3px}
+/* 変更後（列数そのまま、H/E列を少し広げてgapを左右非対称に） */
+.stat-grid-wrap{display:grid;grid-template-columns:54px 1fr 1fr 46px 42px;gap:3px;padding-left:2px}
+.dv-grid-wrap{display:grid;grid-template-columns:54px 1fr 1fr 46px 42px;gap:3px;padding-left:2px}
 /* 入力欄：4桁収まるよう */
 .sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
 .dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
+.sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-end;padding-right:4px}
 /* 能力値エリアと派生値エリアの間隔 */
   /* 7版モードの遷移アニメ */
 .sg-inp{transition:background .2s,border-color .2s}
@@ -381,8 +382,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div>
       <div class="panel-label">派生値</div>
       <div class="dv-grid-wrap">
-        <div class="dv-col-hd"></div><div class="dv-col-hd" style="font-size:10px">入力</div><div class="dv-col-hd">値</div><div class="dv-col-hd">½</div><div class="dv-col-hd">⅕</div>
-      </div>
+  <div class="dv-col-hd"></div><div class="dv-col-hd" style="font-size:10px">入力</div><div class="dv-col-hd">値</div><div class="dv-col-hd">½(H)</div><div class="dv-col-hd">⅕(E)</div>
+</div>
       <div class="dv-grid-wrap" id="derived-rows"></div>
       <div class="derived-mini" id="derived-mini" style="grid-template-columns:1fr 1fr;margin-top:4px"></div>
     </div>
@@ -993,7 +994,8 @@ function updDerivedMini(){
 }
 
 // ===== 並び替え =====
-function makeSortUD(list,idx,rebuildFn){const ud=document.createElement("div");ud.className="sort-updown";const bu=document.createElement("button");bu.className="sort-btn";bu.textContent="↑";const bd2=document.createElement("button");bd2.className="sort-btn";bd2.textContent="↓";bu.addEventListener("click",e=>{e.stopPropagation();if(idx>0){[list[idx-1],list[idx]]=[list[idx],list[idx-1]];rebuildFn();}});bd2.addEventListener("click",e=>{e.stopPropagation();if(idx<list.length-1){[list[idx],list[idx+1]]=[list[idx+1],list[idx]];rebuildFn();}});ud.append(bu,bd2);return ud;}
+// 変更後（空のdivを返すだけ）
+function makeSortUD(list,idx,rebuildFn){return document.createDocumentFragment();}
 function makeHandle(){const h=document.createElement("div");h.className="sort-handle";h.textContent="☰";h.title="ドラッグで並び替え";return h;}
 function bindDnD(rowEl,list,idx,rebuildFn){
   const handle=rowEl.querySelector(".sort-handle");if(!handle)return;
@@ -1016,7 +1018,7 @@ function buildMemoRows(){
     const row=document.createElement("div");row.style.cssText="display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden";row.dataset.dnd=idx;
     const hd=document.createElement("div");hd.style.cssText="display:flex;align-items:center;gap:3px;padding:3px 5px;background:var(--bg3);cursor:pointer;min-height:30px;flex-wrap:nowrap";
     const dh=makeHandle();dh.style.fontSize="12px";
-    const lbl=document.createElement("textarea");lbl.placeholder="ラベル（装甲・特殊etc）";lbl.value=m.label;lbl.rows=1;lbl.style.cssText="flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;cursor:text;resize:none;overflow:hidden;outline:none;color:var(--text)";
+    const lbl=document.createElement("textarea");lbl.placeholder="ラベル入力欄";lbl.value=m.label;lbl.rows=1;lbl.style.cssText="flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;cursor:text;resize:none;overflow:hidden;outline:none;color:var(--text)";
     const tBtn=document.createElement("button");tBtn.style.cssText="background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s";tBtn.textContent="▼";
     const ud=makeSortUD(memoList,idx,()=>{buildMemoRows();saveMemoLocal();updateExport();});
     const dr=document.createElement("div");dr.className="memo-dest-toggle";
@@ -1109,11 +1111,14 @@ function buildAtkRows(){
 }
   function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
 // 既存の btn-add-atk リスナーを置き換え
-document.getElementById("btn-add-atk").addEventListener("click",()=>{
-  atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
-  buildAtkRows();openAcc("atk");
+// 変更後（イベント委譲でbody-atkに委ねる）
+document.getElementById("body-atk").addEventListener("click",e=>{
+  if(e.target.id==="btn-add-atk"){
+    atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
+    buildAtkRows();openAcc("atk");
+  }
 });
-// 区切り追加ボタン（HTMLに追加が必要）
+  // 区切り追加ボタン（HTMLに追加が必要）
 function addAtkSep(){
   atkList.push({id:nxtId++,_sep:true,label:""});
   buildAtkRows();openAcc("atk");
@@ -1165,7 +1170,10 @@ function buildSkRows(){
   updSkBadge();
 }
 function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
-document.getElementById("btn-add-sk").addEventListener("click",()=>{skList.push({id:nxtId++,name:"",val:0});buildSkRows();openAcc("sk");});
+// 変更後
+document.getElementById("sk-rows").parentElement.addEventListener("click",e=>{
+  if(e.target.id==="btn-add-sk"){skList.push({id:nxtId++,name:"",val:0});buildSkRows();}
+});
 
 // ===== 呪文 =====
 function buildSplRows(){
@@ -1184,8 +1192,10 @@ row.append(ud, dh, rm);
   updSplBadge();
 }
 function updSplBadge(){document.getElementById("badge-spl").textContent=splList.filter(s=>s.name).length;}
-document.getElementById("btn-add-spl").addEventListener("click",()=>{splList.push({id:nxtId++,name:"",mp:"",note:""});buildSplRows();openAcc("spl");});
-
+// 変更後
+document.getElementById("panel-spl-inner").addEventListener("click",e=>{
+  if(e.target.id==="btn-add-spl"){splList.push({id:nxtId++,name:"",mp:"",note:""});buildSplRows();}
+});
 // ===== 消耗品 =====
 function buildConsumableRows(){
   const wrap=document.getElementById("cons-rows");wrap.innerHTML="";
