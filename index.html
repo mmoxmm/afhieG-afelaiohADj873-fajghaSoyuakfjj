@@ -365,19 +365,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div id="parse-result" style="display:none;margin-top:5px"></div>
     </div>
   </div>
-  <div class="accordion" id="acc-palette" style="margin-top:0;margin-bottom:5px">
-  <div class="acc-hd" onclick="toggleAcc('palette')">
-    <div class="acc-hd-left">
-      <span class="acc-title">🎮 パレットプレビュー</span>
-    </div>
-    <span class="acc-arrow" id="arrow-palette">▼</span>
-  </div>
-  <div class="acc-body" id="body-palette">
-    <div style="font-size:12px;color:var(--text3);margin-bottom:4px">ここふぉりあのチャットパレット用コマンド一覧</div>
-    <pre id="palette-preview" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;cursor:pointer" onclick="copyPalettePreview()">（ステータスか技能を入力してください）</pre>
-    <button class="btn-add" onclick="copyPalettePreview()" style="margin-top:3px">📋 パレットをコピー</button>
-  </div>
-</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
       <div class="panel-label">能力値</div>
@@ -400,6 +387,24 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="derived-mini" id="derived-mini" style="grid-template-columns:1fr 1fr;margin-top:4px"></div>
     </div>
   </div>
+  <!-- パレットプレビュー（攻撃・消耗品の上に移動） -->
+  <div class="accordion" id="acc-palette" style="margin-top:4px;margin-bottom:0">
+    <div class="acc-hd" onclick="toggleAcc('palette')">
+      <div class="acc-hd-left">
+        <span class="acc-title">🎮 パレットプレビュー</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:4px">攻撃・技能・メモを反映</span>
+      </div>
+      <span class="acc-arrow" id="arrow-palette">▼</span>
+    </div>
+   <div class="acc-body" id="body-palette">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">ここふぉりあのチャットパレット用コマンド一覧（行をドラッグで並び替え可）</div>
+      <div id="palette-sortable" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
+      <div style="display:flex;gap:3px;margin-top:3px">
+        <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 パレットをコピー</button>
+        <button class="btn-add" onclick="resetPaletteOrder()" style="flex:none;font-size:12px;color:var(--text3)">↺ リセット</button>
+      </div>
+   </div>
+  </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
     <div class="accordion" id="acc-atk" style="margin-top:0">
       <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
@@ -420,24 +425,29 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
-    <div class="accordion" id="acc-sk" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('sk')"><div class="acc-hd-left"><span class="acc-title">🎯 技能</span><span class="acc-badge" id="badge-sk">0</span></div><span class="acc-arrow" id="arrow-sk">▼</span></div>
-      <div class="acc-body" id="body-sk">
-        <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
-        <div id="sk-rows"></div>
-<div style="display:flex;gap:3px;margin-top:3px">
-  <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
-  <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
-</div>
+ <div style="margin-top:4px;border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
+    <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2)">
+      <button class="sk-spl-tab active" data-sktab="sk" onclick="switchSkSplTab('sk')"
+        style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 4px;display:flex;align-items:center;justify-content:center;gap:4px">
+        🎯 技能 <span class="acc-badge" id="badge-sk">0</span>
+      </button>
+      <button class="sk-spl-tab" data-sktab="spl" onclick="switchSkSplTab('spl')"
+        style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 4px;display:flex;align-items:center;justify-content:center;gap:4px">
+        ✨ 呪文 <span class="acc-badge" id="badge-spl">0</span>
+      </button>
+    </div>
+    <div id="panel-sk" style="padding:7px;background:var(--bg)">
+      <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
+      <div id="sk-rows"></div>
+      <div style="display:flex;gap:3px;margin-top:3px">
+        <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
+        <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
       </div>
     </div>
-    <div class="accordion" id="acc-spl" style="margin-top:0">
-      <div class="acc-hd" onclick="toggleAcc('spl')"><div class="acc-hd-left"><span class="acc-title">✨ 呪文</span><span class="acc-badge" id="badge-spl">0</span></div><span class="acc-arrow" id="arrow-spl">▼</span></div>
-      <div class="acc-body" id="body-spl">
-        <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span><span></span></div>
-        <div id="spl-rows"></div><button class="btn-add" id="btn-add-spl">＋ 追加</button>
-      </div>
+    <div id="panel-spl" style="display:none;padding:7px;background:var(--bg)">
+      <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span><span></span></div>
+      <div id="spl-rows"></div>
+      <button class="btn-add" id="btn-add-spl">＋ 追加</button>
     </div>
   </div>
   <div class="memo-section" style="margin-top:4px">
@@ -878,6 +888,7 @@ function getDB(t){
   if(t<=364)return{label:"+3D6",build:"4",cmd:"3D6"};if(t<=444)return{label:"+4D6",build:"5",cmd:"4D6"};
   return{label:"+5D6",build:"6",cmd:"5D6"};
 }
+  // DB半分コマンドを返す（1D6→1D3, 2D6→1D6, 1D4→1D2, 3D6→1D6+1D3 等）
 function getMOV(s,d,sz){if(!s&&!d&&!sz)return"—";if(s<sz&&d<sz)return"7";if(s>sz&&d>sz)return"9";return"8";}
 function calcAuto(k){const con=vals.con||0,siz=vals.siz||0,pow=vals.pow||0;if(k==="hp")return(con+siz)?Math.floor((con+siz)/10):0;if(k==="mp")return pow||0;if(k==="san")return pow?pow*5:0;if(k==="luck")return pow?pow*5:0;return 0;}
 function getEff(k){return ovManual[k]?ov[k]:calcAuto(k);}
@@ -1039,14 +1050,26 @@ function buildAtkRows(){
       return;
     }
     const row=document.createElement("div");row.className="atk-row";row.dataset.dnd=idx;
-    row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name||"")+'" data-aid="'+a.id+'" data-f="name"><input type="number" placeholder="30" value="'+(a.pct||"")+'" data-aid="'+a.id+'" data-f="pct"><input type="text" placeholder="1d8" value="'+esc(a.dmg||"")+'" data-aid="'+a.id+'" data-f="dmg"><label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px"><input type="checkbox" '+(a.useDB?'checked':'')+' data-aid="'+a.id+'" data-f="useDB" style="cursor:pointer;accent-color:var(--warn);width:13px;height:13px">DB</label><input type="text" placeholder="備考" value="'+esc(a.note||"")+'" data-aid="'+a.id+'" data-f="note">';
+   row.innerHTML = '<input type="text" placeholder="噛みつき" value="' + esc(a.name || "") + '" data-aid="' + a.id + '" data-f="name">' +
+      '<input type="number" placeholder="30" value="' + (a.pct || "") + '" data-aid="' + a.id + '" data-f="pct">' +
+      '<input type="text" placeholder="1d8" value="' + esc(a.dmg || "") + '" data-aid="' + a.id + '" data-f="dmg">' +
+      '<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px">' +
+        '<select data-aid="' + a.id + '" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:38px;-webkit-appearance:none;text-align:center">' +
+          '<option value="false"' + (!a.useDB ? ' selected' : '') + '>DBなし</option>' +
+          '<option value="true"' + (a.useDB === true ? ' selected' : '') + '>DB</option>' +
+          '<option value="half"' + (a.useDB === "half" ? ' selected' : '') + '>DB/2</option>' +
+        '</select>' +
+      '</label>' +
+      '<input type="text" placeholder="備考" value="' + esc(a.note || "") + '" data-aid="' + a.id + '" data-f="note">';
     const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
     const dh=makeHandle();
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
     row.append(ud,dh,rm);wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener(inp.type==="checkbox"?"change":"input",e=>{
+   row.querySelectorAll("input, select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
       const id=+e.target.dataset.aid,f=e.target.dataset.f;
-      const v=e.target.type==="checkbox"?e.target.checked:e.target.value;
+      let v;
+      if(f==="useDB"){const raw=e.target.value;v=raw==="half"?"half":raw==="true";}
+      else{v=e.target.value;}
       atkList=atkList.map(x=>x.id===id?{...x,[f]:v}:x);
       updAtkBadge();
       if(["pct","dmg","name","useDB"].includes(f)){updateDice();updateExport();renderPalettePreview();}
@@ -1234,12 +1257,19 @@ function parseNpcText(text){
 
   // DBパターン: +db, +DB, +dB, +(db), +(DB) などを検出する関数
   function stripDB(dmgRaw){
-    // +DB, +db, +(DB), +(db) 等を除去しuseDBをtrueで返す
-    const dbPattern=/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*(?:\/\s*\d+)?\s*\)?/g;
-    const hasDB=dbPattern.test(dmgRaw);
-    const dmgStripped=dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*(?:\/\s*\d+)?\s*\)?/g,"").trim();
-    return{dmg:dmgStripped,useDB:hasDB};
+  // db/2 パターン（+db/2, +(db/2) 等）を先に判定
+  const halfPattern=/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g;
+  const hasHalf=halfPattern.test(dmgRaw);
+  if(hasHalf){
+    const dmgStripped=dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g,"").trim();
+    return{dmg:dmgStripped,useDB:"half"};
   }
+  // 通常DB パターン
+  const dbPattern=/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g;
+  const hasDB=dbPattern.test(dmgRaw);
+  const dmgStripped=dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g,"").trim();
+  return{dmg:dmgStripped,useDB:hasDB};
+}
 
   const atkLineRe=/^([^\t\n]+?)\t+([^\t\n]+?)\t+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)?(?:\+\s*(?:db|DB)(?:\/\s*\d+)?)?)\s*$/gm;
   const foundAtkNames=new Set();
@@ -1348,7 +1378,7 @@ function applyParsed(p){
     p.attacks.forEach(a=>{
       if(!atkList.find(x=>x.name===a.name)){
         // useDBフラグを引き継ぐ
-        atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:!!a.useDB});
+        atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:a.useDB||false});
       }
     });
     if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];
@@ -1462,18 +1492,32 @@ function buildCocoforiaJson(){
   const genBoth=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
   if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" 【ダメージボーナス】");
   // 攻撃（区切り線対応）
-  atkList.forEach(a=>{
-    if(a._sep){cmdLines.push(a.label||"━━━");return;}
-    if(!a.name||(a.pct||0)<=0)return;
-    cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");
-    if(a.dmg){
-      if(a.useDB&&db&&db.cmd){
-        if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}
-        else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
-      }else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+// 攻撃（区切り線対応）
+  atkList.forEach(a => {
+    if (a._sep) { cmdLines.push(a.label || "━━━"); return; }
+    if (!a.name || (a.pct || 0) <= 0) return;
+    cmdLines.push("CC<=" + (a.pct) + " 【" + a.name + "】");
+    if (a.dmg) {
+      if (a.useDB === "half" && db && db.cmd) {
+        const halfCmd = db.cmd + "/2";
+        if (genBoth) {
+          cmdLines.push(a.dmg + " 【" + a.name + "ダメージ（DBなし）】");
+          cmdLines.push(a.dmg + "+" + halfCmd + " 【" + a.name + "ダメージ（DB/2込み）】");
+        } else {
+          cmdLines.push(a.dmg + "+" + halfCmd + " 【" + a.name + "ダメージ】");
+        }
+      } else if (a.useDB && db && db.cmd) {
+        if (genBoth) {
+          cmdLines.push(a.dmg + " 【" + a.name + "ダメージ（DBなし）】");
+          cmdLines.push(a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ（DB込み）】");
+        } else {
+          cmdLines.push(a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ】");
+        }
+      } else {
+        cmdLines.push(a.dmg + " 【" + a.name + "ダメージ】");
+      }
     }
-  });
-  // 技能（区切り線対応）
+  });  // 技能（区切り線対応）
   skList.forEach(s=>{
     if(s._sep){cmdLines.push(s.label||"━━━");return;}
     if(!s.name||(s.val||0)<=0)return;
@@ -1520,10 +1564,24 @@ function buildPaletteText(){
     if(!a.name||(a.pct||0)<=0)return;
     cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");
     if(a.dmg){
-      if(a.useDB&&db&&db.cmd){
-        if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}
-        else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
-      }else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+      if(a.useDB==="half"&&db&&db.cmd){
+        const halfCmd=db.cmd+"/2";
+        if(genBoth){
+          cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");
+          cmdLines.push(a.dmg+"+"+halfCmd+" 【"+a.name+"ダメージ（DB/2込み）】");
+        }else{
+          cmdLines.push(a.dmg+"+"+halfCmd+" 【"+a.name+"ダメージ】");
+        }
+      }else if(a.useDB&&db&&db.cmd){
+        if(genBoth){
+          cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");
+          cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");
+        }else{
+          cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
+        }
+      }else{
+        cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+      }
     }
   });
   skList.forEach(s=>{
@@ -1534,19 +1592,133 @@ function buildPaletteText(){
   memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));
   return cmdLines.join("\n")||"（ステータスか技能を入力してください）";
 }
+  // ===== パレット並び替え =====
+let paletteCustomOrder = null; // null = 自動順
 
-function renderPalettePreview(){
-  const el=document.getElementById("palette-preview");
-  if(!el)return;
-  el.textContent=buildPaletteText();
+function getPaletteLines() {
+  const cmdLines = [];
+  const strV = vals.str || 0, sizV = vals.siz || 0;
+  const db = (strV + sizV > 0) ? getDB(strV + sizV) : null;
+  const genBoth = document.getElementById("chk-both-db")?.checked || document.getElementById("chk-both-db2")?.checked || false;
+  if (db && db.cmd && atkList.some(a => a.name && (a.pct || 0) > 0 && a.useDB))
+    cmdLines.push({ text: db.cmd + " 【ダメージボーナス】", key: "_db" });
+  atkList.forEach(a => {
+    if (a._sep) { cmdLines.push({ text: a.label || "━━━", key: "sep_" + a.id, isSep: true }); return; }
+    if (!a.name || (a.pct || 0) <= 0) return;
+    cmdLines.push({ text: "CC<=" + a.pct + " 【" + a.name + "】", key: "atk_" + a.id });
+    if (a.dmg) {
+      if (a.useDB === "half" && db && db.cmd) {
+        const halfCmd = db.cmd + "/2";
+        if (genBoth) {
+          cmdLines.push({ text: a.dmg + " 【" + a.name + "ダメージ（DBなし）】", key: "dmg_n_" + a.id });
+          cmdLines.push({ text: a.dmg + "+" + halfCmd + " 【" + a.name + "ダメージ（DB/2込み）】", key: "dmg_h_" + a.id });
+        } else {
+          cmdLines.push({ text: a.dmg + "+" + halfCmd + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
+        }
+      } else if (a.useDB && db && db.cmd) {
+        if (genBoth) {
+          cmdLines.push({ text: a.dmg + " 【" + a.name + "ダメージ（DBなし）】", key: "dmg_n_" + a.id });
+          cmdLines.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ（DB込み）】", key: "dmg_h_" + a.id });
+        } else {
+          cmdLines.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
+        }
+      } else {
+        cmdLines.push({ text: a.dmg + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
+      }
+    }
+  });
+  skList.forEach(s => {
+    if (s._sep) { cmdLines.push({ text: s.label || "━━━", key: "ssep_" + s.id, isSep: true }); return; }
+    if (!s.name || (s.val || 0) <= 0) return;
+    cmdLines.push({ text: "CC<=" + s.val + " 【" + s.name + "】", key: "sk_" + s.id });
+  });
+  memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
+    .forEach(m => cmdLines.push({ text: (m.label ? m.label + "\u3000" : "") + m.content, key: "memo_" + m.id }));
+  return cmdLines;
 }
 
-function copyPalettePreview(){
-  const txt=buildPaletteText();
-  if(txt==="（ステータスか技能を入力してください）"){showToast("データがありません");return;}
-  navigator.clipboard.writeText(txt).then(()=>showToast("パレットをコピーしました")).catch(()=>showToast("コピー失敗"));
+function renderPalettePreview() {
+  const wrap = document.getElementById("palette-sortable");
+  const legacyEl = document.getElementById("palette-preview");
+  const lines = getPaletteLines();
+  if (!lines.length) {
+    if (wrap) wrap.innerHTML = '<div style="color:var(--text3);padding:4px 2px">（ステータスか技能を入力してください）</div>';
+    if (legacyEl) legacyEl.textContent = "（ステータスか技能を入力してください）";
+    return;
+  }
+  // カスタム順が設定されていれば適用
+  let ordered = lines;
+  if (paletteCustomOrder) {
+    const keyMap = Object.fromEntries(lines.map(l => [l.key, l]));
+    const reordered = paletteCustomOrder.filter(k => keyMap[k]).map(k => keyMap[k]);
+    const newItems = lines.filter(l => !paletteCustomOrder.includes(l.key));
+    ordered = [...reordered, ...newItems];
+  }
+  if (!wrap) {
+    if (legacyEl) legacyEl.textContent = ordered.map(l => l.text).join("\n");
+    return;
+  }
+  wrap.innerHTML = "";
+  ordered.forEach((line, idx) => {
+    const row = document.createElement("div");
+    row.dataset.key = line.key;
+    row.dataset.idx = idx;
+    row.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 2px;border-radius:3px;margin-bottom:1px;cursor:default;" + (line.isSep ? "opacity:.5;" : "");
+    const handle = document.createElement("span");
+    handle.textContent = "⠿";
+    handle.style.cssText = "cursor:grab;color:var(--text3);font-size:14px;flex-shrink:0;touch-action:none;user-select:none;padding:0 2px";
+    const txt = document.createElement("span");
+    txt.textContent = line.text;
+    txt.style.cssText = "flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:" + (line.isSep ? "var(--text3)" : "var(--text2)");
+    const cpBtn = document.createElement("button");
+    cpBtn.textContent = "📋";
+    cpBtn.style.cssText = "background:none;border:none;cursor:pointer;font-size:11px;padding:1px 3px;flex-shrink:0;color:var(--text3)";
+    cpBtn.addEventListener("click", e => { e.stopPropagation(); navigator.clipboard.writeText(line.text).then(() => { cpBtn.textContent = "✓"; setTimeout(() => cpBtn.textContent = "📋", 1000); addHistory(line.text); }); });
+    row.append(handle, txt, cpBtn);
+    wrap.appendChild(row);
+    // ドラッグ並び替え
+    let startY = 0;
+    handle.addEventListener("pointerdown", e => {
+      e.preventDefault(); handle.setPointerCapture(e.pointerId); startY = e.clientY;
+      const allRows = [...wrap.querySelectorAll("[data-key]")];
+      row.style.background = "var(--bg3)";
+      function mv(ev) { allRows.forEach(r => r.style.borderTop = ""); const target = allRows.find(r => r !== row && Math.abs(ev.clientY - r.getBoundingClientRect().top) < 18); if (target) target.style.borderTop = "2px solid var(--accent)"; }
+      function up(ev) {
+        handle.removeEventListener("pointermove", mv);
+        row.style.background = "";
+        allRows.forEach(r => r.style.borderTop = "");
+        if (Math.abs(ev.clientY - startY) < 4) return;
+        let toIdx = idx;
+        allRows.forEach((r, ri) => { if (r !== row && Math.abs(ev.clientY - r.getBoundingClientRect().top) < 18) toIdx = ri; });
+        if (toIdx === idx) return;
+        const keys = ordered.map(l => l.key);
+        const [moved] = keys.splice(idx, 1); keys.splice(toIdx, 0, moved);
+        paletteCustomOrder = keys;
+        renderPalettePreview();
+      }
+      handle.addEventListener("pointermove", mv);
+      handle.addEventListener("pointerup", up, { once: true });
+    });
+  });
+  // legacy pre にも同期
+  if (legacyEl) legacyEl.textContent = ordered.map(l => l.text).join("\n");
 }
-  
+
+function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("並び順をリセットしました"); }
+
+function copyPalettePreview() {
+  const lines = getPaletteLines();
+  let ordered = lines;
+  if (paletteCustomOrder) {
+    const keyMap = Object.fromEntries(lines.map(l => [l.key, l]));
+    const reordered = paletteCustomOrder.filter(k => keyMap[k]).map(k => keyMap[k]);
+    const newItems = lines.filter(l => !paletteCustomOrder.includes(l.key));
+    ordered = [...reordered, ...newItems];
+  }
+  const txt = ordered.map(l => l.text).join("\n");
+  if (!txt || txt === "（ステータスか技能を入力してください）") { showToast("データがありません"); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast("パレットをコピーしました")).catch(() => showToast("コピー失敗"));
+}  
   
   function copyExport(){const el=document.getElementById("export-preview");if(!el)return;if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("データがありません");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));}else{const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));}}
 function downloadExport(){const el=document.getElementById("export-preview");if(!el)return;const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");const blob=new Blob([txt],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+".json";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);showToast("ダウンロードしました");}
@@ -1837,6 +2009,16 @@ document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("c
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
 
+function switchSkSplTab(tab){
+  document.querySelectorAll(".sk-spl-tab").forEach(btn=>{
+    const active=btn.dataset.sktab===tab;
+    btn.style.borderBottomColor=active?"var(--accent)":"transparent";
+    btn.style.color=active?"var(--text)":"var(--text3)";
+  });
+  document.getElementById("panel-sk").style.display=tab==="sk"?"":"none";
+  document.getElementById("panel-spl").style.display=tab==="spl"?"":"none";
+}  
+  
 // ===== 初期化 =====
 loadMemoLocal();
 buildStatRows();
