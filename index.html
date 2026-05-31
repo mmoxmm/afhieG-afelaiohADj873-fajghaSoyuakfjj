@@ -105,10 +105,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
 /* 攻撃行 */
-.atk-headers{display:grid;grid-template-columns:1fr 46px 46px 30px 1fr 18px 14px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.atk-headers{display:grid;grid-template-columns:1fr 46px 46px 44px 1fr 14px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .atk-headers span:first-child{text-align:left}
-.atk-row{display:grid;grid-template-columns:1fr 46px 46px 30px 1fr 18px 14px 22px;gap:2px;align-items:center;margin-bottom:3px}
-.atk-row input{padding:4px 4px;font-size:14px;text-align:center}
+.atk-row{display:grid;grid-template-columns:1fr 46px 46px 44px 1fr 14px 22px;gap:2px;align-items:center;margin-bottom:3px}.atk-row input{padding:4px 4px;font-size:14px;text-align:center}
 .atk-row input:first-child{text-align:left}
 /* 技能行 */
 .sk-headers{display:grid;grid-template-columns:1fr 50px 36px 36px 18px 14px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
@@ -122,9 +121,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .spl-row{display:grid;grid-template-columns:1fr 48px 1fr 18px 14px 22px;gap:2px;align-items:center;margin-bottom:3px}
 .spl-row input{padding:4px 4px;font-size:14px}
 /* 消耗品行 */
-.cons-headers{display:grid;grid-template-columns:1fr 38px 38px 18px 14px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.cons-headers{display:grid;grid-template-columns:1fr 38px 38px 14px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .cons-headers span:first-child{text-align:left}
-.cons-row{display:grid;grid-template-columns:1fr 38px 38px 18px 14px 22px;gap:2px;align-items:center;margin-bottom:3px}
+.cons-row{display:grid;grid-template-columns:1fr 38px 38px 14px 22px;gap:2px;align-items:center;margin-bottom:3px}
 .cons-row input{padding:4px 4px;font-size:13px;text-align:center}
 .cons-row input:first-child{text-align:left}
 .btn-remove{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:15px;width:22px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -1050,22 +1049,21 @@ function buildAtkRows(){
       return;
     }
     const row=document.createElement("div");row.className="atk-row";row.dataset.dnd=idx;
-   row.innerHTML = '<input type="text" placeholder="噛みつき" value="' + esc(a.name || "") + '" data-aid="' + a.id + '" data-f="name">' +
+  row.innerHTML = '<input type="text" placeholder="噛みつき" value="' + esc(a.name || "") + '" data-aid="' + a.id + '" data-f="name">' +
       '<input type="number" placeholder="30" value="' + (a.pct || "") + '" data-aid="' + a.id + '" data-f="pct">' +
       '<input type="text" placeholder="1d8" value="' + esc(a.dmg || "") + '" data-aid="' + a.id + '" data-f="dmg">' +
       '<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px">' +
-        '<select data-aid="' + a.id + '" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:38px;-webkit-appearance:none;text-align:center">' +
-          '<option value="false"' + (!a.useDB ? ' selected' : '') + '>DBなし</option>' +
+        '<select data-aid="' + a.id + '" data-f="useDB" style="font-size:10px;padding:1px 2px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--warn);cursor:pointer;width:42px;-webkit-appearance:none;text-align:center">' +
+          '<option value="false"' + (!a.useDB ? ' selected' : '') + '>なし</option>' +
           '<option value="true"' + (a.useDB === true ? ' selected' : '') + '>DB</option>' +
           '<option value="half"' + (a.useDB === "half" ? ' selected' : '') + '>DB/2</option>' +
         '</select>' +
       '</label>' +
       '<input type="text" placeholder="備考" value="' + esc(a.note || "") + '" data-aid="' + a.id + '" data-f="note">';
-    const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
-    const dh=makeHandle();
-    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(ud,dh,rm);wrap.appendChild(row);
-   row.querySelectorAll("input, select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
+    const dh = makeHandle();
+    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+    row.append(dh, rm);
+    row.querySelectorAll("input, select").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",e=>{
       const id=+e.target.dataset.aid,f=e.target.dataset.f;
       let v;
       if(f==="useDB"){const raw=e.target.value;v=raw==="half"?"half":raw==="true";}
@@ -1108,10 +1106,9 @@ function buildSkRows(){
       inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=sk.label||"";
       inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
       inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
-      const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
-      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-      rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updateExport();renderPalettePreview();});
-      row.append(dh,inp,ud,rm);wrap.appendChild(row);
+      const dh = makeHandle();
+      const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+    row.append(dh, rm);
       bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
       return;
     }
@@ -1143,13 +1140,12 @@ function buildSplRows(){
   splList.forEach((s,idx)=>{
     const row=document.createElement("div");row.className="spl-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="呪文名..." value="'+esc(s.name||"")+'" data-sid="'+s.id+'" data-f="name"><input type="text" placeholder="3MP" value="'+esc(s.mp||"")+'" data-sid="'+s.id+'" data-f="mp"><input type="text" placeholder="効果..." value="'+esc(s.note||"")+'" data-sid="'+s.id+'" data-f="note">';
-    const ud=makeSortUD(splList,idx,buildSplRows);
-    const dh=makeHandle();
-    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(ud,dh,rm);wrap.appendChild(row);
+    const dh = makeHandle();
+    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+    row.append(ud, dh, rm);
     row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.sid,f=e.target.dataset.f;splList=splList.map(x=>x.id===id?{...x,[f]:e.target.value}:x);updSplBadge();}));
     rm.addEventListener("click",()=>{if(splList.length>1){splList=splList.filter(x=>x.id!==s.id);buildSplRows();}});
-    bindDnD(row,splList,idx,buildSplRows);
+    bindDnD(row, splList, idx, buildSplRows);
   });
   updSplBadge();
 }
@@ -1163,12 +1159,10 @@ function buildConsumableRows(){
     const row=document.createElement("div");row.className="cons-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="弾丸・アイテム" value="'+esc(c.label||"")+'" data-cid="'+c.id+'" data-f="label"><input type="number" placeholder="現在" value="'+(c.cur||"")+'" data-cid="'+c.id+'" data-f="cur"><input type="number" placeholder="最大" value="'+(c.max||"")+'" data-cid="'+c.id+'" data-f="max">';
     const ud=makeSortUD(consumables,idx,()=>{buildConsumableRows();updateExport();});
-    const dh=makeHandle();
-    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
-    row.append(ud,dh,rm);wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.cid,f=e.target.dataset.f;consumables=consumables.map(x=>x.id===id?{...x,[f]:e.target.value}:x);updConsBadge();updateExport();}));
-    rm.addEventListener("click",()=>{consumables=consumables.filter(x=>x.id!==c.id);buildConsumableRows();updateExport();});
-    bindDnD(row,consumables,idx,()=>{buildConsumableRows();updateExport();});
+  const dh = makeHandle();
+    const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+    row.append(dh, rm);
+    bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); });
   });
   updConsBadge();
 }
@@ -1891,7 +1885,8 @@ function loadDataIntoEditor(data){
 nxtId=allIds.length?Math.max(...allIds)+1:1;
   buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();buildConsumableRows();updateStatDisplay();
   if(atkList.some(a=>a.name))openAcc("atk");if(splList.some(s=>s.name))openAcc("spl");
-  if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");if(memoList.some(m=>m.label||m.content))openMemo();if(consumables.some(c=>c.label))openAcc("cons");
+  if(skList.some(s=>s.name&&(s.val||0)>0))openAcc("sk");
+  if(memoList.some(m=>m.label||m.content))openMemo();if(consumables.some(c=>c.label))openAcc("cons");
   reExpandAllMemos();
 }
 function renderSaveCard(sv,isShared){
@@ -2008,16 +2003,6 @@ function switchTab(t){
 document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
-
-function switchSkSplTab(tab){
-  document.querySelectorAll(".sk-spl-tab").forEach(btn=>{
-    const active=btn.dataset.sktab===tab;
-    btn.style.borderBottomColor=active?"var(--accent)":"transparent";
-    btn.style.color=active?"var(--text)":"var(--text3)";
-  });
-  document.getElementById("panel-sk").style.display=tab==="sk"?"":"none";
-  document.getElementById("panel-spl").style.display=tab==="spl"?"":"none";
-}  
   
 // ===== 初期化 =====
 loadMemoLocal();
