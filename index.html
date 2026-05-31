@@ -317,8 +317,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .dv-grid-wrap{display:grid;grid-template-columns:54px 1fr 1fr 46px 42px;gap:3px;padding-left:2px}
 /* 入力欄：4桁収まるよう */
 .sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
-/* 変更後（セミコロン追加） */
-.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
+.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0;}
 .sg-half,.sg-fifth,.dv-half,.dv-fifth{justify-content:flex-start;padding-left:2px}
   /* 能力値エリアと派生値エリアの間隔 */
   /* 7版モードの遷移アニメ */
@@ -491,13 +490,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
     </div>
 
-    <div class="accordion" id="acc-cons" style="margin-top:0">
-      <div class="acc-body" id="body-cons">
-        <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
-          <button class="sk-spl-tab active" data-cstab="cons" onclick="switchConsSplTab('cons')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
-          <button class="sk-spl-tab" data-cstab="spl" onclick="switchConsSplTab('spl')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:3px">✨ 呪文 <span id="badge-spl" class="acc-badge" style="background:var(--success)">0</span></button>
+  <div class="accordion" id="acc-cons" style="margin-top:0">
+      <div class="acc-hd" onclick="toggleAcc('cons')">
+        <div class="acc-hd-left">
+          <span class="acc-title">🎒 消耗・呪文</span>
+          <span class="acc-badge" id="badge-cons">0</span>
+          <span class="acc-badge" id="badge-spl" style="background:var(--success)">0</span>
         </div>
-        <div id="panel-cons">
+        <span class="acc-arrow" id="arrow-cons">▼</span>
+      </div>
+    <div id="panel-cons">
           <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
           <div id="cons-rows"></div>
           <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
@@ -1317,8 +1319,21 @@ function buildAtkRows(){
       customDbVal=e.target.value;
       dbBtn.textContent=dbBtnLabel("custom",customDbVal);
       updateAtkItem();
+      document.getElementById("btn-add-atk").addEventListener("click",()=>{
     });
 
+// 攻撃追加・区切りボタンのリスナー（初回1回だけ登録）
+(function(){
+  const btnAdd=document.getElementById("btn-add-atk");
+  if(btnAdd&&!btnAdd._bound){
+    btnAdd._bound=true;
+    btnAdd.addEventListener("click",()=>{
+      atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
+      buildAtkRows();openAcc("atk");
+    });
+  }
+})();
+      
     function updateAtkItem(){
       const udb=stateToUseDB(dbState,customDbVal);
       atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);
@@ -1754,8 +1769,7 @@ function updateDice(){
   const dba=document.getElementById("dmg-bonus-area");
   const dbw=document.getElementById("dmg-block-wrap");
   const bss=document.getElementById("bonus-block-standalone");
-  // 要素がなければ何もしない（メモタブに移行済みのため）
-  if(!cont)return;
+  if(!cont||!dba||!dbw||!bss)return;
   const aA=atkList.filter(a=>a.name&&(a.pct||0)>0),aS=STATS.filter(({key})=>(vals[key]||0)>0);
   const aD=[{l:"HP",v:getEff("hp")},{l:"MP",v:getEff("mp")},{l:"SAN",v:getEff("san")},{l:"幸運",v:getEff("luck")}].filter(d=>d.v>0);
   const aSk=skList.filter(s=>s.name&&(s.val||0)>0);
@@ -1964,7 +1978,6 @@ function getPaletteLines() {
   });
   return cmdLines;
 }
-// 変更後（全体差し替え）
 function renderPalettePreview() {
   const wrapSk = document.getElementById("palette-sortable-sk");
   const wrapAtk = document.getElementById("palette-sortable-atk");
@@ -1972,7 +1985,6 @@ function renderPalettePreview() {
 
   const lines = getPaletteLines();
 
-  // 左: 技能のみ / 右: 攻撃・ダメージ・メモ・呪文
   const skLines = lines.filter(l =>
     l.key.startsWith("sk_") || l.key.startsWith("ssep_")
   );
@@ -2362,9 +2374,15 @@ function switchTab(t){
     if(currentSavePage==="personal"){renderSaveList();updateExport();}
     else if(currentSavePage==="shared"){renderSharedList();updateExport();}
   }
-  // dice タブはメモ/履歴に変更済みなので updateDice() 呼び出しを削除
+  if(t==="dice"){
+    // メモ/履歴タブ：session-memo-diceの内容をsession-memoと同期
+    const orig=document.getElementById("session-memo");
+    const dice=document.getElementById("session-memo-dice");
+    if(orig&&dice&&dice.value!==orig.value)dice.value=orig.value;
+    renderHistory();
+  }
 }
-  document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 watchInp(document.getElementById("sync-key-input"),document.getElementById("w-synckey"));
 watchInp(document.getElementById("npc-name"),document.getElementById("w-npcname"));
   
