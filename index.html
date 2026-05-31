@@ -311,13 +311,14 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 /* ===== 修正追加CSS ===== */
-/* 能力値グリッド列幅調整（入力欄を広く、間隔詰め） */
-.stat-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
-.dv-grid-wrap{display:grid;grid-template-columns:56px 56px 1fr 42px 42px;gap:1px}
-/* 入力欄を少し広く */
-.sg-inp{padding:0 18px 0 5px;min-width:0}
-.sg-inp-cell{min-width:0}
-/* 7版モードの遷移アニメ */
+/* 能力値グリッド：入力欄を広く、列間バランス改善 */
+.stat-grid-wrap{display:grid;grid-template-columns:58px 1fr 1fr 44px 40px;gap:3px}
+.dv-grid-wrap{display:grid;grid-template-columns:58px 1fr 1fr 44px 40px;gap:3px}
+/* 入力欄：4桁収まるよう */
+.sg-inp{padding:0 20px 0 6px;font-size:14px;min-width:0}
+.dv-inp{padding:0 18px 0 5px;font-size:14px;min-width:0}
+/* 能力値エリアと派生値エリアの間隔 */
+  /* 7版モードの遷移アニメ */
 .sg-inp{transition:background .2s,border-color .2s}
 /* 保存タブアコーディオン内のsync-key-block余白を除去 */
 #body-sync-personal .sync-key-block,
@@ -364,7 +365,20 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div id="parse-result" style="display:none;margin-top:5px"></div>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start;margin-top:2px">
+  <div class="accordion" id="acc-palette" style="margin-top:0;margin-bottom:5px">
+  <div class="acc-hd" onclick="toggleAcc('palette')">
+    <div class="acc-hd-left">
+      <span class="acc-title">🎮 パレットプレビュー</span>
+    </div>
+    <span class="acc-arrow" id="arrow-palette">▼</span>
+  </div>
+  <div class="acc-body" id="body-palette">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:4px">ここふぉりあのチャットパレット用コマンド一覧</div>
+    <pre id="palette-preview" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;cursor:pointer" onclick="copyPalettePreview()">（ステータスか技能を入力してください）</pre>
+    <button class="btn-add" onclick="copyPalettePreview()" style="margin-top:3px">📋 パレットをコピー</button>
+  </div>
+</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
       <div class="panel-label">能力値</div>
       <!-- 既存の sg-col-hd 4つ目・5つ目を変更 -->
@@ -391,7 +405,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="acc-hd" onclick="toggleAcc('atk')"><div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div><span class="acc-arrow" id="arrow-atk">▼</span></div>
       <div class="acc-body" id="body-atk">
         <div class="atk-headers"><span>名前</span><span>%</span><span>ダメ</span><span style="color:var(--warn)">DB</span><span>備考</span><span></span><span></span><span></span></div>
-        <div id="atk-rows"></div><button class="btn-add" id="btn-add-atk">＋ 追加</button>
+        <div id="atk-rows"></div>
+<div style="display:flex;gap:3px;margin-top:3px">
+  <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
+  <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+</div>
       </div>
     </div>
     <div class="accordion" id="acc-cons" style="margin-top:0">
@@ -407,7 +425,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="acc-hd" onclick="toggleAcc('sk')"><div class="acc-hd-left"><span class="acc-title">🎯 技能</span><span class="acc-badge" id="badge-sk">0</span></div><span class="acc-arrow" id="arrow-sk">▼</span></div>
       <div class="acc-body" id="body-sk">
         <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
-        <div id="sk-rows"></div><button class="btn-add" id="btn-add-sk">＋ 追加</button>
+        <div id="sk-rows"></div>
+<div style="display:flex;gap:3px;margin-top:3px">
+  <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
+  <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+</div>
       </div>
     </div>
     <div class="accordion" id="acc-spl" style="margin-top:0">
@@ -665,7 +687,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
           <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
-            <input type="checkbox" id="chk-both-db" onchange="updateExport()" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            <input type="checkbox" id="chk-both-db" onchange="syncBothDbCheck(this)"style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
             DB付き/なし両方生成
           </label>
           <span style="font-size:11px;color:var(--text3)">攻撃欄DBチェック行のみ適用</span>
@@ -723,26 +745,31 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         </div>
       </div>
     </div>
-
-    <!-- 出力セクション（共有タブ内） -->
-    <div class="accordion" style="margin-top:0;margin-bottom:5px">
-      <div class="acc-hd" onclick="toggleAcc('export-shared')">
-        <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
-        <span class="acc-arrow" id="arrow-export-shared">▼</span>
-      </div>
-      <div class="acc-body" id="body-export-shared">
-        <div style="display:flex;gap:4px;margin-bottom:5px">
-          <button onclick="setExportMode('json')" class="export-btn" style="font-size:12px" id="exp-btn-json2">キャラパレJSON</button>
-          <button onclick="setExportMode('text')" class="export-btn sec" style="font-size:12px" id="exp-btn-text2">チャット用テキスト</button>
-        </div>
-        <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
-        <div class="export-btn-row">
-          <button class="export-btn" onclick="copyExport()">📋 コピー</button>
-        </div>
-        <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V でキャラコマ生成。</div>
-      </div>
+<!-- 出力セクション（共有タブ内） -->
+<div class="accordion" style="margin-top:0;margin-bottom:5px">
+  <div class="acc-hd" onclick="toggleAcc('export-shared')">
+    <div class="acc-hd-left"><span class="acc-title">🎮 ここふぉりあ出力</span></div>
+    <span class="acc-arrow" id="arrow-export-shared">▼</span>
+  </div>
+  <div class="acc-body" id="body-export-shared">
+    <div style="display:flex;gap:4px;margin-bottom:5px">
+      <button onclick="setExportMode('json')" class="export-btn" style="font-size:12px" id="exp-btn-json2">キャラパレJSON</button>
+      <button onclick="setExportMode('text')" class="export-btn sec" style="font-size:12px" id="exp-btn-text2">チャット用テキスト</button>
     </div>
-
+    <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
+        <input type="checkbox" id="chk-both-db2" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+        DB付き/なし両方生成
+      </label>
+      <span style="font-size:11px;color:var(--text3)">攻撃欄DBチェック行のみ適用</span>
+    </div>
+    <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+    <div class="export-btn-row">
+      <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+    </div>
+    <div class="export-note">※ JSONは「📋 コピー」→ ここふぉりあの盤面にCtrl+V でキャラコマ生成。</div>
+  </div>
+</div>
     <div class="save-toolbar"><button class="btn-pri" id="btn-save-shared-current" style="background:var(--success)">現在のデータを共有に保存</button></div>
     <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
   </div>
@@ -994,39 +1021,97 @@ function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=
 function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");wrap.innerHTML="";
   atkList.forEach((a,idx)=>{
+    if(a._sep){
+      // 区切り線
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+      row.dataset.dnd=idx;
+      const dh=makeHandle();
+      const inp=document.createElement("input");
+      inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=a.label||"";
+      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
+      inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
+      const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
+      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+      rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();updateExport();renderPalettePreview();});
+      row.append(dh,inp,ud,rm);wrap.appendChild(row);
+      bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
+      return;
+    }
     const row=document.createElement("div");row.className="atk-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="噛みつき" value="'+esc(a.name||"")+'" data-aid="'+a.id+'" data-f="name"><input type="number" placeholder="30" value="'+(a.pct||"")+'" data-aid="'+a.id+'" data-f="pct"><input type="text" placeholder="1d8" value="'+esc(a.dmg||"")+'" data-aid="'+a.id+'" data-f="dmg"><label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:var(--warn);white-space:nowrap;cursor:pointer;height:28px"><input type="checkbox" '+(a.useDB?'checked':'')+' data-aid="'+a.id+'" data-f="useDB" style="cursor:pointer;accent-color:var(--warn);width:13px;height:13px">DB</label><input type="text" placeholder="備考" value="'+esc(a.note||"")+'" data-aid="'+a.id+'" data-f="note">';
-    const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();});
+    const ud=makeSortUD(atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
     const dh=makeHandle();
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
     row.append(ud,dh,rm);wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener(inp.type==="checkbox"?"change":"input",e=>{const id=+e.target.dataset.aid,f=e.target.dataset.f;const v=e.target.type==="checkbox"?e.target.checked:e.target.value;atkList=atkList.map(x=>x.id===id?{...x,[f]:v}:x);updAtkBadge();if(["pct","dmg","name","useDB"].includes(f)){updateDice();updateExport();}}));
-    rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();}});
-    bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();});
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener(inp.type==="checkbox"?"change":"input",e=>{
+      const id=+e.target.dataset.aid,f=e.target.dataset.f;
+      const v=e.target.type==="checkbox"?e.target.checked:e.target.value;
+      atkList=atkList.map(x=>x.id===id?{...x,[f]:v}:x);
+      updAtkBadge();
+      if(["pct","dmg","name","useDB"].includes(f)){updateDice();updateExport();renderPalettePreview();}
+    }));
+    rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateDice();renderPalettePreview();}});
+    bindDnD(row,atkList,idx,()=>{buildAtkRows();updateDice();updateExport();renderPalettePreview();});
   });
   updAtkBadge();
 }
-function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
-document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");});
-
+  function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name).length;}
+// 既存の btn-add-atk リスナーを置き換え
+document.getElementById("btn-add-atk").addEventListener("click",()=>{
+  atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});
+  buildAtkRows();openAcc("atk");
+});
+// 区切り追加ボタン（HTMLに追加が必要）
+function addAtkSep(){
+  atkList.push({id:nxtId++,_sep:true,label:""});
+  buildAtkRows();openAcc("atk");
+}
+function addSkSep(){
+  skList.push({id:nxtId++,_sep:true,label:""});
+  buildSkRows();openAcc("sk");
+}
+  
 // ===== 技能 =====
 function buildSkRows(){
   const wrap=document.getElementById("sk-rows");wrap.innerHTML="";
   skList.forEach((sk,idx)=>{
+    if(sk._sep){
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+      row.dataset.dnd=idx;
+      const dh=makeHandle();
+      const inp=document.createElement("input");
+      inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=sk.label||"";
+      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
+      inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateDice();updateExport();renderPalettePreview();});
+      const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+      rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      row.append(dh,inp,ud,rm);wrap.appendChild(row);
+      bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updateExport();renderPalettePreview();});
+      return;
+    }
     const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;
     const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;
     row.innerHTML='<input type="text" placeholder="技能名..." value="'+esc(sk.name||"")+'" data-sid="'+sk.id+'" data-f="name"><input type="number" min="0" max="999" placeholder="—" value="'+(sk.val||"")+'" data-sid="'+sk.id+'" data-f="val"><div class="skill-val">'+(h!=null?h:"—")+'</div><div class="skill-val">'+(f!=null?f:"—")+'</div>';
-    const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();});
+    const ud=makeSortUD(skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
     const dh=makeHandle();
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
     row.append(ud,dh,rm);wrap.appendChild(row);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const id=+e.target.dataset.sid,f=e.target.dataset.f;const v=f==="val"?parseInt(e.target.value)||0:e.target.value;skList=skList.map(x=>x.id===id?{...x,[f]:v}:x);if(f==="val")buildSkRows();updateDice();updatePreviewSelect();updSkBadge();}));
-    rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updatePreviewSelect();updSkBadge();}});
-    bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();});
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
+      const id=+e.target.dataset.sid,f=e.target.dataset.f;
+      const v=f==="val"?parseInt(e.target.value)||0:e.target.value;
+      skList=skList.map(x=>x.id===id?{...x,[f]:v}:x);
+      if(f==="val")buildSkRows();
+      updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();
+    }));
+    rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateDice();updatePreviewSelect();updSkBadge();renderPalettePreview();}});
+    bindDnD(row,skList,idx,()=>{buildSkRows();updateDice();updatePreviewSelect();renderPalettePreview();});
   });
   updSkBadge();
 }
-function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
+  function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
 document.getElementById("btn-add-sk").addEventListener("click",()=>{skList.push({id:nxtId++,name:"",val:0});buildSkRows();openAcc("sk");});
 
 // ===== 呪文 =====
@@ -1353,17 +1438,47 @@ document.getElementById("preview-manual-val").addEventListener("input",()=>{prev
 
 // ===== JSON/テキスト出力 =====
 function setExportMode(mode){exportMode=mode;document.getElementById("exp-btn-json").className="export-btn"+(mode==="json"?"":" sec");document.getElementById("exp-btn-text").className="export-btn"+(mode==="text"?"":" sec");const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
+
+function syncBothDbCheck(el){
+  const other = el.id === 'chk-both-db' 
+    ? document.getElementById('chk-both-db2') 
+    : document.getElementById('chk-both-db');
+  if(other) other.checked = el.checked;
+  updateExport();
+}
+ 
 function buildCocoforiaJson(){
   const name=document.getElementById("npc-name").value||"NPC";
   const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
-  if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"幸運",value:luck,max:luck});
+  if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});
+  if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});
+  if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});
+  if(luck>0||ovManual.luck)status.push({label:"幸運",value:luck,max:luck});
   consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});
   const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});
-  const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const cmdLines=[];
+  const strV=vals.str||0,sizV=vals.siz||0;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const genBoth=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
   if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" 【ダメージボーナス】");
-  const genBoth=document.getElementById("chk-both-db")?.checked||false;
-  atkList.filter(a=>a.name&&(a.pct||0)>0).forEach(a=>{cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");if(a.dmg){if(a.useDB&&db&&db.cmd){if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");}else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");}});
-  skList.filter(s=>s.name&&(s.val||0)>0).forEach(s=>cmdLines.push("CC<="+(s.val)+" 【"+s.name+"】"));
+  // 攻撃（区切り線対応）
+  atkList.forEach(a=>{
+    if(a._sep){cmdLines.push(a.label||"━━━");return;}
+    if(!a.name||(a.pct||0)<=0)return;
+    cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");
+    if(a.dmg){
+      if(a.useDB&&db&&db.cmd){
+        if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}
+        else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
+      }else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+    }
+  });
+  // 技能（区切り線対応）
+  skList.forEach(s=>{
+    if(s._sep){cmdLines.push(s.label||"━━━");return;}
+    if(!s.name||(s.val||0)<=0)return;
+    cmdLines.push("CC<="+(s.val)+" 【"+s.name+"】");
+  });
   memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));
   const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?m.label+"　":"")+m.content);
   return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});
@@ -1389,12 +1504,51 @@ function updateExport(){
   const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"（ステータスを入力すると出力されます）";
   if(el)el.textContent=txt;
   if(el2)el2.textContent=txt;
-  // 共有タブのボタン同期
   const j2=document.getElementById("exp-btn-json2"),t2=document.getElementById("exp-btn-text2");
   if(j2)j2.className="export-btn"+(exportMode==="json"?"":" sec");
   if(t2)t2.className="export-btn"+(exportMode==="text"?"":" sec");
-} 
-function copyExport(){const el=document.getElementById("export-preview");if(!el)return;if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("データがありません");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));}else{const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));}}
+  renderPalettePreview(); // ← 追加
+}
+function buildPaletteText(){
+  const cmdLines=[];
+  const strV=vals.str||0,sizV=vals.siz||0;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const genBoth=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
+  if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" 【ダメージボーナス】");
+  atkList.forEach(a=>{
+    if(a._sep){cmdLines.push(a.label||"━━━");return;}
+    if(!a.name||(a.pct||0)<=0)return;
+    cmdLines.push("CC<="+(a.pct)+" 【"+a.name+"】");
+    if(a.dmg){
+      if(a.useDB&&db&&db.cmd){
+        if(genBoth){cmdLines.push(a.dmg+" 【"+a.name+"ダメージ（DBなし）】");cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】");}
+        else cmdLines.push(a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】");
+      }else cmdLines.push(a.dmg+" 【"+a.name+"ダメージ】");
+    }
+  });
+  skList.forEach(s=>{
+    if(s._sep){cmdLines.push(s.label||"━━━");return;}
+    if(!s.name||(s.val||0)<=0)return;
+    cmdLines.push("CC<="+(s.val)+" 【"+s.name+"】");
+  });
+  memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));
+  return cmdLines.join("\n")||"（ステータスか技能を入力してください）";
+}
+
+function renderPalettePreview(){
+  const el=document.getElementById("palette-preview");
+  if(!el)return;
+  el.textContent=buildPaletteText();
+}
+
+function copyPalettePreview(){
+  const txt=buildPaletteText();
+  if(txt==="（ステータスか技能を入力してください）"){showToast("データがありません");return;}
+  navigator.clipboard.writeText(txt).then(()=>showToast("パレットをコピーしました")).catch(()=>showToast("コピー失敗"));
+}
+  
+  
+  function copyExport(){const el=document.getElementById("export-preview");if(!el)return;if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("データがありません");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("コピーしました！盤面にCtrl+Vで貼り付け")).catch(()=>showToast("コピー失敗"));}else{const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}navigator.clipboard.writeText(txt).then(()=>showToast("コピーしました")).catch(()=>showToast("コピー失敗"));}}
 function downloadExport(){const el=document.getElementById("export-preview");if(!el)return;const txt=el.textContent;if(!txt||txt==="（ステータスを入力すると出力されます）"){showToast("データがありません");return;}const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");const blob=new Blob([txt],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+".json";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);showToast("ダウンロードしました");}
 
 // ===== KP支援 =====
