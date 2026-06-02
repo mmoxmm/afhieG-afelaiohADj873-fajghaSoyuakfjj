@@ -111,12 +111,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .atk-row{display:grid;grid-template-columns:3fr 44px 2fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:4px;font-size:14px}
 /* 技能行 */
-.sk-headers{display:grid;grid-template-columns:5fr 44px 32px 32px 18px 18px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.sk-headers{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:5fr 44px 32px 32px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:4px;font-size:14px;text-align:center}
 .sk-row input:first-child{text-align:left}
-.skill-val{text-align:center;font-size:13px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:4px 2px;border:0.5px solid var(--border)}
+.skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:3px 1px;border:0.5px solid var(--border)}
 /* 呪文行 */
 .spl-headers{display:grid;grid-template-columns:1fr 38px 1fr 22px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3)}
 .spl-row{display:grid;grid-template-columns:1fr 38px 1fr 22px 22px;gap:2px;align-items:center;margin-bottom:3px}
@@ -284,7 +284,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 @media(max-width:520px){
   .stat-grid-wrap,.dv-grid-wrap{grid-template-columns:42px 1fr 1fr 38px 34px}
-  .sk-row,.sk-headers{grid-template-columns:1fr 40px 30px 30px 16px 16px}
+  .sk-row,.sk-headers{grid-template-columns:1fr 38px 26px 26px 14px 14px}
   .spl-headers,.spl-row{grid-template-columns:1fr 34px 1fr 20px 20px}
   .save-toolbar{flex-wrap:wrap}
 }
@@ -374,19 +374,40 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <span class="acc-arrow" id="arrow-palette">▼</span>
     </div>
     <div class="acc-body" id="body-palette">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能</div>
-          <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
+      <!-- パレットタブ -->
+      <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
+        <button id="palette-tab-auto" onclick="switchPaletteTab('auto')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px">🔄 自動</button>
+        <button id="palette-tab-manual" onclick="switchPaletteTab('manual')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px">✏️ 手書き</button>
+      </div>
+      <!-- 自動タブ -->
+      <div id="palette-panel-auto">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能</div>
+            <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・メモ</div>
+            <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
+          </div>
         </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・ダメージ・メモ</div>
-          <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:280px;overflow-y:auto"></div>
+        <div style="display:flex;gap:3px;margin-top:3px">
+          <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 コピー</button>
+          <button class="btn-add" onclick="resetPaletteOrder()" style="flex:1;font-size:12px;color:var(--text3)">↺ リセット</button>
         </div>
       </div>
-      <div style="display:flex;gap:3px;margin-top:3px">
-        <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 コピー</button>
-        <button class="btn-add" onclick="resetPaletteOrder()" style="flex:1;font-size:12px;color:var(--text3)">↺ リセット</button>
+      <!-- 手書きタブ -->
+      <div id="palette-panel-manual" style="display:none">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">1行ずつ入力。ドラッグで並び替え可能。</div>
+        <div id="manual-palette-rows"></div>
+        <div style="display:flex;gap:3px;margin-top:3px">
+          <button class="btn-add" onclick="addManualPaletteRow()" style="flex:2">＋ 行追加</button>
+          <button class="btn-add" onclick="addManualPaletteSep()" style="flex:1;font-size:12px">━ 区切り</button>
+        </div>
+        <div style="display:flex;gap:3px;margin-top:3px">
+          <button class="btn-add" onclick="copyManualPalette()" style="flex:1">📋 コピー</button>
+          <button class="btn-add" onclick="clearManualPalette()" style="flex:1;font-size:12px;color:var(--danger)">🗑 クリア</button>
+        </div>
       </div>
     </div>
   </div>
@@ -397,9 +418,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="accordion" id="acc-atk" style="margin-top:0">
       <div class="acc-hd" onclick="toggleAcc('atk')">
         <div class="acc-hd-left"><span class="acc-title">⚔️ 攻撃</span><span class="acc-badge" id="badge-atk">0</span></div>
-        <span class="acc-arrow" id="arrow-atk">▼</span>
+        <span class="acc-arrow open" id="arrow-atk">▼</span>
       </div>
-      <div class="acc-body" id="body-atk">
+      <div class="acc-body open" id="body-atk">
         <div id="atk-rows"></div>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
@@ -498,8 +519,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
   <div class="full-card" style="margin-bottom:5px">
-    <div class="kp-card-title">📝 雑メモ（自動保存）</div>
-    <textarea id="session-memo-dice" placeholder="自由にメモ..."></textarea>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <div class="kp-card-title" style="margin-bottom:0">📝 メモ <span class="acc-badge" id="badge-dice-memo">0</span></div>
+      <button class="btn-add" onclick="addDiceMemoRow()" style="margin-top:0;width:auto;padding:3px 10px;font-size:12px">＋ 追加</button>
+    </div>
+    <div id="dice-memo-rows"></div>
   </div>
   <div class="full-card">
     <div class="kp-card-title">📋 コマンド履歴</div>
@@ -681,8 +705,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
     <button class="btn-pri" id="btn-save-current" style="flex:2;min-width:0">💾 保存</button>
-    <button class="btn-sync" id="btn-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️ UP</button>
-    <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️ DL</button>
+    <button class="btn-sync" id="btn-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️UP</button>
+    <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️DL</button>
   </div>
     <div id="save-list-wrap"></div>
   </div>
@@ -734,8 +758,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
     <button class="btn-pri" id="btn-save-shared-current" style="flex:2;min-width:0;background:var(--success)">💾 共有保存</button>
-    <button class="btn-sync" id="btn-shared-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️ UP</button>
-    <button class="btn-sync" id="btn-shared-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️ DL</button>
+    <button class="btn-sync" id="btn-shared-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️UP</button>
+    <button class="btn-sync" id="btn-shared-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️DL</button>
   </div>
     <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
   </div>
@@ -898,8 +922,141 @@ function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),s
 function renderSharedList(){const wrap=document.getElementById("shared-list-wrap");const shared=lSharedSaves();if(!shared.length){wrap.innerHTML='<p class="save-empty">\u5171\u6709\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08'+shared.length+'\u4ef6\uff09</div><div class="save-list">'+shared.map(sv=>renderSaveCard(sv,true)).join("")+'</div>';bindSaveListEvents(wrap);}
 async function saveDataTo(dest){const d=getCurrentData();if(dest==="personal"){writeSaves([d,...currentSaves]);if(currentSavePage==="personal")renderSaveList();showToast("\u300c"+d.name+"\u300d\u3092\u500b\u4eba\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else if(dest==="shared"){const shared=lSharedSaves();wSharedSaves([d,...shared]);if(currentSavePage==="shared")renderSharedList();showToast("\u300c"+d.name+"\u300d\u3092\u5171\u6709\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}}
 function showSaveDestPicker(){if(!sharedToken){saveDataTo("personal");return;}const overlay=document.createElement("div");overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";overlay.innerHTML='<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">\u4fdd\u5b58\u5148\u3092\u9078\u629e</div><button id="sp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc64 \u500b\u4eba\u306b\u4fdd\u5b58</button><button id="sp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc65 \u5171\u6709\u306b\u4fdd\u5b58</button><button id="sp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>';document.body.appendChild(overlay);document.getElementById("sp-personal").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("personal");});document.getElementById("sp-shared").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("shared");});document.getElementById("sp-cancel").addEventListener("click",()=>document.body.removeChild(overlay));}
+
+// ===== パレット手書きタブ =====
+let manualPaletteLines = [];
+try { manualPaletteLines = JSON.parse(localStorage.getItem('coc_manual_palette') || '[]'); } catch { manualPaletteLines = []; }
+function saveManualPalette() { localStorage.setItem('coc_manual_palette', JSON.stringify(manualPaletteLines)); }
+
+function switchPaletteTab(tab) {
+  const auto = document.getElementById('palette-tab-auto');
+  const manual = document.getElementById('palette-tab-manual');
+  const panelAuto = document.getElementById('palette-panel-auto');
+  const panelManual = document.getElementById('palette-panel-manual');
+  if (!auto || !manual || !panelAuto || !panelManual) return;
+  auto.style.borderBottomColor = tab === 'auto' ? 'var(--accent)' : 'transparent';
+  auto.style.color = tab === 'auto' ? 'var(--text)' : 'var(--text3)';
+  manual.style.borderBottomColor = tab === 'manual' ? 'var(--accent)' : 'transparent';
+  manual.style.color = tab === 'manual' ? 'var(--text)' : 'var(--text3)';
+  panelAuto.style.display = tab === 'auto' ? '' : 'none';
+  panelManual.style.display = tab === 'manual' ? '' : 'none';
+  if (tab === 'manual') buildManualPaletteRows();
+}
+
+function buildManualPaletteRows() {
+  const wrap = document.getElementById('manual-palette-rows');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  manualPaletteLines.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.dataset.dnd = idx;
+    row.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:3px;';
+    const dh = makeHandle();
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = item.text || '';
+    if (item._sep) {
+      inp.placeholder = '\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501';
+      inp.style.cssText = 'flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;';
+    } else {
+      inp.placeholder = 'CC<=60 \u300a\u6280\u80fd\u300b';
+      inp.style.cssText = 'flex:1;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:3px 7px;height:28px;font-family:"SF Mono",Consolas,monospace;';
+    }
+    inp.addEventListener('input', e => {
+      manualPaletteLines[idx] = { ...manualPaletteLines[idx], text: e.target.value };
+      saveManualPalette();
+    });
+    const cpBtn = document.createElement('button');
+    cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '\ud83d\udccb';
+    cpBtn.addEventListener('click', () => {
+      if (!inp.value.trim()) return;
+      navigator.clipboard.writeText(inp.value).then(() => { cpBtn.textContent = '\u2713'; setTimeout(() => cpBtn.textContent = '\ud83d\udccb', 1000); addHistory(inp.value); });
+    });
+    const rm = document.createElement('button'); rm.className = 'btn-remove'; rm.textContent = '\u00d7';
+    rm.addEventListener('click', () => { manualPaletteLines.splice(idx, 1); saveManualPalette(); buildManualPaletteRows(); });
+    row.append(dh, inp, cpBtn, rm);
+    wrap.appendChild(row);
+    bindDnD(row, manualPaletteLines, idx, () => { saveManualPalette(); buildManualPaletteRows(); });
+  });
+}
+
+function addManualPaletteRow() {
+  manualPaletteLines.push({ id: nxtId++, text: '', _sep: false });
+  saveManualPalette(); buildManualPaletteRows();
+}
+function addManualPaletteSep() {
+  manualPaletteLines.push({ id: nxtId++, text: '', _sep: true });
+  saveManualPalette(); buildManualPaletteRows();
+}
+function copyManualPalette() {
+  const txt = manualPaletteLines.filter(l => l.text).map(l => l.text).join('\n');
+  if (!txt) { showToast('\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f'));
+}
+function clearManualPalette() {
+  if (!confirm('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30af\u30ea\u30a2\u3057\u307e\u3059\u304b\uff1f')) return;
+  manualPaletteLines = []; saveManualPalette(); buildManualPaletteRows();
+}
+
+// ===== メモ/履歴タブ ブロックメモ =====
+let diceMemos = [];
+try { diceMemos = JSON.parse(localStorage.getItem('coc_v4_dice_memos') || '[]'); } catch { diceMemos = []; }
+function saveDiceMemos() { localStorage.setItem('coc_v4_dice_memos', JSON.stringify(diceMemos)); }
+
+function buildDiceMemoRows() {
+  const wrap = document.getElementById('dice-memo-rows');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  diceMemos.forEach((m, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:4px;';
+    row.dataset.dnd = idx;
+    // ヘッダー
+    const hd = document.createElement('div');
+    hd.style.cssText = 'display:flex;align-items:center;gap:3px;padding:3px 5px;background:var(--bg3);min-height:28px;';
+    const dh = makeHandle(); dh.style.fontSize = '12px';
+    const lbl = document.createElement('input');
+    lbl.type = 'text'; lbl.placeholder = '\u30e9\u30d9\u30eb...'; lbl.value = m.label || '';
+    lbl.style.cssText = 'flex:1;font-size:13px;font-weight:600;background:transparent;border:none;outline:none;color:var(--text);min-width:0;';
+    const cpBtn = document.createElement('button');
+    cpBtn.className = 'memo-copy-btn'; cpBtn.textContent = '\ud83d\udccb';
+    const dlBtn = document.createElement('button');
+    dlBtn.textContent = '\u00d7';
+    dlBtn.style.cssText = 'background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0;';
+    hd.append(dh, lbl, cpBtn, dlBtn);
+    // ボディ
+    const bd = document.createElement('div');
+    bd.style.cssText = 'padding:4px 6px;background:var(--bg2);';
+    const ct = document.createElement('textarea');
+    ct.placeholder = '\u30e1\u30e2\u5185\u5bb9...'; ct.value = m.content || ''; ct.rows = 1;
+    ct.style.cssText = 'width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px;resize:none;overflow:hidden;outline:none;color:var(--text);';
+    bd.appendChild(ct);
+    row.append(hd, bd);
+    wrap.appendChild(row);
+    lbl.addEventListener('input', e => { diceMemos[idx] = { ...diceMemos[idx], label: e.target.value }; saveDiceMemos(); updDiceMemoBadge(); });
+    ct.addEventListener('input', e => { diceMemos[idx] = { ...diceMemos[idx], content: e.target.value }; autoExpand(ct); saveDiceMemos(); updDiceMemoBadge(); });
+    cpBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const txt = (m.label ? m.label + '\u3000' : '') + (m.content || '');
+      navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = '\u2713'; cpBtn.classList.add('copied'); setTimeout(() => { cpBtn.textContent = '\ud83d\udccb'; cpBtn.classList.remove('copied'); }, 1200); });
+    });
+    dlBtn.addEventListener('click', e => { e.stopPropagation(); diceMemos.splice(idx, 1); saveDiceMemos(); buildDiceMemoRows(); updDiceMemoBadge(); });
+    bindAutoExpand(ct);
+    bindDnD(row, diceMemos, idx, () => { saveDiceMemos(); buildDiceMemoRows(); });
+  });
+  updDiceMemoBadge();
+}
+function addDiceMemoRow() {
+  diceMemos.push({ id: nxtId++, label: '', content: '' });
+  saveDiceMemos(); buildDiceMemoRows(); updDiceMemoBadge();
+}
+function updDiceMemoBadge() {
+  const el = document.getElementById('badge-dice-memo');
+  if (el) el.textContent = diceMemos.filter(m => m.label || m.content).length;
+}
+
 function switchKpTab(t){document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));["combat","san","mythos","madness","misc"].forEach(id=>{const el=document.getElementById("kp-"+id);if(el)el.style.display=id===t?"":"none";});}
-function switchTab(t){document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));["stats","dice","kp","save"].forEach(id=>{const el=document.getElementById("tab-"+id);if(el)el.style.display=id===t?"":"none";});if(t==="save"){if(currentSavePage==="personal"){renderSaveList();updateExport();}else if(currentSavePage==="shared"){renderSharedList();updateExport();}}if(t==="dice"){const orig=document.getElementById("session-memo");const dice=document.getElementById("session-memo-dice");if(orig&&dice&&dice.value!==orig.value)dice.value=orig.value;renderHistory();}}
+function switchTab(t){document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));["stats","dice","kp","save"].forEach(id=>{const el=document.getElementById("tab-"+id);if(el)el.style.display=id===t?"":"none";});if(t==="save"){if(currentSavePage==="personal"){renderSaveList();updateExport();}else if(currentSavePage==="shared"){renderSharedList();updateExport();}}if(t==="dice"){renderHistory();buildDiceMemoRows();}}
 document.addEventListener("DOMContentLoaded",function(){
   document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
   document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");});
@@ -946,6 +1103,8 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-download2")?.addEventListener("click",downloadFromCloud);
   document.getElementById("btn-shared-upload2")?.addEventListener("click",uploadToShared);
   document.getElementById("btn-shared-download2")?.addEventListener("click",downloadFromShared);
+  // diceメモ初期化
+  buildDiceMemoRows();
 });
 loadMemoLocal();
 buildStatRows();
