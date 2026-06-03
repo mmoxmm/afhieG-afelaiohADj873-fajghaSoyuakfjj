@@ -108,12 +108,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
 /* 攻撃行 */
-.atk-row{display:grid;grid-template-columns:2fr 44px 2fr 40px 28px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
+.atk-row{display:grid;grid-template-columns:2fr 44px 2fr 38px 25px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:4px;font-size:14px}
 /* 技能行 */
-.sk-headers{display:grid;grid-template-columns:minmax(0,1fr) 52px 32px 32px 16px 14px 14px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.sk-headers{display:grid;grid-template-columns:minmax(0,1fr) 52px 32px 32px 16px 18px 18px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:minmax(0,1fr) 52px 32px 32px 16px 14px 14px;gap:2px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:minmax(0,1fr) 52px 32px 32px 16px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:4px;font-size:14px;text-align:center}
 .sk-row input:first-child{text-align:left}
 .skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:3px 1px;border:0.5px solid var(--border)}
@@ -340,10 +340,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <!-- 能力値・派生値 2カラム -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
-      <div class="panel-label">能力値</div>
-      <div class="stat-grid-wrap">
-        <div class="sg-col-hd"></div>
-        <div class="sg-col-hd" id="sg-hd-inp">6版</div>
+<div class="stat-grid-wrap">
+  <div class="sg-col-hd" style="text-align:left;color:var(--text2);font-weight:700">能力値</div>
+  <div class="sg-col-hd" id="sg-hd-inp">6版</div>
         <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
         <div class="sg-col-hd" id="sg-col-hd-h" style="color:#c03030">½(H)</div>
         <div class="sg-col-hd" id="sg-col-hd-e" style="color:#2855a0">⅕(E)</div>
@@ -351,10 +350,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="stat-grid-wrap" id="stat-rows"></div>
     </div>
     <div>
-      <div class="panel-label">派生値</div>
-      <div class="dv-grid-wrap">
-        <div class="dv-col-hd"></div>
-        <div class="dv-col-hd" style="font-size:10px">入力</div>
+<div class="dv-grid-wrap">
+  <div class="dv-col-hd" style="text-align:left;color:var(--text2);font-weight:700">派生値</div>
+  <div class="dv-col-hd" style="font-size:10px">入力</div>
         <div class="dv-col-hd">値</div>
         <div class="dv-col-hd" style="color:#c03030">½(H)</div>
         <div class="dv-col-hd" style="color:#2855a0">⅕(E)</div>
