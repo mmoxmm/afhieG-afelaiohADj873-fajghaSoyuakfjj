@@ -865,7 +865,18 @@ function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();show
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
 function syncBothDbCheck(el){const other=el.id==="chk-both-db"?document.getElementById("chk-both-db2"):document.getElementById("chk-both-db");if(other)other.checked=el.checked;updateExport();}
-function buildCocoforiaJson(){const name=document.getElementById("npc-name").value||"NPC";const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");atkList.forEach(a=>{if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}if(!a.name||(a.pct||0)<=0)return;cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");if(a.dmg){if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(a.useDB===true&&db&&db.cmd){if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(typeof a.useDB==="string"&&a.useDB!=="half")cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}});skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}if(!s.name||(s.val||0)<=0)return;cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});}
+function buildCocoforiaJson(){const name=document.getElementById("npc-name").value||"NPC";const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");atkList.forEach(a=>{if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}if(!a.name||(a.pct||0)<=0)return;cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");if(a.dmg){if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(a.useDB===true&&db&&db.cmd){if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(typeof a.useDB==="string"&&a.useDB!=="half")cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}});
+                              
+                              splList.forEach(s=>{
+      if(!s.name)return;
+      let line=s.name;
+      if(s.mp) line+=" (MP:"+s.mp+")";
+      if(s.note) line+=" ※"+s.note;
+      cmdLines.push(line);
+    });
+
+                              
+                              skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}if(!s.name||(s.val||0)<=0)return;cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});}
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
 function updateExport(){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";const el=document.getElementById("export-preview");if(el)el.textContent=txt;const el2=document.getElementById("export-preview2");if(el2)el2.textContent=txt;}
 function copyExport(){if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}else{const el=document.getElementById("export-preview");const txt=el?.textContent;if(!txt||txt==="\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09"){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}}
@@ -1124,5 +1135,208 @@ if(savedSToken){const inp=document.getElementById("shared-token-input");if(inp)i
 const savedSGist=localStorage.getItem(L_SGIST)||"";
 if(savedSGist){sharedGistId=savedSGist;updSharedGistDisplay();const inp=document.getElementById("shared-gist-id-input");if(inp)inp.value=savedSGist;document.getElementById("btn-shared-upload").disabled=!savedSToken;document.getElementById("btn-shared-download").disabled=!savedSToken;}
 </script>
+
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════╗
+  ║  CoC変換ツール バグ修正パッチ v1.1                    ║
+  ║                                                      ║
+  ║  【使い方】                                           ║
+  ║  元のHTMLファイルの </body> タグ直前に                 ║
+  ║  このファイルの <script>〜</script> を貼り付ける       ║
+  ╚══════════════════════════════════════════════════════╝
+  
+  【修正内容】
+  ① 呪文(✨呪文タブ)がJSONに反映されないバグを修正
+     原因: buildCocoforiaJson() の cmdLines 構築ループに
+           splList（呪文リスト）が完全に抜けていた
+  
+  ② メモの「パレ」設定が反映されないバグを修正確認
+     dest="cmd" / "both" のメモは既に含まれている（正常）
+  
+  ③ 手書きパレットをJSONに追加するオプションを追加
+     保存タブ→ ✏️ 手書きパレットもJSONに追加 のチェックで
+     自動生成 + 手書きタブの内容を合わせてJSON出力できる
+-->
+
+<!--
+  ▼▼▼ 元のHTMLの </body> 直前にここから貼り付け ▼▼▼
+-->
+
+<script>
+// ============================================================
+// CoC変換ツール バグ修正 v1.1  (</body>直前に貼り付け)
+// ============================================================
+
+// ─── FIX 1: buildCocoforiaJson() を修正版で上書き ───────────
+// 呪文(splList)がcmdLinesに追加されていなかった根本バグを修正
+// 手書きパレット追加オプションも同時に実装
+
+window.buildCocoforiaJson = function() {
+  const name = document.getElementById("npc-name").value || "NPC";
+  const status = [];
+  const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
+  if(hp > 0 || ovManual.hp) status.push({label:"HP",    value:hp,   max:hp});
+  if(mp > 0 || ovManual.mp) status.push({label:"MP",    value:mp,   max:mp});
+  if(san > 0|| ovManual.san)status.push({label:"SAN",   value:san,  max:san});
+  if(luck>0 || ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});
+  consumables.filter(c=>c.label).forEach(c=>{
+    const cur=parseInt(c.cur)||0, max=parseInt(c.max)||0;
+    status.push({label:c.label, value:cur, max:max||cur});
+  });
+
+  const params = [];
+  STATS.forEach(({key,label})=>{
+    const v=vals[key]||0;
+    if(v>0) params.push({label, value:String(v)});
+  });
+
+  const cmdLines = [];
+  const strV=vals.str||0, sizV=vals.siz||0;
+  const db = (strV+sizV>0) ? getDB(strV+sizV) : null;
+  const gB = document.getElementById("chk-both-db")?.checked
+           || document.getElementById("chk-both-db2")?.checked || false;
+
+  // ダメージボーナス行
+  if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))
+    cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");
+
+  // 攻撃
+  atkList.forEach(a=>{
+    if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}
+    if(!a.name||(a.pct||0)<=0)return;
+    cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");
+    if(a.dmg){
+      if(a.useDB==="half"&&db&&db.cmd){
+        const hc=db.cmd+"/2";
+        if(gB){
+          cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");
+          cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");
+        } else {
+          cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");
+        }
+      } else if(a.useDB===true&&db&&db.cmd){
+        if(gB){
+          cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");
+          cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");
+        } else {
+          cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");
+        }
+      } else if(typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB){
+        cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");
+      } else {
+        cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");
+      }
+    }
+  });
+
+  // ★★★ 呪文 — 元コードに完全に欠落していたBUGFIX ★★★
+  splList.forEach(s=>{
+    if(!s.name) return;
+    let line = s.name;
+    if(s.mp)   line += " (MP:"+s.mp+")";
+    if(s.note) line += " \u203b"+s.note;
+    cmdLines.push(line);
+  });
+
+  // 技能
+  skList.forEach(s=>{
+    if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}
+    if(!s.name||(s.val||0)<=0) return;
+    cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");
+  });
+
+  // メモ（パレット行き: dest="cmd" or "both"）
+  memoList
+    .filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
+    .forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));
+
+  // ★★★ 手書きパレット追加オプション（チェックボックスON時）★★★
+  const useManual = document.getElementById("chk-use-manual")?.checked || false;
+  if(useManual && window.manualPaletteLines){
+    manualPaletteLines.filter(l=>l.text).forEach(l=>cmdLines.push(l.text));
+  }
+
+  // メモ欄テキスト（dest="memo" or "both"）
+  const memoLines = memoList
+    .filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both"))
+    .map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);
+
+  return JSON.stringify({
+    kind:"character",
+    data:{name, status, params, commands:cmdLines.join("\n"), memo:memoLines.join("\n")}
+  });
+};
+
+// ─── FIX 2: syncManualCheck 関数を追加 ────────────────────
+window.syncManualCheck = function(el){
+  const other = el.id==="chk-use-manual"
+    ? document.getElementById("chk-use-manual2")
+    : document.getElementById("chk-use-manual");
+  if(other) other.checked = el.checked;
+  if(typeof updateExport==="function") updateExport();
+};
+
+// ─── FIX 3: エクスポートUIにチェックボックスを自動注入 ──────
+(function(){
+  function inject(){
+    [
+      {bodyId:"body-export-personal", chkId:"chk-use-manual"},
+      {bodyId:"body-export-shared",   chkId:"chk-use-manual2"}
+    ].forEach(({bodyId,chkId})=>{
+      const exportBody = document.getElementById(bodyId);
+      if(!exportBody || document.getElementById(chkId)) return;
+      const div = document.createElement("div");
+      div.style.cssText = "display:flex;align-items:center;gap:8px;margin:0 0 5px;padding:5px 8px;background:rgba(40,85,160,.08);border-radius:5px;border:0.5px solid rgba(40,85,160,.28);flex-wrap:wrap";
+      div.innerHTML =
+        '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--accent);font-weight:700">'
+        +'<input type="checkbox" id="'+chkId+'" onchange="syncManualCheck(this)"'
+        +' style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">'
+        +'\u270f\ufe0f \u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3082JSON\u306b\u8ffd\u52a0</label>'
+        +'<span style="font-size:11px;color:var(--text3)">\u81ea\u52d5\u751f\u6210\uff0b\u624b\u66f8\u304d\u30bf\u30d6\u3092\u5408\u308f\u305b\u3066\u51fa\u529b</span>';
+      exportBody.insertBefore(div, exportBody.firstChild);
+    });
+  }
+  // 初期化時 & アコーディオンが開いたときに注入
+  if(document.readyState==="loading")
+    document.addEventListener("DOMContentLoaded",()=>setTimeout(inject,400));
+  else
+    setTimeout(inject,400);
+
+  // toggleAcc をラップして export系アコーディオンが開いたら注入
+  const _orig = window.toggleAcc;
+  window.toggleAcc = function(id){
+    if(_orig) _orig(id);
+    if(id==="export-personal"||id==="export-shared") setTimeout(inject,60);
+  };
+})();
+
+console.log("\u2705 [CoC v1.1] \u4fee\u6b63\u9069\u7528: \u5492\u6587JSON\u51fa\u529b\u30d0\u30b0\u4fee\u6b63 + \u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u8ffd\u52a0\u30aa\u30d7\u30b7\u30e7\u30f3");
+</script>
+
+<!--
+  ▲▲▲ ここまで貼り付け ▲▲▲
+  
+  ────────────────────────────────────────────────────
+  直接HTMLを編集したい場合の手順:
+  
+  [変更1] buildCocoforiaJson() 内の技能ループの直前に呪文ループを追加
+  
+  探す文字列（技能ループの先頭）:
+    skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||
+  
+  その直前に以下を挿入:
+    splList.forEach(s=>{
+      if(!s.name)return;
+      let line=s.name;
+      if(s.mp) line+=" (MP:"+s.mp+")";
+      if(s.note) line+=" ※"+s.note;
+      cmdLines.push(line);
+    });
+  
+  [変更2] 手書きパレット対応は上記パッチスクリプトの追加で対応
+  ────────────────────────────────────────────────────
+-->  
+  
 </body>
 </html>
