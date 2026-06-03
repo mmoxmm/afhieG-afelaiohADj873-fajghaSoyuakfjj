@@ -249,7 +249,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .export-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;padding:5px 10px;flex:1}
 .export-btn.sec{background:none;border:0.5px solid var(--border2);color:var(--text2)}
 .export-note{font-size:11px;color:var(--text3);margin-top:3px}
-.parse-block{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:5px}
+.parse-block{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
 .parse-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 9px;cursor:pointer;user-select:none;min-height:34px}
 .parse-body{padding:7px;display:none}
 .parse-body.open{display:block}
@@ -323,12 +323,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 <div id="tab-stats">
   <div class="parse-block">
     <div class="parse-hd" onclick="toggleParse()">
-      <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">能力値・攻撃・技能を一括適用</span></div>
+      <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">능력치·공격·기술 일괄 적용</span></div>
       <span class="acc-arrow" id="arrow-parse">▼</span>
     </div>
     <div class="parse-body" id="body-parse">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">シナリオ内のステータスを貼り付けると自動解析して適用します。</div>
-      <textarea id="parse-input" placeholder="例）STR:12 CON:14 POW:13&#10;噛みつき 30% 1d8 / 回避 45%&#10;" style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">⚫︎ 시나리오 내 스테이터스를 복사하여 붙여넣으면 자동으로 분석 후 적용됩니다.</div>
+      <textarea id="parse-input" placeholder="스테이터스 텍스트를 입력해 주세요." style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
       <div style="display:flex;gap:4px;margin-top:4px">
         <button onclick="runParse()" style="flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:7px;font-weight:700">🔍 解析して適用</button>
         <button onclick="clearParse()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:13px;padding:7px 10px;font-family:inherit">クリア</button>
@@ -341,7 +341,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
 <div class="stat-grid-wrap">
-  <div class="sg-col-hd" style="text-align:left;color:var(--text2);font-weight:700">能力値</div>
+  <div class="sg-col-hd" style="text-align:center;color:var(--text2);font-weight:700">特性値</div>
   <div class="sg-col-hd" id="sg-hd-inp">6版</div>
         <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
         <div class="sg-col-hd" id="sg-col-hd-h" style="color:#c03030">½(H)</div>
@@ -366,8 +366,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div class="accordion" id="acc-palette" style="margin-top:4px">
     <div class="acc-hd" onclick="toggleAcc('palette')">
       <div class="acc-hd-left">
-        <span class="acc-title">🎮 パレットプレビュー</span>
-        <span style="font-size:11px;color:var(--text3);margin-left:4px">攻撃・技能・メモを反映</span>
+        <span class="acc-title">🎮 팔레트 미리보기</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:4px">攻撃・技能・ MEMOを反映</span>
       </div>
       <span class="acc-arrow" id="arrow-palette">▼</span>
     </div>
@@ -385,7 +385,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
             <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・メモ</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・MEMO</div>
             <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
           </div>
         </div>
@@ -470,7 +470,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
     <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
       <div class="memo-hd" onclick="toggleMemo()" style="padding:5px 9px;background:var(--bg2);min-height:34px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
-        <div class="acc-hd-left"><span class="acc-title">📝 メモ</span><span class="acc-badge" id="badge-memo">0</span></div>
+        <div class="acc-hd-left"><span class="acc-title">📝 MEMO</span><span class="acc-badge" id="badge-memo">0</span></div>
         <span class="acc-arrow open" id="arrow-memo">▼</span>
       </div>
       <div class="memo-body open" id="body-memo" style="padding:6px;background:var(--bg)">
@@ -659,11 +659,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <div id="save-page-personal">
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('sync-personal')">
-        <div class="acc-hd-left"><span class="acc-title">☁️ 個人クラウド同期（GitHub Gist）</span><span id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span></div>
+        <div class="acc-hd-left"><span class="acc-title">☁️ 개인 클라우드 동기화（GitHub Gist）</span><span id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span></div>
         <span class="acc-arrow" id="arrow-sync-personal">▼</span>
       </div>
       <div class="acc-body" id="body-sync-personal">
-        <div class="sync-key-desc">GitHub Personal Access Token（gistスコープ）でデバイス間データ共有。</div>
+        <div class="sync-key-desc">GitHub Personal Access Token(gist 권한)으로 기기 간 데이터를 공유합니다.</div>
         <div id="token-expired-warn" style="display:none;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius);padding:6px 9px;font-size:12px;color:var(--danger);margin-bottom:6px;line-height:1.6"></div>
         <div class="sync-key-row">
           <div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="ghp_xxxx..." autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div>
@@ -684,27 +684,27 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <div class="acc-body" id="body-export-personal">
         <div style="display:flex;gap:4px;margin-bottom:5px">
-          <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">キャラパレJSON</button>
-          <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">チャット用テキスト</button>
+          <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">채팅 팔레트 JSON</button>
+          <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">채팅용 텍스트</button>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
           <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
             <input type="checkbox" id="chk-both-db" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
-            DB付き/なし両方生成
+            DB 포함/미포함 둘 다 생성
           </label>
-          <span style="font-size:11px;color:var(--text3)">攻撃欄DBチェック行のみ適用</span>
+          <span style="font-size:11px;color:var(--text3)">공격란 DB 체크 행에만 적용</span>
         </div>
-        <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+        <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
           <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
         </div>
-        <div class="export-note">※ JSONは「📋 コピー」→ ココフォリアの盤面にCtrl+Vで貼り付け。<br>※ メモの「メモ」＝キャラクターメモ欄、「パレ」＝チャットパレット、「なし」＝出力しない。</div>
+        <div class="export-note">※ JSON은 「📋 복사」 → 코코포리아 화면에서 ⌘+V로 붙여넣기.<br>※ 메모의 「메모」 = 캐릭터 메모란, 「파레」 = 채팅 팔레트, 「없음」 = 출력하지 않음.</div>
       </div>
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
-    <button class="btn-pri" id="btn-save-current" style="flex:2;min-width:0">💾 保存</button>
-    <button class="btn-sync" id="btn-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️UP</button>
+    <button class="btn-pri" id="btn-save-current" style="flex:2;min-width:0">💾 브라우저에서만 목록에 저장</button>
+    <button class="btn-sync" id="btn-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️클라우드 저장</button>
     <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️DL</button>
   </div>
     <div id="save-list-wrap"></div>
@@ -716,13 +716,13 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <span class="acc-arrow" id="arrow-sync-shared">▼</span>
       </div>
       <div class="acc-body" id="body-sync-shared">
-        <div class="sync-key-desc">共有用GistへのToken（gistスコープ）とGist IDを設定します。</div>
+        <div class="sync-key-desc">공유용 Gist의 Token(gist 권한)과 Gist ID를 설정합니다.</div>
         <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">① 共有用 GitHub Token</div>
         <div class="sync-key-row" style="margin-bottom:4px">
           <div class="inp-wrap" id="w-stoken"><input type="text" id="shared-token-input" placeholder="ghp_xxxx... （共有用）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-token-input','w-stoken')">×</button></div>
           <button class="btn-sync" id="btn-apply-stoken" style="background:var(--success)">設定</button>
         </div>
-        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">② 共有Gist ID（任意）</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px">② 共有Gist ID</div>
         <div class="sync-key-row" style="margin-bottom:4px">
           <div class="inp-wrap" id="w-sgist"><input type="text" id="shared-gist-id-input" placeholder="既存のGist IDを入力（空欄=新規作成）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('shared-gist-id-input','w-sgist')">×</button></div>
           <button class="btn-sync" id="btn-set-sgist">確定</button>
@@ -748,16 +748,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
           <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
             <input type="checkbox" id="chk-both-db2" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
-            DB付き/なし両方生成
+            DB 포함/미포함 둘 다 생성
           </label>
         </div>
-        <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+        <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
       </div>
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
-    <button class="btn-pri" id="btn-save-shared-current" style="flex:2;min-width:0;background:var(--success)">💾 共有保存</button>
-    <button class="btn-sync" id="btn-shared-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️UP</button>
+    <button class="btn-pri" id="btn-save-shared-current" style="flex:2;min-width:0;background:var(--success)">💾 브라우저에서만 목록에 저장</button>
+    <button class="btn-sync" id="btn-shared-upload2" style="flex:1;min-width:0;font-size:12px;background:var(--success)" disabled>⬆️클라우드에 공유 저장</button>
     <button class="btn-sync" id="btn-shared-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️DL</button>
   </div>
     <div id="shared-list-wrap"><p class="save-empty">まだ共有データがありません</p></div>
