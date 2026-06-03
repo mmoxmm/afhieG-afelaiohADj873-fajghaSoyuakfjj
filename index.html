@@ -330,8 +330,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div style="font-size:12px;color:var(--text3);margin-bottom:4px;line-height:1.5">⚫︎ 시나리오 내 스테이터스를 복사하여 붙여넣으면 자동으로 분석 후 적용됩니다.</div>
       <textarea id="parse-input" placeholder="스테이터스 텍스트를 입력해 주세요." style="width:100%;min-height:80px;padding:6px 8px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;line-height:1.5;resize:none;overflow:hidden"></textarea>
       <div style="display:flex;gap:4px;margin-top:4px">
-        <button onclick="runParse()" style="flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:7px;font-weight:700">🔍 解析して適用</button>
-        <button onclick="clearParse()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:13px;padding:7px 10px;font-family:inherit">クリア</button>
+        <button onclick="runParse()" style="flex:7;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:7px;font-weight:700">🔍 解析して適用</button>
+        <button onclick="clearParse()" style="flex:3;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:13px;padding:7px;font-family:inherit">クリア</button>
       </div>
       <div id="parse-result" style="display:none;margin-top:5px"></div>
     </div>
@@ -382,11 +382,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
           <div>
             <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能</div>
-            <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
+            <div id="palette-sortable-sk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
           </div>
           <div>
             <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・MEMO</div>
-            <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
+            <div id="palette-sortable-atk" style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto"></div>
           </div>
         </div>
         <div style="display:flex;gap:3px;margin-top:3px">
@@ -396,12 +396,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <!-- 手書きタブ -->
       <div id="palette-panel-manual" style="display:none">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">1行ずつ入力。ドラッグで並び替え可能。</div>
-        <div id="manual-palette-rows"></div>
-        <div style="display:flex;gap:3px;margin-top:3px">
-          <button class="btn-add" onclick="addManualPaletteRow()" style="flex:2">＋ 行追加</button>
-          <button class="btn-add" onclick="addManualPaletteSep()" style="flex:1;font-size:12px">━ 区切り</button>
-        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">チャットパレット内容を直接入力・編集できます。1行1コマンド。</div>
+        <textarea id="manual-palette-textarea" placeholder="CC&lt;=60 《技能名》&#10;1d6+1 《ダメージ》&#10;━━━ 区切り ━━━" style="width:100%;min-height:120px;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:vertical;overflow:auto"></textarea>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" onclick="copyManualPalette()" style="flex:1">📋 コピー</button>
           <button class="btn-add" onclick="clearManualPalette()" style="flex:1;font-size:12px;color:var(--danger)">🗑 クリア</button>
@@ -694,6 +690,13 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
           </label>
           <span style="font-size:11px;color:var(--text3)">공격란 DB 체크 행에만 적용</span>
         </div>
+        <div id="chk-manual-wrap" style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);font-weight:700">
+            <input type="checkbox" id="chk-incl-manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+            ✏️ 手書きパレットをJSONに追加
+          </label>
+          <span style="font-size:11px;color:var(--text3)">自動生成＋手書きを合わせて出力</span>
+        </div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
@@ -865,7 +868,7 @@ function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();show
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
 function syncBothDbCheck(el){const other=el.id==="chk-both-db"?document.getElementById("chk-both-db2"):document.getElementById("chk-both-db");if(other)other.checked=el.checked;updateExport();}
-function buildCocoforiaJson(){const name=document.getElementById("npc-name").value||"NPC";const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");atkList.forEach(a=>{if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}if(!a.name||(a.pct||0)<=0)return;cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");if(a.dmg){if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(a.useDB===true&&db&&db.cmd){if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(typeof a.useDB==="string"&&a.useDB!=="half")cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}});skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}if(!s.name||(s.val||0)<=0)return;cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});}
+function buildCocoforiaJson(){const name=document.getElementById("npc-name").value||"NPC";const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");atkList.forEach(a=>{if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}if(!a.name||(a.pct||0)<=0)return;cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");if(a.dmg){if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(a.useDB===true&&db&&db.cmd){if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false"&&a.useDB!==false)cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}});splList.forEach(s=>{if(!s.name)return;const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");const subTxt=s.note||"";cmdLines.push(mainTxt+(subTxt?" \u300a"+subTxt+"\u300b":""));});skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}if(!s.name||(s.val||0)<=0)return;cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));const inclManual=document.getElementById("chk-incl-manual")?.checked||false;if(inclManual&&manualPaletteText.trim()){const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);manLines.forEach(l=>cmdLines.push(l));}const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});}
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
 function updateExport(){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";const el=document.getElementById("export-preview");if(el)el.textContent=txt;const el2=document.getElementById("export-preview2");if(el2)el2.textContent=txt;}
 function copyExport(){if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}else{const el=document.getElementById("export-preview");const txt=el?.textContent;if(!txt||txt==="\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09"){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}}
@@ -923,9 +926,20 @@ async function saveDataTo(dest){const d=getCurrentData();if(dest==="personal"){w
 function showSaveDestPicker(){if(!sharedToken){saveDataTo("personal");return;}const overlay=document.createElement("div");overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";overlay.innerHTML='<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">\u4fdd\u5b58\u5148\u3092\u9078\u629e</div><button id="sp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc64 \u500b\u4eba\u306b\u4fdd\u5b58</button><button id="sp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc65 \u5171\u6709\u306b\u4fdd\u5b58</button><button id="sp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>';document.body.appendChild(overlay);document.getElementById("sp-personal").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("personal");});document.getElementById("sp-shared").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("shared");});document.getElementById("sp-cancel").addEventListener("click",()=>document.body.removeChild(overlay));}
 
 // ===== パレット手書きタブ =====
+let manualPaletteText = '';
+try { manualPaletteText = localStorage.getItem('coc_manual_palette_text') || ''; } catch { manualPaletteText = ''; }
+// 旧形式(配列)からの移行
+try {
+  const old = localStorage.getItem('coc_manual_palette');
+  if (old && !manualPaletteText) {
+    const arr = JSON.parse(old);
+    manualPaletteText = arr.filter(l => l.text).map(l => l.text).join('\n');
+    localStorage.setItem('coc_manual_palette_text', manualPaletteText);
+  }
+} catch {}
+function saveManualPalette() { localStorage.setItem('coc_manual_palette_text', manualPaletteText); }
+// 後方互換のため残す（旧コードから参照される可能性）
 let manualPaletteLines = [];
-try { manualPaletteLines = JSON.parse(localStorage.getItem('coc_manual_palette') || '[]'); } catch { manualPaletteLines = []; }
-function saveManualPalette() { localStorage.setItem('coc_manual_palette', JSON.stringify(manualPaletteLines)); }
 
 function switchPaletteTab(tab) {
   const auto = document.getElementById('palette-tab-auto');
@@ -939,62 +953,40 @@ function switchPaletteTab(tab) {
   manual.style.color = tab === 'manual' ? 'var(--text)' : 'var(--text3)';
   panelAuto.style.display = tab === 'auto' ? '' : 'none';
   panelManual.style.display = tab === 'manual' ? '' : 'none';
-  if (tab === 'manual') buildManualPaletteRows();
+  if (tab === 'manual') {
+    const ta = document.getElementById('manual-palette-textarea');
+    if (ta) { ta.value = manualPaletteText; ta.addEventListener('input', e => { manualPaletteText = e.target.value; saveManualPalette(); }, { once: true }); ta.oninput = e => { manualPaletteText = e.target.value; saveManualPalette(); }; }
+  }
 }
 
 function buildManualPaletteRows() {
-  const wrap = document.getElementById('manual-palette-rows');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  manualPaletteLines.forEach((item, idx) => {
-    const row = document.createElement('div');
-    row.dataset.dnd = idx;
-    row.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:3px;';
-    const dh = makeHandle();
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.value = item.text || '';
-    if (item._sep) {
-      inp.placeholder = '\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501';
-      inp.style.cssText = 'flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;';
-    } else {
-      inp.placeholder = 'CC<=60 \u300a\u6280\u80fd\u300b';
-      inp.style.cssText = 'flex:1;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:3px 7px;height:28px;font-family:"SF Mono",Consolas,monospace;';
-    }
-    inp.addEventListener('input', e => {
-      manualPaletteLines[idx] = { ...manualPaletteLines[idx], text: e.target.value };
-      saveManualPalette();
-    });
-    const cpBtn = document.createElement('button');
-    cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '\ud83d\udccb';
-    cpBtn.addEventListener('click', () => {
-      if (!inp.value.trim()) return;
-      navigator.clipboard.writeText(inp.value).then(() => { cpBtn.textContent = '\u2713'; setTimeout(() => cpBtn.textContent = '\ud83d\udccb', 1000); addHistory(inp.value); });
-    });
-    const rm = document.createElement('button'); rm.className = 'btn-remove'; rm.textContent = '\u00d7';
-    rm.addEventListener('click', () => { manualPaletteLines.splice(idx, 1); saveManualPalette(); buildManualPaletteRows(); });
-    row.append(dh, inp, cpBtn, rm);
-    wrap.appendChild(row);
-    bindDnD(row, manualPaletteLines, idx, () => { saveManualPalette(); buildManualPaletteRows(); });
-  });
+  // textarea型のため行ビルド不要。textarea初期化のみ
+  const ta = document.getElementById('manual-palette-textarea');
+  if (ta) { ta.value = manualPaletteText; ta.oninput = e => { manualPaletteText = e.target.value; saveManualPalette(); }; }
 }
 
 function addManualPaletteRow() {
-  manualPaletteLines.push({ id: nxtId++, text: '', _sep: false });
-  saveManualPalette(); buildManualPaletteRows();
+  const ta = document.getElementById('manual-palette-textarea');
+  if (!ta) return;
+  ta.value = ta.value + (ta.value && !ta.value.endsWith('\n') ? '\n' : '') + '';
+  ta.focus(); manualPaletteText = ta.value; saveManualPalette();
 }
 function addManualPaletteSep() {
-  manualPaletteLines.push({ id: nxtId++, text: '', _sep: true });
-  saveManualPalette(); buildManualPaletteRows();
+  const ta = document.getElementById('manual-palette-textarea');
+  if (!ta) return;
+  ta.value = ta.value + (ta.value && !ta.value.endsWith('\n') ? '\n' : '') + '━━━━━━━━━━\n';
+  ta.focus(); manualPaletteText = ta.value; saveManualPalette();
 }
 function copyManualPalette() {
-  const txt = manualPaletteLines.filter(l => l.text).map(l => l.text).join('\n');
+  const txt = manualPaletteText.trim();
   if (!txt) { showToast('\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093'); return; }
   navigator.clipboard.writeText(txt).then(() => showToast('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f'));
 }
 function clearManualPalette() {
   if (!confirm('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30af\u30ea\u30a2\u3057\u307e\u3059\u304b\uff1f')) return;
-  manualPaletteLines = []; saveManualPalette(); buildManualPaletteRows();
+  manualPaletteText = ''; saveManualPalette();
+  const ta = document.getElementById('manual-palette-textarea');
+  if (ta) ta.value = '';
 }
 
 // ===== メモ/履歴タブ ブロックメモ =====
