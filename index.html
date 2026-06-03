@@ -804,6 +804,65 @@ let sanSelected=[];
 let currentSavePage="personal";
 let sharedToken="",sharedGistId="";
 const L_SAVES="coc_v4_saves",L_KEY="coc_gist_token",L_GIST="coc_gist_id",L_GIST_TS="coc_gist_token_ts",L_STOKEN="coc_shared_token",L_SGIST="coc_shared_gist_id";
+function renderPalettePreview(){
+  const skEl=document.getElementById("palette-sortable-sk");
+  const atkEl=document.getElementById("palette-sortable-atk");
+  if(!skEl||!atkEl)return;
+  const strV=vals.str||0,sizV=vals.siz||0;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
+  // 技能パネル
+  const skH=[];
+  skList.forEach(s=>{
+    if(s._sep){skH.push('<div style="color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;font-size:11px">'+(esc(s.label)||"━━━")+'</div>');return;}
+    if(!s.name||(s.val||0)<=0)return;
+    skH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">CC&lt;='+s.val+' 【'+esc(s.name)+'】</div>');
+  });
+  skEl.innerHTML=skH.length?skH.join(''):'<div style="color:var(--text3);font-size:12px;padding:4px">技能なし</div>';
+  // 攻撃/呪文/MEMOパネル
+  const atkH=[];
+  if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
+    atkH.push('<div style="padding:2px 0;line-height:1.5">'+esc(db.cmd)+' 【ダメージボーナス】</div>');
+  atkList.forEach(a=>{
+    if(a._sep){atkH.push('<div style="color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;font-size:11px">'+(esc(a.label)||"━━━")+'</div>');return;}
+    if(!a.name)return;
+    if(a.pct)atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">CC&lt;='+a.pct+' 【'+esc(a.name)+'】</div>');
+    if(a.dmg){
+      const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
+      if(a.useDB==="half"&&db&&db.cmd){
+        const hc=db.cmd+"/2";
+        if(gB){
+          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ（DBなし）】</div>');
+          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+hc+' 【'+esc(a.name)+'ダメージ（DB/2込み）】</div>');
+        }else atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+hc+' 【'+esc(a.name)+'ダメージ】</div>');
+      }else if(a.useDB===true&&db&&db.cmd){
+        if(gB){
+          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ（DBなし）】</div>');
+          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+esc(db.cmd)+' 【'+esc(a.name)+'ダメージ（DB込み）】</div>');
+        }else atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+esc(db.cmd)+' 【'+esc(a.name)+'ダメージ】</div>');
+      }else if(isCus){
+        atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+esc(a.useDB)+' 【'+esc(a.name)+'ダメージ】</div>');
+      }else{
+        atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ】</div>');
+      }
+    }
+  });
+  splList.forEach(s=>{
+    if(!s.name)return;
+    atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(s.name)+(s.mp?' (MP:'+esc(s.mp)+')':'')+'</div>');
+    if(s.note)atkH.push('<div style="padding:1px 0;font-size:11px;color:var(--text3)">// '+esc(s.note)+'</div>');
+  });
+  consumables.forEach(c=>{
+    if(!c.label)return;
+    const cur=c.cur!==undefined&&c.cur!==""?c.cur:"?";
+    const max=c.max!==undefined&&c.max!==""?"/"+c.max:"";
+    atkH.push('<div style="padding:2px 0;line-height:1.5">'+esc(c.label)+' '+cur+max+'</div>');
+  });
+  memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>{
+    atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+(m.label?esc(m.label)+'　':'')+esc(m.content)+'</div>');
+  });
+  atkEl.innerHTML=atkH.length?atkH.join(''):'<div style="color:var(--text3);font-size:12px;padding:4px">データなし</div>';
+}
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function escA(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;")}
 function showToast(m,dur=1800){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._tt);t._tt=setTimeout(()=>t.classList.remove("show"),dur);}
@@ -932,7 +991,32 @@ function parseNpcText(text){const t=normalizeNpcText(text);const r={stats:{},hp:
 function runParse(){const text=document.getElementById("parse-input").value.trim();if(!text){showToast("\u30c6\u30ad\u30b9\u30c8\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044");return;}const p=parseNpcText(text);const hasAny=Object.keys(p.stats).length>0||p.hp!==null||p.attacks.length>0||p.skills.length>0||p.memos.length>0;const el=document.getElementById("parse-result");el.style.display="block";if(!hasAny){el.innerHTML='<div style="color:var(--danger);font-size:13px;padding:7px;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius)">\u8a8d\u8b58\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002</div>';return;}applyParsed(p);el.innerHTML='<div class="parse-result-box" style="color:var(--success);font-size:12px">\u2705 \u89e3\u6790\u3057\u3066\u9069\u7528\u3057\u307e\u3057\u305f</div>';setTimeout(()=>{el.style.display="none";document.getElementById("body-parse").classList.remove("open");document.getElementById("arrow-parse").classList.remove("open");},1500);}
 function clearParse(){document.getElementById("parse-input").value="";const el=document.getElementById("parse-result");el.style.display="none";el.innerHTML="";}
 function applyParsed(p){Object.keys(p.stats).forEach(key=>{const rawVal=p.stats[key];const newV7=inputMode===7?rawVal:rawVal*5;vals[key]=newV7;const inp=document.querySelector('.sg-inp[data-key="'+key+'"]');if(inp){inp.value=inputMode===6?rawVal:newV7;inp.parentElement.querySelector(".sg-clr").style.display="block";}});if(p.hp!==null){ov.hp=p.hp;ovManual.hp=true;const i=document.getElementById("di-hp");if(i){i.value=p.hp;const c=document.getElementById("dc-hp");if(c)c.style.display="block";}}if(p.mp!==null){ov.mp=p.mp;ovManual.mp=true;const i=document.getElementById("di-mp");if(i){i.value=p.mp;const c=document.getElementById("dc-mp");if(c)c.style.display="block";}}if(p.san!==null){ov.san=p.san;ovManual.san=true;const i=document.getElementById("di-san");if(i){i.value=p.san;const c=document.getElementById("dc-san");if(c)c.style.display="block";}}if(p.luck!=null){ov.luck=p.luck;ovManual.luck=true;const i=document.getElementById("di-luck");if(i){i.value=p.luck;const c=document.getElementById("dc-luck");if(c)c.style.display="block";}}if(p.attacks.length){atkList=atkList.filter(a=>a.name);p.attacks.forEach(a=>{if(!atkList.find(x=>x.name===a.name))atkList.push({id:nxtId++,name:a.name,pct:parseInt(a.pct)||0,dmg:a.dmg,note:a.note||"",useDB:a.useDB||false});});if(!atkList.length)atkList=[{id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false}];buildAtkRows();openAcc("atk");}if(p.skills.length){skList=skList.filter(s=>s.name&&(s.val||0)>0);p.skills.forEach(s=>{if(!skList.find(x=>x.name===s.name))skList.push({id:nxtId++,name:s.name,val:s.val});});if(!skList.length)skList=[{id:nxtId++,name:"",val:0}];buildSkRows();}if(p.memos.length){memoList=memoList.filter(m=>m.label||m.content);p.memos.forEach(m=>{if(!memoList.find(x=>x.label===m.label))memoList.push({id:nxtId++,label:m.label,content:m.content,dest:"cmd"});});buildMemoRows();openMemo();saveMemoLocal();}if(p._characterName&&!document.getElementById("npc-name").value){document.getElementById("npc-name").value=p._characterName;document.getElementById("w-npcname").classList.add("hv");}updateStatDisplay();}
-function fullReset(){if(!confirm("\u5168\u30c7\u30fc\u30bf\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3059\u304b\uff1f"))return;document.getElementById("npc-name").value="";document.getElementById("w-npcname").classList.remove("hv");STATS.forEach(({key})=>{vals[key]=0;});document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{inp.value="";inp.parentElement.querySelector(".sg-clr").style.display="none";});ov.hp=ov.mp=ov.san=ov.luck=0;ovManual.hp=ovManual.mp=ovManual.san=ovManual.luck=false;["hp","mp","san","luck"].forEach(k=>{const i=document.getElementById("di-"+k);if(i)i.value="";const c=document.getElementById("dc-"+k);if(c)c.style.display="none";});skList=[{id:0,name:"",val:0}];atkList=[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:"",dest:"cmd"}];consumables=[];nxtId=1;buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStatDisplay();showToast("\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
+function fullReset(){
+  if(!confirm("全データをリセットしますか？"))return;
+  document.getElementById("npc-name").value="";
+  document.getElementById("w-npcname").classList.remove("hv");
+  STATS.forEach(({key})=>{vals[key]=0;});
+  document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{
+    inp.value="";
+    inp.parentElement.querySelector(".sg-clr").style.display="none";
+  });
+  ov.hp=ov.mp=ov.san=ov.luck=0;
+  ovManual.hp=ovManual.mp=ovManual.san=ovManual.luck=false;
+  ["hp","mp","san","luck"].forEach(k=>{
+    const i=document.getElementById("di-"+k);if(i)i.value="";
+    const c=document.getElementById("dc-"+k);if(c)c.style.display="none";
+  });
+  skList=[{id:0,name:"",val:0}];
+  atkList=[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}];
+  splList=[{id:0,name:"",mp:"",note:""}];
+  memoList=[{id:0,label:"",content:"",dest:"cmd"}];
+  consumables=[];nxtId=1;
+  manualPaletteText="";saveManualPalette();
+  const ta=document.getElementById("manual-palette-textarea");
+  if(ta)ta.value="";
+  buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();
+  updateStatDisplay();showToast("リセットしました");
+}
 
 let paletteCustomOrder=null;
 function getPaletteLines(){
@@ -940,61 +1024,47 @@ function getPaletteLines(){
   const strV=vals.str||0,sizV=vals.siz||0;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
-
-  // DB
   if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
-    cmd.push({text:db.cmd+" 《ダメージボーナス》",key:"_db"});
-
-  // 攻撃（%なしでも名前があれば表示）
+    cmd.push({text:db.cmd+" 【ダメージボーナス】",key:"_db"});
   atkList.forEach(a=>{
     if(a._sep){cmd.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
-    if(!a.name)return; // ← pct>0 の条件を削除
-    const pctStr=a.pct?("CC<="+a.pct+" 《"+a.name+"》"):("《"+a.name+"》");
-    cmd.push({text:pctStr,key:"atk_"+a.id});
+    if(!a.name)return;
+    if(a.pct)cmd.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
       if(a.useDB==="half"&&db&&db.cmd){
         const hc=db.cmd+"/2";
         if(gB){
-          cmd.push({text:a.dmg+" 《"+a.name+"ダメージ（DBなし）》",key:"dmg_n_"+a.id});
-          cmd.push({text:a.dmg+"+"+hc+" 《"+a.name+"ダメージ（DB/2込み）》",key:"dmg_h_"+a.id});
-        }else cmd.push({text:a.dmg+"+"+hc+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+          cmd.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          cmd.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ（DB/2込み）】",key:"dmg_h_"+a.id});
+        }else cmd.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
       }else if(a.useDB===true&&db&&db.cmd){
         if(gB){
-          cmd.push({text:a.dmg+" 《"+a.name+"ダメージ（DBなし）》",key:"dmg_n_"+a.id});
-          cmd.push({text:a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ（DB込み）》",key:"dmg_h_"+a.id});
-        }else cmd.push({text:a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
-      }else if(isCus)cmd.push({text:a.dmg+a.useDB+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
-      else cmd.push({text:a.dmg+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+          cmd.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          cmd.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】",key:"dmg_h_"+a.id});
+        }else cmd.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      }else if(isCus)cmd.push({text:a.dmg+a.useDB+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      else cmd.push({text:a.dmg+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
     }
   });
-
-  // 呪文
   splList.forEach(s=>{
     if(!s.name)return;
     const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");
     cmd.push({text:mainTxt,sub:s.note||undefined,key:"spl_"+s.id});
   });
-
-  // 消耗品
   consumables.forEach(c=>{
     if(!c.label)return;
     const cur=c.cur!==undefined&&c.cur!==""?c.cur:"?";
     const max=c.max!==undefined&&c.max!==""?("/"+c.max):"";
     cmd.push({text:c.label+" "+cur+max,key:"cons_"+c.id});
   });
-
-  // MEMO（dest=cmd or both）
   memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
     .forEach(m=>cmd.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
-
-  // 技能
   skList.forEach(s=>{
     if(s._sep){cmd.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
     if(!s.name||(s.val||0)<=0)return;
-    cmd.push({text:"CC<="+s.val+" 《"+s.name+"》",key:"sk_"+s.id});
+    cmd.push({text:"CC<="+s.val+" 【"+s.name+"】",key:"sk_"+s.id});
   });
-
   return cmd;
 }
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
@@ -1105,8 +1175,63 @@ async function uploadToShared(){if(!sharedToken){showToast("\u5171\u6709\u30c8\u
 async function downloadFromShared(){if(!sharedToken){showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044");return;}if(!sharedGistId){setSharedSt("\u26a0 \u5171\u6709Gist ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}setSharedSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026","ing");const data=await sharedGistGet();if(!data){setSharedSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057","err");showToast("\u30c7\u30fc\u30bf\u306a\u3057");return;}const remote=data.saves||[];if(remote.length){const local=lSharedSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>r.id===l.id))merged.push(l);});merged.sort((a,b)=>b.id-a.id);wSharedSaves(merged);setSharedSt("\u2713 \u5b8c\u4e86\uff08"+merged.length+"\u4ef6\uff09","ok");showToast(merged.length+"\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f");renderSharedList();}else setSharedSt("\u26a0 \u30af\u30e9\u30a6\u30c9\u306b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093","err");}
 function setSharedGistId(){const raw=document.getElementById("shared-gist-id-input").value.trim();if(!raw){setSharedSt("Gist ID\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}const m=raw.match(/([a-f0-9]{20,40})/i);if(!m){setSharedSt("\u26a0 \u6709\u52b9\u306aGist ID\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093","err");return;}sharedGistId=m[1];localStorage.setItem(L_SGIST,sharedGistId);updSharedGistDisplay();setSharedSt("\u2713 Gist ID\u8a2d\u5b9a\u6e08","ok");showToast("Gist ID\u3092\u8a2d\u5b9a\u3057\u307e\u3057\u305f");}
 
-function getCurrentData(){const strV=vals.str||0,sizV=vals.siz||0,db=(strV||sizV)?getDB(strV+sizV):null;return{id:Date.now(),name:document.getElementById("npc-name").value||"\uff08\u540d\u79f0\u306a\u3057\uff09",savedAt:new Date().toISOString(),vals:{...vals},ov:{...ov},ovManual:{...ovManual},skList:JSON.parse(JSON.stringify(skList)),atkList:JSON.parse(JSON.stringify(atkList)),splList:JSON.parse(JSON.stringify(splList)),memoList:JSON.parse(JSON.stringify(memoList)),consumables:JSON.parse(JSON.stringify(consumables)),dmgLabel:db?db.label:null,build:db?db.build:null};}
-function loadDataIntoEditor(data){document.getElementById("npc-name").value=data.name==="\uff08\u540d\u79f0\u306a\u3057\uff09"?"":data.name;document.getElementById("w-npcname").classList.toggle("hv",!!document.getElementById("npc-name").value);STATS.forEach(({key})=>{vals[key]=parseInt(data.vals?.[key])||0;});document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{const k=inp.dataset.key,v=vals[k]||0;inp.value=v>0?(inputMode===6?Math.round(v/5):v):"";const clr=inp.parentElement.querySelector(".sg-clr");if(clr)clr.style.display=inp.value?"block":"none";});ov.hp=ov.mp=ov.san=ov.luck=0;ovManual.hp=ovManual.mp=ovManual.san=ovManual.luck=false;if(data.ov)Object.entries(data.ov).forEach(([k,v])=>{ov[k]=parseInt(v)||0;});if(data.ovManual)Object.assign(ovManual,data.ovManual);["hp","mp","san","luck"].forEach(k=>{const i=document.getElementById("di-"+k);if(i)i.value=ovManual[k]?(ov[k]||""):"";const c=document.getElementById("dc-"+k);if(c)c.style.display=ovManual[k]?"block":"none";});skList=(data.skList||[{id:0,name:"",val:0}]).map(s=>({...s,val:parseInt(s.val)||0}));atkList=(data.atkList||[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}]).map(a=>({useDB:false,...a,pct:parseInt(a.pct)||0}));splList=data.splList||[{id:0,name:"",mp:"",note:""}];memoList=(data.memoList||[{id:0,label:"",content:"",dest:"cmd"}]).map(m=>({...m,dest:m.dest||"cmd"}));consumables=data.consumables||[];const allIds=[...skList,...atkList,...splList,...memoList,...consumables].map(x=>Number(x.id)||0).filter(id=>id>0);nxtId=allIds.length?Math.max(...allIds)+1:1;buildAtkRows();buildSkRows();buildSplRows();buildMemoRows();buildConsumableRows();if(atkList.some(a=>a.name))openAcc("atk");if(consumables.some(c=>c.label))openAcc("cons");if(memoList.some(m=>m.label||m.content))openMemo();updateStatDisplay();reExpandAllMemos();}
+function getCurrentData(){
+  const strV=vals.str||0,sizV=vals.siz||0,db=(strV||sizV)?getDB(strV+sizV):null;
+  return{
+    id:Date.now(),
+    name:document.getElementById("npc-name").value||"（名称なし）",
+    savedAt:new Date().toISOString(),
+    vals:{...vals},
+    ov:{...ov},
+    ovManual:{...ovManual},
+    skList:JSON.parse(JSON.stringify(skList)),
+    atkList:JSON.parse(JSON.stringify(atkList)),
+    splList:JSON.parse(JSON.stringify(splList)),
+    memoList:JSON.parse(JSON.stringify(memoList)),
+    consumables:JSON.parse(JSON.stringify(consumables)),
+    manualPalette:manualPaletteText,
+    dmgLabel:db?db.label:null,
+    build:db?db.build:null
+  };
+}
+function loadDataIntoEditor(data){
+  document.getElementById("npc-name").value=data.name==="（名称なし）"?"":data.name;
+  document.getElementById("w-npcname").classList.toggle("hv",!!document.getElementById("npc-name").value);
+  STATS.forEach(({key})=>{vals[key]=parseInt(data.vals?.[key])||0;});
+  document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{
+    const k=inp.dataset.key,v=vals[k]||0;
+    inp.value=v>0?(inputMode===6?Math.round(v/5):v):"";
+    const clr=inp.parentElement.querySelector(".sg-clr");
+    if(clr)clr.style.display=inp.value?"block":"none";
+  });
+  ov.hp=ov.mp=ov.san=ov.luck=0;
+  ovManual.hp=ovManual.mp=ovManual.san=ovManual.luck=false;
+  if(data.ov)Object.entries(data.ov).forEach(([k,v])=>{ov[k]=parseInt(v)||0;});
+  if(data.ovManual)Object.assign(ovManual,data.ovManual);
+  ["hp","mp","san","luck"].forEach(k=>{
+    const i=document.getElementById("di-"+k);
+    if(i)i.value=ovManual[k]?(ov[k]||""):"";
+    const c=document.getElementById("dc-"+k);
+    if(c)c.style.display=ovManual[k]?"block":"none";
+  });
+  skList=(data.skList||[{id:0,name:"",val:0}]).map(s=>({...s,val:parseInt(s.val)||0}));
+  atkList=(data.atkList||[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}]).map(a=>({useDB:false,...a,pct:parseInt(a.pct)||0}));
+  splList=data.splList||[{id:0,name:"",mp:"",note:""}];
+  memoList=(data.memoList||[{id:0,label:"",content:"",dest:"cmd"}]).map(m=>({...m,dest:m.dest||"cmd"}));
+  consumables=data.consumables||[];
+  const allIds=[...skList,...atkList,...splList,...memoList,...consumables].map(x=>Number(x.id)||0).filter(id=>id>0);
+  nxtId=allIds.length?Math.max(...allIds)+1:1;
+  // 手書きパレットをキャラクター単位で復元
+  manualPaletteText=data.manualPalette||"";
+  saveManualPalette();
+  const ta=document.getElementById("manual-palette-textarea");
+  if(ta)ta.value=manualPaletteText;
+  buildAtkRows();buildSkRows();buildSplRows();buildMemoRows();buildConsumableRows();
+  if(atkList.some(a=>a.name))openAcc("atk");
+  if(consumables.some(c=>c.label))openAcc("cons");
+  if(memoList.some(m=>m.label||m.content))openMemo();
+  updateStatDisplay();reExpandAllMemos();
+}
 function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head"><div class="save-card-name">'+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
 function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};shared[idx]=u;wSharedSaves(shared);renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
