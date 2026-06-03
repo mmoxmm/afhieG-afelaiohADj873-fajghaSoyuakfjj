@@ -294,6 +294,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .dv-col-hd:nth-child(4),.dv-col-hd:nth-child(5){
   text-align:center;padding-left:0;
 }
+#acc-palette{border:2px solid var(--border2);}
+.sk-row{margin-bottom:5px;}
+.atk-row{margin-bottom:5px;}
+.cons-row{margin-bottom:5px;}
+.spl-row{margin-bottom:5px;}
+.memo-body>div{margin-bottom:5px;}
 </style>
 </head><body>
 <div class="app-header">
@@ -338,7 +344,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 
   <!-- 能力値・派生値 2カラム -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:15px">
     <div>
 <div class="stat-grid-wrap">
   <div class="sg-col-hd" style="text-align:center;color:var(--text2);font-weight:700">特性値</div>
@@ -1005,7 +1011,7 @@ function buildAtkRows(){
   wrap.innerHTML="";
   const hdr=document.createElement("div");
   // ダメージ列を広く(2fr)、DB列を少し縮める(28px)、行間縮小(margin-bottom:2px)
-  hdr.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 28px 30px 16px 18px;gap:2px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
+  hdr.style.cssText="display:grid;grid-template-columns:5fr 40px 2fr 26px 16px 18px 18px;gap:1px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
   hdr.innerHTML="<span style='text-align:left'>武器名・技能名</span><span>命中%</span><span>ダメ</span><span>DB</span><span></span><span></span><span></span>";
   wrap.appendChild(hdr);
   function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}
@@ -1016,7 +1022,7 @@ function buildAtkRows(){
   atkList.forEach((a,idx)=>{
     if(a._sep){
       const row=document.createElement("div");
-      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:2px;";
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:5px;";
       row.dataset.dnd=idx;
       const dh=makeHandle();
       const inp=document.createElement("input");
@@ -1033,22 +1039,22 @@ function buildAtkRows(){
     let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";
     const row=document.createElement("div");
     // グリッド列をヘッダーと同じに
-    row.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 28px 30px 16px 18px;gap:2px;align-items:center;margin-bottom:2px;";
+    row.style.cssText="display:grid;grid-template-columns:5fr 40px 2fr 26px 16px 18px 18px;gap:1px;align-items:center;justify-items:center;margin-bottom:2px;";
     row.dataset.dnd=idx;
     const nameInp=document.createElement("input");
     nameInp.type="text";nameInp.placeholder="素手・近接（格闘）";nameInp.value=a.name||"";
-    nameInp.style.cssText="padding:3px 5px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;";
+    nameInp.style.cssText="padding:3px 5px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;justify-self:stretch;";
     const pctInp=document.createElement("input");pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";
-    pctInp.style.cssText="padding:3px 2px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    pctInp.style.cssText="padding:3px 2px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;justify-self:stretch;";
     const dmgInp=document.createElement("input");dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";
     // ダメージ欄：フォント少し大きく、左右パディング増
-    dmgInp.style.cssText="padding:3px 4px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    dmgInp.style.cssText="padding:3px 4px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;justify-self:stretch;";
     // DBボタン：一回り小さく(26px)
     const dbBtn=document.createElement("button");
     dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);
-    dbBtn.style.cssText="width:26px;height:26px;font-size:8px;";
+    dbBtn.style.cssText="width:24px;height:26px;font-size:8px;margin:0;padding:0;";
     const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;
-    const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";dbWrap.append(dbBtn,dbCI);
+    const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;width:26px;overflow:hidden;";dbWrap.append(dbBtn,dbCI);
     const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
     const dh=makeHandle();
     const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
