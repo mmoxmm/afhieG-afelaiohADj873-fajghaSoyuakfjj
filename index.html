@@ -706,6 +706,17 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     ✏️ 手書きのみ
   </label>
 </div>
+        <div id="chk-order-wrap" style="margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📋 コマンド順序</div>
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+    <input type="radio" name="cmd-order" id="chk-order-sk-first" value="sk-first" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+    🎯 技能 → ⚔️ 攻撃
+  </label>
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+    <input type="radio" name="cmd-order" id="chk-order-atk-first" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+    ⚔️ 攻撃 → 🎯 技能
+  </label>
+</div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
@@ -808,60 +819,140 @@ function renderPalettePreview(){
   const skEl=document.getElementById("palette-sortable-sk");
   const atkEl=document.getElementById("palette-sortable-atk");
   if(!skEl||!atkEl)return;
+
   const strV=vals.str||0,sizV=vals.siz||0;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
-  // 技能パネル
-  const skH=[];
-  skList.forEach(s=>{
-    if(s._sep){skH.push('<div style="color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;font-size:11px">'+(esc(s.label)||"━━━")+'</div>');return;}
+
+  // ===== 技能パネル =====
+  skEl.innerHTML="";
+  skList.forEach((s,idx)=>{
+    if(s._sep){
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:3px;padding:2px 0;border-top:1px dashed var(--border);margin:2px 0;";
+      row.dataset.dnd=idx;
+      const dh=makeHandle();dh.style.fontSize="11px";
+      const lbl=document.createElement("span");
+      lbl.style.cssText="flex:1;font-size:11px;color:var(--text3);";
+      lbl.textContent=s.label||"━━━";
+      row.append(dh,lbl);
+      skEl.appendChild(row);
+      bindDnD(row,skList,idx,()=>{buildSkRows();renderPalettePreview();updateExport();});
+      return;
+    }
     if(!s.name||(s.val||0)<=0)return;
-    skH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">CC&lt;='+s.val+' 【'+esc(s.name)+'】</div>');
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;word-break:break-all;";
+    row.dataset.dnd=idx;
+    const dh=makeHandle();dh.style.fontSize="11px";
+    const txt=document.createElement("span");
+    txt.style.cssText="flex:1;font-size:12px;cursor:pointer;";
+    txt.textContent="CC<="+s.val+" 【"+s.name+"】";
+    txt.addEventListener("click",()=>{
+      const cmd="CC<="+s.val+" 【"+s.name+"】";
+      navigator.clipboard.writeText(cmd).then(()=>{txt.style.color="var(--success)";setTimeout(()=>txt.style.color="",700);addHistory(cmd);showToast("コピー: "+cmd);});
+    });
+    row.append(dh,txt);
+    skEl.appendChild(row);
+    bindDnD(row,skList,idx,()=>{buildSkRows();renderPalettePreview();updateExport();});
   });
-  skEl.innerHTML=skH.length?skH.join(''):'<div style="color:var(--text3);font-size:12px;padding:4px">技能なし</div>';
-  // 攻撃/呪文/MEMOパネル
-  const atkH=[];
+  if(!skEl.children.length){
+    const empty=document.createElement("div");
+    empty.style.cssText="color:var(--text3);font-size:12px;padding:4px;";
+    empty.textContent="技能なし";
+    skEl.appendChild(empty);
+  }
+  // 技能パネル下：区切り追加ボタン
+  const skSepBtn=document.createElement("button");
+  skSepBtn.className="btn-add";
+  skSepBtn.style.cssText="margin-top:4px;font-size:11px;";
+  skSepBtn.textContent="━ 区切り追加";
+  skSepBtn.addEventListener("click",()=>{addSkSep();renderPalettePreview();});
+  skEl.appendChild(skSepBtn);
+
+  // ===== 攻撃/呪文/MEMOパネル =====
+  atkEl.innerHTML="";
+  const atkItems=[];
   if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
-    atkH.push('<div style="padding:2px 0;line-height:1.5">'+esc(db.cmd)+' 【ダメージボーナス】</div>');
+    atkItems.push({text:db.cmd+" 【ダメージボーナス】",key:"_db"});
   atkList.forEach(a=>{
-    if(a._sep){atkH.push('<div style="color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;font-size:11px">'+(esc(a.label)||"━━━")+'</div>');return;}
+    if(a._sep){atkItems.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true,id:a.id});return;}
     if(!a.name)return;
-    if(a.pct)atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">CC&lt;='+a.pct+' 【'+esc(a.name)+'】</div>');
+    if(a.pct)atkItems.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
       if(a.useDB==="half"&&db&&db.cmd){
         const hc=db.cmd+"/2";
         if(gB){
-          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ（DBなし）】</div>');
-          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+hc+' 【'+esc(a.name)+'ダメージ（DB/2込み）】</div>');
-        }else atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+hc+' 【'+esc(a.name)+'ダメージ】</div>');
+          atkItems.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          atkItems.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ（DB/2込み）】",key:"dmg_h_"+a.id});
+        }else atkItems.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
       }else if(a.useDB===true&&db&&db.cmd){
         if(gB){
-          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ（DBなし）】</div>');
-          atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+esc(db.cmd)+' 【'+esc(a.name)+'ダメージ（DB込み）】</div>');
-        }else atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+'+'+esc(db.cmd)+' 【'+esc(a.name)+'ダメージ】</div>');
-      }else if(isCus){
-        atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+esc(a.useDB)+' 【'+esc(a.name)+'ダメージ】</div>');
-      }else{
-        atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(a.dmg)+' 【'+esc(a.name)+'ダメージ】</div>');
-      }
+          atkItems.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          atkItems.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】",key:"dmg_h_"+a.id});
+        }else atkItems.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      }else if(isCus)atkItems.push({text:a.dmg+a.useDB+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      else atkItems.push({text:a.dmg+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
     }
   });
   splList.forEach(s=>{
     if(!s.name)return;
-    atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+esc(s.name)+(s.mp?' (MP:'+esc(s.mp)+')':'')+'</div>');
-    if(s.note)atkH.push('<div style="padding:1px 0;font-size:11px;color:var(--text3)">// '+esc(s.note)+'</div>');
+    atkItems.push({text:s.name+(s.mp?" (MP:"+s.mp+")":""),key:"spl_"+s.id});
+    if(s.note)atkItems.push({text:"// "+s.note,key:"splnote_"+s.id,isNote:true});
   });
   consumables.forEach(c=>{
     if(!c.label)return;
     const cur=c.cur!==undefined&&c.cur!==""?c.cur:"?";
     const max=c.max!==undefined&&c.max!==""?"/"+c.max:"";
-    atkH.push('<div style="padding:2px 0;line-height:1.5">'+esc(c.label)+' '+cur+max+'</div>');
+    atkItems.push({text:c.label+" "+cur+max,key:"cons_"+c.id});
   });
-  memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>{
-    atkH.push('<div style="padding:2px 0;line-height:1.5;word-break:break-all">'+(m.label?esc(m.label)+'　':'')+esc(m.content)+'</div>');
+  memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
+    .forEach(m=>atkItems.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
+
+  atkItems.forEach((item,idx)=>{
+    const row=document.createElement("div");
+    if(item.isSep){
+      row.style.cssText="display:flex;align-items:center;gap:3px;border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;";
+      const dh=makeHandle();dh.style.fontSize="11px";
+      const lbl=document.createElement("span");
+      lbl.style.cssText="flex:1;font-size:11px;color:var(--text3);";
+      lbl.textContent=item.text;
+      row.append(dh,lbl);
+      // 区切りはatkListのDnDに連動させるため、atkListを直接操作
+      row.dataset.dndAtk=idx;
+    }else if(item.isNote){
+      row.style.cssText="display:flex;padding:1px 0 1px 14px;";
+      const lbl=document.createElement("span");
+      lbl.style.cssText="font-size:11px;color:var(--text3);";
+      lbl.textContent=item.text;
+      row.append(lbl);
+    }else{
+      row.style.cssText="display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;";
+      const dh=makeHandle();dh.style.fontSize="11px";
+      const txt=document.createElement("span");
+      txt.style.cssText="flex:1;font-size:12px;word-break:break-all;cursor:pointer;";
+      txt.textContent=item.text;
+      txt.addEventListener("click",()=>{
+        navigator.clipboard.writeText(item.text).then(()=>{txt.style.color="var(--success)";setTimeout(()=>txt.style.color="",700);addHistory(item.text);showToast("コピー: "+item.text.slice(0,20)+(item.text.length>20?"…":""));});
+      });
+      row.append(dh,txt);
+    }
+    atkEl.appendChild(row);
   });
-  atkEl.innerHTML=atkH.length?atkH.join(''):'<div style="color:var(--text3);font-size:12px;padding:4px">データなし</div>';
+  if(!atkItems.length){
+    const empty=document.createElement("div");
+    empty.style.cssText="color:var(--text3);font-size:12px;padding:4px;";
+    empty.textContent="データなし";
+    atkEl.appendChild(empty);
+  }
+  // 攻撃パネル下：区切り追加ボタン
+  const atkSepBtn=document.createElement("button");
+  atkSepBtn.className="btn-add";
+  atkSepBtn.style.cssText="margin-top:4px;font-size:11px;";
+  atkSepBtn.textContent="━ 区切り追加";
+  atkSepBtn.addEventListener("click",()=>{addAtkSep();renderPalettePreview();});
+  atkEl.appendChild(atkSepBtn);
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function escA(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;")}
@@ -913,7 +1004,8 @@ function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");
   wrap.innerHTML="";
   const hdr=document.createElement("div");
-  hdr.style.cssText="display:grid;grid-template-columns:4fr 44px 1fr 32px 34px 20px 20px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center;";
+  // ダメージ列を広く(2fr)、DB列を少し縮める(28px)、行間縮小(margin-bottom:2px)
+  hdr.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 28px 30px 16px 18px;gap:2px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
   hdr.innerHTML="<span style='text-align:left'>武器名・技能名</span><span>命中%</span><span>ダメ</span><span>DB</span><span></span><span></span><span></span>";
   wrap.appendChild(hdr);
   function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}
@@ -924,12 +1016,12 @@ function buildAtkRows(){
   atkList.forEach((a,idx)=>{
     if(a._sep){
       const row=document.createElement("div");
-      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:2px;";
       row.dataset.dnd=idx;
       const dh=makeHandle();
       const inp=document.createElement("input");
       inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=a.label||"";
-      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
+      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:26px;";
       inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});
       const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
       rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();});
@@ -940,16 +1032,21 @@ function buildAtkRows(){
     let dbState=gDS(a.useDB);
     let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";
     const row=document.createElement("div");
-    row.style.cssText="display:grid;grid-template-columns:4fr 44px 1fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px;";
+    // グリッド列をヘッダーと同じに
+    row.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 28px 30px 16px 18px;gap:2px;align-items:center;margin-bottom:2px;";
     row.dataset.dnd=idx;
     const nameInp=document.createElement("input");
     nameInp.type="text";nameInp.placeholder="素手・近接（格闘）";nameInp.value=a.name||"";
-    nameInp.style.cssText="padding:4px 6px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;";
+    nameInp.style.cssText="padding:3px 5px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;";
     const pctInp=document.createElement("input");pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";
-    pctInp.style.cssText="padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    pctInp.style.cssText="padding:3px 2px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
     const dmgInp=document.createElement("input");dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";
-    dmgInp.style.cssText="padding:4px 2px;font-size:12px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
-    const dbBtn=document.createElement("button");dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);
+    // ダメージ欄：フォント少し大きく、左右パディング増
+    dmgInp.style.cssText="padding:3px 4px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    // DBボタン：一回り小さく(26px)
+    const dbBtn=document.createElement("button");
+    dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);
+    dbBtn.style.cssText="width:26px;height:26px;font-size:8px;";
     const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;
     const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";dbWrap.append(dbBtn,dbCI);
     const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
@@ -1033,52 +1130,59 @@ function fullReset(){
 
 let paletteCustomOrder=null;
 function getPaletteLines(){
-  const cmd=[];
   const strV=vals.str||0,sizV=vals.siz||0;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
+  const atkFirst=document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked||false;
+
+  // 攻撃ブロック
+  const atkBlock=[];
   if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
-    cmd.push({text:db.cmd+" 【ダメージボーナス】",key:"_db"});
+    atkBlock.push({text:db.cmd+" 【ダメージボーナス】",key:"_db"});
   atkList.forEach(a=>{
-    if(a._sep){cmd.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
+    if(a._sep){atkBlock.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
     if(!a.name)return;
-    if(a.pct)cmd.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
+    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
       if(a.useDB==="half"&&db&&db.cmd){
         const hc=db.cmd+"/2";
         if(gB){
-          cmd.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
-          cmd.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ（DB/2込み）】",key:"dmg_h_"+a.id});
-        }else cmd.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+          atkBlock.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          atkBlock.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ（DB/2込み）】",key:"dmg_h_"+a.id});
+        }else atkBlock.push({text:a.dmg+"+"+hc+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
       }else if(a.useDB===true&&db&&db.cmd){
         if(gB){
-          cmd.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
-          cmd.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】",key:"dmg_h_"+a.id});
-        }else cmd.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
-      }else if(isCus)cmd.push({text:a.dmg+a.useDB+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
-      else cmd.push({text:a.dmg+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+          atkBlock.push({text:a.dmg+" 【"+a.name+"ダメージ（DBなし）】",key:"dmg_n_"+a.id});
+          atkBlock.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ（DB込み）】",key:"dmg_h_"+a.id});
+        }else atkBlock.push({text:a.dmg+"+"+db.cmd+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      }else if(isCus)atkBlock.push({text:a.dmg+a.useDB+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
+      else atkBlock.push({text:a.dmg+" 【"+a.name+"ダメージ】",key:"dmg_"+a.id});
     }
   });
   splList.forEach(s=>{
     if(!s.name)return;
     const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");
-    cmd.push({text:mainTxt,sub:s.note||undefined,key:"spl_"+s.id});
+    atkBlock.push({text:mainTxt,sub:s.note||undefined,key:"spl_"+s.id});
   });
   consumables.forEach(c=>{
     if(!c.label)return;
     const cur=c.cur!==undefined&&c.cur!==""?c.cur:"?";
     const max=c.max!==undefined&&c.max!==""?("/"+c.max):"";
-    cmd.push({text:c.label+" "+cur+max,key:"cons_"+c.id});
+    atkBlock.push({text:c.label+" "+cur+max,key:"cons_"+c.id});
   });
   memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
-    .forEach(m=>cmd.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
+    .forEach(m=>atkBlock.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
+
+  // 技能ブロック
+  const skBlock=[];
   skList.forEach(s=>{
-    if(s._sep){cmd.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
+    if(s._sep){skBlock.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
     if(!s.name||(s.val||0)<=0)return;
-    cmd.push({text:"CC<="+s.val+" 【"+s.name+"】",key:"sk_"+s.id});
+    skBlock.push({text:"CC<="+s.val+" 【"+s.name+"】",key:"sk_"+s.id});
   });
-  return cmd;
+
+  return atkFirst ? [...atkBlock,...skBlock] : [...skBlock,...atkBlock];
 }
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
