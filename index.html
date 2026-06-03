@@ -690,13 +690,21 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
           </label>
           <span style="font-size:11px;color:var(--text3)">공격란 DB 체크 행에만 적용</span>
         </div>
-        <div id="chk-manual-wrap" style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);flex-wrap:wrap">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);font-weight:700">
-            <input type="checkbox" id="chk-incl-manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-            ✏️ 手書きパレットをJSONに追加
-          </label>
-          <span style="font-size:11px;color:var(--text3)">自動生成＋手書きを合わせて出力</span>
-        </div>
+<div id="chk-manual-wrap" style="margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+    <input type="radio" name="palette-mode" id="chk-auto-only" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+    🔄 自動生成のみ
+  </label>
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+    <input type="radio" name="palette-mode" id="chk-incl-manual" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+    🔄＋✏️ 自動生成＋手書きを合わせて出力
+  </label>
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+    <input type="radio" name="palette-mode" id="chk-manual-only" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+    ✏️ 手書きのみ
+  </label>
+</div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
@@ -862,13 +870,162 @@ function applyParsed(p){Object.keys(p.stats).forEach(key=>{const rawVal=p.stats[
 function fullReset(){if(!confirm("\u5168\u30c7\u30fc\u30bf\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3059\u304b\uff1f"))return;document.getElementById("npc-name").value="";document.getElementById("w-npcname").classList.remove("hv");STATS.forEach(({key})=>{vals[key]=0;});document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{inp.value="";inp.parentElement.querySelector(".sg-clr").style.display="none";});ov.hp=ov.mp=ov.san=ov.luck=0;ovManual.hp=ovManual.mp=ovManual.san=ovManual.luck=false;["hp","mp","san","luck"].forEach(k=>{const i=document.getElementById("di-"+k);if(i)i.value="";const c=document.getElementById("dc-"+k);if(c)c.style.display="none";});skList=[{id:0,name:"",val:0}];atkList=[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}];splList=[{id:0,name:"",mp:"",note:""}];memoList=[{id:0,label:"",content:"",dest:"cmd"}];consumables=[];nxtId=1;buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();updateStatDisplay();showToast("\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 
 let paletteCustomOrder=null;
-function getPaletteLines(){const cmd=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmd.push({text:db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b",key:"_db"});atkList.forEach(a=>{if(a._sep){cmd.push({text:a.label||"\u2501\u2501\u2501",key:"sep_"+a.id,isSep:true});return;}if(!a.name||(a.pct||0)<=0)return;cmd.push({text:"CC<="+a.pct+" \u300a"+a.name+"\u300b",key:"atk_"+a.id});if(a.dmg){const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmd.push({text:a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b",key:"dmg_n_"+a.id});cmd.push({text:a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b",key:"dmg_h_"+a.id});}else cmd.push({text:a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b",key:"dmg_"+a.id});}else if(a.useDB===true&&db&&db.cmd){if(gB){cmd.push({text:a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b",key:"dmg_n_"+a.id});cmd.push({text:a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b",key:"dmg_h_"+a.id});}else cmd.push({text:a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b",key:"dmg_"+a.id});}else if(isCus)cmd.push({text:a.dmg+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b",key:"dmg_"+a.id});else cmd.push({text:a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b",key:"dmg_"+a.id});}});splList.forEach(s=>{if(!s.name)return;const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");const subTxt=s.note||"";cmd.push({text:mainTxt,sub:subTxt||undefined,key:"spl_"+s.id});});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmd.push({text:(m.label?m.label+"\u3000":"")+m.content,key:"memo_"+m.id}));skList.forEach(s=>{if(s._sep){cmd.push({text:s.label||"\u2501\u2501\u2501",key:"ssep_"+s.id,isSep:true});return;}if(!s.name||(s.val||0)<=0)return;cmd.push({text:"CC<="+s.val+" \u300a"+s.name+"\u300b",key:"sk_"+s.id});});return cmd;}
+function getPaletteLines(){
+  const cmd=[];
+  const strV=vals.str||0,sizV=vals.siz||0;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
+
+  // DB
+  if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&(a.pct||0)>0&&a.useDB))
+    cmd.push({text:db.cmd+" 《ダメージボーナス》",key:"_db"});
+
+  // 攻撃
+  atkList.forEach(a=>{
+    if(a._sep){cmd.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
+    if(!a.name||(a.pct||0)<=0)return;
+    cmd.push({text:"CC<="+a.pct+" 《"+a.name+"》",key:"atk_"+a.id});
+    if(a.dmg){
+      const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
+      if(a.useDB==="half"&&db&&db.cmd){
+        const hc=db.cmd+"/2";
+        if(gB){
+          cmd.push({text:a.dmg+" 《"+a.name+"ダメージ（DBなし）》",key:"dmg_n_"+a.id});
+          cmd.push({text:a.dmg+"+"+hc+" 《"+a.name+"ダメージ（DB/2込み）》",key:"dmg_h_"+a.id});
+        }else cmd.push({text:a.dmg+"+"+hc+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+      }else if(a.useDB===true&&db&&db.cmd){
+        if(gB){
+          cmd.push({text:a.dmg+" 《"+a.name+"ダメージ（DBなし）》",key:"dmg_n_"+a.id});
+          cmd.push({text:a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ（DB込み）》",key:"dmg_h_"+a.id});
+        }else cmd.push({text:a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+      }else if(isCus)cmd.push({text:a.dmg+a.useDB+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+      else cmd.push({text:a.dmg+" 《"+a.name+"ダメージ》",key:"dmg_"+a.id});
+    }
+  });
+
+  // 呪文
+  splList.forEach(s=>{
+    if(!s.name)return;
+    const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");
+    cmd.push({text:mainTxt,sub:s.note||undefined,key:"spl_"+s.id});
+  });
+
+  // 消耗品
+  consumables.forEach(c=>{
+    if(!c.label)return;
+    const cur=c.cur!==undefined&&c.cur!==""?c.cur:"?";
+    const max=c.max!==undefined&&c.max!==""?("/"+c.max):"";
+    cmd.push({text:c.label+" "+cur+max,key:"cons_"+c.id});
+  });
+
+  // MEMO（dest=cmd or both）
+  memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
+    .forEach(m=>cmd.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
+
+  // 技能
+  skList.forEach(s=>{
+    if(s._sep){cmd.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
+    if(!s.name||(s.val||0)<=0)return;
+    cmd.push({text:"CC<="+s.val+" 《"+s.name+"》",key:"sk_"+s.id});
+  });
+
+  return cmd;
+}
 function renderPalettePreview(){const wSk=document.getElementById("palette-sortable-sk");const wAtk=document.getElementById("palette-sortable-atk");if(!wSk||!wAtk)return;const lines=getPaletteLines();const skL=lines.filter(l=>l.key.startsWith("sk_")||l.key.startsWith("ssep_"));const aL=lines.filter(l=>!l.key.startsWith("sk_")&&!l.key.startsWith("ssep_"));function renderCol(wrap,colL,emptyMsg){if(!colL.length){wrap.innerHTML='<div style="color:var(--text3);padding:4px 2px;font-size:12px">'+emptyMsg+'</div>';return;}wrap.innerHTML="";colL.forEach(line=>{const row=document.createElement("div");row.dataset.key=line.key;row.style.cssText="display:flex;align-items:center;gap:4px;padding:2px;border-radius:3px;margin-bottom:1px;"+(line.isSep?"opacity:.5;":"");const handle=document.createElement("span");handle.textContent="\u2a1f";handle.style.cssText="cursor:grab;color:var(--text3);font-size:14px;flex-shrink:0;touch-action:none;user-select:none;padding:0 2px";const txt=document.createElement("span");txt.style.cssText="flex:1;overflow:hidden;font-size:11px;line-height:1.4;word-break:break-all;white-space:normal;color:"+(line.isSep?"var(--text3)":"var(--text2)");if(line.sub){txt.innerHTML=esc(line.text)+'<br><span style="font-size:10px;color:var(--text3)">'+esc(line.sub)+'</span>';}else{txt.textContent=line.text;}const cpBtn=document.createElement("button");cpBtn.textContent="\ud83d\udccb";cpBtn.style.cssText="background:none;border:none;cursor:pointer;font-size:11px;padding:1px 3px;flex-shrink:0;color:var(--text3)";cpBtn.addEventListener("click",e=>{e.stopPropagation();navigator.clipboard.writeText(line.text).then(()=>{cpBtn.textContent="\u2713";setTimeout(()=>cpBtn.textContent="\ud83d\udccb",1000);addHistory(line.text);});});row.append(handle,txt,cpBtn);wrap.appendChild(row);});}renderCol(wSk,skL,"\u6280\u80fd\u306a\u3057");renderCol(wAtk,aL,"\u653b\u6483\u30fb\u30e1\u30e2\u306a\u3057");}
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
 function syncBothDbCheck(el){const other=el.id==="chk-both-db"?document.getElementById("chk-both-db2"):document.getElementById("chk-both-db");if(other)other.checked=el.checked;updateExport();}
-function buildCocoforiaJson(){const name=document.getElementById("npc-name").value||"NPC";const status=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});if(luck>0||ovManual.luck)status.push({label:"\u5e78\u904b",value:luck,max:luck});consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;status.push({label:c.label,value:cur,max:max||cur});});const params=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)params.push({label,value:String(v)});});const cmdLines=[];const strV=vals.str||0,sizV=vals.siz||0;const db=(strV+sizV>0)?getDB(strV+sizV):null;const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;if(db&&db.cmd&&atkList.some(a=>a.name&&(a.pct||0)>0&&a.useDB))cmdLines.push(db.cmd+" \u300a\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\u300b");atkList.forEach(a=>{if(a._sep){cmdLines.push(a.label||"\u2501\u2501\u2501");return;}if(!a.name||(a.pct||0)<=0)return;cmdLines.push("CC<="+a.pct+" \u300a"+a.name+"\u300b");if(a.dmg){if(a.useDB==="half"&&db&&db.cmd){const hc=db.cmd+"/2";if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB/2\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+hc+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(a.useDB===true&&db&&db.cmd){if(gB){cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u306a\u3057\uff09\u300b");cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\uff08DB\u8fbc\u307f\uff09\u300b");}else cmdLines.push(a.dmg+"+"+db.cmd+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}else if(typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false"&&a.useDB!==false)cmdLines.push(a.dmg+"+"+a.useDB+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else cmdLines.push(a.dmg+" \u300a"+a.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}});splList.forEach(s=>{if(!s.name)return;const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");const subTxt=s.note||"";cmdLines.push(mainTxt+(subTxt?" \u300a"+subTxt+"\u300b":""));});skList.forEach(s=>{if(s._sep){cmdLines.push(s.label||"\u2501\u2501\u2501");return;}if(!s.name||(s.val||0)<=0)return;cmdLines.push("CC<="+s.val+" \u300a"+s.name+"\u300b");});memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both")).forEach(m=>cmdLines.push((m.label?m.label+"\u3000":"")+m.content));const inclManual=document.getElementById("chk-incl-manual")?.checked||false;if(inclManual&&manualPaletteText.trim()){const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);manLines.forEach(l=>cmdLines.push(l));}const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both")).map(m=>(m.label?"  "+m.label+"\u3000":"")+m.content);return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});}
+function buildCocoforiaJson(){
+  const name=document.getElementById("npc-name").value||"NPC";
+  const status=[];
+  const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");
+  if(hp>0||ovManual.hp)status.push({label:"HP",value:hp,max:hp});
+  if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});
+  if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});
+  if(luck>0||ovManual.luck)status.push({label:"幸運",value:luck,max:luck});
+
+  // 消耗品をstatusに追加
+  consumables.filter(c=>c.label).forEach(c=>{
+    const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;
+    status.push({label:c.label,value:cur,max:max||cur});
+  });
+
+  const params=[];
+  STATS.forEach(({key,label})=>{
+    const v=vals[key]||0;
+    if(v>0)params.push({label,value:String(v)});
+  });
+
+  const strV=vals.str||0,sizV=vals.siz||0;
+  const db=(strV+sizV>0)?getDB(strV+sizV):null;
+  const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
+
+  // 出力モード判定
+  const inclManual=document.getElementById("chk-incl-manual")?.checked||false;
+  const useManualOnly=document.getElementById("chk-manual-only")?.checked||false;
+
+  let cmdLines=[];
+
+  if(!useManualOnly){
+    // 自動生成パレット
+    if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&(a.pct||0)>0&&a.useDB))
+      cmdLines.push(db.cmd+" 《ダメージボーナス》");
+
+    atkList.forEach(a=>{
+      if(a._sep){cmdLines.push(a.label||"━━━");return;}
+      if(!a.name||(a.pct||0)<=0)return;
+      cmdLines.push("CC<="+a.pct+" 《"+a.name+"》");
+      if(a.dmg){
+        if(a.useDB==="half"&&db&&db.cmd){
+          const hc=db.cmd+"/2";
+          if(gB){cmdLines.push(a.dmg+" 《"+a.name+"ダメージ（DBなし）》");cmdLines.push(a.dmg+"+"+hc+" 《"+a.name+"ダメージ（DB/2込み）》");}
+          else cmdLines.push(a.dmg+"+"+hc+" 《"+a.name+"ダメージ》");
+        }else if(a.useDB===true&&db&&db.cmd){
+          if(gB){cmdLines.push(a.dmg+" 《"+a.name+"ダメージ（DBなし）》");cmdLines.push(a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ（DB込み）》");}
+          else cmdLines.push(a.dmg+"+"+db.cmd+" 《"+a.name+"ダメージ》");
+        }else if(typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false"&&a.useDB!==false)
+          cmdLines.push(a.dmg+"+"+a.useDB+" 《"+a.name+"ダメージ》");
+        else cmdLines.push(a.dmg+" 《"+a.name+"ダメージ》");
+      }
+    });
+
+    // 呪文
+    splList.forEach(s=>{
+      if(!s.name)return;
+      const mainTxt=s.name+(s.mp?" (MP:"+s.mp+")":"");
+      const subTxt=s.note||"";
+      cmdLines.push(mainTxt+(subTxt?" 《"+subTxt+"》":""));
+    });
+
+    // 技能
+    skList.forEach(s=>{
+      if(s._sep){cmdLines.push(s.label||"━━━");return;}
+      if(!s.name||(s.val||0)<=0)return;
+      cmdLines.push("CC<="+s.val+" 《"+s.name+"》");
+    });
+
+    // MEMO（dest=cmd or both）
+    memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
+      .forEach(m=>cmdLines.push((m.label?m.label+"　":"")+m.content));
+
+    // 手書きを追記
+    if(inclManual&&manualPaletteText.trim()){
+      const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
+      manLines.forEach(l=>cmdLines.push(l));
+    }
+  }else{
+    // 手書きのみ
+    if(manualPaletteText.trim()){
+      cmdLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
+    }
+  }
+
+  const memoLines=memoList.filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both"))
+    .map(m=>(m.label?"  "+m.label+"　":"")+m.content);
+
+  return JSON.stringify({kind:"character",data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}});
+}
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
 function updateExport(){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";const el=document.getElementById("export-preview");if(el)el.textContent=txt;const el2=document.getElementById("export-preview2");if(el2)el2.textContent=txt;}
 function copyExport(){if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}else{const el=document.getElementById("export-preview");const txt=el?.textContent;if(!txt||txt==="\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09"){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}}
