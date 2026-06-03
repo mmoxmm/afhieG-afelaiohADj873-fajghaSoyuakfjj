@@ -51,10 +51,10 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .save-page-btn{flex:1;background:none;border:none;border-radius:6px;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 8px;transition:all .2s;text-align:center}
 .save-page-btn.active{background:var(--bg);color:var(--text);box-shadow:var(--shadow)}
 /* 能力値グリッド - 5列固定 */
-.stat-grid-wrap{display:grid;grid-template-columns:48px 52px 1fr 44px 40px;gap:3px;padding-left:0}
+.stat-grid-wrap{display:grid;grid-template-columns:46px 68px 1fr 44px 40px;gap:3px;padding-left:0}
 .sg-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .sg-col-hd:first-child{text-align:left}
-.sg-col-hd:nth-child(4),.sg-col-hd:nth-child(5){text-align:center}
+.sg-col-hd:nth-child(4),.sg-col-hd:nth-child(5){text-align:left;padding-left:2px}
 .sg-label{display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--cell-h);padding:0 2px 0 0;text-align:center;cursor:pointer;border-radius:3px;transition:background .1s}
 .sg-label:hover{background:var(--bg3)}
 .sg-label strong{font-size:15px;font-weight:700;line-height:1.15}
@@ -70,7 +70,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .sg-fifth{display:flex;align-items:center;justify-content:center;height:var(--cell-h);font-size:13px;color:#2855a0;cursor:pointer;border-radius:3px;transition:background .1s}
 .sg-fifth:hover{background:var(--bg3)}
 /* 派生値グリッド - 5列固定 */
-.dv-grid-wrap{display:grid;grid-template-columns:48px 52px 1fr 44px 40px;gap:3px;padding-left:2px}
+.dv-grid-wrap{display:grid;grid-template-columns:46px 68px 1fr 44px 40px;gap:3px;padding-left:0}
 .dv-col-hd{font-size:11px;color:var(--text3);text-align:center;padding-bottom:3px}
 .dv-col-hd:first-child{text-align:left}
 .dv-col-hd:nth-child(4),.dv-col-hd:nth-child(5){text-align:left;padding-left:2px}
@@ -108,12 +108,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .acc-body{padding:7px;background:var(--bg);display:none}
 .acc-body.open{display:block}
 /* 攻撃行 */
-.atk-row{display:grid;grid-template-columns:2fr 40px 1.5fr 34px 22px 22px 22px;gap:2px;align-items:center;margin-bottom:3px}
+.atk-row{display:grid;grid-template-columns:3fr 44px 2fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:4px;font-size:14px}
 /* 技能行 */
-.sk-headers{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}.atk-headers{display:grid;grid-template-columns:2fr 40px 1.5fr 34px 22px 22px 22px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.sk-headers{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:1fr 40px 28px 28px 20px 20px 22px;gap:2px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:4px;font-size:14px;text-align:center}
 .sk-row input:first-child{text-align:left}
 .skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:3px 1px;border:0.5px solid var(--border)}
@@ -257,7 +257,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .shared-badge{font-size:10px;background:var(--success);color:#fff;border-radius:3px;padding:1px 4px;margin-left:3px;font-weight:700}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(56px);background:var(--text);color:var(--bg);border-radius:var(--radius-lg);padding:5px 13px;font-size:13px;z-index:999;opacity:0;transition:transform .2s,opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.db-cycle-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:var(--bg2);color:var(--text3);cursor:pointer;font-family:inherit;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1.1;text-align:center;padding:0;white-space:pre-line}
+.db-cycle-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);background:var(--bg2);color:var(--text3);cursor:pointer;font-family:inherit;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1.1;text-align:center;padding:0;white-space:pre-line}
 .db-cycle-btn.db-none{border-color:var(--border2);color:var(--text3)}
 .db-cycle-btn.db-full{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
 .db-cycle-btn.db-half{border-color:var(--accent);color:var(--accent);background:rgba(40,85,160,.10)}
@@ -283,7 +283,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .combat-v6{color:var(--text3);flex:1}.combat-v7{font-weight:600;flex:1}
 
 @media(max-width:520px){
-  .stat-grid-wrap,.dv-grid-wrap{grid-template-columns:40px 48px 1fr 36px 32px}
+  .stat-grid-wrap,.dv-grid-wrap{grid-template-columns:40px 60px 1fr 40px 36px}
   .sk-row,.sk-headers{grid-template-columns:1fr 38px 26px 26px 14px 14px}
   .spl-headers,.spl-row{grid-template-columns:1fr 34px 1fr 20px 20px}
   .save-toolbar{flex-wrap:wrap}
@@ -340,9 +340,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   <!-- 能力値・派生値 2カラム -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:4px">
     <div>
-      <div class="panel-label">能力値</div>
       <div class="stat-grid-wrap">
-        <div class="sg-col-hd"></div>
+        <div class="sg-col-hd" style="font-size:10px;font-weight:700;color:var(--text2);text-align:left;letter-spacing:0">能力値</div>
         <div class="sg-col-hd" id="sg-hd-inp">6版</div>
         <div class="sg-col-hd" id="sg-hd-conv">7版%</div>
         <div class="sg-col-hd" id="sg-col-hd-h" style="color:#c03030">½(H)</div>
@@ -351,9 +350,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="stat-grid-wrap" id="stat-rows"></div>
     </div>
     <div>
-      <div class="panel-label">派生値</div>
       <div class="dv-grid-wrap">
-        <div class="dv-col-hd"></div>
+        <div class="dv-col-hd" style="font-size:10px;font-weight:700;color:var(--text2);text-align:left;letter-spacing:0">派生値</div>
         <div class="dv-col-hd" style="font-size:10px">入力</div>
         <div class="dv-col-hd">値</div>
         <div class="dv-col-hd" style="color:#c03030">½(H)</div>
@@ -398,12 +396,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
       <!-- 手書きタブ -->
       <div id="palette-panel-manual" style="display:none">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">1行ずつ入力。ドラッグで並び替え可能。</div>
-        <div id="manual-palette-rows"></div>
-        <div style="display:flex;gap:3px;margin-top:3px">
-          <button class="btn-add" onclick="addManualPaletteRow()" style="flex:2">＋ 行追加</button>
-          <button class="btn-add" onclick="addManualPaletteSep()" style="flex:1;font-size:12px">━ 区切り</button>
-        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">チャットパレット全体をここに貼り付けて保管・編集できます。</div>
+        <textarea id="manual-palette-textarea" placeholder="CC&lt;=60 《技能名》&#10;1d6 《ダメージ》&#10;━━━ 区切り ━━━&#10;..." style="width:100%;min-height:160px;font-size:13px;font-family:'SF Mono',Consolas,monospace;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:vertical;overflow:auto"></textarea>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" onclick="copyManualPalette()" style="flex:1">📋 コピー</button>
           <button class="btn-add" onclick="clearManualPalette()" style="flex:1;font-size:12px;color:var(--danger)">🗑 クリア</button>
@@ -421,7 +415,6 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <span class="acc-arrow open" id="arrow-atk">▼</span>
       </div>
       <div class="acc-body open" id="body-atk">
-        <div class="atk-headers"><span>武器名</span><span>%</span><span>ダメージ</span><span>DB</span><span></span><span></span><span></span></div>
         <div id="atk-rows"></div>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
@@ -462,7 +455,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         </div>
       </div>
       <div style="padding:7px;background:var(--bg)">
-        <div class="sk-headers" style="grid-template-columns:1fr 40px 28px 28px 20px 20px 22px"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span><span></span></div>
+        <div class="sk-headers"><span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span></div>
         <div id="sk-rows"></div>
         <div style="display:flex;gap:3px;margin-top:3px">
           <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
@@ -820,7 +813,7 @@ function saveMemoLocal(){localStorage.setItem("coc_v4_memo",JSON.stringify(memoL
 function loadMemoLocal(){try{const r=JSON.parse(localStorage.getItem("coc_v4_memo")||"null");if(r)memoList=r.map(m=>({...m,dest:m.dest||"cmd"}));else memoList=[{id:0,label:"",content:"",dest:"cmd"}];}catch{memoList=[{id:0,label:"",content:"",dest:"cmd"}];}}
 function switchConsSplTab(tab){const bc=document.getElementById("cstab-btn-cons");const bs=document.getElementById("cstab-btn-spl");if(bc){bc.style.borderBottomColor=tab==="cons"?"var(--accent)":"transparent";bc.style.color=tab==="cons"?"var(--text)":"var(--text3)";}if(bs){bs.style.borderBottomColor=tab==="spl"?"var(--accent)":"transparent";bs.style.color=tab==="spl"?"var(--text)":"var(--text3)";}const pc=document.getElementById("panel-cons");const ps=document.getElementById("panel-spl-inner");if(pc)pc.style.display=tab==="cons"?"":"none";if(ps)ps.style.display=tab==="spl"?"":"none";}
 function switchSavePage(page){currentSavePage=page;["personal","shared"].forEach(p=>{const el=document.getElementById("save-page-"+p);if(el)el.style.display=p===page?"":"none";document.getElementById("spb-"+p)?.classList.toggle("active",p===page);});if(page==="personal"){renderSaveList();updateExport();}if(page==="shared"){renderSharedList();updateExport();}}
-function setInputMode(mode){inputMode=mode;document.getElementById("btn-mode-6").classList.toggle("active",mode===6);document.getElementById("btn-mode-7").classList.toggle("active",mode===7);document.getElementById("mode-hint").textContent=mode===6?"6版値\u21927版%に自動変換":"7版%を直接入力";document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";const isV7=mode===7;document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{const k=inp.dataset.key,v=vals[k]||0;inp.value=v>0?(mode===6?Math.round(v/5):v):"";inp.placeholder=mode===6?"6版値":"7版%";inp.style.background=isV7?"rgba(40,85,160,0.10)":"";inp.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";});updateStatDisplay();}
+function setInputMode(mode){inputMode=mode;document.getElementById("btn-mode-6").classList.toggle("active",mode===6);document.getElementById("btn-mode-7").classList.toggle("active",mode===7);document.getElementById("mode-hint").textContent=mode===6?"6版値\u21927版%に自動変換":"7版%を直接入力";document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";const isV7=mode===7;document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{const k=inp.dataset.key,v=vals[k]||0;inp.value=v>0?(mode===6?Math.round(v/5):v):"";inp.placeholder=mode===6?"6版値":"7版%";inp.style.background=isV7?"rgba(40,85,160,0.10)":"";inp.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";});const parseInput=document.getElementById("parse-input");const parseBlock=document.querySelector(".parse-block");if(parseInput){parseInput.style.background=isV7?"rgba(40,85,160,0.07)":"";parseInput.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";}if(parseBlock){parseBlock.style.borderColor=isV7?"rgba(40,85,160,0.5)":"var(--border2)";parseBlock.style.background=isV7?"rgba(40,85,160,0.04)":"";}updateStatDisplay();}
 function getDB(t){if(t<=64)return{label:"-2",build:"-2",cmd:null};if(t<=84)return{label:"-1",build:"-1",cmd:null};if(t<=124)return{label:"\u306a\u3057",build:"0",cmd:null};if(t<=164)return{label:"+1D4",build:"1",cmd:"1D4"};if(t<=204)return{label:"+1D6",build:"2",cmd:"1D6"};if(t<=284)return{label:"+2D6",build:"3",cmd:"2D6"};if(t<=364)return{label:"+3D6",build:"4",cmd:"3D6"};if(t<=444)return{label:"+4D6",build:"5",cmd:"4D6"};return{label:"+5D6",build:"6",cmd:"5D6"};}
 function getMOV(s,d,sz){if(!s&&!d&&!sz)return"\u2014";if(s<sz&&d<sz)return"7";if(s>sz&&d>sz)return"9";return"8";}
 function calcAuto(k){const con=vals.con||0,siz=vals.siz||0,pow=vals.pow||0;if(k==="hp")return(con+siz)?Math.floor((con+siz)/10):0;if(k==="mp")return pow||0;if(k==="san")return pow?pow*5:0;if(k==="luck")return pow?pow*5:0;return 0;}
@@ -840,10 +833,10 @@ function buildMemoRows(){const wrap=document.getElementById("memo-rows");wrap.in
 function addMemoRow(){memoList.push({id:nxtId++,label:"",content:"",dest:"cmd"});buildMemoRows();openMemo();}
 function updMemoBadge(){document.getElementById("badge-memo").textContent=memoList.filter(m=>m.label||m.content).length;}
 function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=>(m.label?m.label+"\u3000":"")+m.content).join("\n");if(!lines){showToast("\u30e1\u30e2\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(lines).then(()=>showToast("\u5168\u30e1\u30e2\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
-function buildAtkRows(){const wrap=document.getElementById("atk-rows");wrap.innerHTML="";function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}function nDS(c){if(c==="none")return"full";if(c==="full")return"half";if(c==="half")return"none";return"none";}function dBL(s,cv){if(s==="none")return"DB\n\u306a\u3057";if(s==="full")return"DB";if(s==="half")return"DB\n/2";return cv||"\u624b\u52d5";}function dBC(s){return"db-cycle-btn db-"+(s==="none"?"none":s==="full"?"full":s==="half"?"half":"custom");}function s2U(s,cv){if(s==="none")return false;if(s==="full")return true;if(s==="half")return"half";return cv||false;}atkList.forEach((a,idx)=>{if(a._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=a.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();});row.append(dh,inp,rm);wrap.appendChild(row);bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});return;}let dbState=gDS(a.useDB);let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";const row=document.createElement("div");row.style.cssText="display:grid;grid-template-columns:2fr 40px 1.5fr 34px 22px 22px 22px;gap:2px;align-items:center;margin-bottom:3px;";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u564c\u307f\u3064\u304d";nameInp.value=a.name||"";nameInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const pctInp=document.createElement("input");pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";pctInp.style.cssText="padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const dmgInp=document.createElement("input");dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";dmgInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const dbBtn=document.createElement("button");dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";dbWrap.append(dbBtn,dbCI);const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.style.cssText="width:22px;height:28px;font-size:13px;flex-shrink:0;padding:0;";rm.textContent="\u00d7";row.append(nameInp,pctInp,dmgInp,dbWrap,cpBtn,dh,rm);wrap.appendChild(row);function updA(){const udb=s2U(dbState,customDbVal);atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);updateExport();renderPalettePreview();updAtkBadge();}let pt=null;dbBtn.addEventListener("pointerdown",()=>{pt=setTimeout(()=>{pt=null;dbState="custom";dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.add("show");dbCI.focus();updA();},600);});dbBtn.addEventListener("pointerup",()=>{if(pt!==null){clearTimeout(pt);pt=null;if(dbState!=="custom"){dbState=nDS(dbState);dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.toggle("show",dbState==="custom");updA();}}});dbBtn.addEventListener("pointercancel",()=>{clearTimeout(pt);pt=null;});dbCI.addEventListener("input",e=>{customDbVal=e.target.value;dbBtn.textContent=dBL("custom",customDbVal);updA();});nameInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,name:e.target.value}:x);updAtkBadge();updateExport();renderPalettePreview();});pctInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,pct:parseInt(e.target.value)||0}:x);updateExport();renderPalettePreview();});dmgInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,dmg:e.target.value}:x);updateExport();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const at=atkList.find(x=>x.id===a.id);if(!at||!at.name)return;const strV=vals.str||0,sizV=vals.siz||0,db=(strV+sizV>0)?getDB(strV+sizV):null;const lines=[ccCmd(at.name,at.pct||0)];if(at.dmg){if(at.useDB==="half"&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+"/2 \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else if(at.useDB===true&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else if(typeof at.useDB==="string"&&at.useDB!=="half")lines.push(at.dmg+"+"+at.useDB+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else lines.push(at.dmg+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}const txt=lines.join("\n");navigator.clipboard.writeText(txt).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(txt);});});rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();}});bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});});updAtkBadge();}
+function buildAtkRows(){const wrap=document.getElementById("atk-rows");wrap.innerHTML="";function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}function nDS(c){if(c==="none")return"full";if(c==="full")return"half";if(c==="half")return"none";return"none";}function dBL(s,cv){if(s==="none")return"DB\n\u306a\u3057";if(s==="full")return"DB";if(s==="half")return"DB\n/2";return cv||"\u624b\u52d5";}function dBC(s){return"db-cycle-btn db-"+(s==="none"?"none":s==="full"?"full":s==="half"?"half":"custom");}function s2U(s,cv){if(s==="none")return false;if(s==="full")return true;if(s==="half")return"half";return cv||false;}atkList.forEach((a,idx)=>{if(a._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=a.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();});row.append(dh,inp,rm);wrap.appendChild(row);bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});return;}let dbState=gDS(a.useDB);let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";const row=document.createElement("div");row.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px;";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u564c\u307f\u3064\u304d";nameInp.value=a.name||"";nameInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const pctInp=document.createElement("input");pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";pctInp.style.cssText="padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const dmgInp=document.createElement("input");dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";dmgInp.style.cssText="padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";const dbBtn=document.createElement("button");dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";dbWrap.append(dbBtn,dbCI);const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="\ud83d\udccb";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";row.append(nameInp,pctInp,dmgInp,dbWrap,cpBtn,dh,rm);wrap.appendChild(row);function updA(){const udb=s2U(dbState,customDbVal);atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);updateExport();renderPalettePreview();updAtkBadge();}let pt=null;dbBtn.addEventListener("pointerdown",()=>{pt=setTimeout(()=>{pt=null;dbState="custom";dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.add("show");dbCI.focus();updA();},600);});dbBtn.addEventListener("pointerup",()=>{if(pt!==null){clearTimeout(pt);pt=null;if(dbState!=="custom"){dbState=nDS(dbState);dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.toggle("show",dbState==="custom");updA();}}});dbBtn.addEventListener("pointercancel",()=>{clearTimeout(pt);pt=null;});dbCI.addEventListener("input",e=>{customDbVal=e.target.value;dbBtn.textContent=dBL("custom",customDbVal);updA();});nameInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,name:e.target.value}:x);updAtkBadge();updateExport();renderPalettePreview();});pctInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,pct:parseInt(e.target.value)||0}:x);updateExport();renderPalettePreview();});dmgInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,dmg:e.target.value}:x);updateExport();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const at=atkList.find(x=>x.id===a.id);if(!at||!at.name)return;const strV=vals.str||0,sizV=vals.siz||0,db=(strV+sizV>0)?getDB(strV+sizV):null;const lines=[ccCmd(at.name,at.pct||0)];if(at.dmg){if(at.useDB==="half"&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+"/2 \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else if(at.useDB===true&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else if(typeof at.useDB==="string"&&at.useDB!=="half")lines.push(at.dmg+"+"+at.useDB+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");else lines.push(at.dmg+" \u300a"+at.name+"\u30c0\u30e1\u30fc\u30b8\u300b");}const txt=lines.join("\n");navigator.clipboard.writeText(txt).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(txt);});});rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();}});bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});});updAtkBadge();}
 function addAtkSep(){atkList.push({id:nxtId++,_sep:true,label:""});buildAtkRows();openAcc("atk");}
 function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name&&(a.pct||0)>0).length;}
-function buildSkRows(){const wrap=document.getElementById("sk-rows");wrap.innerHTML="";skList.forEach((sk,idx)=>{if(sk._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=sk.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();renderPalettePreview();});row.append(inp,dh,rm);wrap.appendChild(row);bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});return;}const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u6280\u80fd\u540d...";nameInp.value=sk.name||"";const valInp=document.createElement("input");valInp.type="number";valInp.min="0";valInp.max="999";valInp.placeholder="\u2014";valInp.value=sk.val||"";const hDiv=document.createElement("div");hDiv.className="skill-val";hDiv.textContent=h!=null?h:"\u2014";const fDiv=document.createElement("div");fDiv.className="skill-val";fDiv.textContent=f!=null?f:"\u2014";const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="\ud83d\udccb";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.style.cssText="width:22px;height:28px;font-size:13px;flex-shrink:0;padding:0;";rm.textContent="\u00d7";row.append(nameInp,valInp,hDiv,fDiv,cpBtn,dh,rm);wrap.appendChild(row);nameInp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,name:e.target.value}:x);updateExport();updSkBadge();renderPalettePreview();});valInp.addEventListener("input",e=>{const nv=parseInt(e.target.value)||0;skList=skList.map(x=>x.id===sk.id?{...x,val:nv}:x);buildSkRows();updateExport();updSkBadge();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const s=skList.find(x=>x.id===sk.id);if(!s||!s.name)return;const cmd=ccCmd(s.name,s.val||0);navigator.clipboard.writeText(cmd).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(cmd);});});rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();updSkBadge();renderPalettePreview();}});bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});});updSkBadge();}
+function buildSkRows(){const wrap=document.getElementById("sk-rows");wrap.innerHTML="";skList.forEach((sk,idx)=>{if(sk._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=sk.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();renderPalettePreview();});row.append(inp,dh,rm);wrap.appendChild(row);bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});return;}const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u6280\u80fd\u540d...";nameInp.value=sk.name||"";const valInp=document.createElement("input");valInp.type="number";valInp.min="0";valInp.max="999";valInp.placeholder="\u2014";valInp.value=sk.val||"";const hDiv=document.createElement("div");hDiv.className="skill-val";hDiv.textContent=h!=null?h:"\u2014";const fDiv=document.createElement("div");fDiv.className="skill-val";fDiv.textContent=f!=null?f:"\u2014";const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="\ud83d\udccb";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";row.append(nameInp,valInp,hDiv,fDiv,cpBtn,dh,rm);wrap.appendChild(row);nameInp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,name:e.target.value}:x);updateExport();updSkBadge();renderPalettePreview();});valInp.addEventListener("input",e=>{const nv=parseInt(e.target.value)||0;skList=skList.map(x=>x.id===sk.id?{...x,val:nv}:x);buildSkRows();updateExport();updSkBadge();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const s=skList.find(x=>x.id===sk.id);if(!s||!s.name)return;const cmd=ccCmd(s.name,s.val||0);navigator.clipboard.writeText(cmd).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(cmd);});});rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();updSkBadge();renderPalettePreview();}});bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});});updSkBadge();}
 function addSkSep(){skList.push({id:nxtId++,_sep:true,label:""});buildSkRows();}
 function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
 
@@ -925,10 +918,23 @@ async function saveDataTo(dest){const d=getCurrentData();if(dest==="personal"){w
 function showSaveDestPicker(){if(!sharedToken){saveDataTo("personal");return;}const overlay=document.createElement("div");overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";overlay.innerHTML='<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">\u4fdd\u5b58\u5148\u3092\u9078\u629e</div><button id="sp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc64 \u500b\u4eba\u306b\u4fdd\u5b58</button><button id="sp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc65 \u5171\u6709\u306b\u4fdd\u5b58</button><button id="sp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>';document.body.appendChild(overlay);document.getElementById("sp-personal").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("personal");});document.getElementById("sp-shared").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("shared");});document.getElementById("sp-cancel").addEventListener("click",()=>document.body.removeChild(overlay));}
 
 // ===== パレット手書きタブ =====
-let manualPaletteLines = [];
-try { manualPaletteLines = JSON.parse(localStorage.getItem('coc_manual_palette') || '[]'); } catch { manualPaletteLines = []; }
-function saveManualPalette() { localStorage.setItem('coc_manual_palette', JSON.stringify(manualPaletteLines)); }
-
+let manualPaletteText = '';
+try { manualPaletteText = localStorage.getItem('coc_manual_palette_text') || ''; } catch { manualPaletteText = ''; }
+// 旧行データがあれば移行
+(function migrateLegacyManual(){
+  try {
+    const old = JSON.parse(localStorage.getItem('coc_manual_palette') || '[]');
+    if (old.length && !manualPaletteText) {
+      manualPaletteText = old.filter(l=>l.text).map(l=>l.text).join('\n');
+      localStorage.setItem('coc_manual_palette_text', manualPaletteText);
+    }
+  } catch {}
+})();
+function saveManualPalette() {
+  const ta = document.getElementById('manual-palette-textarea');
+  if (ta) manualPaletteText = ta.value;
+  localStorage.setItem('coc_manual_palette_text', manualPaletteText);
+}
 function switchPaletteTab(tab) {
   const auto = document.getElementById('palette-tab-auto');
   const manual = document.getElementById('palette-tab-manual');
@@ -941,67 +947,27 @@ function switchPaletteTab(tab) {
   manual.style.color = tab === 'manual' ? 'var(--text)' : 'var(--text3)';
   panelAuto.style.display = tab === 'auto' ? '' : 'none';
   panelManual.style.display = tab === 'manual' ? '' : 'none';
-  if (tab === 'manual') buildManualPaletteRows();
+  if (tab === 'manual') {
+    const ta = document.getElementById('manual-palette-textarea');
+    if (ta) ta.value = manualPaletteText;
+  }
 }
-
-function buildManualPaletteRows() {
-  const wrap = document.getElementById('manual-palette-rows');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  manualPaletteLines.forEach((item, idx) => {
-    const row = document.createElement('div');
-    row.dataset.dnd = idx;
-    row.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:3px;';
-    const dh = makeHandle();
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.value = item.text || '';
-    if (item._sep) {
-      inp.placeholder = '\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501';
-      inp.style.cssText = 'flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;';
-    } else {
-      inp.placeholder = 'CC<=60 \u300a\u6280\u80fd\u300b';
-      inp.style.cssText = 'flex:1;font-size:13px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:3px 7px;height:28px;font-family:"SF Mono",Consolas,monospace;';
-    }
-    inp.addEventListener('input', e => {
-      manualPaletteLines[idx] = { ...manualPaletteLines[idx], text: e.target.value };
-      saveManualPalette();
-    });
-    const cpBtn = document.createElement('button');
-    cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '\ud83d\udccb';
-    cpBtn.addEventListener('click', () => {
-      if (!inp.value.trim()) return;
-      navigator.clipboard.writeText(inp.value).then(() => { cpBtn.textContent = '\u2713'; setTimeout(() => cpBtn.textContent = '\ud83d\udccb', 1000); addHistory(inp.value); });
-    });
-    const rm = document.createElement('button'); rm.className = 'btn-remove'; rm.textContent = '\u00d7';
-    rm.addEventListener('click', () => { manualPaletteLines.splice(idx, 1); saveManualPalette(); buildManualPaletteRows(); });
-    row.append(dh, inp, cpBtn, rm);
-    wrap.appendChild(row);
-    bindDnD(row, manualPaletteLines, idx, () => { saveManualPalette(); buildManualPaletteRows(); });
-  });
-}
-
-function addManualPaletteRow() {
-  manualPaletteLines.push({ id: nxtId++, text: '', _sep: false });
-  saveManualPalette(); buildManualPaletteRows();
-}
-function addManualPaletteSep() {
-  manualPaletteLines.push({ id: nxtId++, text: '', _sep: true });
-  saveManualPalette(); buildManualPaletteRows();
-}
+function buildManualPaletteRows() { /* テキストエリア版では不要 */ }
+function addManualPaletteRow() {}
+function addManualPaletteSep() {}
 function copyManualPalette() {
-  const txt = manualPaletteLines.filter(l => l.text).map(l => l.text).join('\n');
-  if (!txt) { showToast('\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093'); return; }
-  navigator.clipboard.writeText(txt).then(() => showToast('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f'));
+  const ta = document.getElementById('manual-palette-textarea');
+  const txt = ta ? ta.value.trim() : manualPaletteText.trim();
+  if (!txt) { showToast('データがありません'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('パレットをコピーしました'));
 }
 function clearManualPalette() {
-  if (!confirm('\u624b\u66f8\u304d\u30d1\u30ec\u30c3\u30c8\u3092\u30af\u30ea\u30a2\u3057\u307e\u3059\u304b\uff1f')) return;
-  manualPaletteLines = []; saveManualPalette(); buildManualPaletteRows();
+  if (!confirm('手書きパレットをクリアしますか？')) return;
+  manualPaletteText = '';
+  const ta = document.getElementById('manual-palette-textarea');
+  if (ta) ta.value = '';
+  saveManualPalette();
 }
-
-// ===== メモ/履歴タブ ブロックメモ =====
-let diceMemos = [];
-try { diceMemos = JSON.parse(localStorage.getItem('coc_v4_dice_memos') || '[]'); } catch { diceMemos = []; }
 function saveDiceMemos() { localStorage.setItem('coc_v4_dice_memos', JSON.stringify(diceMemos)); }
 
 function buildDiceMemoRows() {
@@ -1049,11 +1015,7 @@ function buildDiceMemoRows() {
 }
 function addDiceMemoRow() {
   diceMemos.push({ id: nxtId++, label: '', content: '' });
-  saveDiceMemos();
-  // diceタブが非表示なら切り替えてからビルド
-  const diceTab = document.getElementById('tab-dice');
-  if (diceTab && diceTab.style.display === 'none') { switchTab('dice'); }
-  buildDiceMemoRows(); updDiceMemoBadge();
+  saveDiceMemos(); buildDiceMemoRows(); updDiceMemoBadge();
 }
 function updDiceMemoBadge() {
   const el = document.getElementById('badge-dice-memo');
@@ -1119,6 +1081,8 @@ loadKp();
 initMythosSelect();
 loadHistory();
 const parseInpEl=document.getElementById("parse-input");if(parseInpEl)bindAutoExpand(parseInpEl);
+  const manualTa=document.getElementById("manual-palette-textarea");
+  if(manualTa){manualTa.value=manualPaletteText;let mtTimer=null;manualTa.addEventListener("input",()=>{clearTimeout(mtTimer);mtTimer=setTimeout(()=>{manualPaletteText=manualTa.value;saveManualPalette();},400);});}
 currentSaves=lSaves();
 loadCustomLocal();
 renderBeingList();buildSpellRef();populateSanSelects();
