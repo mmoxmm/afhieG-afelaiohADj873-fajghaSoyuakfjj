@@ -909,17 +909,72 @@ function buildMemoRows(){const wrap=document.getElementById("memo-rows");wrap.in
 function addMemoRow(){memoList.push({id:nxtId++,label:"",content:"",dest:"cmd"});buildMemoRows();openMemo();}
 function updMemoBadge(){document.getElementById("badge-memo").textContent=memoList.filter(m=>m.label||m.content).length;}
 function copyAllMemo(){const lines=memoList.filter(m=>m.label||m.content).map(m=>(m.label?m.label+"\u3000":"")+m.content).join("\n");if(!lines){showToast("\u30e1\u30e2\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(lines).then(()=>showToast("\u5168\u30e1\u30e2\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
+
 function buildAtkRows(){
   const wrap=document.getElementById("atk-rows");
   wrap.innerHTML="";
-
-  // ヘッダー行を追加
   const hdr=document.createElement("div");
-  hdr.style.cssText="display:grid;grid-template-columns:3fr 44px 2fr 32px 34px 20px 20px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center;";
-  hdr.innerHTML="<span style='text-align:left'>武器名</span><span>命中%</span><span>ダメージ</span><span>DB</span><span></span><span></span><span></span>";
+  hdr.style.cssText="display:grid;grid-template-columns:4fr 44px 1fr 32px 34px 20px 20px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center;";
+  hdr.innerHTML="<span style='text-align:left'>武器名・技能名</span><span>命中%</span><span>ダメ</span><span>DB</span><span></span><span></span><span></span>";
   wrap.appendChild(hdr);
-
   function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}
+  function nDS(c){if(c==="none")return"full";if(c==="full")return"half";if(c==="half")return"none";return"none";}
+  function dBL(s,cv){if(s==="none")return"DB\nなし";if(s==="full")return"DB";if(s==="half")return"DB\n/2";return cv||"手動";}
+  function dBC(s){return"db-cycle-btn db-"+(s==="none"?"none":s==="full"?"full":s==="half"?"half":"custom");}
+  function s2U(s,cv){if(s==="none")return false;if(s==="full")return true;if(s==="half")return"half";return cv||false;}
+  atkList.forEach((a,idx)=>{
+    if(a._sep){
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+      row.dataset.dnd=idx;
+      const dh=makeHandle();
+      const inp=document.createElement("input");
+      inp.type="text";inp.placeholder="━━━ 区切り ━━━";inp.value=a.label||"";
+      inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";
+      inp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});
+      const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+      rm.addEventListener("click",()=>{atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();});
+      row.append(dh,inp,rm);wrap.appendChild(row);
+      bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});
+      return;
+    }
+    let dbState=gDS(a.useDB);
+    let customDbVal=(typeof a.useDB==="string"&&a.useDB!=="half")?a.useDB:"";
+    const row=document.createElement("div");
+    row.style.cssText="display:grid;grid-template-columns:4fr 44px 1fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px;";
+    row.dataset.dnd=idx;
+    const nameInp=document.createElement("input");
+    nameInp.type="text";nameInp.placeholder="素手・近接（格闘）";nameInp.value=a.name||"";
+    nameInp.style.cssText="padding:4px 6px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;";
+    const pctInp=document.createElement("input");pctInp.type="number";pctInp.placeholder="30";pctInp.value=a.pct||"";
+    pctInp.style.cssText="padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    const dmgInp=document.createElement("input");dmgInp.type="text";dmgInp.placeholder="1d8";dmgInp.value=a.dmg||"";
+    dmgInp.style.cssText="padding:4px 2px;font-size:12px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+    const dbBtn=document.createElement("button");dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);
+    const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;
+    const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;";dbWrap.append(dbBtn,dbCI);
+    const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
+    const dh=makeHandle();
+    const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="×";
+    row.append(nameInp,pctInp,dmgInp,dbWrap,cpBtn,dh,rm);
+    wrap.appendChild(row);
+    function updA(){const udb=s2U(dbState,customDbVal);atkList=atkList.map(x=>x.id===a.id?{...x,useDB:udb}:x);updateExport();renderPalettePreview();updAtkBadge();}
+    let pt=null;
+    dbBtn.addEventListener("pointerdown",()=>{pt=setTimeout(()=>{pt=null;dbState="custom";dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.add("show");dbCI.focus();updA();},600);});
+    dbBtn.addEventListener("pointerup",()=>{if(pt!==null){clearTimeout(pt);pt=null;if(dbState!=="custom"){dbState=nDS(dbState);dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);dbCI.classList.toggle("show",dbState==="custom");updA();}}});
+    dbBtn.addEventListener("pointercancel",()=>{clearTimeout(pt);pt=null;});
+    dbCI.addEventListener("input",e=>{customDbVal=e.target.value;dbBtn.textContent=dBL("custom",customDbVal);updA();});
+    nameInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,name:e.target.value}:x);updAtkBadge();updateExport();renderPalettePreview();});
+    pctInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,pct:parseInt(e.target.value)||0}:x);updateExport();renderPalettePreview();});
+    dmgInp.addEventListener("input",e=>{atkList=atkList.map(x=>x.id===a.id?{...x,dmg:e.target.value}:x);updateExport();renderPalettePreview();});
+    cpBtn.addEventListener("click",()=>{const at=atkList.find(x=>x.id===a.id);if(!at||!at.name)return;const strV=vals.str||0,sizV=vals.siz||0,db=(strV+sizV>0)?getDB(strV+sizV):null;const lines=at.pct?["CC<="+at.pct+" 【"+at.name+"】"]:[at.name];if(at.dmg){if(at.useDB==="half"&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+"/2 【ダメージ判定・"+at.name+"】");else if(at.useDB===true&&db&&db.cmd)lines.push(at.dmg+"+"+db.cmd+" 【ダメージ判定・"+at.name+"】");else if(typeof at.useDB==="string"&&at.useDB!=="half")lines.push(at.dmg+"+"+at.useDB+" 【ダメージ判定・"+at.name+"】");else lines.push(at.dmg+" 【ダメージ判定・"+at.name+"】");}const txt=lines.join("\n");navigator.clipboard.writeText(txt).then(()=>{cpBtn.textContent="✓";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="📋";cpBtn.classList.remove("copied");},1200);addHistory(txt);});});
+    rm.addEventListener("click",()=>{if(atkList.length>1){atkList=atkList.filter(x=>x.id!==a.id);buildAtkRows();updateExport();renderPalettePreview();}else{atkList=[{id:a.id,name:"",pct:0,dmg:"",note:"",useDB:false}];buildAtkRows();updateExport();renderPalettePreview();}});
+    bindDnD(row,atkList,idx,()=>{buildAtkRows();updateExport();renderPalettePreview();});
+  });
+  updAtkBadge();
+}  
+  
+function gDS(u){if(!u||u===false)return"none";if(u===true)return"full";if(u==="half")return"half";return"custom";}
   function nDS(c){if(c==="none")return"full";if(c==="full")return"half";if(c==="half")return"none";return"none";}
   function dBL(s,cv){if(s==="none")return"DB\nなし";if(s==="full")return"DB";if(s==="half")return"DB\n/2";return cv||"手動";}
   function dBC(s){return"db-cycle-btn db-"+(s==="none"?"none":s==="full"?"full":s==="half"?"half":"custom");}
