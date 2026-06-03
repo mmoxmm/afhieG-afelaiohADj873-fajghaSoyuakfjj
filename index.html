@@ -111,9 +111,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .atk-row{display:grid;grid-template-columns:3fr 44px 2fr 32px 34px 20px 20px;gap:2px;align-items:center;margin-bottom:3px}
 .atk-row input{padding:4px;font-size:14px}
 /* 技能行 */
-.sk-headers{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
+.sk-headers{display:grid;grid-template-columns:minmax(0,1fr) 40px 28px 28px 18px 18px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:1fr 40px 28px 28px 16px 14px;gap:2px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:minmax(0,1fr) 40px 28px 28px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:4px;font-size:14px;text-align:center}
 .sk-row input:first-child{text-align:left}
 .skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:3px 1px;border:0.5px solid var(--border)}
@@ -284,7 +284,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 @media(max-width:520px){
   .stat-grid-wrap,.dv-grid-wrap{grid-template-columns:46px 1fr 46px 36px 32px}
-  .sk-row,.sk-headers{grid-template-columns:1fr 38px 26px 26px 14px 14px}
+  .sk-row,.sk-headers{grid-template-columns:minmax(0,1fr) 38px 26px 26px 14px 14px}
   .spl-headers,.spl-row{grid-template-columns:1fr 34px 1fr 20px 20px}
   .save-toolbar{flex-wrap:wrap}
 }
