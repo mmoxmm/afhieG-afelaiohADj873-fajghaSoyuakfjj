@@ -113,7 +113,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 /* 技能行 */
 .sk-headers{display:grid;grid-template-columns:minmax(0,1fr) 48px 32px 32px 16px 18px 18px;gap:2px;padding:0 2px 3px;font-size:11px;color:var(--text3);text-align:center}
 .sk-headers span:first-child{text-align:left}
-.sk-row{display:grid;grid-template-columns:minmax(0,1fr) 48px 32px 32px 16px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
+.sk-row{display:grid;grid-template-columns:minmax(0,1fr) 48px 32px 32px 22px 18px 18px;gap:2px;align-items:center;margin-bottom:3px}
 .sk-row input{padding:4px;font-size:14px;text-align:center}
 .sk-row input:first-child{text-align:left}
 .skill-val{text-align:center;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--radius);padding:3px 1px;border:0.5px solid var(--border)}
@@ -264,7 +264,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .db-cycle-btn.db-custom{border-color:var(--success);color:var(--success);background:var(--success-bg)}
 .db-custom-inp{width:44px;height:26px;font-size:11px;padding:0 3px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;color:var(--text);font-family:'SF Mono',Consolas,monospace;text-align:center;outline:none;display:none}
 .db-custom-inp.show{display:block}
-.row-copy-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:1px 3px;flex-shrink:0;line-height:1;border-radius:3px;transition:color .1s}
+.row-copy-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:1px 3px;flex-shrink:0;line-height:1;border-radius:3px;transition:color .1s;align-self:center}
 .row-copy-btn:hover{color:var(--success)}
 .row-copy-btn.copied{color:var(--success)}
 .ref-inline{background:var(--bg2);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:7px;margin-top:6px}
@@ -684,9 +684,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('export-personal')">
         <div class="acc-hd-left"><span class="acc-title">🎮 ココフォリア出力</span></div>
-        <span class="acc-arrow" id="arrow-export-personal">▼</span>
+        <span class="acc-arrow open" id="arrow-export-personal">▼</span>
       </div>
-      <div class="acc-body" id="body-export-personal">
+      <div class="acc-body open" id="body-export-personal">
         <div style="display:flex;gap:4px;margin-bottom:5px">
           <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">채팅 팔레트 JSON</button>
           <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">채팅용 텍스트</button>
@@ -698,31 +698,33 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
           </label>
           <span style="font-size:11px;color:var(--text3)">공격란 DB 체크 행에만 적용</span>
         </div>
-<div id="chk-manual-wrap" style="margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
-  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-    <input type="radio" name="palette-mode" id="chk-auto-only" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-    🔄 自動生成のみ
-  </label>
-  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-    <input type="radio" name="palette-mode" id="chk-incl-manual" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-    🔄＋✏️ 自動生成＋手書きを合わせて出力
-  </label>
-  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-    <input type="radio" name="palette-mode" id="chk-manual-only" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-    ✏️ 手書きのみ
-  </label>
-</div>
-        <div id="chk-order-wrap" style="margin:4px 0;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📋 コマンド順序</div>
-  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-    <input type="radio" name="cmd-order" id="chk-order-sk-first" value="sk-first" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-    🎯 技能 → ⚔️ 攻撃
-  </label>
-  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-    <input type="radio" name="cmd-order" id="chk-order-atk-first" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-    ⚔️ 攻撃 → 🎯 技能
-  </label>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+  <div id="chk-manual-wrap" style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="palette-mode" id="chk-auto-only" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🔄 自動生成のみ
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="palette-mode" id="chk-incl-manual" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🔄＋✏️ 自動＋手書き
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="radio" name="palette-mode" id="chk-manual-only" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      ✏️ 手書きのみ
+    </label>
+  </div>
+  <div id="chk-order-wrap" style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📋 コマンド順序</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="cmd-order" id="chk-order-sk-first" value="sk-first" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🎯 技能 → ⚔️ 攻撃
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="radio" name="cmd-order" id="chk-order-atk-first" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      ⚔️ 攻撃 → 🎯 技能
+    </label>
+  </div>
 </div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
@@ -768,9 +770,9 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('export-shared')">
         <div class="acc-hd-left"><span class="acc-title">🎮 ココフォリア出力</span></div>
-        <span class="acc-arrow" id="arrow-export-shared">▼</span>
+        <span class="acc-arrow open" id="arrow-export-shared">▼</span>
       </div>
-      <div class="acc-body" id="body-export-shared">
+      <div class="acc-body open" id="body-export-shared">
         <div style="display:flex;gap:4px;margin-bottom:5px">
           <button onclick="setExportMode('json')" class="export-btn" style="font-size:12px" id="exp-btn-json2">キャラパレJSON</button>
           <button onclick="setExportMode('text')" class="export-btn sec" style="font-size:12px" id="exp-btn-text2">チャット用テキスト</button>
@@ -781,6 +783,36 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
             DB 포함/미포함 둘 다 생성
           </label>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+  <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="palette-mode" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🔄 自動生成のみ
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="palette-mode2" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🔄＋✏️ 自動＋手書き
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="radio" name="palette-mode2" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      ✏️ 手書きのみ
+    </label>
+  </div>
+  <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📋 コマンド順序</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="radio" name="cmd-order2" value="sk-first" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      🎯 技能 → ⚔️ 攻撃
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="radio" name="cmd-order2" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      ⚔️ 攻撃 → 🎯 技能
+    </label>
+  </div>
+</div>
+<div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
+<div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
         <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
       </div>
@@ -1062,7 +1094,7 @@ function buildAtkRows(){
     // DBボタン：一回り小さく(26px)
     const dbBtn=document.createElement("button");
     dbBtn.className=dBC(dbState);dbBtn.textContent=dBL(dbState,customDbVal);
-    dbBtn.style.cssText="width:24px;height:26px;font-size:8px;margin:0;padding:0;";
+    dbBtn.style.cssText="width:22px;height:22px;font-size:8px;margin:0;padding:0;";
     const dbCI=document.createElement("input");dbCI.type="text";dbCI.placeholder="+1d4";dbCI.className="db-custom-inp"+(dbState==="custom"?" show":"");dbCI.value=customDbVal;
     const dbWrap=document.createElement("div");dbWrap.style.cssText="display:flex;flex-direction:column;align-items:center;gap:1px;width:26px;overflow:hidden;";dbWrap.append(dbBtn,dbCI);
     const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="📋";
@@ -1160,7 +1192,7 @@ function getPaletteLines(){
   const strV=vals.str||0,sizV=vals.siz||0;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
-  const atkFirst=document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked||false;
+  const atkFirst=document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked||document.querySelector('input[name="cmd-order2"][value="atk-first"]')?.checked||false;
 
   // 攻撃ブロック
   const atkBlock=[];
@@ -1235,8 +1267,8 @@ function buildCocoforiaJson(){
   });
 
   // パレットモード判定
-  const inclManual=document.querySelector('input[name="palette-mode"][value="both"]')?.checked||false;
-  const useManualOnly=document.querySelector('input[name="palette-mode"][value="manual"]')?.checked||false;
+ const inclManual=document.querySelector('input[name="palette-mode"][value="both"]')?.checked||document.querySelector('input[name="palette-mode2"][value="both"]')?.checked||false;
+const useManualOnly=document.querySelector('input[name="palette-mode"][value="manual"]')?.checked||document.querySelector('input[name="palette-mode2"][value="manual"]')?.checked||false;
 
   let cmdLines=[];
 
