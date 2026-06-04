@@ -707,7 +707,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </label>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
       <input type="radio" name="palette-mode" id="chk-incl-manual" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-      🔄＋✏️ 自動＋手書き
+      🔄＋自動＋✏️ 手書き
     </label>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
       <input type="radio" name="palette-mode" id="chk-manual-only" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
@@ -725,6 +725,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       ⚔️ 攻撃 → 🎯 技能
     </label>
   </div>
+  <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);grid-column:1/-1;">
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+    <input type="checkbox" id="chk-stat-vars" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+    📊 特性値コマンドを末尾に追加（自動生成時のみ有効）
+  </label>
+</div>
 </div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row">
@@ -792,7 +798,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     </label>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
       <input type="radio" name="palette-mode2" value="both" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-      🔄＋✏️ 自動＋手書き
+      🔄＋自動＋✏️ 手書き
     </label>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
       <input type="radio" name="palette-mode2" value="manual" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
@@ -810,6 +816,12 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       ⚔️ 攻撃 → 🎯 技能
     </label>
   </div>
+　 <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);grid-column:1/-1;">
+  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+    <input type="checkbox" id="chk-stat-vars2" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+    📊 特性値コマンドを末尾に追加（自動生成時のみ有効）
+  </label>
+</div>
 </div>
 <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
 <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
@@ -834,6 +846,10 @@ const TEMP_MADNESS=[{id:1,title:"健忘症",desc:"直前1d10時間の記憶を�
 const PERM_MADNESS=[{id:1,title:"解離性健忘",desc:"特定の記憶・技能が永続的に失われる。"},{id:2,title:"恐怖症（永続）",desc:"特定の対象への制御不能な恐怖。"},{id:3,title:"強迫観念",desc:"特定の行動を繰り返さずにいられない。"},{id:4,title:"妄想",desc:"固定した誤信念が続く。"},{id:5,title:"多重人格",desc:"別の人格が行動を上書きすることがある。"},{id:6,title:"幻覚（慢性）",desc:"神話的な幻視・幻聴が続く。"},{id:7,title:"マニア",desc:"神話的な何かへの執着。"},{id:8,title:"抑鬱",desc:"意欲の著しい低下。"},{id:9,title:"過食・拒食",desc:"食行動の極端な変化。"},{id:10,title:"崩壊",desc:"現実との接触を失う。"}];
 const WEAPONS=[["素手","1d3"],["短剣","1d4"],["棍棒","1d6"],["槍","1d6"],["大剣","1d8"],["斧","1d6"],["ライフル","2d6"],["拳銃","1d8"]];
 const vals={};STATS.forEach(s=>vals[s.key]=0);
+// カスタムフィールド（能力値セクション下部）
+let customFields = [{id:'cf1',label:'',value:''},{id:'cf2',label:'',value:''}];
+try{ const _cf=localStorage.getItem('coc_custom_fields'); if(_cf) customFields=JSON.parse(_cf); }catch{}
+function saveCustomFields(){ localStorage.setItem('coc_custom_fields',JSON.stringify(customFields)); }
 let inputMode=6;
 const ov={hp:0,mp:0,san:0,luck:0};
 let ovManual={hp:false,mp:false,san:false,luck:false};
@@ -1035,7 +1051,35 @@ function getEff(k){return ovManual[k]?ov[k]:calcAuto(k);}
 function makeHandle(){const h=document.createElement("div");h.className="sort-handle";h.textContent="\u2630";return h;}
 function bindDnD(rowEl,list,idx,rebuildFn){const handle=rowEl.querySelector(".sort-handle");if(!handle)return;let sy=0;handle.addEventListener("pointerdown",e=>{e.preventDefault();handle.setPointerCapture(e.pointerId);sy=e.clientY;const allR=[...rowEl.parentElement.querySelectorAll("[data-dnd]")].map(r=>({el:r,idx:+r.dataset.dnd,top:r.getBoundingClientRect().top}));rowEl.classList.add("row-dragging");function mv(ev){allR.forEach(r=>r.el.classList.remove("row-dragover"));const t=allR.find(r=>r.idx!==idx&&Math.abs(ev.clientY-r.top)<20);if(t)t.el.classList.add("row-dragover");}function up(ev){handle.removeEventListener("pointermove",mv);rowEl.classList.remove("row-dragging");allR.forEach(r=>r.el.classList.remove("row-dragover"));if(Math.abs(ev.clientY-sy)<6)return;let ti=idx;for(const r of allR)if(r.idx!==idx&&Math.abs(ev.clientY-r.top-10)<26){ti=r.idx;break;}if(ti===idx)return;const item=list.splice(idx,1)[0];list.splice(ti,0,item);rebuildFn();}handle.addEventListener("pointermove",mv);handle.addEventListener("pointerup",up,{once:true});});}
 function makeClickCopy(el,cmd,val){if(!val){el.textContent="\u2014";el.style.cursor="";el.onclick=null;return;}el.textContent=val;el.style.cursor="pointer";el.onclick=()=>{navigator.clipboard.writeText(cmd).then(()=>{const orig=el.textContent;el.textContent="\u2713";const oc=el.style.color;el.style.color="var(--success)";setTimeout(()=>{el.textContent=orig;el.style.color=oc||"";},900);addHistory(cmd);});};}
-function buildStatRows(){const wrap=document.getElementById("stat-rows");wrap.innerHTML="";STATS.forEach(({key,label,jp})=>{const lc=document.createElement("div");lc.className="sg-label";lc.innerHTML="<strong>"+label+"</strong><em>"+jp+"</em>";lc.addEventListener("click",()=>{const v7=vals[key]||0;if(!v7)return;const cmd=ccCmd(label,v7);navigator.clipboard.writeText(cmd).then(()=>{lc.style.background="var(--success-bg)";setTimeout(()=>lc.style.background="",700);addHistory(cmd);showToast("\u30b3\u30d4\u30fc: "+cmd);});});const ic=document.createElement("div");ic.className="sg-inp-cell";const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6\u7248":"\u0037\u7248%";inp.className="sg-inp";inp.dataset.key=key;if(inputMode===7){inp.style.background="rgba(40,85,160,0.10)";inp.style.borderColor="rgba(40,85,160,0.35)";}const clr=document.createElement("button");clr.className="sg-clr";clr.textContent="\u00d7";ic.append(inp,clr);const convEl=document.createElement("div");convEl.className="sg-conv";convEl.id="v-conv-"+key;convEl.textContent="\u2014";const hEl=document.createElement("div");hEl.className="sg-half";hEl.id="v-h-"+key;hEl.textContent="\u2014";const fEl=document.createElement("div");fEl.className="sg-fifth";fEl.id="v-f-"+key;fEl.textContent="\u2014";wrap.append(lc,ic,convEl,hEl,fEl);inp.addEventListener("input",e=>{const raw=parseInt(e.target.value)||0;clr.style.display=raw>0?"block":"none";vals[key]=inputMode===6?raw*5:raw;updateStatDisplay();});clr.addEventListener("click",()=>{inp.value="";vals[key]=0;clr.style.display="none";updateStatDisplay();});});buildDerivedRows();}
+function buildStatRows(){const wrap=document.getElementById("stat-rows");wrap.innerHTML="";STATS.forEach(({key,label,jp})=>{const lc=document.createElement("div");lc.className="sg-label";lc.innerHTML="<strong>"+label+"</strong><em>"+jp+"</em>";lc.addEventListener("click",()=>{const v7=vals[key]||0;if(!v7)return;const cmd=ccCmd(label,v7);navigator.clipboard.writeText(cmd).then(()=>{lc.style.background="var(--success-bg)";setTimeout(()=>lc.style.background="",700);addHistory(cmd);showToast("\u30b3\u30d4\u30fc: "+cmd);});});const ic=document.createElement("div");ic.className="sg-inp-cell";const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max=inputMode===6?99:999;inp.placeholder=inputMode===6?"6\u7248":"\u0037\u7248%";inp.className="sg-inp";inp.dataset.key=key;if(inputMode===7){inp.style.background="rgba(40,85,160,0.10)";inp.style.borderColor="rgba(40,85,160,0.35)";}const clr=document.createElement("button");clr.className="sg-clr";clr.textContent="\u00d7";ic.append(inp,clr);const convEl=document.createElement("div");convEl.className="sg-conv";convEl.id="v-conv-"+key;convEl.textContent="\u2014";const hEl=document.createElement("div");hEl.className="sg-half";hEl.id="v-h-"+key;hEl.textContent="\u2014";const fEl=document.createElement("div");fEl.className="sg-fifth";fEl.id="v-f-"+key;fEl.textContent="\u2014";wrap.append(lc,ic,convEl,hEl,fEl);inp.addEventListener("input",e=>{const raw=parseInt(e.target.value)||0;clr.style.display=raw>0?"block":"none";vals[key]=inputMode===6?raw*5:raw;updateStatDisplay();});clr.addEventListener("click",()=>{inp.value="";vals[key]=0;clr.style.display="none";updateStatDisplay();});});buildDerivedRows();setTimeout(buildCustomFieldRows, 0);}
+function buildCustomFieldRows(){
+  // 派生値グリッドの下に差し込む専用コンテナ
+  let wrap = document.getElementById('custom-field-rows');
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.id = 'custom-field-rows';
+    wrap.style.cssText = 'margin-top:4px;display:flex;flex-direction:column;gap:3px;';
+    // derived-mini の後に挿入
+    const mini = document.getElementById('derived-mini');
+    if(mini && mini.parentNode) mini.parentNode.insertBefore(wrap, mini.nextSibling);
+    else document.getElementById('derived-rows')?.after(wrap);
+  }
+  wrap.innerHTML = '';
+  customFields.forEach((cf,idx)=>{
+    const row = document.createElement('div');
+　　row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:4px;align-items:center;';
+    const lbl = document.createElement('input');
+    lbl.type='text'; lbl.placeholder='自由ラベル'; lbl.value=cf.label||'';
+    lbl.style.cssText='font-size:12px;padding:3px 5px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);width:100%;font-family:inherit;text-align:center;';
+    const val = document.createElement('input');
+    val.type='text'; val.placeholder='値'; val.value=cf.value||'';
+    val.style.cssText='font-size:13px;font-weight:700;padding:3px 6px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);width:100%;font-family:inherit;text-align:center;';
+    row.append(lbl,val);
+    wrap.appendChild(row);
+    lbl.addEventListener('input',e=>{ customFields[idx]={...customFields[idx],label:e.target.value}; saveCustomFields(); updateExport(); });
+    val.addEventListener('input',e=>{ customFields[idx]={...customFields[idx],value:e.target.value}; saveCustomFields(); updateExport(); });
+  });
+}
 function updateStatDisplay(){STATS.forEach(({key,label})=>{const v7=vals[key]||0;const ce=document.getElementById("v-conv-"+key),he=document.getElementById("v-h-"+key),fe=document.getElementById("v-f-"+key);if(inputMode===6){const hv=v7?Math.floor(v7/2):0,fv=v7?Math.floor(v7/5):0;if(ce)makeClickCopy(ce,ccCmd(label,v7),v7||null);if(he)makeClickCopy(he,ccCmd(label,hv),hv||null);if(fe)makeClickCopy(fe,ccCmd(label,fv),fv||null);}else{const v6ref=v7?Math.round(v7/5):0;const hv=v7?Math.floor(v7/2):0,fv=v7?Math.floor(v7/5):0;if(ce){ce.textContent=v6ref||"\u2014";ce.style.fontSize="13px";ce.style.color="var(--text3)";ce.style.cursor="";}if(he)makeClickCopy(he,ccCmd(label,hv),hv||null);if(fe)makeClickCopy(fe,ccCmd(label,fv),fv||null);}});["hp","mp","san","luck"].forEach(k=>{if(!ovManual[k])updDerived(k);else{const inp=document.getElementById("di-"+k);if(inp)inp.placeholder=calcAuto(k)||"\u81ea\u52d5";}});updDerivedMini();updateExport();renderPalettePreview();}
 function buildDerivedRows(){const wrap=document.getElementById("derived-rows");wrap.innerHTML="";[{key:"hp",label:"HP",jp:"\u8010\u4e45\u529b"},{key:"mp",label:"MP",jp:"\u9b54\u529b"},{key:"san",label:"SAN",jp:"\u6b63\u6c17\u5ea6"},{key:"luck",label:"\u5e78\u904b",jp:"LUK"}].forEach(({key,label,jp})=>{const lc=document.createElement("div");lc.className="dv-label";lc.innerHTML="<strong>"+label+"</strong><em>"+jp+"</em>";lc.addEventListener("click",()=>{const v=getEff(key);if(!v)return;const cmd=ccCmd(label,v);navigator.clipboard.writeText(cmd).then(()=>{lc.style.background="var(--success-bg)";setTimeout(()=>lc.style.background="",700);addHistory(cmd);showToast("\u30b3\u30d4\u30fc: "+cmd);});});const ic=document.createElement("div");ic.className="dv-inp-cell";const inp=document.createElement("input");inp.type="number";inp.min="0";inp.className="dv-inp";inp.id="di-"+key;const ea=key==="luck"?0:calcAuto(key);
 inp.placeholder=key==="luck"?"\u624b\u5165\u529b":(ea||"\u81ea\u52d5");if(ovManual[key])inp.value=ov[key]||"";const clr=document.createElement("button");clr.className="dv-clr";clr.id="dc-"+key;clr.textContent="\u00d7";clr.style.display=ovManual[key]?"block":"none";ic.append(inp,clr);const en=getEff(key);const vd=document.createElement("div");vd.className="dv-val";vd.id="dv-"+key;vd.textContent=en||"\u2014";const hd=document.createElement("div");hd.className="dv-half";hd.id="dh-"+key;hd.textContent=en?Math.floor(en/2):"\u2014";const fd=document.createElement("div");fd.className="dv-fifth";fd.id="df-"+key;fd.textContent=en?Math.floor(en/5):"\u2014";wrap.append(lc,ic,vd,hd,fd);inp.addEventListener("input",e=>{ov[key]=parseInt(e.target.value)||0;ovManual[key]=e.target.value!=="";clr.style.display=e.target.value?"block":"none";updDerived(key);updateExport();});clr.addEventListener("click",()=>{inp.value="";ov[key]=0;ovManual[key]=false;clr.style.display="none";updDerived(key);updateExport();});})}
@@ -1200,7 +1244,8 @@ function getPaletteLines(){
   atkList.forEach(a=>{
     if(a._sep){atkBlock.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
     if(!a.name)return;
-    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
+    // ★ 「ダメージ判定・」を先頭に追加
+    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【ダメージ判定・"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
       if(a.useDB==="half"&&db&&db.cmd){
@@ -1232,7 +1277,6 @@ function getPaletteLines(){
   memoList.filter(m=>(m.label||m.content)&&(m.dest==="cmd"||m.dest==="both"))
     .forEach(m=>atkBlock.push({text:(m.label?m.label+"　":"")+m.content,key:"memo_"+m.id}));
 
-  // 技能ブロック
   const skBlock=[];
   skList.forEach(s=>{
     if(s._sep){skBlock.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
@@ -1242,6 +1286,7 @@ function getPaletteLines(){
 
   return atkFirst ? [...atkBlock,...skBlock] : [...skBlock,...atkBlock];
 }
+
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
@@ -1264,20 +1309,21 @@ function buildCocoforiaJson(){
     const v=vals[key]||0;
     if(v>0)params.push({label,value:String(v)});
   });
+  // ★ カスタムフィールドをparamsに追加
+  customFields.forEach(cf=>{
+    if(cf.label&&cf.value) params.push({label:cf.label,value:String(cf.value)});
+  });
 
-  // パレットモード判定
- const inclManual=document.querySelector('input[name="palette-mode"][value="both"]')?.checked||document.querySelector('input[name="palette-mode2"][value="both"]')?.checked||false;
-const useManualOnly=document.querySelector('input[name="palette-mode"][value="manual"]')?.checked||document.querySelector('input[name="palette-mode2"][value="manual"]')?.checked||false;
+  const inclManual=document.querySelector('input[name="palette-mode"][value="both"]')?.checked||document.querySelector('input[name="palette-mode2"][value="both"]')?.checked||false;
+  const useManualOnly=document.querySelector('input[name="palette-mode"][value="manual"]')?.checked||document.querySelector('input[name="palette-mode2"][value="manual"]')?.checked||false;
 
   let cmdLines=[];
 
   if(!useManualOnly){
-    // getPaletteLines()を使って自動生成（プレビューと同一ロジック）
     const lines=getPaletteLines();
     lines.forEach(l=>{
       if(l.sub){
         cmdLines.push(l.text);
-        // sub(効果)はコメント行として追加
         cmdLines.push("// "+l.sub);
       }else{
         cmdLines.push(l.text);
@@ -1288,6 +1334,26 @@ const useManualOnly=document.querySelector('input[name="palette-mode"][value="ma
       const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
       manLines.forEach(l=>cmdLines.push(l));
     }
+
+   // ★ 末尾に能力値変数コマンドを追加（自動生成時・チェックON時のみ）
+    const addStatVars=document.getElementById("chk-stat-vars")?.checked
+      ??document.getElementById("chk-stat-vars2")?.checked
+      ??true;
+    if(addStatVars){
+      const statVarLines=[];
+      STATS.forEach(({key,label})=>{
+        const v=vals[key]||0;
+        if(v>0) statVarLines.push("{"+key.toUpperCase()+"}【"+key.toUpperCase()+"】");
+      });
+      if(statVarLines.length){
+        cmdLines.push("━━━ 能力値 ━━━");
+        statVarLines.forEach(l=>cmdLines.push(l));
+      }
+      customFields.forEach(cf=>{
+        if(cf.label&&cf.value) cmdLines.push("{"+cf.label+"} 【"+cf.label+"】");
+      });
+    }
+
   }else{
     if(manualPaletteText.trim()){
       cmdLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
@@ -1298,8 +1364,8 @@ const useManualOnly=document.querySelector('input[name="palette-mode"][value="ma
     .filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both"))
     .map(m=>(m.label?"  "+m.label+"　":"")+m.content);
 
-cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
-return JSON.stringify({
+  cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
+  return JSON.stringify({
     kind:"character",
     data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
   });
@@ -1367,7 +1433,8 @@ function getCurrentData(){
     consumables:JSON.parse(JSON.stringify(consumables)),
     manualPalette:manualPaletteText,
     dmgLabel:db?db.label:null,
-    build:db?db.build:null
+    build:db?db.build:null,
+    customFields:JSON.parse(JSON.stringify(customFields))
   };
 }
 function loadDataIntoEditor(data){
@@ -1406,6 +1473,7 @@ function loadDataIntoEditor(data){
   if(atkList.some(a=>a.name))openAcc("atk");
   if(consumables.some(c=>c.label))openAcc("cons");
   if(memoList.some(m=>m.label||m.content))openMemo();
+if(data.customFields){ customFields=data.customFields; saveCustomFields(); buildCustomFieldRows(); }
   updateStatDisplay();reExpandAllMemos();
 }
 function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head"><div class="save-card-name">'+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
