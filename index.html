@@ -987,11 +987,14 @@ function loadMemoLocal(){try{const r=JSON.parse(localStorage.getItem("coc_v4_mem
 function switchConsSplTab(tab){const bc=document.getElementById("cstab-btn-cons");const bs=document.getElementById("cstab-btn-spl");if(bc){bc.style.borderBottomColor=tab==="cons"?"var(--accent)":"transparent";bc.style.color=tab==="cons"?"var(--text)":"var(--text3)";}if(bs){bs.style.borderBottomColor=tab==="spl"?"var(--accent)":"transparent";bs.style.color=tab==="spl"?"var(--text)":"var(--text3)";}const pc=document.getElementById("panel-cons");const ps=document.getElementById("panel-spl-inner");if(pc)pc.style.display=tab==="cons"?"":"none";if(ps)ps.style.display=tab==="spl"?"":"none";}
 function switchSavePage(page){currentSavePage=page;["personal","shared"].forEach(p=>{const el=document.getElementById("save-page-"+p);if(el)el.style.display=p===page?"":"none";document.getElementById("spb-"+p)?.classList.toggle("active",p===page);});if(page==="personal"){renderSaveList();updateExport();}if(page==="shared"){renderSharedList();updateExport();}}
 function setInputMode(mode){inputMode=mode;document.getElementById("btn-mode-6").classList.toggle("active",mode===6);document.getElementById("btn-mode-7").classList.toggle("active",mode===7);document.getElementById("mode-hint").textContent=mode===6?"6版値\u21927版%に自動変換":"7版%を直接入力";document.getElementById("sg-hd-inp").textContent=mode===6?"6版":"7版%";document.getElementById("sg-hd-conv").textContent=mode===6?"7版%":"6版";const isV7=mode===7;document.querySelectorAll(".sg-inp[data-key]").forEach(inp=>{const k=inp.dataset.key,v=vals[k]||0;inp.value=v>0?(mode===6?Math.round(v/5):v):"";inp.placeholder=mode===6?"6版値":"7版%";inp.style.background=isV7?"rgba(40,85,160,0.10)":"";inp.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";});const _pb=document.querySelector(".parse-block"),_pi=document.getElementById("parse-input");if(_pi){_pi.style.background=isV7?"rgba(40,85,160,0.07)":"";_pi.style.borderColor=isV7?"rgba(40,85,160,0.35)":"";}if(_pb){_pb.style.borderColor=isV7?"rgba(40,85,160,0.5)":"";_pb.style.background=isV7?"rgba(40,85,160,0.04)":"";}updateStatDisplay();const isV7b=mode===7;
-const luckInp=document.getElementById("di-luck");
-if(luckInp){
-  luckInp.style.background=isV7b?"rgba(40,85,160,0.10)":"";
-  luckInp.style.borderColor=isV7b?"rgba(40,85,160,0.35)":"";
-}}
+["hp","mp","san","luck"].forEach(k=>{
+  const inp=document.getElementById("di-"+k);
+  if(inp){
+    inp.style.background=isV7b?"rgba(40,85,160,0.10)":"";
+    inp.style.borderColor=isV7b?"rgba(40,85,160,0.35)":"";
+  }
+});
+}
 function getDB(t){if(t<=64)return{label:"-2",build:"-2",cmd:null};if(t<=84)return{label:"-1",build:"-1",cmd:null};if(t<=124)return{label:"\u306a\u3057",build:"0",cmd:null};if(t<=164)return{label:"+1D4",build:"1",cmd:"1D4"};if(t<=204)return{label:"+1D6",build:"2",cmd:"1D6"};if(t<=284)return{label:"+2D6",build:"3",cmd:"2D6"};if(t<=364)return{label:"+3D6",build:"4",cmd:"3D6"};if(t<=444)return{label:"+4D6",build:"5",cmd:"4D6"};return{label:"+5D6",build:"6",cmd:"5D6"};}
 function getMOV(s,d,sz){if(!s&&!d&&!sz)return"\u2014";if(s<sz&&d<sz)return"7";if(s>sz&&d>sz)return"9";return"8";}
 function calcAuto(k){const con=vals.con||0,siz=vals.siz||0,pow=vals.pow||0;if(k==="hp")return(con+siz)?Math.floor((con+siz)/10):0;if(k==="mp")return pow?Math.floor(pow/5):0;if(k==="san")return pow||0;if(k==="luck")return 0;return 0;}
