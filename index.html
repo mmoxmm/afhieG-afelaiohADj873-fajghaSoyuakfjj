@@ -1343,14 +1343,14 @@ function buildCocoforiaJson(){
       const statVarLines=[];
       STATS.forEach(({key,label})=>{
         const v=vals[key]||0;
-        if(v>0) statVarLines.push("{"+key.toUpperCase()+"}【"+key.toUpperCase()+"】");
+        if(v>0) statVarLines.push("CC<={"+key.toUpperCase()+"} 【"+key.toUpperCase()+"】");
       });
       if(statVarLines.length){
         cmdLines.push("＝＝＝ ステータス ＝＝＝");
         statVarLines.forEach(l=>cmdLines.push(l));
       }
       customFields.forEach(cf=>{
-        if(cf.label&&cf.value) cmdLines.push("{"+cf.label+"} 【"+cf.label+"】");
+        if(cf.label&&cf.value) cmdLines.push("CC<={"+cf.label+"} 【"+cf.label+"】");
       });
     }
 
