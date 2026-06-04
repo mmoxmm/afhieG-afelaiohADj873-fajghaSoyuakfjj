@@ -327,7 +327,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 
 <!-- STATS TAB -->
 <div id="tab-stats">
-  <div class="parse-block">
+ <div class="parse-block" style="margin-bottom:15px">
     <div class="parse-hd" onclick="toggleParse()">
       <div class="acc-hd-left"><span class="acc-title">📋 数値自動解析</span><span style="font-size:12px;color:var(--text3);margin-left:4px">능력치·공격·기술 일괄 적용</span></div>
       <span class="acc-arrow" id="arrow-parse">▼</span>
@@ -345,7 +345,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 
   <!-- 能力値・派生値 2カラム -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:15px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-top:19px">
     <div>
 <div class="stat-grid-wrap">
   <div class="sg-col-hd" style="text-align:center;color:var(--text2);font-weight:700">特性値</div>
@@ -370,7 +370,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 
   <!-- パレットプレビュー -->
-  <div class="accordion" id="acc-palette" style="margin-top:4px">
+  <div class="accordion" id="acc-palette" style="margin-top:10px">
     <div class="acc-hd" onclick="toggleAcc('palette')">
       <div class="acc-hd-left">
         <span class="acc-title">🎮 팔레트 미리보기</span>
@@ -415,7 +415,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
   </div>
 
   <!-- 攻撃・消耗品 2カラム -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:12px">
     <!-- 攻撃 -->
     <div class="accordion" id="acc-atk" style="margin-top:0">
       <div class="acc-hd" onclick="toggleAcc('atk')">
