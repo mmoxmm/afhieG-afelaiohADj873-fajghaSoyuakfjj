@@ -1231,36 +1231,36 @@ function fullReset(){
 }
 
 let paletteCustomOrder=null;
-function getPaletteLines(){
+
+function getPaletteLines(forExport = false) {
   const strV=vals.str||0,sizV=vals.siz||0;
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
   const atkFirst=document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked||document.querySelector('input[name="cmd-order2"][value="atk-first"]')?.checked||false;
 
-  // 攻撃ブロック
   const atkBlock=[];
   if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
     atkBlock.push({text:db.cmd+" 【ダメージボーナス】",key:"_db"});
   atkList.forEach(a=>{
     if(a._sep){atkBlock.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
     if(!a.name)return;
-    // ★ 「ダメージ判定・」を先頭に追加
-    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【ダメージ判定・"+a.name+"】",key:"atk_"+a.id});
+    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
+      const dmgLabel=forExport?"ダメージ判定・":"";
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
       if(a.useDB==="half"&&db&&db.cmd){
         const hc=db.cmd+"/2";
         if(gB){
-          atkBlock.push({text:a.dmg+" 【ダメージ判定・"+a.name+"（DBなし）】",key:"dmg_n_"+a.id});
-          atkBlock.push({text:a.dmg+"+"+hc+" 【ダメージ判定・"+a.name+"（DB/2込み）】",key:"dmg_h_"+a.id});
-        }else atkBlock.push({text:a.dmg+"+"+hc+" 【ダメージ判定・"+a.name+"】",key:"dmg_"+a.id});
+          atkBlock.push({text:a.dmg+" 【"+dmgLabel+a.name+"（DBなし）】",key:"dmg_n_"+a.id});
+          atkBlock.push({text:a.dmg+"+"+hc+" 【"+dmgLabel+a.name+"（DB/2込み）】",key:"dmg_h_"+a.id});
+        }else atkBlock.push({text:a.dmg+"+"+hc+" 【"+dmgLabel+a.name+"】",key:"dmg_"+a.id});
       }else if(a.useDB===true&&db&&db.cmd){
         if(gB){
-          atkBlock.push({text:a.dmg+" 【ダメージ判定・"+a.name+"（DBなし）】",key:"dmg_n_"+a.id});
-          atkBlock.push({text:a.dmg+"+"+db.cmd+" 【ダメージ判定・"+a.name+"（DB込み）】",key:"dmg_h_"+a.id});
-        }else atkBlock.push({text:a.dmg+"+"+db.cmd+" 【ダメージ判定・"+a.name+"】",key:"dmg_"+a.id});
-      }else if(isCus)atkBlock.push({text:a.dmg+a.useDB+" 【ダメージ判定・"+a.name+"】",key:"dmg_"+a.id});
-      else atkBlock.push({text:a.dmg+" 【ダメージ判定・"+a.name+"】",key:"dmg_"+a.id});
+          atkBlock.push({text:a.dmg+" 【"+dmgLabel+a.name+"（DBなし）】",key:"dmg_n_"+a.id});
+          atkBlock.push({text:a.dmg+"+"+db.cmd+" 【"+dmgLabel+a.name+"（DB込み）】",key:"dmg_h_"+a.id});
+        }else atkBlock.push({text:a.dmg+"+"+db.cmd+" 【"+dmgLabel+a.name+"】",key:"dmg_"+a.id});
+      }else if(isCus)atkBlock.push({text:a.dmg+a.useDB+" 【"+dmgLabel+a.name+"】",key:"dmg_"+a.id});
+      else atkBlock.push({text:a.dmg+" 【"+dmgLabel+a.name+"】",key:"dmg_"+a.id});
     }
   });
   splList.forEach(s=>{
@@ -1286,7 +1286,7 @@ function getPaletteLines(){
 
   return atkFirst ? [...atkBlock,...skBlock] : [...skBlock,...atkBlock];
 }
-
+  
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
@@ -1309,7 +1309,6 @@ function buildCocoforiaJson(){
     const v=vals[key]||0;
     if(v>0)params.push({label,value:String(v)});
   });
-  // ★ カスタムフィールドをparamsに追加
   customFields.forEach(cf=>{
     if(cf.label&&cf.value) params.push({label:cf.label,value:String(cf.value)});
   });
@@ -1320,7 +1319,7 @@ function buildCocoforiaJson(){
   let cmdLines=[];
 
   if(!useManualOnly){
-    const lines=getPaletteLines();
+    const lines=getPaletteLines(true);  // ← true を渡す
     lines.forEach(l=>{
       if(l.sub){
         cmdLines.push(l.text);
@@ -1335,7 +1334,6 @@ function buildCocoforiaJson(){
       manLines.forEach(l=>cmdLines.push(l));
     }
 
-   // ★ 末尾に特性値変数コマンドを追加（自動生成時・チェックON時のみ）
     const addStatVars=document.getElementById("chk-stat-vars")?.checked
       ??document.getElementById("chk-stat-vars2")?.checked
       ??true;
@@ -1477,10 +1475,10 @@ if(data.customFields){ customFields=data.customFields; saveCustomFields(); build
   updateStatDisplay();reExpandAllMemos();
 }
 function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head"><div class="save-card-name">'+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
-function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};shared[idx]=u;wSharedSaves(shared);renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:s,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
+function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};shared[idx]=u;wSharedSaves(shared);renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const u={...getCurrentData(),id:+btn.dataset.id,savedAt:new Date().toISOString()};const s=[...currentSaves];s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
 function renderSharedList(){const wrap=document.getElementById("shared-list-wrap");const shared=lSharedSaves();if(!shared.length){wrap.innerHTML='<p class="save-empty">\u5171\u6709\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08'+shared.length+'\u4ef6\uff09</div><div class="save-list">'+shared.map(sv=>renderSaveCard(sv,true)).join("")+'</div>';bindSaveListEvents(wrap);}
-async function saveDataTo(dest){const d=getCurrentData();if(dest==="personal"){writeSaves([d,...currentSaves]);if(currentSavePage==="personal")renderSaveList();showToast("\u300c"+d.name+"\u300d\u3092\u500b\u4eba\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:s,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else if(dest==="shared"){const shared=lSharedSaves();wSharedSaves([d,...shared]);if(currentSavePage==="shared")renderSharedList();showToast("\u300c"+d.name+"\u300d\u3092\u5171\u6709\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}}
+async function saveDataTo(dest){const d=getCurrentData();if(dest==="personal"){writeSaves([d,...currentSaves]);if(currentSavePage==="personal")renderSaveList();showToast("\u300c"+d.name+"\u300d\u3092\u500b\u4eba\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else if(dest==="shared"){const shared=lSharedSaves();wSharedSaves([d,...shared]);if(currentSavePage==="shared")renderSharedList();showToast("\u300c"+d.name+"\u300d\u3092\u5171\u6709\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}}
 function showSaveDestPicker(){if(!sharedToken){saveDataTo("personal");return;}const overlay=document.createElement("div");overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";overlay.innerHTML='<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">\u4fdd\u5b58\u5148\u3092\u9078\u629e</div><button id="sp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc64 \u500b\u4eba\u306b\u4fdd\u5b58</button><button id="sp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">\ud83d\udc65 \u5171\u6709\u306b\u4fdd\u5b58</button><button id="sp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>';document.body.appendChild(overlay);document.getElementById("sp-personal").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("personal");});document.getElementById("sp-shared").addEventListener("click",()=>{document.body.removeChild(overlay);saveDataTo("shared");});document.getElementById("sp-cancel").addEventListener("click",()=>document.body.removeChild(overlay));}
 
 // ===== パレット手書きタブ =====
