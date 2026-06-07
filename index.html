@@ -694,6 +694,11 @@ appearance: textfield;min-width:0}
           <button class="btn-sync" id="btn-download" style="flex:1;font-size:13px" disabled>⬇️ ダウンロード</button>
         </div>
         <div style="font-size:11px;color:var(--text3);margin-top:4px" id="gist-id-display"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin:6px 0 2px">② 個人Gist ID（トークンを変えても同じデータを使う場合）</div>
+        <div class="sync-key-row" style="margin-bottom:2px">
+          <div class="inp-wrap" id="w-pgist"><input type="text" id="personal-gist-id-input" placeholder="既存のGist IDを入力（空欄=新規作成）" autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('personal-gist-id-input','w-pgist')">×</button></div>
+          <button class="btn-sync" id="btn-set-pgist">確定</button>
+        </div>
         <div class="sync-status" id="sync-status"></div>
       </div>
     </div>
@@ -1416,7 +1421,18 @@ function updateBalanceResult(){const res=document.getElementById("balance-result
 
 function getAllBeings(){return MYTHOS_BEINGS.concat(customBeings);}
 function getAllSpells(){return SPELL_REF.concat(customSpells);}
-function saveMythosCloud(){saveCustomLocal();if(syncToken)gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells}});}
+function setPersonalGistId(){
+  const raw=document.getElementById("personal-gist-id-input").value.trim();
+  if(!raw){
+    gistId="";localStorage.removeItem("coc_gist_id");updGistDisplay();
+    showToast("Gist IDをクリアしました（次回保存時に新規作成）");return;
+  }
+  const m=raw.match(/([a-f0-9]{20,40})/i);
+  if(!m){showToast("⚠ 有効なGist IDが見つかりません");return;}
+  gistId=m[1];localStorage.setItem("coc_gist_id",gistId);updGistDisplay();
+  showToast("Gist IDを設定しました");
+}
+function saveMythosCloud(){
 function addCustomBeing(){const n=document.getElementById("new-being-name").value.trim(),s=document.getElementById("new-being-s").value.trim(),f=document.getElementById("new-being-f").value.trim();if(!n){showToast("\u751f\u7269\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044");return;}customBeings.push({name:n,s:s||"0",f:f||"?",custom:true});saveMythosCloud();document.getElementById("new-being-name").value="";document.getElementById("new-being-s").value="";document.getElementById("new-being-f").value="";renderBeingList();populateSanSelects();showToast(n+" \u3092\u8ffd\u52a0\u3057\u307e\u3057\u305f");}
 function addCustomSpell(){const n=document.getElementById("new-spell-name").value.trim(),mp=document.getElementById("new-spell-mp").value.trim(),san=document.getElementById("new-spell-san").value.trim();if(!n){showToast("\u5492\u6587\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044");return;}customSpells.push({name:n,cost:mp||"?",san:"0/"+(san||"?"),sanF:san||"?",time:"\u2014",desc:"\uff08\u30ab\u30b9\u30bf\u30e0\uff09",custom:true});saveMythosCloud();document.getElementById("new-spell-name").value="";document.getElementById("new-spell-mp").value="";document.getElementById("new-spell-san").value="";buildSpellRef();populateSanSelects();showToast(n+" \u3092\u8ffd\u52a0\u3057\u307e\u3057\u305f");}
 function populateSanSelects(){const beings=getAllBeings(),allSpells=getAllSpells();const bS=document.getElementById("san-sel-being"),sS=document.getElementById("san-sel-spell");if(!bS||!sS)return;bS.innerHTML="<option value=''>\u2500\u2500 \u9078\u629e \u2500\u2500</option>";beings.forEach((b,i)=>{const o=document.createElement("option");o.value=i;o.textContent=b.name+" (\u6210:"+b.s+"/\u5931:"+b.f+")";bS.appendChild(o);});sS.innerHTML="<option value=''>\u2500\u2500 \u9078\u629e \u2500\u2500</option>";allSpells.forEach((s,i)=>{const o=document.createElement("option");o.value="s"+i;o.textContent=s.name+" (MP:"+s.cost+")";sS.appendChild(o);});}
@@ -1456,12 +1472,6 @@ function setMythosSt(msg,cls=""){const el=document.getElementById("mythos-sync-s
 function updGistDisplay(){const el=document.getElementById("gist-id-display");if(el)el.textContent=gistId?"Gist ID: "+gistId:"";}
 function updSharedGistDisplay(){const el=document.getElementById("shared-gist-display");if(el)el.textContent=sharedGistId?"\u5171\u6709Gist ID: "+sharedGistId:"";}
 async function applyKey(token){token=(token||"").trim();if(!token){setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}syncToken=token;localStorage.setItem(L_KEY,token);document.getElementById("btn-upload").disabled=false;document.getElementById("btn-download").disabled=false;const d2a=document.getElementById("btn-download2");if(d2a)d2a.disabled=false;setSyncSt("\u78ba\u8a8d\u4e2d\u2026","ing");try{const r=await fetch("https://api.github.com/user",{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});if(r.ok){const u=await r.json();setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08"+u.login+"\uff09","ok");gistId=localStorage.getItem(L_GIST)||"";
-
-if(gistId){
-
-  const inp=document.getElementById("sync-key-input");
-
-  if(inp)inp.value=token;
 
 }updGistDisplay();currentSaves=lSaves();loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();if(currentSavePage==="personal")renderSaveList();}else{syncToken="";setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557","err");document.getElementById("btn-upload").disabled=true;document.getElementById("btn-download").disabled=true;const d2b=document.getElementById("btn-download2");if(d2b)d2b.disabled=true;}}catch{syncToken="";setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc","err");}}
 async function gistSet(payload){const content=JSON.stringify(payload,null,2);const body={description:"CoC NPC Tool Data",public:false,files:{"coc_saves.json":{content}}};try{let r;if(gistId)r=await fetch("https://api.github.com/gists/"+gistId,{method:"PATCH",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});else r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});if(!r.ok)return false;const d=await r.json();gistId=d.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();return true;}catch{return false;}}
@@ -1808,6 +1818,9 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-save-current").addEventListener("click",showSaveDestPicker);
   document.getElementById("btn-save-shared-current").addEventListener("click",()=>saveDataTo("shared"));
   document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
+  document.getElementById("btn-set-pgist").addEventListener("click",setPersonalGistId);
+  document.getElementById("personal-gist-id-input").addEventListener("keydown",e=>{if(e.key==="Enter")setPersonalGistId();});
+  watchInp(document.getElementById("personal-gist-id-input"),document.getElementById("w-pgist"));
   document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
   document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
   document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
@@ -1845,6 +1858,8 @@ const parseInpEl=document.getElementById("parse-input");if(parseInpEl)bindAutoEx
 currentSaves=lSaves();
 loadCustomLocal();
 renderBeingList();buildSpellRef();populateSanSelects();
+const savedPGist=localStorage.getItem("coc_gist_id")||"";
+if(savedPGist){const pgInp=document.getElementById("personal-gist-id-input");if(pgInp)pgInp.value=savedPGist;}
 const savedToken=localStorage.getItem(L_KEY)||"";
 if(savedToken){const inp=document.getElementById("sync-key-input");if(inp)inp.value=savedToken;applyKey(savedToken);}
 const savedSToken=localStorage.getItem(L_STOKEN)||"";
