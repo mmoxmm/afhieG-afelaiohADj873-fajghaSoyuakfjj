@@ -1458,18 +1458,38 @@ if(gistId){
 
 }updGistDisplay();currentSaves=lSaves();loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();if(currentSavePage==="personal")renderSaveList();}else{syncToken="";setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557","err");document.getElementById("btn-upload").disabled=true;document.getElementById("btn-download").disabled=true;const d2b=document.getElementById("btn-download2");if(d2b)d2b.disabled=true;}}catch{syncToken="";setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc","err");}}
 async function gistSet(payload){const content=JSON.stringify(payload,null,2);const body={description:"CoC NPC Tool Data",public:false,files:{"coc_saves.json":{content}}};try{let r;if(gistId)r=await fetch("https://api.github.com/gists/"+gistId,{method:"PATCH",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});else r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});if(!r.ok)return false;const d=await r.json();gistId=d.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();return true;}catch{return false;}}
-async function gistGet(){if(!gistId){if(!syncToken)return null;try{const lr=await fetch("https://api.github.com/gists",{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});if(!lr.ok)return null;const list=await lr.json();const found=list.find(g=>g.description==="CoC NPC Tool Data"&&g.files?.["coc_saves.json"]);if(found){
-  gistId=found.id;
-  localStorage.setItem(L_GIST,gistId);
-  updGistDisplay();
-  // gistId確定後に再取得
-  const r2=await fetch("https://api.github.com/gists/"+gistId,{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});
-  if(!r2.ok)return null;
-  const d2=await r2.json();
-  const content2=d2.files?.["coc_saves.json"]?.content;
-  if(!content2)return null;
-  return JSON.parse(content2);
-}else return null;}}try{const headers={"Accept":"application/vnd.github.v3+json"};if(syncToken)headers["Authorization"]="token "+syncToken;const r=await fetch("https://api.github.com/gists/"+gistId,{headers});if(!r.ok)return null;const d=await r.json();const content=d.files?.["coc_saves.json"]?.content;if(!content)return null;return JSON.parse(content);}catch{return null;}}
+async function gistGet(){
+  if(!gistId){
+    if(!syncToken)return null;
+    try{
+      const lr=await fetch("https://api.github.com/gists",{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});
+      if(!lr.ok)return null;
+      const list=await lr.json();
+      const found=list.find(g=>g.description==="CoC NPC Tool Data"&&g.files?.["coc_saves.json"]);
+      if(found){
+        gistId=found.id;
+        localStorage.setItem(L_GIST,gistId);
+        updGistDisplay();
+        const r2=await fetch("https://api.github.com/gists/"+gistId,{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});
+        if(!r2.ok)return null;
+        const d2=await r2.json();
+        const content2=d2.files?.["coc_saves.json"]?.content;
+        if(!content2)return null;
+        return JSON.parse(content2);
+      }else return null;
+    }catch{return null;}
+  }
+  try{
+    const headers={"Accept":"application/vnd.github.v3+json"};
+    if(syncToken)headers["Authorization"]="token "+syncToken;
+    const r=await fetch("https://api.github.com/gists/"+gistId,{headers});
+    if(!r.ok)return null;
+    const d=await r.json();
+    const content=d.files?.["coc_saves.json"]?.content;
+    if(!content)return null;
+    return JSON.parse(content);
+  }catch{return null;}
+}
 async function uploadToCloud(){
   if(!syncToken){
     showToast("トークンを設定してください");
@@ -1760,6 +1780,7 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
   document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
   document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
+  document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
   document.getElementById("btn-download2").addEventListener("click",downloadFromCloud);
   document.getElementById("btn-apply-stoken").addEventListener("click",()=>applySharedKey(document.getElementById("shared-token-input").value));
   document.getElementById("shared-token-input").addEventListener("keydown",e=>{if(e.key==="Enter")applySharedKey(document.getElementById("shared-token-input").value);});
