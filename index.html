@@ -1364,7 +1364,7 @@ function buildCocoforiaJson(){
     });
 
     if(inclManual&&manualPaletteText.trim()){
-      const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
+      const manLines=manualPaletteText.split("\n").map(l=>l.trimEnd());
       manLines.forEach(l=>cmdLines.push(l));
     }
 
@@ -1388,7 +1388,7 @@ function buildCocoforiaJson(){
 
   }else{
     if(manualPaletteText.trim()){
-      cmdLines=manualPaletteText.split("\n").map(l=>l.trimEnd()).filter(l=>l.length>0);
+      cmdLines=manualPaletteText.split("\n").map(l=>l.trimEnd());
     }
   }
 
@@ -1397,6 +1397,7 @@ function buildCocoforiaJson(){
     .map(m=>(m.label?"  "+m.label+"　":"")+m.content);
 
   cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
+  while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
   return JSON.stringify({
     kind:"character",
     data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
