@@ -1859,8 +1859,6 @@ currentSaves=lSaves();
 loadCustomLocal();
 renderBeingList();buildSpellRef();populateSanSelects();
 const savedPGist=localStorage.getItem("coc_gist_id")||"";
-if(savedPGist){const pgInp=document.getElementById("personal-gist-id-input");if(pgInp)pgInp.value=savedPGist;}
-const savedPGist=localStorage.getItem("coc_gist_id")||"";
 if(savedPGist){
   gistId=savedPGist;
   const pgInp=document.getElementById("personal-gist-id-input");
