@@ -408,14 +408,20 @@ appearance: textfield;min-width:0}
       </div>
       <!-- 手書きタブ -->
       <div id="palette-panel-manual" style="display:none">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">チャットパレット内容を直接入力・編集できます。1行1コマンド。</div>
-        <textarea id="manual-palette-textarea" placeholder="CC&lt;=60 【技能名】&#10;1d6+1 【ダメージ】&#10;━━━ 区切り ━━━" style="width:100%;min-height:120px;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:vertical;overflow:auto"></textarea>
-        <div style="display:flex;gap:3px;margin-top:3px">
-          <button class="btn-add" onclick="copyManualPalette()" style="flex:1">📋 コピー</button>
-          <button class="btn-add" onclick="clearManualPalette()" style="flex:1;font-size:12px;color:var(--danger)">🗑 クリア</button>
-        </div>
-      </div>
-    </div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:4px">
+    <strong style="color:var(--accent)">本番</strong>：出力に反映されます。
+    <strong style="color:var(--text3)">仮置き</strong>：メモ用（出力されません）
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px">📋 本番用</div>
+  <textarea id="manual-palette-textarea" placeholder="CC<=60 【技能名】&#10;1d6+1 【ダメージ】&#10;━━━ 区切り ━━━" style="width:100%;min-height:36px;height:auto;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:rgba(40,85,160,0.07);border:1px solid rgba(40,85,160,0.35);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
+  <div style="font-size:11px;font-weight:700;color:var(--text3);margin:6px 0 2px">📝 仮置き（出力されません）</div>
+  <textarea id="manual-palette-draft" placeholder="下書き・メモ用スペース..." style="width:100%;min-height:36px;height:auto;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
+  <div style="display:flex;gap:3px;margin-top:3px">
+    <button class="btn-add" onclick="copyManualPalette()" style="flex:1">📋 本番コピー</button>
+    <button class="btn-add" onclick="clearManualPalette()" style="flex:1;font-size:12px;color:var(--danger)">🗑 本番クリア</button>
+  </div>
+</div>
+</div>
   </div>
 
   <!-- 攻撃・消耗品 2カラム -->
@@ -796,7 +802,7 @@ appearance: textfield;min-width:0}
   <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
     <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-      <input type="radio" name="palette-mode" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
+      <input type="radio" name="palette-mode2" value="auto" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
       🔄 自動生成のみ
     </label>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
@@ -1433,21 +1439,55 @@ function setGlobalSt(msg,cls=""){
 function setSyncSt(msg,cls=""){
   const el=document.getElementById("sync-status");
   if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}
-  setGlobalSt(msg,cls); // ← 追加
 }
 function setSharedSt(msg,cls=""){
   const el=document.getElementById("shared-sync-status");
   if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}
-  setGlobalSt(msg,cls); // ← 追加
 }
 
 function setMythosSt(msg,cls=""){const el=document.getElementById("mythos-sync-status");if(el){el.textContent=msg;el.className="sync-status"+(cls?" "+cls:"");}}
 function updGistDisplay(){const el=document.getElementById("gist-id-display");if(el)el.textContent=gistId?"Gist ID: "+gistId:"";}
 function updSharedGistDisplay(){const el=document.getElementById("shared-gist-display");if(el)el.textContent=sharedGistId?"\u5171\u6709Gist ID: "+sharedGistId:"";}
-async function applyKey(token){token=(token||"").trim();if(!token){setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}syncToken=token;localStorage.setItem(L_KEY,token);document.getElementById("btn-upload").disabled=false;document.getElementById("btn-download").disabled=false;const d2a=document.getElementById("btn-download2");if(d2a)d2a.disabled=false;setSyncSt("\u78ba\u8a8d\u4e2d\u2026","ing");try{const r=await fetch("https://api.github.com/user",{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});if(r.ok){const u=await r.json();setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08"+u.login+"\uff09","ok");gistId=localStorage.getItem(L_GIST)||"";updGistDisplay();currentSaves=lSaves();loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();if(currentSavePage==="personal")renderSaveList();}else{syncToken="";setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557","err");document.getElementById("btn-upload").disabled=true;document.getElementById("btn-download").disabled=true;const d2b=document.getElementById("btn-download2");if(d2b)d2b.disabled=true;}}catch{syncToken="";setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc","err");}}
+async function applyKey(token){token=(token||"").trim();if(!token){setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}syncToken=token;localStorage.setItem(L_KEY,token);document.getElementById("btn-upload").disabled=false;document.getElementById("btn-download").disabled=false;const d2a=document.getElementById("btn-download2");if(d2a)d2a.disabled=false;setSyncSt("\u78ba\u8a8d\u4e2d\u2026","ing");try{const r=await fetch("https://api.github.com/user",{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});if(r.ok){const u=await r.json();setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08"+u.login+"\uff09","ok");gistId=localStorage.getItem(L_GIST)||"";
+
+if(gistId){
+
+  const inp=document.getElementById("sync-key-input");
+
+  if(inp)inp.value=token;
+
+}updGistDisplay();currentSaves=lSaves();loadCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();if(currentSavePage==="personal")renderSaveList();}else{syncToken="";setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557","err");document.getElementById("btn-upload").disabled=true;document.getElementById("btn-download").disabled=true;const d2b=document.getElementById("btn-download2");if(d2b)d2b.disabled=true;}}catch{syncToken="";setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc","err");}}
 async function gistSet(payload){const content=JSON.stringify(payload,null,2);const body={description:"CoC NPC Tool Data",public:false,files:{"coc_saves.json":{content}}};try{let r;if(gistId)r=await fetch("https://api.github.com/gists/"+gistId,{method:"PATCH",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});else r=await fetch("https://api.github.com/gists",{method:"POST",headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});if(!r.ok)return false;const d=await r.json();gistId=d.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();return true;}catch{return false;}}
-async function gistGet(){if(!gistId){if(!syncToken)return null;try{const lr=await fetch("https://api.github.com/gists",{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});if(!lr.ok)return null;const list=await lr.json();const found=list.find(g=>g.description==="CoC NPC Tool Data"&&g.files?.["coc_saves.json"]);if(found){gistId=found.id;localStorage.setItem(L_GIST,gistId);updGistDisplay();}else return null;}catch{return null;}}try{const headers={"Accept":"application/vnd.github.v3+json"};if(syncToken)headers["Authorization"]="token "+syncToken;const r=await fetch("https://api.github.com/gists/"+gistId,{headers});if(!r.ok)return null;const d=await r.json();const content=d.files?.["coc_saves.json"]?.content;if(!content)return null;return JSON.parse(content);}catch{return null;}}
-async function uploadToCloud(){if(!syncToken){showToast("\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044");return;}setSyncSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026","ing");const ok=await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells}});if(ok){setSyncSt("\u2713 \u5b8c\u4e86\uff08"+lSaves().length+"\u4ef6\uff09","ok");showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f");}else{setSyncSt("\u26a0 \u5931\u6557","err");showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557");}}
+async function gistGet(){if(!gistId){if(!syncToken)return null;try{const lr=await fetch("https://api.github.com/gists",{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});if(!lr.ok)return null;const list=await lr.json();const found=list.find(g=>g.description==="CoC NPC Tool Data"&&g.files?.["coc_saves.json"]);if(found){
+  gistId=found.id;
+  localStorage.setItem(L_GIST,gistId);
+  updGistDisplay();
+  // gistId確定後に再取得
+  const r2=await fetch("https://api.github.com/gists/"+gistId,{headers:{"Authorization":"token "+syncToken,"Accept":"application/vnd.github.v3+json"}});
+  if(!r2.ok)return null;
+  const d2=await r2.json();
+  const content2=d2.files?.["coc_saves.json"]?.content;
+  if(!content2)return null;
+  return JSON.parse(content2);
+}else return null;}}try{const headers={"Accept":"application/vnd.github.v3+json"};if(syncToken)headers["Authorization"]="token "+syncToken;const r=await fetch("https://api.github.com/gists/"+gistId,{headers});if(!r.ok)return null;const d=await r.json();const content=d.files?.["coc_saves.json"]?.content;if(!content)return null;return JSON.parse(content);}catch{return null;}}
+async function uploadToCloud(){
+  if(!syncToken){
+    showToast("トークンを設定してください");
+    return;
+  }
+  setSyncSt("アップロード中…","ing");
+  setGlobalSt("アップロード中…","ing");
+  const ok=await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells}});
+  if(ok){
+    setSyncSt("✓ 完了（"+lSaves().length+"件）","ok");
+    setGlobalSt("✓ 完了（"+lSaves().length+"件）","ok");
+    showToast("アップロードしました");
+  }else{
+    setSyncSt("⚠ 失敗","err");
+    setGlobalSt("⚠ 失敗","err");
+    showToast("アップロード失敗");
+  }
+}
 async function downloadFromCloud(){if(!syncToken){showToast("\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044");return;}setSyncSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026","ing");const data=await gistGet();if(!data){setSyncSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057","err");showToast("\u30c7\u30fc\u30bf\u306a\u3057");return;}const remote=data.saves||[];if(remote.length){const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>String(r.id)===String(l.id)))merged.push(l);});merged.sort((a,b)=>b.id-a.id);currentSaves=merged;wSaves(merged);setSyncSt("\u2713 \u5b8c\u4e86\uff08"+merged.length+"\u4ef6\uff09","ok");showToast(merged.length+"\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f");if(currentSavePage==="personal")renderSaveList();}else{
   setSyncSt("⚠ 클라우드에 데이터가 없습니다","err");
   showToast("⚠ 클라우드 저장 목록이 비어 있습니다");
@@ -1585,9 +1625,25 @@ function switchPaletteTab(tab) {
   panelAuto.style.display = tab === 'auto' ? '' : 'none';
   panelManual.style.display = tab === 'manual' ? '' : 'none';
   if (tab === 'manual') {
-    const ta = document.getElementById('manual-palette-textarea');
-    if (ta) { ta.value = manualPaletteText; ta.addEventListener('input', e => { manualPaletteText = e.target.value; saveManualPalette(); }, { once: true }); ta.oninput = e => { manualPaletteText = e.target.value; saveManualPalette(); }; }
+  const ta = document.getElementById('manual-palette-textarea');
+  if (ta) {
+    ta.value = manualPaletteText;
+    autoExpand(ta);
+    ta.oninput = e => { manualPaletteText = e.target.value; saveManualPalette(); autoExpand(ta); updateExport(); };
   }
+  // 仮置きの自動伸縮
+  const draft = document.getElementById('manual-palette-draft');
+  if (draft) {
+    let draftText = '';
+    try { draftText = localStorage.getItem('coc_manual_palette_draft') || ''; } catch {}
+    draft.value = draftText;
+    autoExpand(draft);
+    draft.oninput = e => {
+      try { localStorage.setItem('coc_manual_palette_draft', e.target.value); } catch {}
+      autoExpand(draft);
+    };
+  }
+}
 }
 
 function buildManualPaletteRows() {
@@ -1704,7 +1760,7 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-apply-key").addEventListener("click",()=>applyKey(document.getElementById("sync-key-input").value));
   document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
   document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
-  document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
+  document.getElementById("btn-download2").addEventListener("click",downloadFromCloud);
   document.getElementById("btn-apply-stoken").addEventListener("click",()=>applySharedKey(document.getElementById("shared-token-input").value));
   document.getElementById("shared-token-input").addEventListener("keydown",e=>{if(e.key==="Enter")applySharedKey(document.getElementById("shared-token-input").value);});
   document.getElementById("btn-set-sgist").addEventListener("click",setSharedGistId);
