@@ -422,6 +422,8 @@ appearance: textfield;min-width:0}
           <div>
             <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">📝 仮置き（出力されません）</div>
             <textarea id="manual-palette-draft" placeholder="下書き・メモ用スペース..." style="width:100%;min-height:80px;height:auto;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
+            <button class="btn-add" onclick="copyDraftPalette()" style="margin-top:3px">📋 仮置きコピー</button>
+            <button class="btn-add" onclick="clearDraftPalette()" style="font-size:12px;color:var(--danger)">🗑 仮置きクリア</button>
           </div>
         </div>
       </div>
@@ -1699,7 +1701,19 @@ function clearManualPalette() {
   const ta = document.getElementById('manual-palette-textarea');
   if (ta) ta.value = '';
 }
-
+function copyDraftPalette() {
+  const el = document.getElementById('manual-palette-draft');
+  const txt = el.value.trim();
+  if (!txt) { showToast('仮置きが空です'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('仮置きをコピーしました'));
+}
+function clearDraftPalette() {
+  if (!confirm('仮置きをクリアしますか？')) return;
+  const el = document.getElementById('manual-palette-draft');
+  el.value = '';
+  try { localStorage.removeItem('coc_manual_palette_draft'); } catch {}
+  showToast('仮置きをクリアしました');
+}
 // ===== メモ/履歴タブ ブロックメモ =====
 let diceMemos = [];
 try { diceMemos = JSON.parse(localStorage.getItem('coc_v4_dice_memos') || '[]'); } catch { diceMemos = []; }
