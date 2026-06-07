@@ -1860,6 +1860,13 @@ loadCustomLocal();
 renderBeingList();buildSpellRef();populateSanSelects();
 const savedPGist=localStorage.getItem("coc_gist_id")||"";
 if(savedPGist){const pgInp=document.getElementById("personal-gist-id-input");if(pgInp)pgInp.value=savedPGist;}
+const savedPGist=localStorage.getItem("coc_gist_id")||"";
+if(savedPGist){
+  gistId=savedPGist;
+  const pgInp=document.getElementById("personal-gist-id-input");
+  if(pgInp)pgInp.value=savedPGist;
+  updGistDisplay();
+}
 const savedToken=localStorage.getItem(L_KEY)||"";
 if(savedToken){const inp=document.getElementById("sync-key-input");if(inp)inp.value=savedToken;applyKey(savedToken);}
 const savedSToken=localStorage.getItem(L_STOKEN)||"";
