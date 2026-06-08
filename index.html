@@ -582,7 +582,13 @@ appearance: textfield;min-width:0}
     </div>
 
     <!-- ラベルリスト -->
-    <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;margin-bottom:4px">ラベル一覧</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+  <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em">ラベル一覧</div>
+  <button onclick="clearAllKomaLabels()" 
+          style="background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-size:11px;padding:2px 7px">
+    🗑 全クリア
+  </button>
+</div>
     <div id="koma-label-rows"></div>
     <div style="display:flex;gap:3px;margin-top:3px">
       <button class="btn-add" onclick="addKomaLabel()" style="flex:2">＋ ラベル追加</button>
@@ -647,7 +653,19 @@ appearance: textfield;min-width:0}
   </div>
   </div>
   
+<!-- コマ出力ブロック -->
+<div class="full-card" style="margin-bottom:5px">
+  <div class="kp-card-title">📤 パレット出力</div>
+  <div style="display:flex;gap:4px;margin-bottom:5px">
+    <button onclick="copyKomaPalette('simple')" class="export-btn" style="flex:1;font-size:13px">📋 シンプル型コピー</button>
+    <button onclick="copyKomaPalette('named')" class="export-btn" style="flex:1;font-size:13px">📋 コマ名付きコピー</button>
+  </div>
+  <div class="export-preview" id="koma-export-preview" onclick="copyKomaPalette('simple')" 
+       title="タップでシンプルコピー" style="min-height:60px"></div>
+  <div class="export-note">※ 「シンプル型」は @ラベル のみ。「コマ名付き」は @ラベル 【コマ名】 の形式。</div>
+</div>
 
+  
   <!-- 保存・一覧 -->
   <div class="full-card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -920,6 +938,7 @@ appearance: textfield;min-width:0}
     <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️ 클라우드에서 가져오기</button>
   </div>
     <div id="save-list-wrap"></div>
+    <div id="save-koma-list-wrap-personal" style="margin-top:8px"></div>
   </div>
   <div id="save-page-shared" style="display:none">
     <div class="accordion" style="margin-top:0;margin-bottom:5px;border-color:rgba(26,158,114,.4)">
@@ -1248,6 +1267,12 @@ function renderKomaPalettePreview(){
   renderInto(simpleEl, "simple");
   renderInto(namedEl, "named");
 }
+  // プレビューテキスト更新
+const prev = document.getElementById("koma-export-preview");
+if(prev){
+  const lines = getKomaLines("simple").filter(l => !l.isSep).map(l => l.text);
+  prev.textContent = lines.length ? lines.join("\n") : "（ラベルを追加してください）";
+}
 
 function switchKomaPaletteTab(tab){
   const tabAuto   = document.getElementById("koma-palette-tab-auto");
@@ -1373,13 +1398,18 @@ function deleteKomaData(id){
 }
 
 function renderKomaSaveList(){
-  const wrap = document.getElementById("koma-save-list-wrap");
-  if(!wrap) return;
   const saved = lSavedKomas();
-  if(!saved.length){
-    wrap.innerHTML = '<p class="save-empty">まだ保存されたコマはありません</p>';
-    return;
-  }
+  const html = saved.length ? saved.map(d => {/* 既存カード生成 */}).join("") 
+              : '<p class="save-empty">まだ保存されたコマはありません</p>';
+  
+  // コマタブ側
+  const wrap = document.getElementById("koma-save-list-wrap");
+  if(wrap) wrap.innerHTML = html;
+  
+  // 保存タブ側（追加）
+  const wrap2 = document.getElementById("save-koma-list-wrap-personal");
+  if(wrap2) wrap2.innerHTML = html ? `<div style="font-size:12px;font-weight:700;color:var(--text3);margin:8px 0 4px">🎭 コマ（${saved.length}件）</div>` + html : '';
+}
   wrap.innerHTML = saved.map(d => {
     const dt = new Date(d.savedAt);
     const ds = dt.getFullYear() + "/" + String(dt.getMonth()+1).padStart(2,"0") + "/" + String(dt.getDate()).padStart(2,"0")
@@ -1457,6 +1487,15 @@ function syncStatVarsCheck(el){
   updateExport();
 }
 
+function clearAllKomaLabels(){
+  if(!confirm("全ラベルをクリアしますか？")) return;
+  currentKoma.labels = [];
+  komaNxtId = 1;
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+  showToast("ラベルをクリアしました");
+}
+  
 function getSecretCmdLines(){
   const name = document.getElementById("npc-name")?.value || "キャラ名";
   return [
@@ -1901,6 +1940,35 @@ buildCustomFieldRows();
   const ta=document.getElementById("manual-palette-textarea");
   if(ta)ta.value="";
   buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();
+  // コマタブもリセット
+currentKoma = { id:0, name:"", globalAt:"@", labels:[], manualPalette:"" };
+komaNxtId = 1;
+const komaNameEl = document.getElementById("koma-name");
+if(komaNameEl) komaNameEl.value = "";
+for(let i = 0; i < 5; i++) currentKoma.labels.push({id: komaNxtId++, text:'', atOverride:null});
+buildKomaLabelRows();
+renderKomaPalettePreview();
+const kmta = document.getElementById("koma-manual-textarea");
+if(kmta) kmta.value = "";
+  <button onclick="resetKomaOnly()" 
+        style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;padding:4px 8px;white-space:nowrap;flex-shrink:0">
+  コマリセット
+</button>
+
+function resetKomaOnly(){
+  if(!confirm("コマデータをリセットしますか？")) return;
+  currentKoma = { id:0, name:"", globalAt:"@", labels:[], manualPalette:"" };
+  komaNxtId = 1;
+  const nameEl = document.getElementById("koma-name");
+  if(nameEl){ nameEl.value = ""; document.getElementById("w-komaname")?.classList.remove("hv"); }
+  for(let i = 0; i < 5; i++) currentKoma.labels.push({id: komaNxtId++, text:'', atOverride:null});
+  setKomaGlobal("@");
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+  const ta = document.getElementById("koma-manual-textarea");
+  if(ta) ta.value = "";
+  showToast("コマデータをリセットしました");
+} 
   updateStatDisplay();showToast("リセットしました");
 }
 
