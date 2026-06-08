@@ -1079,6 +1079,56 @@ let komaList = []; // 保存済みコマ一覧
 let komaNxtId = 1;
 let currentSaveFilter = "all"; // "all" | "char" | "koma"
 
+// ===== コマJSON出力プレビュー =====
+let komaPaletteSrc = 'simple'; // 'simple' | 'named' | 'manual'
+
+function setKomaPaletteSrc(src) {
+  komaPaletteSrc = src;
+  ['simple', 'named', 'manual'].forEach(k => {
+    document.getElementById('kpsrc-' + k)?.classList.toggle('active', k === src);
+  });
+  updateKomaJsonPreview();
+}
+
+function getKomaPaletteText() {
+  if (komaPaletteSrc === 'manual') {
+    return (currentKoma.manualPalette || '').trim();
+  }
+  const lines = getKomaLines(komaPaletteSrc === 'named' ? 'named' : 'simple');
+  return lines.filter(l => !l.isSep).map(l => l.text).join('\n');
+}
+
+function updateKomaJsonPreview() {
+  const el = document.getElementById('koma-export-preview');
+  if (!el) return;
+  const name = document.getElementById('koma-name')?.value || 'コマ';
+  const paletteText = getKomaPaletteText();
+  const obj = {
+    kind: 'character',
+    data: {
+      name,
+      commands: paletteText,
+      memo: '',
+      status: [],
+      params: []
+    }
+  };
+  el.textContent = JSON.stringify(obj, null, 2);
+}
+
+function copyKomaJson() {
+  const name = document.getElementById('koma-name')?.value || 'コマ';
+  const paletteText = getKomaPaletteText();
+  if (!paletteText) { showToast('ラベルがありません'); return; }
+  const obj = {
+    kind: 'character',
+    data: { name, commands: paletteText, memo: '', status: [], params: [] }
+  };
+  navigator.clipboard.writeText(JSON.stringify(obj))
+    .then(() => showToast('JSONをコピーしました'))
+    .catch(() => showToast('コピー失敗'));
+}
+
 function lSavedKomas(){ try{ return JSON.parse(localStorage.getItem("coc_v4_komas")||"[]"); }catch{ return []; } }
 function wSavedKomas(l){ localStorage.setItem("coc_v4_komas", JSON.stringify(l)); }
 
