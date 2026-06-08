@@ -674,10 +674,15 @@ appearance: textfield;min-width:0}
 </div>
   
   <!-- 保存・一覧 -->
+ <!-- 保存・一覧 -->
   <div class="full-card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
       <div class="kp-card-title" style="margin-bottom:0">💾 コマ保存</div>
-      <button class="btn-pri" onclick="saveKomaData()" style="font-size:13px;padding:5px 10px">💾 保存</button>
+      <div style="display:flex;gap:4px">
+        <button class="btn-pri" onclick="saveKomaData('personal')" style="font-size:13px;padding:5px 10px">👤 個人保存</button>
+        <button class="btn-pri" onclick="saveKomaData('shared')" style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有保存</button>
+        <button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();" style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
+      </div>
     </div>
     <div id="koma-save-list-wrap">
       <p class="save-empty">まだ保存されたコマはありません</p>
@@ -829,11 +834,7 @@ appearance: textfield;min-width:0}
     <button class="save-page-btn" id="spb-shared" onclick="switchSavePage('shared')">👥 共有</button>
   </div>
   <!-- 保存フィルター -->
-<div class="save-filter-bar" id="save-filter-bar-personal">
-  <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
-  <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
-  <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
-</div>
+<div id="save-filter-bar-personal"></div>
   <div id="save-page-personal">
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('sync-personal')">
@@ -847,10 +848,8 @@ appearance: textfield;min-width:0}
           <div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="ghp_xxxx..." autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div>
           <button class="btn-sync" id="btn-apply-key">設定</button>
         </div>
-        <div style="display:flex;gap:4px;margin-top:5px">
-          <button class="btn-sync" id="btn-upload" style="flex:1;background:var(--success);font-size:13px" disabled>⬆️ 現リストを個人へ全て上書き</button>
-          <button class="btn-sync" id="btn-download" style="flex:1;font-size:13px" disabled>⬇️ ダウンロード</button>
-        </div>
+        <button id="btn-upload" style="display:none" disabled></button>
+        <button id="btn-download" style="display:none" disabled></button>
         <div style="font-size:11px;color:var(--text3);margin-top:4px" id="gist-id-display"></div>
         <div style="font-size:12px;font-weight:700;color:var(--text2);margin:6px 0 2px">② 個人Gist ID（トークンを変えても同じデータを使う場合）</div>
         <div class="sync-key-row" style="margin-bottom:2px">
@@ -860,9 +859,20 @@ appearance: textfield;min-width:0}
         <div class="sync-status" id="sync-status"></div>
       </div>
     </div>
+    <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px">
+        <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
+        <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
+        <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="btn-sync" id="btn-upload" style="background:var(--success);font-size:13px;padding:5px 10px" disabled onclick="uploadToCloud()">⬆️ 上書き</button>
+        <button class="btn-sync" id="btn-download" style="font-size:13px;padding:5px 10px" disabled onclick="downloadFromCloud()">⬇️ 取得</button>
+      </div>
+    </div>
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('export-personal')">
-        <div class="acc-hd-left"><span class="acc-title">🎮 ココフォリア出力</span></div>
+    <div class="acc-hd-left"><span class="acc-title">🎮 ココフォリア出力</span></div>
         <span class="acc-arrow open" id="arrow-export-personal">▼</span>
       </div>
       <div class="acc-body open" id="body-export-personal">
@@ -1220,7 +1230,6 @@ function addKomaSep(){
 }
 
 function getKomaLines(type){
-  // type: "simple" | "named"
   const name = document.getElementById("koma-name")?.value || "";
   const lines = [];
   currentKoma.labels.forEach(lbl => {
@@ -1229,11 +1238,10 @@ function getKomaLines(type){
       return;
     }
     if(!lbl.text) return;
-    const at = getKomaAt(lbl);
     if(type === "simple"){
-      lines.push({text: at + lbl.text});
+      lines.push({text: "#" + lbl.text});
     } else {
-      lines.push({text: at + lbl.text + (name ? " 【" + name + "】" : "")});
+      lines.push({text: "#" + lbl.text + (name ? " 【" + name + "】" : "")});
     }
   });
   return lines;
@@ -1350,7 +1358,7 @@ function clearKomaDraft(){
 }
 
 // ===== コマ保存・一覧 =====
-function saveKomaData(){
+function saveKomaData(dest){
   const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
   const d = {
     _isKoma: true,
@@ -1361,6 +1369,25 @@ function saveKomaData(){
     labels: JSON.parse(JSON.stringify(currentKoma.labels)),
     manualPalette: currentKoma.manualPalette || ""
   };
+
+  if(dest === "shared"){
+    const shared = lSharedSaves();
+    wSharedSaves([d, ...shared]);
+    showToast("「" + name + "」を共有に保存中…");
+    sharedGistSet({saves: lSharedSaves()}).then(ok => {
+      showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
+      renderSharedList();
+      renderKomaSaveList();
+    });
+  } else {
+    const saved = lSavedKomas();
+    wSavedKomas([d, ...saved]);
+    komaList = lSavedKomas();
+    renderKomaSaveList();
+    showToast("「" + name + "」を個人に保存しました");
+    if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
+  }
+}
 
   if(sharedToken){
     // 個人/共有を選ぶオーバーレイ
@@ -1409,9 +1436,9 @@ function saveKomaData(){
   }
 }
   
-function loadKomaData(id){
-  const saved = lSavedKomas();
-  const d = saved.find(k => k.id === id);
+function loadKomaData(id, isShared){
+  const list = isShared ? lSharedSaves() : lSavedKomas();
+  const d = list.find(k => k.id === id);
   if(!d) return;
   currentKoma.globalAt = d.globalAt || "@";
   currentKoma.labels = JSON.parse(JSON.stringify(d.labels || []));
@@ -1427,114 +1454,32 @@ function loadKomaData(id){
   buildKomaLabelRows();
   renderKomaPalettePreview();
   showToast("「" + d.name + "」を読み込みました");
+  switchTab("koma");
 }
 
-function deleteKomaData(id){
-  const saved = lSavedKomas();
-  const d = saved.find(k => k.id === id);
-  if(!d) return;
-  if(!confirm("「" + d.name + "」を削除しますか？")) return;
-  wSavedKomas(saved.filter(k => k.id !== id));
-  komaList = lSavedKomas();
-  renderKomaSaveList();
-  showToast("削除しました");
-}
-  // ===== コマJSON出力 =====
-let komaPaletteSrc = 'simple'; // 'simple' | 'named' | 'manual'
-
-function setKomaPaletteSrc(src) {
-  komaPaletteSrc = src;
-  ['simple','named','manual'].forEach(k => {
-    document.getElementById('kpsrc-' + k)?.classList.toggle('active', k === src);
-  });
-  updateKomaJsonPreview();
-}
-
-function getKomaChatPaletteText() {
-  if (komaPaletteSrc === 'manual') {
-    return (currentKoma.manualPalette || '').trim();
+function deleteKomaData(id, isShared){
+  if(isShared){
+    const shared = lSharedSaves();
+    const d = shared.find(k => k.id === id);
+    if(!d) return;
+    if(!confirm("「" + d.name + "」を削除しますか？")) return;
+    wSharedSaves(shared.filter(k => k.id !== id));
+    renderSharedList();
+    renderKomaSaveList();
+    showToast("削除しました");
+  } else {
+    const saved = lSavedKomas();
+    const d = saved.find(k => k.id === id);
+    if(!d) return;
+    if(!confirm("「" + d.name + "」を削除しますか？")) return;
+    wSavedKomas(saved.filter(k => k.id !== id));
+    komaList = lSavedKomas();
+    renderKomaSaveList();
+    showToast("削除しました");
   }
-  const lines = getKomaLines(komaPaletteSrc).filter(l => !l.isSep).map(l => l.text);
-  return lines.join('\n');
 }
 
-function buildKomaCocoforiaJson() {
-  const komaName = (document.getElementById('koma-name')?.value || 'コマ').trim() || 'コマ';
-
-  const labels = currentKoma.labels.filter(l => !l._sep && l.text);
-  const faces = labels.length
-    ? labels.map(lbl => ({ name: lbl.text, type: 'image', url: '' }))
-    : [{ name: 'デフォルト', type: 'image', url: '' }];
-
-  const chatpalette = getKomaChatPaletteText();
-
-  const obj = {
-    kind: 'character',
-    data: {
-      name: komaName,
-      memo: '',
-      initiative: 0,
-      status: [],
-      params: [],
-      commands: chatpalette,
-      faces: faces.map(f => ({ name: f.name, url: f.url }))
-    }
-  };
-
-  return JSON.stringify(obj, null, 2);
-}
-
-function updateKomaJsonPreview() {
-  const el = document.getElementById('koma-export-preview');
-  if (!el) return;
-  el.textContent = buildKomaCocoforiaJson();
-}
-
-function copyKomaJson() {
-  const json = buildKomaCocoforiaJson();
-  // ococフォリアはインデントなしのほうが安全
-  const compact = JSON.stringify(JSON.parse(json));
-  navigator.clipboard.writeText(compact)
-    .then(() => showToast('コマJSONをコピーしました'))
-    .catch(() => showToast('コピー失敗'));
-}
-
-function renderKomaSaveList(){
-  const saved = lSavedKomas();
-
-  function makeKomaCard(d){
-    const dt = new Date(d.savedAt);
-    const ds = dt.getFullYear() + "/" + String(dt.getMonth()+1).padStart(2,"0") + "/" + String(dt.getDate()).padStart(2,"0")
-      + " " + String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0");
-    const lblCount = (d.labels||[]).filter(l => !l._sep && l.text).length;
-    return '<div class="koma-save-card">'
-      + '<div class="koma-save-head"><span class="koma-save-name">' + esc(d.name) + '</span><span class="koma-save-date">' + ds + '</span></div>'
-      + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件 ／ ' + (d.globalAt==="@" ? "@半角" : "＠全角") + '</div>'
-      + '<div class="koma-save-actions">'
-      + '<button class="btn-pri" style="font-size:13px;padding:4px 8px" onclick="loadKomaData(' + d.id + ')">読み込む</button>'
-      + '<button class="btn-sec" style="font-size:13px;padding:4px 7px" onclick="overwriteKomaData(' + d.id + ')">上書き</button>'
-      + '<button class="btn-dng" onclick="deleteKomaData(' + d.id + ')">削除</button>'
-      + '</div></div>';
-  }
-
-  const html = saved.length ? saved.map(makeKomaCard).join("") : '<p class="save-empty">まだ保存されたコマはありません</p>';
-
-  const wrap = document.getElementById("koma-save-list-wrap");
-  if(wrap) wrap.innerHTML = html;
-
-  const wrap2 = document.getElementById("save-koma-list-wrap-personal");
-  if(wrap2){
-    wrap2.innerHTML = saved.length
-      ? '<div style="font-size:12px;font-weight:700;color:var(--text3);margin:8px 0 4px">🎭 コマ（' + saved.length + '件）</div>' + html
-      : '<p class="save-empty" style="margin-top:4px">まだ保存されたコマはありません</p>';
-    wrap2.style.display = (currentSaveFilter === "char") ? "none" : "";
-  }
-}  
-  
-function overwriteKomaData(id){
-  const saved = lSavedKomas();
-  const idx = saved.findIndex(k => k.id === id);
-  if(idx < 0) return;
+function overwriteKomaData(id, isShared){
   const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
   const fresh = {
     _isKoma: true,
@@ -1545,13 +1490,28 @@ function overwriteKomaData(id){
     labels: JSON.parse(JSON.stringify(currentKoma.labels)),
     manualPalette: currentKoma.manualPalette || ""
   };
-  saved[idx] = fresh;
-  wSavedKomas(saved);
-  komaList = lSavedKomas();
-  renderKomaSaveList();
-  showToast("「" + name + "」を上書きしました");
+  if(isShared){
+    const shared = lSharedSaves();
+    const idx = shared.findIndex(k => k.id === id);
+    if(idx < 0) return;
+    shared[idx] = fresh;
+    wSharedSaves(shared);
+    renderSharedList();
+    renderKomaSaveList();
+    showToast("「" + name + "」を上書きしました");
+  } else {
+    const saved = lSavedKomas();
+    const idx = saved.findIndex(k => k.id === id);
+    if(idx < 0) return;
+    saved[idx] = fresh;
+    wSavedKomas(saved);
+    komaList = lSavedKomas();
+    renderKomaSaveList();
+    showToast("「" + name + "」を上書きしました");
+    if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
+  }
 }
-
+  
 // ===== 保存フィルター =====
 function setSaveFilter(f){
   currentSaveFilter = f;
