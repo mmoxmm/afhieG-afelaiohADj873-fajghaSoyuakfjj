@@ -571,10 +571,6 @@ appearance: textfield;min-width:0}
           <button class="inp-clear" onclick="clrInp('koma-name','w-komaname')">×</button>
         </div>
       </div>
-        <button onclick="resetKomaOnly()" 
-        style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;padding:4px 8px;white-space:nowrap;flex-shrink:0">
-  コマリセット
-</button>
       <div style="flex:3;display:flex;align-items:center;gap:5px;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)">
         <span style="font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap">全体</span>
         <div class="koma-at-toggle" style="display:flex;gap:3px">
@@ -588,9 +584,10 @@ appearance: textfield;min-width:0}
     <!-- ラベルリスト -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
   <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em">ラベル一覧</div>
-  <button onclick="clearAllKomaLabels()" 
-          style="background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-size:11px;padding:2px 7px">
-    🗑 全クリア
+   <button onclick="resetKomaOnly()" 
+        style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;padding:4px 8px;white-space:nowrap;flex-shrink:0">
+  🗑️クリア
+</button>
   </button>
 </div>
     <div id="koma-label-rows"></div>
