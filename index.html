@@ -1270,12 +1270,12 @@ function renderKomaPalettePreview(){
 
   renderInto(simpleEl, "simple");
   renderInto(namedEl, "named");
-}
-  // プレビューテキスト更新
+    // プレビューテキスト更新
 const prev = document.getElementById("koma-export-preview");
 if(prev){
   const lines = getKomaLines("simple").filter(l => !l.isSep).map(l => l.text);
   prev.textContent = lines.length ? lines.join("\n") : "（ラベルを追加してください）";
+}
 }
 
 function switchKomaPaletteTab(tab){
@@ -1426,21 +1426,6 @@ function deleteKomaData(id){
   if(wrap2) wrap2.innerHTML = saved.length
     ? '<div style="font-size:12px;font-weight:700;color:var(--text3);margin:8px 0 4px">🎭 コマ（' + saved.length + '件）</div>' + html
     : '';
-}
-  wrap.innerHTML = saved.map(d => {
-    const dt = new Date(d.savedAt);
-    const ds = dt.getFullYear() + "/" + String(dt.getMonth()+1).padStart(2,"0") + "/" + String(dt.getDate()).padStart(2,"0")
-      + " " + String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0");
-    const lblCount = (d.labels||[]).filter(l => !l._sep && l.text).length;
-    return '<div class="koma-save-card">'
-      + '<div class="koma-save-head"><span class="koma-save-name">' + esc(d.name) + '</span><span class="koma-save-date">' + ds + '</span></div>'
-      + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件 ／ ' + (d.globalAt||"@") + ' プレフィックス</div>'
-      + '<div class="koma-save-actions">'
-      + '<button class="btn-pri" style="font-size:13px;padding:4px 8px" onclick="loadKomaData(' + d.id + ')">読み込む</button>'
-      + '<button class="btn-sec" style="font-size:13px;padding:4px 7px" onclick="overwriteKomaData(' + d.id + ')">上書き</button>'
-      + '<button class="btn-dng" onclick="deleteKomaData(' + d.id + ')">削除</button>'
-      + '</div></div>';
-  }).join("");
 }
 
 function overwriteKomaData(id){
@@ -1967,6 +1952,16 @@ buildKomaLabelRows();
 renderKomaPalettePreview();
 const kmta = document.getElementById("koma-manual-textarea");
 if(kmta) kmta.value = "";
+  // コマタブもリセット
+  currentKoma = { id:0, name:"", globalAt:"@", labels:[], manualPalette:"" };
+  komaNxtId = 1;
+  const komaNameEl = document.getElementById("koma-name");
+  if(komaNameEl) komaNameEl.value = "";
+  for(let i = 0; i < 5; i++) currentKoma.labels.push({id: komaNxtId++, text:'', atOverride:null});
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+  const kmta = document.getElementById("koma-manual-textarea");
+  if(kmta) kmta.value = "";
    updateStatDisplay();showToast("リセットしました");
 }
   
