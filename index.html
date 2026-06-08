@@ -2570,17 +2570,6 @@ function bindSaveListEvents(wrap){
     });
   });
 }
-const isRename=fresh.name!==shared[idx].name;
-const u=isRename?fresh:{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()};
-if(isRename)wSharedSaves([u,...shared]);
-else{shared[idx]=u;wSharedSaves(shared);}renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();
-const u=fresh.name===currentSaves[idx].name
-  ?{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()}
-  :fresh;
-const s=fresh.name===currentSaves[idx].name
-  ?[...currentSaves]
-  :[fresh,...currentSaves];
-if(fresh.name===currentSaves[idx].name)s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに上書きしました":"⚠ 同期失敗",ok?"ok":"err");}else{setSyncSt("⚠ トークン未設定（ローカルのみ保存）","err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
 function renderSharedList(){
   const wrap=document.getElementById("shared-list-wrap");
