@@ -304,6 +304,30 @@ appearance: textfield;min-width:0}
 .cons-row{margin-bottom:5px;}
 .spl-row{margin-bottom:5px;}
 .memo-body>div{margin-bottom:5px;}
+/* ===== コマ作成タブ ===== */
+.koma-at-toggle{display:flex;gap:3px;flex-shrink:0}
+.koma-at-btn{background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 6px;line-height:1.4;white-space:nowrap;transition:all .1s;font-family:'SF Mono',Consolas,monospace;font-weight:700}
+.koma-at-btn.active-half{border-color:var(--accent);color:var(--accent);background:rgba(40,85,160,.10)}
+.koma-at-btn.active-full{border-color:var(--warn);color:var(--warn);background:rgba(168,96,16,.10)}
+.koma-label-row{display:flex;align-items:center;gap:4px;margin-bottom:4px;padding:4px 6px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius)}
+.koma-label-text{flex:1;font-size:14px;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;min-width:0}
+.koma-preview-block{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px;max-height:260px;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:12px}
+.koma-preview-line{display:flex;align-items:center;justify-content:space-between;padding:2px 0;line-height:1.6;word-break:break-all;cursor:pointer;border-radius:3px;transition:background .1s}
+.koma-preview-line:hover{background:var(--bg3)}
+.koma-sep-row{display:flex;align-items:center;gap:3px;margin-bottom:4px}
+.koma-sep-inp{flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px}
+.koma-save-card{background:var(--bg2);border-radius:var(--radius-lg);padding:7px;border:0.5px solid var(--border);margin-bottom:4px}
+.koma-save-head{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.koma-save-name{font-size:15px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.koma-save-date{font-size:12px;color:var(--text3);white-space:nowrap}
+.koma-save-actions{display:flex;gap:3px;margin-top:3px}
+.koma-badge{font-size:11px;background:var(--warn);color:#fff;border-radius:8px;padding:1px 5px;font-weight:700;margin-left:3px}
+/* 保存フィルター */
+.save-filter-bar{display:flex;gap:3px;margin-bottom:6px}
+.save-filter-btn{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 10px;transition:all .15s}
+.save-filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+/* 秘匿コマンドブロック */
+.secret-cmd-preview{font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--text2);line-height:1.7;padding:4px 2px}
 </style>
 </head><body>
 <div class="app-header">
@@ -321,10 +345,11 @@ appearance: textfield;min-width:0}
 </div>
 <div class="app-tabs">
   <div class="tabs">
-    <button class="tab active" data-tab="stats">📋 ステータス</button>
-    <button class="tab" data-tab="dice">📝 メモ/履歴</button>
-    <button class="tab" data-tab="kp">🛠 KP支援</button>
-    <button class="tab" data-tab="save">💾 保存</button>
+<button class="tab active" data-tab="stats">📋 ステータス</button>
+<button class="tab" data-tab="koma">🎭 コマ</button>
+<button class="tab" data-tab="dice">📝 メモ/履歴</button>
+<button class="tab" data-tab="kp">🛠 KP支援</button>
+<button class="tab" data-tab="save">💾 保存</button>
   </div>
 </div>
 <div class="app-body"><div class="app-body-inner">
@@ -534,6 +559,108 @@ appearance: textfield;min-width:0}
   </div>
 </div><!-- /tab-stats -->
 
+<!-- KOMA TAB -->
+<div id="tab-koma" style="display:none">
+  <!-- コマ名 & @トグル -->
+  <div class="full-card" style="margin-bottom:5px">
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+      <div style="flex:7;display:flex;align-items:center;gap:4px">
+        <span class="kp-card-title" style="margin-bottom:0;white-space:nowrap">🎭 コマ設定</span>
+        <div class="inp-wrap" id="w-komaname" style="flex:1">
+          <input type="text" id="koma-name" placeholder="コマ名（例：天候・時間帯）">
+          <button class="inp-clear" onclick="clrInp('koma-name','w-komaname')">×</button>
+        </div>
+      </div>
+      <div style="flex:3;display:flex;align-items:center;gap:5px;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)">
+        <span style="font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap">全体</span>
+        <div class="koma-at-toggle" style="display:flex;gap:3px">
+          <button class="koma-at-btn active-half" id="koma-global-half" onclick="setKomaGlobal('@')">@ 半角(履歴なし)</button>
+          <button class="koma-at-btn" id="koma-global-full" onclick="setKomaGlobal('＠')">＠ 全角(履歴あり)</button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ラベルリスト -->
+    <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;margin-bottom:4px">ラベル一覧</div>
+    <div id="koma-label-rows"></div>
+    <div style="display:flex;gap:3px;margin-top:3px">
+      <button class="btn-add" onclick="addKomaLabel()" style="flex:2">＋ ラベル追加</button>
+      <button class="btn-add" onclick="addKomaSep()" style="flex:1;font-size:12px">━ 区切り</button>
+    </div>
+  <!-- パレットプレビュー -->
+  <div class="accordion" id="acc-koma-palette" style="margin-top:12px;margin-bottom:5px">
+    <div class="acc-hd" onclick="toggleAcc('koma-palette')">
+      <div class="acc-hd-left">
+        <span class="acc-title">🎮 パレットプレビュー</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:4px">タップでコピー</span>
+      </div>
+      <span class="acc-arrow open" id="arrow-koma-palette">▼</span>
+    </div>
+    <div class="acc-body open" id="body-koma-palette">
+      <!-- パレットサブタブ -->
+      <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);margin:-7px -7px 6px">
+        <button id="koma-palette-tab-auto" onclick="switchKomaPaletteTab('auto')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px">🔄 自動</button>
+        <button id="koma-palette-tab-manual" onclick="switchKomaPaletteTab('manual')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:5px 3px">✏️ 手書き</button>
+      </div>
+
+      <!-- 自動タブ -->
+      <div id="koma-panel-auto" style="min-height:220px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">シンプル型</div>
+            <div class="koma-preview-block" id="koma-preview-simple"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">コマ名付き型</div>
+            <div class="koma-preview-block" id="koma-preview-named"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:3px">
+          <button class="btn-add" onclick="copyKomaPalette('simple')" style="flex:1">📋 シンプルコピー</button>
+          <button class="btn-add" onclick="copyKomaPalette('named')" style="flex:1">📋 コマ名付きコピー</button>
+          <button class="btn-add" onclick="renderKomaPalettePreview()" style="flex:1;font-size:11px">🔄 更新</button>
+        </div>
+      </div>
+
+      <!-- 手書きタブ -->
+<div id="koma-panel-manual" style="display:none; min-height:220px;">
+  <div style="font-size:11px;color:var(--text3);margin-bottom:4px">
+    <strong style="color:var(--accent)">本番</strong>：出力に反映されます。
+    <strong style="color:var(--text3)">仮置き</strong>：メモ用（出力されません）
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px">📋 本番用</div>
+      <textarea id="koma-manual-textarea" placeholder="@朝&#10;@昼&#10;@夜" style="width:100%;min-height:80px;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:rgba(40,85,160,0.07);border:1px solid rgba(40,85,160,0.35);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
+      <button class="btn-add" onclick="copyKomaManual()" style="margin-top:3px">📋 本番コピー</button>
+      <button class="btn-add" onclick="clearKomaManual()" style="font-size:12px;color:var(--danger)">🗑 本番クリア</button>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">📝 仮置き（出力されません）</div>
+      <textarea id="koma-manual-draft" placeholder="下書き・メモ用スペース..." style="width:100%;min-height:80px;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
+      <button class="btn-add" onclick="copyKomaDraft()" style="margin-top:3px">📋 仮置きコピー</button>
+      <button class="btn-add" onclick="clearKomaDraft()" style="font-size:12px;color:var(--danger)">🗑 仮置きクリア</button>
+    </div>
+  </div>
+</div>
+  </div>
+  </div>
+  
+
+  <!-- 保存・一覧 -->
+  <div class="full-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="kp-card-title" style="margin-bottom:0">💾 コマ保存</div>
+      <button class="btn-pri" onclick="saveKomaData()" style="font-size:13px;padding:5px 10px">💾 保存</button>
+    </div>
+    <div id="koma-save-list-wrap">
+      <p class="save-empty">まだ保存されたコマはありません</p>
+    </div>
+  </div>
+</div>
+<!-- /KOMA TAB -->
+
 <!-- DICE TAB -->
 <div id="tab-dice" style="display:none">
   <div class="full-card" style="margin-bottom:5px">
@@ -676,6 +803,12 @@ appearance: textfield;min-width:0}
     <button class="save-page-btn active" id="spb-personal" onclick="switchSavePage('personal')">👤 個人</button>
     <button class="save-page-btn" id="spb-shared" onclick="switchSavePage('shared')">👥 共有</button>
   </div>
+  <!-- 保存フィルター -->
+<div class="save-filter-bar" id="save-filter-bar-personal">
+  <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
+  <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
+  <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
+</div>
   <div id="save-page-personal">
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
       <div class="acc-hd" onclick="toggleAcc('sync-personal')">
@@ -751,6 +884,33 @@ appearance: textfield;min-width:0}
     <input type="checkbox" id="chk-stat-vars" checked onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
     📊 特性値コマンドを末尾に追加
   </label>
+</div>
+<!-- 秘匿コマンドブロック（個人） -->
+<div style="margin-top:4px">
+  <div class="acc-hd" onclick="toggleAcc('secret-cmd')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
+    <span style="font-size:12px;font-weight:700;color:var(--text2)">🔒 自動追加コマンド詳細設定</span>
+    <span class="acc-arrow" id="arrow-secret-cmd">▼</span>
+  </div>
+  <div class="acc-body" id="body-secret-cmd" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <!-- 特性値プレビュー -->
+      <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+          <input type="checkbox" id="chk-stat-vars2-detail" checked onchange="syncStatVarsCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          📊 特性値コマンド
+        </label>
+        <div class="secret-cmd-preview" id="stat-vars-preview">（特性値を入力すると表示）</div>
+      </div>
+      <!-- 秘匿コマンドプレビュー -->
+      <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+          <input type="checkbox" id="chk-secret-cmd" onchange="syncSecretCmdCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          🔒 秘匿タブ向けコマンド
+        </label>
+        <div class="secret-cmd-preview" id="secret-cmd-preview">（チェックをONにすると表示）</div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
         <div class="export-preview" id="export-preview" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
@@ -842,6 +1002,31 @@ appearance: textfield;min-width:0}
     📊 特性値コマンドを末尾に追加
   </label>
 </div>
+<!-- 秘匿コマンドブロック（共有） -->
+<div style="margin-top:4px">
+  <div class="acc-hd" onclick="toggleAcc('secret-cmd2')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
+    <span style="font-size:12px;font-weight:700;color:var(--text2)">🔒 自動追加コマンド詳細設定</span>
+    <span class="acc-arrow" id="arrow-secret-cmd2">▼</span>
+  </div>
+  <div class="acc-body" id="body-secret-cmd2" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+          <input type="checkbox" id="chk-stat-vars3-detail" checked onchange="syncStatVarsCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          📊 特性値コマンド
+        </label>
+        <div class="secret-cmd-preview" id="stat-vars-preview2">（特性値を入力すると表示）</div>
+      </div>
+      <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+          <input type="checkbox" id="chk-secret-cmd2" onchange="syncSecretCmdCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          🔒 秘匿タブ向けコマンド
+        </label>
+        <div class="secret-cmd-preview" id="secret-cmd-preview2">（チェックをONにすると表示）</div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
         <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
         <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
@@ -857,6 +1042,467 @@ appearance: textfield;min-width:0}
 </div><!-- /app-body-inner -->
 </div><!-- /app-body -->
 <div class="toast" id="toast"></div><script>
+// ===== コマ作成 グローバル変数 =====
+let currentKoma = {
+  id: 0,
+  name: "",
+  globalAt: "@",
+  labels: [],
+  manualPalette: ""
+};
+let komaList = []; // 保存済みコマ一覧
+let komaNxtId = 1;
+let currentSaveFilter = "all"; // "all" | "char" | "koma"
+
+function lSavedKomas(){ try{ return JSON.parse(localStorage.getItem("coc_v4_komas")||"[]"); }catch{ return []; } }
+function wSavedKomas(l){ localStorage.setItem("coc_v4_komas", JSON.stringify(l)); }
+
+// ===== コマ作成 ロジック =====
+function setKomaGlobal(mark){
+  currentKoma.globalAt = mark;
+  document.getElementById("koma-global-half").className = "koma-at-btn" + (mark==="@" ? " active-half" : "");
+  document.getElementById("koma-global-full").className = "koma-at-btn" + (mark==="＠" ? " active-full" : "");
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+}
+
+function getKomaAt(lbl){
+  // 個別オーバーライドがあればそれ、なければ全体設定
+  if(lbl.atOverride) return lbl.atOverride;
+  return currentKoma.globalAt;
+}
+
+function buildKomaLabelRows(){
+  const wrap = document.getElementById("koma-label-rows");
+  if(!wrap) return;
+  wrap.innerHTML = "";
+
+  currentKoma.labels.forEach((lbl, idx) => {
+    // 区切り行
+    if(lbl._sep){
+      const row = document.createElement("div");
+      row.className = "koma-sep-row";
+      row.dataset.dnd = idx;
+      const dh = makeHandle();
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.placeholder = "━━━ 区切り ━━━";
+      inp.value = lbl.label || "";
+      inp.className = "koma-sep-inp";
+      inp.addEventListener("input", e => {
+        currentKoma.labels[idx] = {...currentKoma.labels[idx], label: e.target.value};
+        renderKomaPalettePreview();
+      });
+      const rm = document.createElement("button");
+      rm.className = "btn-remove"; rm.textContent = "×";
+      rm.addEventListener("click", () => {
+        currentKoma.labels.splice(idx, 1);
+        buildKomaLabelRows();
+        renderKomaPalettePreview();
+      });
+      row.append(dh, inp, rm);
+      wrap.appendChild(row);
+      bindDnD(row, currentKoma.labels, idx, () => { buildKomaLabelRows(); renderKomaPalettePreview(); });
+      return;
+    }
+
+    const row = document.createElement("div");
+    row.className = "koma-label-row";
+    row.dataset.dnd = idx;
+
+    const dh = makeHandle();
+
+    // ラベルテキスト入力
+    const inp = document.createElement("input");
+    inp.type = "text";
+    inp.placeholder = "ラベル名（例：朝）";
+    inp.value = lbl.text || "";
+    inp.className = "koma-label-text";
+    inp.addEventListener("input", e => {
+      currentKoma.labels[idx] = {...currentKoma.labels[idx], text: e.target.value};
+      renderKomaPalettePreview();
+    });
+    inp.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  // 次のラベル入力欄を探す
+  const allInps = [...document.querySelectorAll("#koma-label-rows .koma-label-text")];
+  const cur = allInps.indexOf(inp);
+  if (cur >= 0 && cur < allInps.length - 1) {
+    allInps[cur + 1].focus();
+  } else {
+    // 最後の行なら新規追加してフォーカス
+    addKomaLabel();
+    requestAnimationFrame(() => {
+      const updated = [...document.querySelectorAll("#koma-label-rows .koma-label-text")];
+      updated[updated.length - 1]?.focus();
+    });
+  }
+});
+
+    // 個別@トグル
+    const atWrap = document.createElement("div");
+    atWrap.className = "koma-at-toggle";
+
+    const btnDefault = document.createElement("button");
+    btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? " active-half" : "");
+    btnDefault.textContent = "全体";
+    btnDefault.title = "全体設定に従う";
+
+    const btnHalf = document.createElement("button");
+    btnHalf.className = "koma-at-btn" + (lbl.atOverride==="@" ? " active-half" : "");
+    btnHalf.textContent = "@";
+    btnHalf.title = "半角（個別）";
+
+    const btnFull = document.createElement("button");
+    btnFull.className = "koma-at-btn" + (lbl.atOverride==="＠" ? " active-full" : "");
+    btnFull.textContent = "＠";
+    btnFull.title = "全角（個別）";
+
+    // クロージャバグ対策：毎回 currentKoma.labels[idx] を参照
+    btnDefault.addEventListener("click", () => {
+      currentKoma.labels[idx] = {...currentKoma.labels[idx], atOverride: null};
+      buildKomaLabelRows();
+      renderKomaPalettePreview();
+    });
+    btnHalf.addEventListener("click", () => {
+      currentKoma.labels[idx] = {...currentKoma.labels[idx], atOverride: "@"};
+      buildKomaLabelRows();
+      renderKomaPalettePreview();
+    });
+    btnFull.addEventListener("click", () => {
+      currentKoma.labels[idx] = {...currentKoma.labels[idx], atOverride: "＠"};
+      buildKomaLabelRows();
+      renderKomaPalettePreview();
+    });
+
+    atWrap.append(btnDefault, btnHalf, btnFull);
+
+    const rm = document.createElement("button");
+    rm.className = "btn-remove"; rm.textContent = "×";
+    rm.addEventListener("click", () => {
+      currentKoma.labels.splice(idx, 1);
+      buildKomaLabelRows();
+      renderKomaPalettePreview();
+    });
+
+    row.append(dh, inp, atWrap, rm);
+    wrap.appendChild(row);
+    bindDnD(row, currentKoma.labels, idx, () => { buildKomaLabelRows(); renderKomaPalettePreview(); });
+  });
+}
+
+function addKomaLabel(){
+  currentKoma.labels.push({id: komaNxtId++, text: "", atOverride: null});
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+}
+
+function addKomaSep(){
+  currentKoma.labels.push({id: komaNxtId++, _sep: true, label: ""});
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+}
+
+function getKomaLines(type){
+  // type: "simple" | "named"
+  const name = document.getElementById("koma-name")?.value || "";
+  const lines = [];
+  currentKoma.labels.forEach(lbl => {
+    if(lbl._sep){
+      lines.push({isSep: true, text: lbl.label || "━━━━━━━━━━"});
+      return;
+    }
+    if(!lbl.text) return;
+    const at = getKomaAt(lbl);
+    if(type === "simple"){
+      lines.push({text: at + lbl.text});
+    } else {
+      lines.push({text: at + lbl.text + (name ? " 【" + name + "】" : "")});
+    }
+  });
+  return lines;
+}
+
+function renderKomaPalettePreview(){
+  const simpleEl = document.getElementById("koma-preview-simple");
+  const namedEl  = document.getElementById("koma-preview-named");
+  if(!simpleEl || !namedEl) return;
+
+  function renderInto(el, type){
+    el.innerHTML = "";
+    const lines = getKomaLines(type);
+    if(!lines.length){
+      el.innerHTML = '<span style="color:var(--text3);font-size:12px">ラベルを追加してください</span>';
+      return;
+    }
+    lines.forEach(l => {
+      const row = document.createElement("div");
+      if(l.isSep){
+        row.style.cssText = "font-size:11px;color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;";
+        row.textContent = l.text;
+      } else {
+        row.className = "koma-preview-line";
+        row.textContent = l.text;
+        row.addEventListener("click", () => {
+          navigator.clipboard.writeText(l.text).then(() => {
+            row.style.color = "var(--success)";
+            setTimeout(() => row.style.color = "", 700);
+            addHistory(l.text);
+            showToast("コピー: " + l.text);
+          });
+        });
+      }
+      el.appendChild(row);
+    });
+  }
+
+  renderInto(simpleEl, "simple");
+  renderInto(namedEl, "named");
+}
+
+function switchKomaPaletteTab(tab){
+  const tabAuto   = document.getElementById("koma-palette-tab-auto");
+  const tabManual = document.getElementById("koma-palette-tab-manual");
+  const panelAuto   = document.getElementById("koma-panel-auto");
+  const panelManual = document.getElementById("koma-panel-manual");
+  if(!tabAuto) return;
+  tabAuto.style.borderBottomColor   = tab==="auto"   ? "var(--accent)" : "transparent";
+  tabAuto.style.color               = tab==="auto"   ? "var(--text)"   : "var(--text3)";
+  tabManual.style.borderBottomColor = tab==="manual" ? "var(--accent)" : "transparent";
+  tabManual.style.color             = tab==="manual" ? "var(--text)"   : "var(--text3)";
+  panelAuto.style.display   = tab==="auto"   ? "" : "none";
+  panelManual.style.display = tab==="manual" ? "" : "none";
+
+if(tab==="manual"){
+  const ta = document.getElementById("koma-manual-textarea");
+  if(ta){
+    ta.value = currentKoma.manualPalette || "";
+    autoExpand(ta);
+    ta.oninput = e => {
+      currentKoma.manualPalette = e.target.value;
+      autoExpand(ta);
+    };  // ← ここでta.oninputを閉じる
+  }
+
+  // ここから仮置きの初期化（taのifブロックの外）
+  const komaDraft = document.getElementById('koma-manual-draft');
+  if(komaDraft){
+    let d = '';
+    try { d = localStorage.getItem('coc_koma_manual_draft') || ''; } catch {}
+    komaDraft.value = d;
+    autoExpand(komaDraft);
+    komaDraft.oninput = e => {
+      try { localStorage.setItem('coc_koma_manual_draft', e.target.value); } catch {}
+      autoExpand(komaDraft);
+    };
+  }
+}
+}
+
+function copyKomaPalette(type){
+  const lines = getKomaLines(type).filter(l => !l.isSep).map(l => l.text);
+  if(!lines.length){ showToast("ラベルがありません"); return; }
+  const txt = lines.join("\n");
+  navigator.clipboard.writeText(txt).then(() => showToast("コピーしました（" + lines.length + "行）"));
+}
+
+function copyKomaManual(){
+  const txt = (currentKoma.manualPalette || "").trim();
+  if(!txt){ showToast("手書きが空です"); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast("手書きパレットをコピーしました"));
+}
+
+function clearKomaManual(){
+  if(!confirm("手書きパレットをクリアしますか？")) return;
+  currentKoma.manualPalette = "";
+  const ta = document.getElementById("koma-manual-textarea");
+  if(ta) ta.value = "";
+  showToast("クリアしました");
+}
+
+function copyKomaDraft(){
+  const el = document.getElementById('koma-manual-draft');
+  const txt = el ? el.value.trim() : '';
+  if(!txt){ showToast('仮置きが空です'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('仮置きをコピーしました'));
+}
+function clearKomaDraft(){
+  if(!confirm('仮置きをクリアしますか？')) return;
+  const el = document.getElementById('koma-manual-draft');
+  if(el) el.value = '';
+  try { localStorage.removeItem('coc_koma_manual_draft'); } catch {}
+  showToast('仮置きをクリアしました');
+}
+
+// ===== コマ保存・一覧 =====
+function saveKomaData(){
+  const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
+  const d = {
+    _isKoma: true,
+    id: Date.now(),
+    name,
+    savedAt: new Date().toISOString(),
+    globalAt: currentKoma.globalAt,
+    labels: JSON.parse(JSON.stringify(currentKoma.labels)),
+    manualPalette: currentKoma.manualPalette || ""
+  };
+  const saved = lSavedKomas();
+  wSavedKomas([d, ...saved]);
+  komaList = lSavedKomas();
+  renderKomaSaveList();
+  showToast("「" + name + "」を保存しました");
+}
+
+function loadKomaData(id){
+  const saved = lSavedKomas();
+  const d = saved.find(k => k.id === id);
+  if(!d) return;
+  currentKoma.globalAt = d.globalAt || "@";
+  currentKoma.labels = JSON.parse(JSON.stringify(d.labels || []));
+  currentKoma.manualPalette = d.manualPalette || "";
+  komaNxtId = currentKoma.labels.length
+    ? Math.max(...currentKoma.labels.map(l => Number(l.id)||0)) + 1
+    : 1;
+  const nameEl = document.getElementById("koma-name");
+  if(nameEl){ nameEl.value = d.name === "（名称なし）" ? "" : d.name; }
+  watchInp(nameEl, document.getElementById("w-komaname"));
+  setKomaGlobal(currentKoma.globalAt);
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+  showToast("「" + d.name + "」を読み込みました");
+}
+
+function deleteKomaData(id){
+  const saved = lSavedKomas();
+  const d = saved.find(k => k.id === id);
+  if(!d) return;
+  if(!confirm("「" + d.name + "」を削除しますか？")) return;
+  wSavedKomas(saved.filter(k => k.id !== id));
+  komaList = lSavedKomas();
+  renderKomaSaveList();
+  showToast("削除しました");
+}
+
+function renderKomaSaveList(){
+  const wrap = document.getElementById("koma-save-list-wrap");
+  if(!wrap) return;
+  const saved = lSavedKomas();
+  if(!saved.length){
+    wrap.innerHTML = '<p class="save-empty">まだ保存されたコマはありません</p>';
+    return;
+  }
+  wrap.innerHTML = saved.map(d => {
+    const dt = new Date(d.savedAt);
+    const ds = dt.getFullYear() + "/" + String(dt.getMonth()+1).padStart(2,"0") + "/" + String(dt.getDate()).padStart(2,"0")
+      + " " + String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0");
+    const lblCount = (d.labels||[]).filter(l => !l._sep && l.text).length;
+    return '<div class="koma-save-card">'
+      + '<div class="koma-save-head"><span class="koma-save-name">' + esc(d.name) + '</span><span class="koma-save-date">' + ds + '</span></div>'
+      + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件 ／ ' + (d.globalAt||"@") + ' プレフィックス</div>'
+      + '<div class="koma-save-actions">'
+      + '<button class="btn-pri" style="font-size:13px;padding:4px 8px" onclick="loadKomaData(' + d.id + ')">読み込む</button>'
+      + '<button class="btn-sec" style="font-size:13px;padding:4px 7px" onclick="overwriteKomaData(' + d.id + ')">上書き</button>'
+      + '<button class="btn-dng" onclick="deleteKomaData(' + d.id + ')">削除</button>'
+      + '</div></div>';
+  }).join("");
+}
+
+function overwriteKomaData(id){
+  const saved = lSavedKomas();
+  const idx = saved.findIndex(k => k.id === id);
+  if(idx < 0) return;
+  const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
+  const fresh = {
+    _isKoma: true,
+    id,
+    name,
+    savedAt: new Date().toISOString(),
+    globalAt: currentKoma.globalAt,
+    labels: JSON.parse(JSON.stringify(currentKoma.labels)),
+    manualPalette: currentKoma.manualPalette || ""
+  };
+  saved[idx] = fresh;
+  wSavedKomas(saved);
+  komaList = lSavedKomas();
+  renderKomaSaveList();
+  showToast("「" + name + "」を上書きしました");
+}
+
+// ===== 保存フィルター =====
+function setSaveFilter(f){
+  currentSaveFilter = f;
+  ["all","char","koma"].forEach(k => {
+    document.getElementById("sfb-"+k)?.classList.toggle("active", k===f);
+  });
+  if(currentSavePage === "personal"){
+    renderSaveList();
+    renderKomaSaveList();
+    // コマリストの表示切り替え
+    const komaWrap = document.getElementById("koma-save-list-wrap");
+    if(komaWrap) komaWrap.style.display = f==="char" ? "none" : "";
+  }
+  // キャラリストの表示切り替え
+  const charWrap = document.getElementById("save-list-wrap");
+  if(charWrap) charWrap.style.display = f==="koma" ? "none" : "";
+}
+
+// ===== 秘匿コマンド =====
+function syncSecretCmdCheck(el){
+  const checked = el.checked;
+  ["chk-secret-cmd","chk-secret-cmd2"].forEach(id => {
+    const el2 = document.getElementById(id);
+    if(el2) el2.checked = checked;
+  });
+  updateSecretCmdPreview();
+  updateExport();
+}
+
+function syncStatVarsCheck(el){
+  const checked = el.checked;
+  // 既存のchk-stat-vars / chk-stat-vars2 も連動
+  ["chk-stat-vars","chk-stat-vars2","chk-stat-vars2-detail","chk-stat-vars3-detail"].forEach(id => {
+    const el2 = document.getElementById(id);
+    if(el2) el2.checked = checked;
+  });
+  updateSecretCmdPreview();
+  updateExport();
+}
+
+function getSecretCmdLines(){
+  const name = document.getElementById("npc-name")?.value || "キャラ名";
+  return [
+    "[ " + name + " ] SAN : X → X",
+    "[ " + name + " ] 幸運 : X → X",
+    "[ " + name + " ] MP : X → X",
+    "[ " + name + " ] HP : X → X"
+  ];
+}
+
+function updateSecretCmdPreview(){
+  const on = document.getElementById("chk-secret-cmd")?.checked || false;
+  const lines = on ? getSecretCmdLines() : [];
+  ["secret-cmd-preview","secret-cmd-preview2"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = on ? lines.join("\n") : "（チェックをONにすると表示）";
+  });
+
+  // 特性値プレビュー更新
+  const statOn = document.getElementById("chk-stat-vars2-detail")?.checked ?? true;
+  const statLines = [];
+  STATS.forEach(({key, label}) => {
+    if((vals[key]||0) > 0) statLines.push("CC<={" + key.toUpperCase() + "} 【" + key.toUpperCase() + "】");
+  });
+  customFields.forEach(cf => {
+    if(cf.label && cf.value) statLines.push("CC<={" + cf.label + "} 【" + cf.label + "】");
+  });
+  ["stat-vars-preview","stat-vars-preview2"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = statOn && statLines.length ? statLines.join("\n") : "（特性値を入力すると表示）";
+  });
+}
 const STATS=[{key:"str",label:"STR",jp:"筋力"},{key:"con",label:"CON",jp:"体力"},{key:"siz",label:"SIZ",jp:"体格"},{key:"int",label:"INT",jp:"知性"},{key:"pow",label:"POW",jp:"精神力"},{key:"dex",label:"DEX",jp:"敏捷"},{key:"app",label:"APP",jp:"外見"},{key:"edu",label:"EDU",jp:"教育"}];
 const MYTHOS_BEINGS=[{name:"クトゥルフ（直視）",s:"1",f:"1d10+1"},{name:"クトゥルフ（知識のみ）",s:"1",f:"6"},{name:"ハスター",s:"1",f:"6"},{name:"ナイアルラトホテップ",s:"1",f:"8"},{name:"シュブ＝ニグラス",s:"1",f:"8"},{name:"アザトース（遠望）",s:"1",f:"1d6+1"},{name:"ダゴン",s:"1",f:"6"},{name:"ディープ・ワン（初遭遇）",s:"0",f:"2"},{name:"ディープ・ワン（群れ）",s:"1",f:"1d4+1"},{name:"ショゴス",s:"1",f:"8"},{name:"ビャーカー",s:"0",f:"1d3+1"},{name:"ナイトガウント",s:"0",f:"1d4+1"},{name:"フライング・ポリープ",s:"1",f:"1d6+1"},{name:"ハウンド・オブ・ティンダロス",s:"1",f:"1d6+1"},{name:"ミ＝ゴ",s:"0",f:"1d4+1"},{name:"老いたる者",s:"0",f:"2"},{name:"グール（初遭遇）",s:"0",f:"1d4"},{name:"ゾンビ（初遭遇）",s:"0",f:"1d4+1"},{name:"ゴースト（初遭遇）",s:"1",f:"1d3+1"},{name:"神話的な儀式（目撃）",s:"1",f:"1d4+2"},{name:"邪神の書物（初読）",s:"1",f:"4"},{name:"神話の真実を知った",s:"1",f:"6"}];
 const SPELL_REF=[{name:"コンタクト・ディープ・ワン",cost:"1MP",san:"0/0",sanF:"0",time:"1時間",desc:"深きものと接触し意思疎通を図る。"},{name:"コンタクト・クトゥルフ",cost:"10MP",san:"1d6/1d10",sanF:"1d10",time:"1時間以上",desc:"ルルイエにてクトゥルフと接触を試みる。"},{name:"サモン・ビャーカー",cost:"5MP",san:"0/1d3",sanF:"1d3",time:"1ラウンド",desc:"ビャーカー1体を召喚。"},{name:"サモン・ナイトガウント",cost:"3MP",san:"0/1d4",sanF:"1d4",time:"1ラウンド",desc:"ナイトガウントを召喚。"},{name:"クリエイト・ゾンビ",cost:"1MP+1SAN",san:"1/1d3",sanF:"1d3",time:"1時間",desc:"死体をゾンビとして再活性化。"},{name:"ファイアー",cost:"2MP",san:"0/0",sanF:"0",time:"1ラウンド",desc:"炎の弾。1d6ダメージ。"},{name:"ウォード",cost:"3MP",san:"0/0",sanF:"0",time:"1時間",desc:"区域を霊的に守護する結界。"},{name:"エルダー・サイン（刻印）",cost:"5MP",san:"1/1d4",sanF:"1d4",time:"1日",desc:"強力な封印の印を刻む。"},{name:"精神支配",cost:"5MP",san:"1/1d6",sanF:"1d6",time:"持続",desc:"対象を術者の意のままに操る。"}];
@@ -888,6 +1534,7 @@ let currentSavePage="personal";
 let sharedToken="",sharedGistId="";
 const L_SAVES="coc_v4_saves",L_KEY="coc_gist_token",L_GIST="coc_gist_id",L_GIST_TS="coc_gist_token_ts",L_STOKEN="coc_shared_token",L_SGIST="coc_shared_gist_id";
 function renderPalettePreview(){
+   if(!document.getElementById("body-palette")?.classList.contains("open")) return;
   const skEl=document.getElementById("palette-sortable-sk");
   const atkEl=document.getElementById("palette-sortable-atk");
   if(!skEl||!atkEl)return;
@@ -1400,7 +2047,12 @@ function buildCocoforiaJson(){
   const memoLines=memoList
     .filter(m=>(m.label||m.content)&&(m.dest==="memo"||m.dest==="both"))
     .map(m=>(m.label?"  "+m.label+"　":"")+m.content);
-
+// 秘匿タブ向けコマンド
+  const addSecretCmd = document.getElementById("chk-secret-cmd")?.checked || false;
+  if(addSecretCmd){
+    cmdLines.push("＝＝＝ 秘匿管理 ＝＝＝");
+    getSecretCmdLines().forEach(l => cmdLines.push(l));
+  }
   cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
   while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
   return JSON.stringify({
@@ -1409,7 +2061,15 @@ function buildCocoforiaJson(){
   });
 }
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
-function updateExport(){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";const el=document.getElementById("export-preview");if(el)el.textContent=txt;const el2=document.getElementById("export-preview2");if(el2)el2.textContent=txt;}
+function updateExport(){
+  const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);
+  const txt=any?(exportMode==="json"?buildCocoforiaJson():buildCocoforiaText()):"\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";
+  const el=document.getElementById("export-preview");
+  if(el)el.textContent=txt;
+  const el2=document.getElementById("export-preview2");
+  if(el2)el2.textContent=txt;
+  updateSecretCmdPreview();
+}
 function copyExport(){if(exportMode==="json"){const any=STATS.some(s=>(vals[s.key]||0)>0)||getEff("hp")>0||atkList.some(a=>a.name)||skList.some(s=>s.name&&(s.val||0)>0);if(!any){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const obj=JSON.parse(buildCocoforiaJson());navigator.clipboard.writeText(JSON.stringify(obj)).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}else{const el=document.getElementById("export-preview");const txt=el?.textContent;if(!txt||txt==="\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09"){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}}
 function downloadExport(){const el=document.getElementById("export-preview");if(!el)return;const txt=el.textContent;if(!txt||txt==="\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09"){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const name=(document.getElementById("npc-name").value||"npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g,"_");const blob=new Blob([txt],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+".json";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);showToast("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f");}
 function renderHpList(){const w=document.getElementById("hp-list");if(!hpList.length){w.innerHTML='<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPC\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>';return;}w.innerHTML=hpList.map((h,i)=>{const p=Math.max(0,h.cur/h.max*100),c=p>50?"#1a9e72":p>25?"#d09028":"#c03030";return'<div class="hp-item"><span class="hp-name">'+esc(h.name)+'</span><div class="hp-bar-wrap"><div class="hp-bar" style="width:'+p+'%;background:'+c+'"></div></div><span class="hp-nums" style="color:'+c+'">'+h.cur+'/'+h.max+'</span><div class="hp-btns"><button class="hp-btn" data-i="'+i+'" data-d="-1">\u2212</button><button class="hp-btn" data-i="'+i+'" data-d="1">\uff0b</button><button class="hp-btn" data-i="'+i+'" data-d="del" style="color:var(--text3)">\u2715</button></div></div>';}).join("");w.querySelectorAll(".hp-btn").forEach(btn=>btn.addEventListener("click",e=>{const i=+e.currentTarget.dataset.i,d=e.currentTarget.dataset.d;if(d==="del")hpList.splice(i,1);else hpList[i].cur=Math.max(0,Math.min(hpList[i].max,hpList[i].cur+parseInt(d)));renderHpList();saveKp();}));}
@@ -1795,7 +2455,24 @@ function updDiceMemoBadge() {
 }
 
 function switchKpTab(t){document.querySelectorAll("[data-kp]").forEach(b=>b.classList.toggle("active",b.dataset.kp===t));["combat","san","mythos","madness","misc"].forEach(id=>{const el=document.getElementById("kp-"+id);if(el)el.style.display=id===t?"":"none";});}
-function switchTab(t){document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));["stats","dice","kp","save"].forEach(id=>{const el=document.getElementById("tab-"+id);if(el)el.style.display=id===t?"":"none";});if(t==="save"){if(currentSavePage==="personal"){renderSaveList();updateExport();}else if(currentSavePage==="shared"){renderSharedList();updateExport();}}if(t==="dice"){renderHistory();buildDiceMemoRows();}}
+function switchTab(t){
+  
+  document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  ["stats","dice","kp","save","koma"].forEach(id=>{
+    const el=document.getElementById("tab-"+id);
+    if(el)el.style.display=id===t?"":"none";
+  });
+  if(t==="save"){
+    if(currentSavePage==="personal"){renderSaveList();updateExport();}
+    else if(currentSavePage==="shared"){renderSharedList();updateExport();}
+  }
+  if(t==="dice"){renderHistory();buildDiceMemoRows();}
+  if(t==="koma"){
+    buildKomaLabelRows();
+    renderKomaPalettePreview();
+    renderKomaSaveList();
+  }
+}
 document.addEventListener("DOMContentLoaded",function(){
   document.querySelectorAll(".tab[data-tab]").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
   document.getElementById("btn-add-atk").addEventListener("click",()=>{atkList.push({id:nxtId++,name:"",pct:0,dmg:"",note:"",useDB:false});buildAtkRows();openAcc("atk");});
@@ -1846,6 +2523,24 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-shared-download2")?.addEventListener("click",downloadFromShared);
   // diceメモ初期化
   buildDiceMemoRows();
+  // コマ作成タブ初期化
+  watchInp(document.getElementById("koma-name"), document.getElementById("w-komaname"));
+  document.getElementById("koma-name")?.addEventListener("input", () => {
+    renderKomaPalettePreview();
+    updateSecretCmdPreview();
+  });
+  if(currentKoma.labels.length === 0){
+  for(let i = 0; i < 5; i++){
+    currentKoma.labels.push({id: komaNxtId++, text: '', atOverride: null});
+  }
+}
+  buildKomaLabelRows();
+  renderKomaPalettePreview();
+  renderKomaSaveList();
+  komaList = lSavedKomas();
+
+  // 秘匿コマンド初期化
+  updateSecretCmdPreview();
 });
 loadMemoLocal();
 buildStatRows();
@@ -1871,6 +2566,33 @@ const savedSToken=localStorage.getItem(L_STOKEN)||"";
 if(savedSToken){const inp=document.getElementById("shared-token-input");if(inp)inp.value=savedSToken;applySharedKey(savedSToken);}
 const savedSGist=localStorage.getItem(L_SGIST)||"";
 if(savedSGist){sharedGistId=savedSGist;updSharedGistDisplay();const inp=document.getElementById("shared-gist-id-input");if(inp)inp.value=savedSGist;document.getElementById("btn-shared-upload").disabled=!savedSToken;document.getElementById("btn-shared-download").disabled=!savedSToken;}
+// コマ作成タブ：保存タブのGist同期に統合
+// gistSet / gistGet を拡張してkomasも含める
+const _origGistSet = gistSet;
+gistSet = async function(payload){
+  payload.komas = lSavedKomas();
+  return _origGistSet(payload);
+};
+
+const _origGistGet = gistGet;
+gistGet = async function(){
+  const data = await _origGistGet();
+  if(!data) return data;
+  // リモートのkomasをマージ
+  const remoteKomas = data.komas || [];
+  if(remoteKomas.length){
+    const localKomas = lSavedKomas();
+    const merged = [...remoteKomas];
+    localKomas.forEach(l => {
+      if(!merged.find(r => String(r.id)===String(l.id))) merged.push(l);
+    });
+    merged.sort((a,b) => b.id - a.id);
+    wSavedKomas(merged);
+    komaList = merged;
+    renderKomaSaveList();
+  }
+  return data;
+};
 </script>
 </body>
 </html>
