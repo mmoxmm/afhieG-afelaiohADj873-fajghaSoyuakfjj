@@ -327,7 +327,7 @@ appearance: textfield;min-width:0}
 .save-filter-btn{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 10px;transition:all .15s}
 .save-filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
 /* 秘匿コマンドブロック */
-.secret-cmd-preview{font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--text2);line-height:1.7;padding:4px 2px}
+.secret-cmd-preview{font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--text2);line-height:1.7;padding:4px 2px;white-space:pre-wrap}
 </style>
 </head><body>
 <div class="app-header">
@@ -882,7 +882,7 @@ appearance: textfield;min-width:0}
 <!-- 秘匿コマンドブロック（個人） -->
 <div style="margin-top:4px;grid-column:1/-1;">
   <div class="acc-hd" onclick="toggleAcc('secret-cmd')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
-    <span style="font-size:12px;font-weight:700;color:var(--text2)">🔒 自動追加コマンド詳細設定</span>
+    <span style="font-size:12px;font-weight:700;color:var(--text2)">💡 自動追加コマンド詳細設定</span>
     <span class="acc-arrow" id="arrow-secret-cmd">▼</span>
   </div>
   <div class="acc-body" id="body-secret-cmd" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
@@ -993,7 +993,7 @@ appearance: textfield;min-width:0}
 <!-- 秘匿コマンドブロック（共有） -->
 <div style="margin-top:4px;grid-column:1/-1;">
   <div class="acc-hd" onclick="toggleAcc('secret-cmd2')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
-    <span style="font-size:12px;font-weight:700;color:var(--text2)">🔒 自動追加コマンド詳細設定</span>
+    <span style="font-size:12px;font-weight:700;color:var(--text2)">💡 自動追加コマンド詳細設定</span>
     <span class="acc-arrow" id="arrow-secret-cmd2">▼</span>
   </div>
   <div class="acc-body" id="body-secret-cmd2" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
