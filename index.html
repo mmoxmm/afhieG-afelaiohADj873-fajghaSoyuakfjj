@@ -1370,6 +1370,24 @@ function saveKomaData(dest){
     manualPalette: currentKoma.manualPalette || ""
   };
 
+  if(dest === "shared"){
+    const shared = lSharedSaves();
+    wSharedSaves([d, ...shared]);
+    showToast("「" + name + "」を共有に保存中…");
+    sharedGistSet({saves: lSharedSaves()}).then(ok => {
+      showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
+      renderSharedList();
+      renderKomaSaveList();
+    });
+  } else {
+    const saved = lSavedKomas();
+    wSavedKomas([d, ...saved]);
+    komaList = lSavedKomas();
+    renderKomaSaveList();
+    showToast("「" + name + "」を個人に保存しました");
+    if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
+  }
+
   if(sharedToken){
     // 個人/共有を選ぶオーバーレイ
     const overlay = document.createElement("div");
