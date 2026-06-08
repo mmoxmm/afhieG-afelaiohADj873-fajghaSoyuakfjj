@@ -569,11 +569,11 @@ appearance: textfield;min-width:0}
         <div class="inp-wrap" id="w-komaname" style="flex:1">
           <input type="text" id="koma-name" placeholder="コマ名（例：天候・時間帯）">
           <button class="inp-clear" onclick="clrInp('koma-name','w-komaname')">×</button>
-          <button onclick="resetKomaOnly()" 
+        </div>
+        <button onclick="resetKomaOnly()" 
         style="background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-size:12px;padding:4px 8px;white-space:nowrap;flex-shrink:0">
   コマリセット
 </button>
-        </div>
       </div>
       <div style="flex:3;display:flex;align-items:center;gap:5px;padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border)">
         <span style="font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap">全体</span>
@@ -1942,16 +1942,6 @@ buildCustomFieldRows();
   const ta=document.getElementById("manual-palette-textarea");
   if(ta)ta.value="";
   buildConsumableRows();clearParse();buildSkRows();buildAtkRows();buildSplRows();buildMemoRows();
-  // コマタブもリセット
-currentKoma = { id:0, name:"", globalAt:"@", labels:[], manualPalette:"" };
-komaNxtId = 1;
-const komaNameEl = document.getElementById("koma-name");
-if(komaNameEl) komaNameEl.value = "";
-for(let i = 0; i < 5; i++) currentKoma.labels.push({id: komaNxtId++, text:'', atOverride:null});
-buildKomaLabelRows();
-renderKomaPalettePreview();
-const kmta = document.getElementById("koma-manual-textarea");
-if(kmta) kmta.value = "";
   // コマタブもリセット
   currentKoma = { id:0, name:"", globalAt:"@", labels:[], manualPalette:"" };
   komaNxtId = 1;
