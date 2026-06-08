@@ -1144,32 +1144,32 @@ function updateKomaJsonPreview() {
   if (!el) return;
   const name = document.getElementById('koma-name')?.value || 'コマ';
   const paletteText = getKomaPaletteText();
+  const faces = currentKoma.labels
+    .filter(l => !l._sep && l.text)
+    .map(l => ({ label: l.text, iconUrl: null }));
   const obj = {
     kind: 'character',
-    data: {
-      name,
-      commands: paletteText,
-      memo: '',
-      status: [],
-      params: []
-    }
+    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces }
   };
   el.textContent = JSON.stringify(obj);
 }
-
+  
 function copyKomaJson() {
   const name = document.getElementById('koma-name')?.value || 'コマ';
   const paletteText = getKomaPaletteText();
   if (!paletteText) { showToast('ラベルがありません'); return; }
+  const faces = currentKoma.labels
+    .filter(l => !l._sep && l.text)
+    .map(l => ({ label: l.text, iconUrl: null }));
   const obj = {
     kind: 'character',
-    data: { name, commands: paletteText, memo: '', status: [], params: [] }
+    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces }
   };
   navigator.clipboard.writeText(JSON.stringify(obj))
     .then(() => showToast('JSONをコピーしました'))
     .catch(() => showToast('コピー失敗'));
 }
-
+  
 function lSavedKomas(){ try{ return JSON.parse(localStorage.getItem("coc_v4_komas")||"[]"); }catch{ return []; } }
 function wSavedKomas(l){ localStorage.setItem("coc_v4_komas", JSON.stringify(l)); }
 
@@ -1449,7 +1449,7 @@ function clearKomaDraft(){
 }
 
 // ===== コマ保存・一覧 =====
-function saveKomaData(dest){
+function saveKomaData(dest) {
   const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
   const d = {
     _isKoma: true,
@@ -1461,23 +1461,29 @@ function saveKomaData(dest){
     manualPalette: currentKoma.manualPalette || ""
   };
 
-  if(dest === "shared"){
+  if (dest === "shared") {
     const shared = lSharedSaves();
     wSharedSaves([d, ...shared]);
+    renderSharedList();
+    renderKomaSaveList();
     showToast("「" + name + "」を共有に保存中…");
-    sharedGistSet({saves: lSharedSaves()}).then(ok => {
-      showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
-      renderSharedList();
-      renderKomaSaveList();
-    });
+    if (sharedToken) {
+      sharedGistSet({ saves: lSharedSaves() }).then(ok => {
+        showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
+      });
+    }
   } else {
     const saved = lSavedKomas();
     wSavedKomas([d, ...saved]);
     komaList = lSavedKomas();
     renderKomaSaveList();
+    renderSaveList();
     showToast("「" + name + "」を個人に保存しました");
-    if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
+    if (syncToken) {
+      gistSet({ saves: lSaves(), komas: lSavedKomas(), mythos: { beings: customBeings, spells: customSpells } });
+    }
   }
+}
 
   if(sharedToken){
     // 個人/共有を選ぶオーバーレイ
