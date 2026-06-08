@@ -656,16 +656,25 @@ appearance: textfield;min-width:0}
   
 <!-- コマ出力ブロック -->
 <div class="full-card" style="margin-bottom:5px">
-  <div class="kp-card-title">📤 パレット出力</div>
-  <div style="display:flex;gap:4px;margin-bottom:5px">
-    <button onclick="copyKomaPalette('simple')" class="export-btn" style="flex:1;font-size:13px">📋 シンプル型コピー</button>
-    <button onclick="copyKomaPalette('named')" class="export-btn" style="flex:1;font-size:13px">📋 コマ名付きコピー</button>
+  <div class="kp-card-title">📤 ococフォリア コマJSON出力</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:6px;line-height:1.5">
+    ラベルを立ち絵・差分として追加し、チャットパレットに選択した内容を入れたJSONを出力します。
   </div>
-  <div class="export-preview" id="koma-export-preview" onclick="copyKomaPalette('simple')" 
-       title="タップでシンプルコピー" style="min-height:60px"></div>
-  <div class="export-note">※ 「シンプル型」は @ラベル のみ。「コマ名付き」は @ラベル 【コマ名】 の形式。</div>
+  <!-- チャットパレット反映元選択 -->
+  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
+  <div style="display:flex;gap:3px;margin-bottom:8px;background:var(--bg2);border-radius:var(--radius-lg);padding:3px" id="koma-palette-src-bar">
+    <button class="save-page-btn active" id="kpsrc-simple" onclick="setKomaPaletteSrc('simple')">🔄 自動シンプル</button>
+    <button class="save-page-btn" id="kpsrc-named" onclick="setKomaPaletteSrc('named')">🔄 自動タイトル付き</button>
+    <button class="save-page-btn" id="kpsrc-manual" onclick="setKomaPaletteSrc('manual')">✏️ 手書き</button>
+  </div>
+  <div class="export-preview" id="koma-export-preview" onclick="copyKomaJson()"
+       title="タップでコピー" style="min-height:60px;font-size:11px"></div>
+  <div style="display:flex;gap:4px;margin-top:5px">
+    <button onclick="copyKomaJson()" class="export-btn" style="flex:1">📋 JSONコピー</button>
+    <button onclick="updateKomaJsonPreview()" class="export-btn sec" style="flex:1">🔄 更新</button>
+  </div>
+  <div class="export-note" style="margin-top:4px">※ ococフォリアで ⌘+V（Ctrl+V）で貼り付けてコマを作成。立ち絵にラベルが差分として追加されます。</div>
 </div>
-
   
   <!-- 保存・一覧 -->
   <div class="full-card">
@@ -1269,11 +1278,7 @@ function renderKomaPalettePreview(){
   renderInto(simpleEl, "simple");
   renderInto(namedEl, "named");
     // プレビューテキスト更新
-const prev = document.getElementById("koma-export-preview");
-if(prev){
-  const lines = getKomaLines("simple").filter(l => !l.isSep).map(l => l.text);
-  prev.textContent = lines.length ? lines.join("\n") : "（ラベルを追加してください）";
-}
+updateKomaJsonPreview();
 }
 
 function switchKomaPaletteTab(tab){
@@ -1396,6 +1401,76 @@ function deleteKomaData(id){
   renderKomaSaveList();
   showToast("削除しました");
 }
+  // ===== コマJSON出力 =====
+let komaPaletteSrc = 'simple'; // 'simple' | 'named' | 'manual'
+
+function setKomaPaletteSrc(src) {
+  komaPaletteSrc = src;
+  ['simple','named','manual'].forEach(k => {
+    document.getElementById('kpsrc-' + k)?.classList.toggle('active', k === src);
+  });
+  updateKomaJsonPreview();
+}
+
+function getKomaChatPaletteText() {
+  if (komaPaletteSrc === 'manual') {
+    return (currentKoma.manualPalette || '').trim();
+  }
+  const lines = getKomaLines(komaPaletteSrc).filter(l => !l.isSep).map(l => l.text);
+  return lines.join('\n');
+}
+
+function buildKomaCocoforiaJson() {
+  const komaName = (document.getElementById('koma-name')?.value || 'コマ').trim() || 'コマ';
+
+  // ラベルから差分リストを生成
+  const labels = currentKoma.labels.filter(l => !l._sep && l.text);
+  const images = labels.map(lbl => ({
+    name: lbl.text,
+    type: 'image',
+    url: ''
+  }));
+  // 差分がなければデフォルト1枚
+  if (!images.length) {
+    images.push({ name: 'デフォルト', type: 'image', url: '' });
+  }
+
+  const chatpalette = getKomaChatPaletteText();
+
+  const obj = {
+    kind: 'character',
+    data: {
+      name: komaName,
+      memo: '',
+      initiative: 0,
+      status: [],
+      params: [],
+      commands: chatpalette,
+      // ococフォリア コマ用フィールド
+      faces: images.map((img, i) => ({
+        name: img.name,
+        url: img.url
+      }))
+    }
+  };
+
+  return JSON.stringify(obj, null, 2);
+}
+
+function updateKomaJsonPreview() {
+  const el = document.getElementById('koma-export-preview');
+  if (!el) return;
+  el.textContent = buildKomaCocoforiaJson();
+}
+
+function copyKomaJson() {
+  const json = buildKomaCocoforiaJson();
+  // ococフォリアはインデントなしのほうが安全
+  const compact = JSON.stringify(JSON.parse(json));
+  navigator.clipboard.writeText(compact)
+    .then(() => showToast('コマJSONをコピーしました'))
+    .catch(() => showToast('コピー失敗'));
+}
   function renderKomaSaveList(){
   const saved = lSavedKomas();
   const html = saved.length
@@ -1406,7 +1481,7 @@ function deleteKomaData(id){
         const lblCount = (d.labels||[]).filter(l => !l._sep && l.text).length;
         return '<div class="koma-save-card">'
           + '<div class="koma-save-head"><span class="koma-save-name">' + esc(d.name) + '</span><span class="koma-save-date">' + ds + '</span></div>'
-          + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件 ／ ' + (d.globalAt==="@" ? "@半角（履歴なし）" : "＠全角（履歴あり）") '
+          + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件 ／ ' + (d.globalAt==="@" ? "@半角（履歴なし）" : "＠全角（履歴あり）") + '</div>'
           + '<div class="koma-save-actions">'
           + '<button class="btn-pri" style="font-size:13px;padding:4px 8px" onclick="loadKomaData(' + d.id + ')">読み込む</button>'
           + '<button class="btn-sec" style="font-size:13px;padding:4px 7px" onclick="overwriteKomaData(' + d.id + ')">上書き</button>'
@@ -2587,6 +2662,7 @@ document.addEventListener("DOMContentLoaded",function(){
   watchInp(document.getElementById("koma-name"), document.getElementById("w-komaname"));
   document.getElementById("koma-name")?.addEventListener("input", () => {
     renderKomaPalettePreview();
+    updateKomaJsonPreview();
     updateSecretCmdPreview();
   });
   if(currentKoma.labels.length === 0){
