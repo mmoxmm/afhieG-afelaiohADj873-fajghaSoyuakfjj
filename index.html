@@ -1486,41 +1486,6 @@ function clearKomaDraft(){
   }
 } 
   
-    function doSaveKoma(dest){
-      document.body.removeChild(overlay);
-      if(dest === "personal"){
-        const saved = lSavedKomas();
-        wSavedKomas([d, ...saved]);
-        komaList = lSavedKomas();
-        renderKomaSaveList();
-        showToast("「" + name + "」を個人に保存しました");
-        if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
-      } else {
-        // 共有：リモートにマージ保存
-        const shared = lSharedSaves();
-        wSharedSaves([d, ...shared]);
-        showToast("「" + name + "」を共有に保存中…");
-        sharedGistSet({saves: lSharedSaves()}).then(ok => {
-          showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
-          renderSharedList();
-        });
-      }
-    }
-
-    document.getElementById("ksp-personal").addEventListener("click", () => doSaveKoma("personal"));
-    document.getElementById("ksp-shared").addEventListener("click", () => doSaveKoma("shared"));
-    document.getElementById("ksp-cancel").addEventListener("click", () => document.body.removeChild(overlay));
-  } else {
-    // 共有トークン未設定→個人のみ
-    const saved = lSavedKomas();
-    wSavedKomas([d, ...saved]);
-    komaList = lSavedKomas();
-    renderKomaSaveList();
-    showToast("「" + name + "」を保存しました");
-    if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
-  }
-}
-  
 function loadKomaData(id, isShared){
   const list = isShared ? lSharedSaves() : lSavedKomas();
   const d = list.find(k => k.id === id);
