@@ -833,12 +833,12 @@ appearance: textfield;min-width:0}
     <button class="save-page-btn active" id="spb-personal" onclick="switchSavePage('personal')">👤 個人</button>
     <button class="save-page-btn" id="spb-shared" onclick="switchSavePage('shared')">👥 共有</button>
   </div>
-  <!-- 保存フィルター -->
-<div id="save-filter-bar-personal"></div>
   <div id="save-page-personal">
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
-      <div class="acc-hd" onclick="toggleAcc('sync-personal')">
-        <div class="acc-hd-left"><span class="acc-title">☁️ 개인 클라우드 동기화（GitHub Gist）</span><span id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span></div>
+      <div class="acc-hd" style="display:flex;align-items:center;gap:5px;padding:5px 9px;cursor:pointer;user-select:none;min-height:34px" onclick="toggleAcc('sync-personal')">
+        <div class="acc-hd-left" style="flex:1"><span class="acc-title">☁️ 개인 클라우드 동기화（GitHub Gist）</span><span id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span></div>
+        <button class="btn-sync" id="btn-upload" style="font-size:12px;padding:4px 8px;background:var(--success)" disabled onclick="event.stopPropagation();uploadToCloud()">⬆️ 上書き</button>
+        <button class="btn-sync" id="btn-download" style="font-size:12px;padding:4px 8px" disabled onclick="event.stopPropagation();downloadFromCloud()">⬇️ 取得</button>
         <span class="acc-arrow" id="arrow-sync-personal">▼</span>
       </div>
       <div class="acc-body" id="body-sync-personal">
@@ -848,8 +848,6 @@ appearance: textfield;min-width:0}
           <div class="inp-wrap" id="w-synckey"><input type="text" id="sync-key-input" placeholder="ghp_xxxx..." autocomplete="off" spellcheck="false"><button class="inp-clear" onclick="clrInp('sync-key-input','w-synckey')">×</button></div>
           <button class="btn-sync" id="btn-apply-key">設定</button>
         </div>
-        <button id="btn-upload" style="display:none" disabled></button>
-        <button id="btn-download" style="display:none" disabled></button>
         <div style="font-size:11px;color:var(--text3);margin-top:4px" id="gist-id-display"></div>
         <div style="font-size:12px;font-weight:700;color:var(--text2);margin:6px 0 2px">② 個人Gist ID（トークンを変えても同じデータを使う場合）</div>
         <div class="sync-key-row" style="margin-bottom:2px">
@@ -857,17 +855,6 @@ appearance: textfield;min-width:0}
           <button class="btn-sync" id="btn-set-pgist">確定</button>
         </div>
         <div class="sync-status" id="sync-status"></div>
-      </div>
-    </div>
-    <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;align-items:center;justify-content:space-between">
-      <div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px">
-        <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
-        <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
-        <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
-      </div>
-      <div style="display:flex;gap:4px">
-        <button class="btn-sync" id="btn-upload" style="background:var(--success);font-size:13px;padding:5px 10px" disabled onclick="uploadToCloud()">⬆️ 全てを削除し現リストで上書き</button>
-        <button class="btn-sync" id="btn-download" style="font-size:13px;padding:5px 10px" disabled onclick="downloadFromCloud()">⬇️ 取得</button>
       </div>
     </div>
     <div class="accordion" style="margin-top:0;margin-bottom:5px">
@@ -947,15 +934,18 @@ appearance: textfield;min-width:0}
           <button class="export-btn" onclick="copyExport()">📋 コピー</button>
           <button class="export-btn sec" id="btn-dl-json" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button>
         </div>
-        <div class="export-note">※ JSON은 「📋 복사」 → 코코포리아 화면에서 ⌘+V로 붙여넣기.<br>※ 메모의 「메모」 = 캐릭터 메모란, 「파레」 = 채팅 팔레트, 「없음」 = 출력하지 않음.</div>
       </div>
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
     <button class="btn-pri" id="btn-save-current" style="flex:2;min-width:0">💾 저장（클라우드 동기화）</button>
     <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled>⬇️ 클라우드에서 가져오기</button>
   </div>
+    <div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">
+      <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
+      <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
+      <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
+    </div>
     <div id="save-list-wrap"></div>
-    <div id="save-koma-list-wrap-personal" style="margin-top:8px"></div>
   </div>
   <div id="save-page-shared" style="display:none">
     <div class="accordion" style="margin-top:0;margin-bottom:5px;border-color:rgba(26,158,114,.4)">
@@ -2442,18 +2432,7 @@ buildCustomFieldRows();
   updateStatDisplay();reExpandAllMemos();
 }
 function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const isKoma = !!sv._isKoma; const typeEmoji = isKoma ? '🎭 ' : '👤 '; const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head">'+'<div class="save-card-name">'+typeEmoji+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
-function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();
-const isRename=fresh.name!==shared[idx].name;
-const u=isRename?fresh:{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()};
-if(isRename)wSharedSaves([u,...shared]);
-else{shared[idx]=u;wSharedSaves(shared);}renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();
-const u=fresh.name===currentSaves[idx].name
-  ?{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()}
-  :fresh;
-const s=fresh.name===currentSaves[idx].name
-  ?[...currentSaves]
-  :[fresh,...currentSaves];
-if(fresh.name===currentSaves[idx].name)s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("同期中…","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"✓ クラウドに上書きしました":"⚠ 同期失敗",ok?"ok":"err");}else{setSyncSt("⚠ トークン未設定（ローカルのみ保存）","err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
+function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(sv._isKoma){loadKomaData(sv.id,isShared);}else{loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");}});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const isRename=fresh.name!==shared[idx].name;const u=isRename?fresh:{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()};if(isRename)wSharedSaves([u,...shared]);else{shared[idx]=u;wSharedSaves(shared);}renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const u=fresh.name===currentSaves[idx].name?{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()}:fresh;const s=fresh.name===currentSaves[idx].name?[...currentSaves]:[fresh,...currentSaves];if(fresh.name===currentSaves[idx].name)s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}else{setSyncSt("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u4fdd\u5b58\uff09","err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const sv=shared.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;wSharedSaves(shared.filter(s=>s.id!==+btn.dataset.id));renderSharedList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
 function renderSharedList(){
   const wrap=document.getElementById("shared-list-wrap");
@@ -2696,8 +2675,6 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("personal-gist-id-input").addEventListener("keydown",e=>{if(e.key==="Enter")setPersonalGistId();});
   watchInp(document.getElementById("personal-gist-id-input"),document.getElementById("w-pgist"));
   document.getElementById("sync-key-input").addEventListener("keydown",e=>{if(e.key==="Enter")applyKey(document.getElementById("sync-key-input").value);});
-  document.getElementById("btn-upload").addEventListener("click",uploadToCloud);
-  document.getElementById("btn-download").addEventListener("click",downloadFromCloud);
   document.getElementById("btn-download2").addEventListener("click",downloadFromCloud);
   document.getElementById("btn-apply-stoken").addEventListener("click",()=>applySharedKey(document.getElementById("shared-token-input").value));
   document.getElementById("shared-token-input").addEventListener("keydown",e=>{if(e.key==="Enter")applySharedKey(document.getElementById("shared-token-input").value);});
