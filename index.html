@@ -1449,7 +1449,8 @@ function clearKomaDraft(){
 }
 
 // ===== コマ保存・一覧 =====
-function saveKomaData(dest) {
+
+ function saveKomaData(dest) {
   const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
   const d = {
     _isKoma: true,
@@ -1483,20 +1484,8 @@ function saveKomaData(dest) {
       gistSet({ saves: lSaves(), komas: lSavedKomas(), mythos: { beings: customBeings, spells: customSpells } });
     }
   }
-}
-
-  if(sharedToken){
-    // 個人/共有を選ぶオーバーレイ
-    const overlay = document.createElement("div");
-    overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";
-    overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)">'
-      + '<div style="font-size:15px;font-weight:700;margin-bottom:12px;text-align:center">コマの保存先</div>'
-      + '<button id="ksp-personal" style="width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">👤 個人に保存</button>'
-      + '<button id="ksp-shared" style="width:100%;background:var(--success);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">👥 共有に保存</button>'
-      + '<button id="ksp-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">キャンセル</button>'
-      + '</div>';
-    document.body.appendChild(overlay);
-
+} 
+  
     function doSaveKoma(dest){
       document.body.removeChild(overlay);
       if(dest === "personal"){
