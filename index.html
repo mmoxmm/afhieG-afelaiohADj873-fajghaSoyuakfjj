@@ -658,11 +658,32 @@ appearance: textfield;min-width:0}
 <div class="full-card" style="margin-bottom:5px">
   <div class="kp-card-title">📤 ココフォリア コマJSON出力</div>
     <!-- チャットパレット反映元選択 -->
-  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
-  <div style="display:flex;gap:3px;margin-bottom:8px;background:var(--bg2);border-radius:var(--radius-lg);padding:3px" id="koma-palette-src-bar">
-    <button class="save-page-btn active" id="kpsrc-simple" onclick="setKomaPaletteSrc('simple')">🔄 自動シンプル</button>
-    <button class="save-page-btn" id="kpsrc-named" onclick="setKomaPaletteSrc('named')">🔄 自動タイトル付き</button>
-    <button class="save-page-btn" id="kpsrc-manual" onclick="setKomaPaletteSrc('manual')">✏️ 手書き</button>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
+      <div style="display:flex;flex-direction:column;gap:2px;background:var(--bg2);border-radius:var(--radius-lg);padding:3px" id="koma-palette-src-bar">
+        <button class="save-page-btn active" id="kpsrc-simple" onclick="setKomaPaletteSrc('simple')">🔄 自動シンプル</button>
+        <button class="save-page-btn" id="kpsrc-named" onclick="setKomaPaletteSrc('named')">🔄 自動タイトル付き</button>
+        <button class="save-page-btn" id="kpsrc-manual" onclick="setKomaPaletteSrc('manual')">✏️ 手書き</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px">⚙️ コマ設定</div>
+      <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+          <input type="checkbox" id="koma-hide-status" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          ステータスを非公開
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+          <input type="checkbox" id="koma-hide-chat" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          発言時に表示しない
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+          <input type="checkbox" id="koma-invisible" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          キャラ一覧に表示しない
+        </label>
+      </div>
+    </div>
   </div>
   <div class="export-preview" id="koma-export-preview" onclick="copyKomaJson()"
        title="タップでコピー" style="min-height:60px;font-size:11px"></div>
@@ -876,7 +897,7 @@ appearance: textfield;min-width:0}
             6판으로 출력
           </label>
         </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:4px 0">
   <div id="chk-manual-wrap" style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
     <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
@@ -901,6 +922,21 @@ appearance: textfield;min-width:0}
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
       <input type="radio" name="cmd-order" id="chk-order-atk-first" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
       ⚔️ 攻撃 → 🎯 技能
+    </label>
+  </div>
+  <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ コマ設定</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="checkbox" id="chk-hide-status" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      ステータスを非公開
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="checkbox" id="chk-hide-chat-char" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      発言時に表示しない
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="checkbox" id="chk-invisible" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      キャラ一覧に表示しない
     </label>
   </div>
 <!-- 秘匿コマンドブロック（個人） -->
@@ -1110,11 +1146,16 @@ function renderKomaSaveList() {
       + " " + String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
     const isShared = !!shared.find(s => s.id === k.id);
     const badge = isShared ? '<span class="shared-badge">共有</span>' : '';
-    const lblCount = (k.labels || []).filter(l => !l._sep && l.text).length;
-    return '<div class="koma-save-card">'
+    const lbls = (k.labels || []).filter(l => !l._sep && l.text);
+    const preview = lbls.map(l => l.text).join('・');
+    const bgStyle = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
+    return '<div class="koma-save-card" style="' + bgStyle + '">'
       + '<div class="koma-save-head"><span class="koma-save-name">' + esc(k.name) + badge + '</span>'
       + '<span class="koma-save-date">' + ds + '</span></div>'
-      + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px">ラベル ' + lblCount + '件</div>'
+      + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px;display:flex;align-items:center;gap:4px;overflow:hidden">'
+      + '<span style="flex-shrink:0;font-weight:700">ラベル ' + lbls.length + '件</span>'
+      + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' + esc(preview) + '</span></div>'
+      + '<div class="koma-save-actions">'
       + '<div class="koma-save-actions">'
       + '<button class="btn-pri btn-koma-load" style="font-size:13px;padding:4px 8px" data-id="' + k.id + '" data-shared="' + (isShared?1:0) + '">読み込む</button>'
       + '<button class="btn-sec btn-koma-update" style="font-size:13px;padding:4px 7px" data-id="' + k.id + '" data-shared="' + (isShared?1:0) + '">上書き</button>'
@@ -1149,9 +1190,12 @@ function updateKomaJsonPreview() {
   const faces = currentKoma.labels
     .filter(l => !l._sep && l.text)
     .map(l => ({ label: l.text, iconUrl: null }));
+  const isHideStatus = document.getElementById('koma-hide-status')?.checked || false;
+  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked || false;
+  const invisible = document.getElementById('koma-invisible')?.checked || false;
   const obj = {
     kind: 'character',
-    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces }
+    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces, isHideStatus, isHideChatCharacter, invisible }
   };
   el.textContent = JSON.stringify(obj);
 }
@@ -1163,9 +1207,12 @@ function copyKomaJson() {
   const faces = currentKoma.labels
     .filter(l => !l._sep && l.text)
     .map(l => ({ label: l.text, iconUrl: null }));
+  const isHideStatus = document.getElementById('koma-hide-status')?.checked || false;
+  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked || false;
+  const invisible = document.getElementById('koma-invisible')?.checked || false;
   const obj = {
     kind: 'character',
-    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces }
+    data: { name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces, isHideStatus, isHideChatCharacter, invisible }
   };
   navigator.clipboard.writeText(JSON.stringify(obj))
     .then(() => showToast('JSONをコピーしました'))
@@ -1624,12 +1671,13 @@ function clearAllKomaLabels(){
 }
   
 function getSecretCmdLines(){
-  const name = document.getElementById("npc-name")?.value || "キャラ名";
+  const name = document.getElementById("npc-name")?.value || "{名前}";
   return [
-    "[ " + name + " ] SAN : X → X",
-    "[ " + name + " ] 幸運 : X → X",
-    "[ " + name + " ] MP : X → X",
-    "[ " + name + " ] HP : X → X",
+    "[ " + name + " ] HP : n → n",
+    "[ " + name + " ] MP : n → n",
+    "[ " + name + " ] SAN : n → n",
+    "[ " + name + " ] 幸運 : n → n",
+    "[ " + name + " ] 暴走率 : n → n",
     "[ " + name + " ] FREE : X → X"
   ];
 }
@@ -2199,7 +2247,14 @@ function buildCocoforiaJson(){
 
   if(!useManualOnly){
     const lines=getPaletteLines(true);  // ← true を渡す
-    lines.forEach(l=>{
+    lines.forEach((l,idx)=>{
+      // 区切り行の前後に空行
+      if(l.isSep){
+        if(idx>0&&cmdLines.length&&cmdLines[cmdLines.length-1]!=='') cmdLines.push('');
+        cmdLines.push(l.text||'━━━━━━━━━━');
+        cmdLines.push('');
+        return;
+      }
       if(l.sub){
         cmdLines.push(l.text);
         cmdLines.push("// "+l.sub);
@@ -2223,8 +2278,10 @@ function buildCocoforiaJson(){
         if(v>0) statVarLines.push("CC<="+(useV6?Math.round(v/5):v)+" 【"+key.toUpperCase()+"】");
       });
       if(statVarLines.length){
+        cmdLines.push('');
         cmdLines.push("＝＝＝ ステータス ＝＝＝");
         statVarLines.forEach(l=>cmdLines.push(l));
+        cmdLines.push('');
       }
       customFields.forEach(cf=>{
         if(cf.label&&cf.value) cmdLines.push("CC<={"+cf.label+"} 【"+cf.label+"】");
@@ -2243,14 +2300,19 @@ function buildCocoforiaJson(){
 // 秘匿タブ向けコマンド
   const addSecretCmd = document.getElementById("chk-secret-cmd")?.checked || false;
   if(addSecretCmd){
-    cmdLines.push("＝＝＝ 秘匿管理 ＝＝＝");
+    cmdLines.push("");
+    cmdLines.push("＝＝＝ 秘匈管理 ＝＝＝");
     getSecretCmdLines().forEach(l => cmdLines.push(l));
+    cmdLines.push("");
   }
   cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
   while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
+  const isHideStatus = document.getElementById("chk-hide-status")?.checked || false;
+  const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || false;
+  const invisible = document.getElementById("chk-invisible")?.checked || false;
   return JSON.stringify({
     kind:"character",
-    data:{name,status,params,initiative:useV6?Math.round((vals.dex||0)/5):(vals.dex||0),commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
+    data:{name,status,params,initiative:useV6?Math.round((vals.dex||0)/5):(vals.dex||0),commands:cmdLines.join("\n"),memo:memoLines.join("\n"),isHideStatus,isHideChatCharacter,invisible}
   });
 }
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
@@ -2808,7 +2870,8 @@ if(savedSGist){sharedGistId=savedSGist;updSharedGistDisplay();const inp=document
 // gistSet / gistGet を拡張してkomasも含める
 const _origGistSet = gistSet;
 gistSet = async function(payload){
-  payload.komas = lSavedKomas();
+  // コマはlSaves()に統合済みなのでkomas不要
+  delete payload.komas;
   return _origGistSet(payload);
 };
 
