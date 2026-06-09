@@ -1507,7 +1507,7 @@ function clearKomaDraft(){
 } 
   
 function loadKomaData(id, isShared){
-  const list = isShared ? lSharedSaves() : lSavedKomas();
+  const list = isShared ? lSharedSaves() : lSaves();
   const d = list.find(k => k.id === id);
   if(!d) return;
   currentKoma.globalAt = d.globalAt || "@";
@@ -1538,12 +1538,12 @@ function deleteKomaData(id, isShared){
     renderKomaSaveList();
     showToast("削除しました");
   } else {
-    const saved = lSavedKomas();
-    const d = saved.find(k => k.id === id);
+    const d = lSaves().find(k => k.id === id);
     if(!d) return;
     if(!confirm("「" + d.name + "」を削除しますか？")) return;
-    wSavedKomas(saved.filter(k => k.id !== id));
-    komaList = lSavedKomas();
+    writeSaves(lSaves().filter(k => k.id !== id));
+    currentSaves = lSaves();
+    renderSaveList();
     renderKomaSaveList();
     showToast("削除しました");
   }
