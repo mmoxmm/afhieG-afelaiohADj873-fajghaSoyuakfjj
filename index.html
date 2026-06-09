@@ -1470,15 +1470,13 @@ function clearKomaDraft(){
       });
     }
   } else {
-    const saved = lSavedKomas();
-    wSavedKomas([d, ...saved]);
-    komaList = lSavedKomas();
-    renderKomaSaveList();
+    writeSaves([d, ...lSaves()]);
     currentSaves = lSaves();
     renderSaveList();
+    renderKomaSaveList();
     showToast("「" + name + "」を個人に保存しました");
     if (syncToken) {
-      gistSet({ saves: lSaves(), komas: lSavedKomas(), mythos: { beings: customBeings, spells: customSpells } });
+      gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
     }
   }
 } 
@@ -1565,16 +1563,7 @@ function setSaveFilter(f){
   ["all","char","koma"].forEach(k => {
     document.getElementById("sfb-"+k)?.classList.toggle("active", k===f);
   });
-  if(currentSavePage === "personal"){
-    renderSaveList();
-    renderKomaSaveList();
-    // コマリストの表示切り替え
-    const komaWrap = document.getElementById("koma-save-list-wrap");
-    if(komaWrap) komaWrap.style.display = f==="char" ? "none" : "";
-  }
-  // キャラリストの表示切り替え
-  const charWrap = document.getElementById("save-list-wrap");
-  if(charWrap) charWrap.style.display = f==="koma" ? "none" : "";
+  if(currentSavePage === "personal") renderSaveList();
 }
 
 // ===== 秘匿コマンド =====
@@ -1614,7 +1603,8 @@ function getSecretCmdLines(){
     "[ " + name + " ] SAN : X → X",
     "[ " + name + " ] 幸運 : X → X",
     "[ " + name + " ] MP : X → X",
-    "[ " + name + " ] HP : X → X"
+    "[ " + name + " ] HP : X → X",
+    "[ " + name + " ] FREE : X → X"
   ];
 }
 
@@ -2044,6 +2034,7 @@ function fullReset(){
   atkList=[{id:0,name:"",pct:0,dmg:"",note:"",useDB:false}];
   splList=[{id:0,name:"",mp:"",note:""}];
   memoList=[{id:0,label:"",content:"",dest:"cmd"}];
+  saveMemoLocal();
   consumables=[];nxtId=1;
 customFields = [{id:'cf1',label:'',value:''},{id:'cf2',label:'',value:''},{id:'cf3',label:'',value:''},{id:'cf4',label:'',value:''}];
 saveCustomFields();
@@ -2228,7 +2219,7 @@ function buildCocoforiaJson(){
   while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
   return JSON.stringify({
     kind:"character",
-    data:{name,status,params,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
+    data:{name,status,params,initiative:vals.dex||0,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
   });
 }
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
@@ -2356,11 +2347,7 @@ async function uploadToCloud(){
     showToast("アップロード失敗");
   }
 }
-async function downloadFromCloud(){if(!syncToken){showToast("\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044");return;}setSyncSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026","ing");const data=await gistGet();if(!data){setSyncSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057","err");showToast("\u30c7\u30fc\u30bf\u306a\u3057");return;}const remote=data.saves||[];if(remote.length){const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>String(r.id)===String(l.id)))merged.push(l);});merged.sort((a,b)=>b.id-a.id);currentSaves=merged;wSaves(merged);setSyncSt("\u2713 \u5b8c\u4e86\uff08"+merged.length+"\u4ef6\uff09","ok");showToast(merged.length+"\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f");if(currentSavePage==="personal")renderSaveList();}else{
-  setSyncSt("⚠ 클라우드에 데이터가 없습니다","err");
-  showToast("⚠ 클라우드 저장 목록이 비어 있습니다");
-}
-const rm=data.mythos;if(rm){if(rm.beings)rm.beings.forEach(rb=>{if(!customBeings.find(lb=>lb.name===rb.name))customBeings.push(rb);});if(rm.spells)rm.spells.forEach(rs=>{if(!customSpells.find(ls=>ls.name===rs.name))customSpells.push(rs);});saveCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();}}
+async function downloadFromCloud(){if(!syncToken){showToast("トークンを設定してください");return;}setSyncSt("ダウンロード中…","ing");setGlobalSt("ダウンロード中…","ing");const data=await gistGet();if(!data){setSyncSt("⚠ データなし","err");setGlobalSt("⚠ データなし","err");showToast("データなし");return;}const remote=data.saves||[];if(remote.length){const local=lSaves(),merged=[...remote];local.forEach(l=>{if(!merged.find(r=>String(r.id)===String(l.id)))merged.push(l);});merged.sort((a,b)=>b.id-a.id);currentSaves=merged;wSaves(merged);setSyncSt("✓ 完了（"+merged.length+"件）","ok");setGlobalSt("✓ 完了（"+merged.length+"件）","ok");showToast(merged.length+"件取得しました");if(currentSavePage==="personal"){renderSaveList();renderKomaSaveList();}}else{setSyncSt("⚠ クラウドにデータがありません","err");setGlobalSt("⚠ クラウドにデータがありません","err");showToast("⚠ クラウドにデータがありません");}const rm=data.mythos;if(rm){if(rm.beings)rm.beings.forEach(rb=>{if(!customBeings.find(lb=>lb.name===rb.name))customBeings.push(rb);});if(rm.spells)rm.spells.forEach(rs=>{if(!customSpells.find(ls=>ls.name===rs.name))customSpells.push(rs);});saveCustomLocal();renderBeingList();buildSpellRef();populateSanSelects();}}
 function lSharedSaves(){try{return JSON.parse(localStorage.getItem("coc_v4_shared_saves")||"[]");}catch{return[];}}
 function wSharedSaves(l){localStorage.setItem("coc_v4_shared_saves",JSON.stringify(l));}
 async function applySharedKey(token){token=(token||"").trim();if(!token){setSharedSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044","err");return;}sharedToken=token;localStorage.setItem(L_STOKEN,token);document.getElementById("btn-shared-upload").disabled=false;document.getElementById("btn-shared-download").disabled=false;const sd2=document.getElementById("btn-shared-download2");if(sd2)sd2.disabled=false;setSharedSt("\u78ba\u8a8d\u4e2d\u2026","ing");try{const r=await fetch("https://api.github.com/user",{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});if(r.ok){const u=await r.json();setSharedSt("\u2713 \u8a8d\u8a3c OK\uff08"+u.login+"\uff09","ok");sharedGistId=localStorage.getItem(L_SGIST)||"";updSharedGistDisplay();}else{sharedToken="";setSharedSt("\u26a0 \u8a8d\u8a3c\u5931\u6557","err");document.getElementById("btn-shared-upload").disabled=true;document.getElementById("btn-shared-download").disabled=true;}}catch{sharedToken="";setSharedSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc","err");}}
@@ -2433,7 +2420,7 @@ buildCustomFieldRows();
 }
 function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const isKoma = !!sv._isKoma; const typeEmoji = isKoma ? '🎭 ' : '👤 '; const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head">'+'<div class="save-card-name">'+typeEmoji+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
 function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(sv._isKoma){loadKomaData(sv.id,isShared);}else{loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");}});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const isRename=fresh.name!==shared[idx].name;const u=isRename?fresh:{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()};if(isRename)wSharedSaves([u,...shared]);else{shared[idx]=u;wSharedSaves(shared);}renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const u=fresh.name===currentSaves[idx].name?{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()}:fresh;const s=fresh.name===currentSaves[idx].name?[...currentSaves]:[fresh,...currentSaves];if(fresh.name===currentSaves[idx].name)s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}else{setSyncSt("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u4fdd\u5b58\uff09","err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){showSharedDeleteDialog(+btn.dataset.id);}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
-function renderSaveList(){const wrap=document.getElementById("save-list-wrap"),saves=currentSaves;if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
+function renderSaveList(){const wrap=document.getElementById("save-list-wrap");if(!wrap)return;const f=currentSaveFilter||"all";const saves=currentSaves.filter(sv=>f==="char"?!sv._isKoma:f==="koma"?!!sv._isKoma:true);if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
 function showSharedDeleteDialog(id){
   const shared=lSharedSaves();
   const sv=shared.find(s=>s.id===id);
