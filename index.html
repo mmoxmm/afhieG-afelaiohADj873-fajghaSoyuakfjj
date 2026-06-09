@@ -867,12 +867,15 @@ appearance: textfield;min-width:0}
           <button onclick="setExportMode('json')" id="exp-btn-json" class="export-btn" style="font-size:12px">채팅 팔레트 JSON</button>
           <button onclick="setExportMode('text')" id="exp-btn-text" class="export-btn sec" style="font-size:12px">채팅용 텍스트</button>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
             <input type="checkbox" id="chk-both-db" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
             DB 포함/미포함 둘 다 생성
           </label>
-          <span style="font-size:11px;color:var(--text3)">공격란 DB 체크 행에만 적용</span>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+            <input type="checkbox" id="chk-use-v6" onchange="syncUseV6Check(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            6판으로 출력
+          </label>
         </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
   <div id="chk-manual-wrap" style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
@@ -983,10 +986,14 @@ appearance: textfield;min-width:0}
           <button onclick="setExportMode('json')" class="export-btn" style="font-size:12px" id="exp-btn-json2">キャラパレJSON</button>
           <button onclick="setExportMode('text')" class="export-btn sec" style="font-size:12px" id="exp-btn-text2">チャット用テキスト</button>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin:4px 0;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25);flex-wrap:wrap">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
             <input type="checkbox" id="chk-both-db2" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
             DB 포함/미포함 둘 다 생성
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+            <input type="checkbox" id="chk-use-v6-2" onchange="syncUseV6Check(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            6판으로 출력
           </label>
         </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
@@ -1043,7 +1050,7 @@ appearance: textfield;min-width:0}
 </div>
 </div>
         <div class="export-preview" id="export-preview2" onclick="copyExport()" title="タップでコピー">（스테이터스 탭 내용을 입력하면 출력됩니다）</div>
-        <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button></div>
+        <div class="export-btn-row"><button class="export-btn" onclick="copyExport()">📋 コピー</button><button class="export-btn sec" id="btn-dl-json2" onclick="downloadExport()" style="display:none">⬇️ JSONダウンロード</button></div>
       </div>
     </div>
     <div class="save-toolbar" style="flex-wrap:wrap;gap:3px">
@@ -1212,7 +1219,14 @@ function buildKomaLabelRows(){
         buildKomaLabelRows();
         renderKomaPalettePreview();
       });
-      row.append(dh, inp, rm);
+      const cpSep = document.createElement("button");
+      cpSep.className = "row-copy-btn"; cpSep.textContent = "📋";
+      cpSep.title = "区切り線をコピー";
+      cpSep.addEventListener("click", () => {
+        const t = inp.value || "━━━━━━━━━━";
+        navigator.clipboard.writeText(t).then(() => { cpSep.textContent = "✓"; setTimeout(() => cpSep.textContent = "📋", 900); });
+      });
+      row.append(dh, inp, cpSep, rm);
       wrap.appendChild(row);
       bindDnD(row, currentKoma.labels, idx, () => { buildKomaLabelRows(); renderKomaPalettePreview(); });
       return;
@@ -1298,7 +1312,17 @@ function buildKomaLabelRows(){
       renderKomaPalettePreview();
     });
 
-    row.append(dh, inp, atWrap, rm);
+    const cpLbl = document.createElement("button");
+    cpLbl.className = "row-copy-btn"; cpLbl.textContent = "📋";
+    cpLbl.title = "@付きでコピー";
+    cpLbl.addEventListener("click", () => {
+      if(!currentKoma.labels[idx].text) return;
+      const at = getKomaAt(currentKoma.labels[idx]);
+      const name = document.getElementById("koma-name")?.value || "";
+      const t = at + currentKoma.labels[idx].text + (name ? " 【" + name + "】" : "");
+      navigator.clipboard.writeText(t).then(() => { cpLbl.textContent = "✓"; setTimeout(() => cpLbl.textContent = "📋", 900); addHistory(t); showToast("コピー: " + t); });
+    });
+    row.append(dh, inp, atWrap, cpLbl, rm);
     wrap.appendChild(row);
     bindDnD(row, currentKoma.labels, idx, () => { buildKomaLabelRows(); renderKomaPalettePreview(); });
   });
@@ -1325,10 +1349,11 @@ function getKomaLines(type){
       return;
     }
     if(!lbl.text) return;
+    const at = getKomaAt(lbl);
     if(type === "simple"){
-      lines.push({text: "#" + lbl.text});
+      lines.push({text: at + lbl.text});
     } else {
-      lines.push({text: "#" + lbl.text + (name ? " 【" + name + "】" : "")});
+      lines.push({text: at + lbl.text + (name ? " 【" + name + "】" : "")});
     }
   });
   return lines;
@@ -1410,10 +1435,11 @@ if(tab==="manual"){
 }
 
 function copyKomaPalette(type){
-  const lines = getKomaLines(type).filter(l => !l.isSep).map(l => l.text);
-  if(!lines.length){ showToast("ラベルがありません"); return; }
-  const txt = lines.join("\n");
-  navigator.clipboard.writeText(txt).then(() => showToast("コピーしました（" + lines.length + "行）"));
+  const all = getKomaLines(type);
+  if(!all.length){ showToast("ラベルがありません"); return; }
+  const txt = all.map(l => l.text).join("\n");
+  const cnt = all.filter(l => !l.isSep).length;
+  navigator.clipboard.writeText(txt).then(() => showToast("コピーしました（" + cnt + "行）"));
 }
 
 function copyKomaManual(){
@@ -1545,12 +1571,13 @@ function overwriteKomaData(id, isShared){
     renderKomaSaveList();
     showToast("「" + name + "」を上書きしました");
   } else {
-    const saved = lSavedKomas();
-    const idx = saved.findIndex(k => k.id === id);
+    const allSaves = lSaves();
+    const idx = allSaves.findIndex(k => k.id === id);
     if(idx < 0) return;
-    saved[idx] = fresh;
-    wSavedKomas(saved);
-    komaList = lSavedKomas();
+    allSaves[idx] = fresh;
+    writeSaves(allSaves);
+    currentSaves = lSaves();
+    renderSaveList();
     renderKomaSaveList();
     showToast("「" + name + "」を上書きしました");
     if(syncToken) gistSet({saves: lSaves(), mythos:{beings:customBeings,spells:customSpells}});
@@ -2085,6 +2112,8 @@ function getPaletteLines(forExport = false) {
   const db=(strV+sizV>0)?getDB(strV+sizV):null;
   const gB=document.getElementById("chk-both-db")?.checked||document.getElementById("chk-both-db2")?.checked||false;
   const atkFirst=document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked||document.querySelector('input[name="cmd-order2"][value="atk-first"]')?.checked||false;
+  const v6out=(forExport&&isUseV6());
+  const cv=(v)=>v6out?Math.round(v/5):v;
 
   const atkBlock=[];
   if(db&&db.cmd&&atkList.some(a=>!a._sep&&a.name&&a.useDB))
@@ -2092,7 +2121,7 @@ function getPaletteLines(forExport = false) {
   atkList.forEach(a=>{
     if(a._sep){atkBlock.push({text:a.label||"━━━",key:"sep_"+a.id,isSep:true});return;}
     if(!a.name)return;
-    if(a.pct)atkBlock.push({text:"CC<="+a.pct+" 【"+a.name+"】",key:"atk_"+a.id});
+    if(a.pct)atkBlock.push({text:"CC<="+cv(a.pct)+" 【"+a.name+"】",key:"atk_"+a.id});
     if(a.dmg){
       const dmgLabel=forExport?"ダメージ判定・":"";
       const isCus=typeof a.useDB==="string"&&a.useDB!=="half"&&a.useDB!=="false";
@@ -2129,16 +2158,18 @@ function getPaletteLines(forExport = false) {
   skList.forEach(s=>{
     if(s._sep){skBlock.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
     if(!s.name||(s.val||0)<=0)return;
-    skBlock.push({text:"CC<="+s.val+" 【"+s.name+"】",key:"sk_"+s.id});
+    skBlock.push({text:"CC<="+cv(s.val)+" 【"+s.name+"】",key:"sk_"+s.id});
   });
 
   return atkFirst ? [...atkBlock,...skBlock] : [...skBlock,...atkBlock];
 }
   
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
-function copyPalettePreview(){const lines=getPaletteLines();const txt=lines.map(l=>l.text).join("\n");if(!txt){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
-function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";updateExport();}
+function copyPalettePreview(){const lines=getPaletteLines();if(!lines.length){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const txt=lines.map(l=>l.isSep?"━━━━━━━━━━":l.text).join("\n");navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
+function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";const dl2=document.getElementById("btn-dl-json2");if(dl2)dl2.style.display=mode==="json"?"inline-flex":"none";updateExport();}
 function syncBothDbCheck(el){const other=el.id==="chk-both-db"?document.getElementById("chk-both-db2"):document.getElementById("chk-both-db");if(other)other.checked=el.checked;updateExport();}
+function syncUseV6Check(el){const other=el.id==="chk-use-v6"?document.getElementById("chk-use-v6-2"):document.getElementById("chk-use-v6");if(other)other.checked=el.checked;updateExport();}
+function isUseV6(){return document.getElementById("chk-use-v6")?.checked||document.getElementById("chk-use-v6-2")?.checked||false;}
 function buildCocoforiaJson(){
   const name=document.getElementById("npc-name").value||"NPC";
   const status=[];
@@ -2153,9 +2184,10 @@ function buildCocoforiaJson(){
   });
 
   const params=[];
+  const useV6=isUseV6();
   STATS.forEach(({key,label})=>{
     const v=vals[key]||0;
-    if(v>0)params.push({label,value:String(v)});
+    if(v>0)params.push({label,value:String(useV6?Math.round(v/5):v)});
   });
   customFields.forEach(cf=>{
     if(cf.label&&cf.value) params.push({label:cf.label,value:String(cf.value)});
@@ -2189,7 +2221,7 @@ function buildCocoforiaJson(){
       const statVarLines=[];
       STATS.forEach(({key,label})=>{
         const v=vals[key]||0;
-        if(v>0) statVarLines.push("CC<={"+key.toUpperCase()+"} 【"+key.toUpperCase()+"】");
+        if(v>0) statVarLines.push("CC<="+(useV6?Math.round(v/5):v)+" 【"+key.toUpperCase()+"】");
       });
       if(statVarLines.length){
         cmdLines.push("＝＝＝ ステータス ＝＝＝");
@@ -2219,7 +2251,7 @@ function buildCocoforiaJson(){
   while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
   return JSON.stringify({
     kind:"character",
-    data:{name,status,params,initiative:vals.dex||0,commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
+    data:{name,status,params,initiative:useV6?Math.round((vals.dex||0)/5):(vals.dex||0),commands:cmdLines.join("\n"),memo:memoLines.join("\n")}
   });
 }
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
@@ -2418,7 +2450,16 @@ saveCustomFields();
 buildCustomFieldRows();
   updateStatDisplay();reExpandAllMemos();
 }
-function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':"";const isKoma = !!sv._isKoma; const typeEmoji = isKoma ? '🎭 ' : '👤 '; const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-sec btn-update" style="font-size:13px;padding:4px 7px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';return'<div class="save-card"><div class="save-card-head">'+'<div class="save-card-name">'+typeEmoji+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30b9\u30c6\u30fc\u30bf\u30b9\u306a\u3057</span>')+(aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip)+'</div><div class="save-card-actions">'+actions+'</div></div>';}
+function renderSaveCard(sv,isShared){const d=new Date(sv.savedAt),ds=d.getFullYear()+"/"+(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+" "+d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");const isKoma = !!sv._isKoma; const typeEmoji = isKoma ? '🎭 ' : '👤 ';
+let chips="";
+if(isKoma){
+  const lbls=(sv.labels||[]).filter(l=>!l._sep&&l.text);
+  const preview=lbls.slice(0,4).map(l=>l.text).join("・")+(lbls.length>4?"…":"");
+  chips='<span class="stat-chip">ラベル '+lbls.length+'件</span>'+(preview?'<span class="stat-chip" style="color:var(--text3)">'+esc(preview)+'</span>':"");
+}else{
+  chips=STATS.filter(({key})=>(parseInt(sv.vals?.[key])||0)>0).map(({key,label})=>'<span class="stat-chip"><strong>'+label+'</strong> '+(parseInt(sv.vals[key])||0)+'</span>').join("");
+}
+const aN=(sv.atkList||[]).filter(a=>a.name).length,skN=(sv.skList||[]).filter(s=>s.name&&(parseInt(s.val)||0)>0).length,cN=(sv.consumables||[]).filter(c=>c.label).length;const dbChip=sv.dmgLabel&&sv.dmgLabel!=="\u306a\u3057"?'<span class="db-chip">DB '+sv.dmgLabel+'</span>':""; const badge=sv._shared?'<span class="shared-badge">\u5171\u6709</span>':"";const actions='<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="'+sv.id+'" data-shared="'+(isShared?1:0)+'">\u524a\u9664</button>';const extraChips=isKoma?"":((aN?'<span class="stat-chip">\u653b\u6483'+aN+'</span>':"")+(skN?'<span class="stat-chip">\u6280\u80fd'+skN+'</span>':"")+(cN?'<span class="stat-chip">\u6d88\u8017\u54c1'+cN+'</span>':"")+(dbChip));return'<div class="save-card"><div class="save-card-head"><div class="save-card-name">'+typeEmoji+esc(sv.name)+badge+'</div><div class="save-card-date">'+ds+'</div></div><div class="save-card-stats">'+(chips||'<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>')+extraChips+'</div><div class="save-card-actions">'+actions+'</div></div>';}
 function bindSaveListEvents(wrap){wrap.querySelectorAll(".btn-load").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";const list=isShared?lSharedSaves():currentSaves;const sv=list.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(sv._isKoma){loadKomaData(sv.id,isShared);}else{loadDataIntoEditor(sv);switchTab("stats");showToast("\u300c"+sv.name+"\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f");}});});wrap.querySelectorAll(".btn-update").forEach(btn=>{btn.addEventListener("click",async()=>{const isShared=btn.dataset.shared==="1";if(isShared){const shared=lSharedSaves();const idx=shared.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const isRename=fresh.name!==shared[idx].name;const u=isRename?fresh:{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()};if(isRename)wSharedSaves([u,...shared]);else{shared[idx]=u;wSharedSaves(shared);}renderSharedList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(sharedToken){setSharedSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await sharedGistSet({saves:lSharedSaves()});setSharedSt(ok?"\u2713 \u5171\u6709\u306b\u540c\u671f\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}}else{const idx=currentSaves.findIndex(s=>s.id===+btn.dataset.id);if(idx<0)return;const fresh=getCurrentData();const u=fresh.name===currentSaves[idx].name?{...fresh,id:+btn.dataset.id,savedAt:new Date().toISOString()}:fresh;const s=fresh.name===currentSaves[idx].name?[...currentSaves]:[fresh,...currentSaves];if(fresh.name===currentSaves[idx].name)s[idx]=u;writeSaves(s);renderSaveList();showToast("\u300c"+u.name+"\u300d\u3092\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f");if(syncToken){setSyncSt("\u540c\u671f\u4e2d\u2026","ing");const ok=await gistSet({saves:currentSaves,mythos:{beings:customBeings,spells:customSpells}});setSyncSt(ok?"\u2713 \u30af\u30e9\u30a6\u30c9\u306b\u4e0a\u66f8\u304d\u3057\u307e\u3057\u305f":"\u26a0 \u540c\u671f\u5931\u6557",ok?"ok":"err");}else{setSyncSt("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u4fdd\u5b58\uff09","err");}}});});wrap.querySelectorAll(".btn-delete").forEach(btn=>{btn.addEventListener("click",()=>{const isShared=btn.dataset.shared==="1";if(isShared){showSharedDeleteDialog(+btn.dataset.id);}else{const sv=currentSaves.find(s=>s.id===+btn.dataset.id);if(!sv)return;if(!confirm("\u300c"+sv.name+"\u300d\u3092\u524a\u9664\u3057\u307e\u3059\u304b\uff1f"))return;writeSaves(currentSaves.filter(s=>s.id!==+btn.dataset.id));renderSaveList();showToast("\u524a\u9664\u3057\u307e\u3057\u305f");}});});}
 function renderSaveList(){const wrap=document.getElementById("save-list-wrap");if(!wrap)return;const f=currentSaveFilter||"all";const saves=currentSaves.filter(sv=>f==="char"?!sv._isKoma:f==="koma"?!!sv._isKoma:true);if(!saves.length){wrap.innerHTML='<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>';return;}wrap.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08'+saves.length+'\u4ef6\uff09</div><div class="save-list">'+saves.map(sv=>renderSaveCard(sv,false)).join("")+'</div>';bindSaveListEvents(wrap);}
 function showSharedDeleteDialog(id){
@@ -2776,18 +2817,14 @@ const _origGistGet = gistGet;
 gistGet = async function(){
   const data = await _origGistGet();
   if(!data) return data;
-  // リモートのkomasをマージ
-  const remoteKomas = data.komas || [];
+  // リモートのkomas（旧形式）をsavesにマージ
+  const remoteKomas = (data.komas || []).filter(k => k._isKoma);
   if(remoteKomas.length){
-    const localKomas = lSavedKomas();
-    const merged = [...remoteKomas];
-    localKomas.forEach(l => {
-      if(!merged.find(r => String(r.id)===String(l.id))) merged.push(l);
+    const remoteSaves = data.saves || [];
+    remoteKomas.forEach(k => {
+      if(!remoteSaves.find(r => String(r.id)===String(k.id))) remoteSaves.push(k);
     });
-    merged.sort((a,b) => b.id - a.id);
-    wSavedKomas(merged);
-    komaList = merged;
-    renderKomaSaveList();
+    data.saves = remoteSaves;
   }
   return data;
 };
