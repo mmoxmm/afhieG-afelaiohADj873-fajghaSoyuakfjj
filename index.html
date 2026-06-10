@@ -863,7 +863,7 @@ appearance: textfield;min-width:0}
 
 <!-- SAVE TAB -->
 <div id="tab-save" style="display:none">
-  <div class="save-page-bar">
+  <div class="save-page-bar" style="position:sticky;top:0;z-index:10;background:var(--bg);padding-top:4px;margin-top:-4px">
     <button class="save-page-btn active" id="spb-personal" onclick="switchSavePage('personal')">👤 個人</button>
     <button class="save-page-btn" id="spb-shared" onclick="switchSavePage('shared')">👥 共有</button>
   </div>
@@ -1228,7 +1228,7 @@ function updateKomaJsonPreview() {
   const obj = {
   kind: 'character',
   data: {
-    name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces,
+    name, memo: '', initiative: vals.dex || 0, status: [], params: [], commands: paletteText, faces,
     secret: isHideStatus,
     hideStatus: isHideChatCharacter,
     invisible: invisible
@@ -1250,7 +1250,7 @@ function copyKomaJson() {
  const obj = {
   kind: 'character',
   data: {
-    name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces,
+    name, memo: '', initiative: vals.dex || 0, status: [], params: [], commands: paletteText, faces,
     secret: isHideStatus,
     hideStatus: isHideChatCharacter,
     invisible: invisible
@@ -2372,13 +2372,13 @@ function buildCocoforiaJson(){
   const isHideStatus = document.getElementById("chk-hide-status")?.checked || document.getElementById("chk-hide-status2")?.checked || false;
   const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || document.getElementById("chk-hide-chat-char2")?.checked || false;
   const invisible = document.getElementById("chk-invisible")?.checked || document.getElementById("chk-invisible2")?.checked || false;
- return JSON.stringify({
+  return JSON.stringify({
   kind:"character",
   data:{
     name,
     status,
     params,
-    initiative: 0,
+    initiative: vals.dex || 0,
     commands:cmdLines.join("\n"),
     memo:memoLines.join("\n"),
     secret:isHideStatus,
