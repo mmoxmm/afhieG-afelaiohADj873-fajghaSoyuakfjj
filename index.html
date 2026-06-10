@@ -2646,7 +2646,7 @@
           <!-- ステータスタブ -->
           <div id="koma-panel-status" style="display:none">
             <div
-              style="display:grid;grid-template-columns:16px minmax(0,1fr) 56px 56px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
+              style="display:grid;grid-template-columns:16px minmax(0,1fr) 72px 72px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
               <span></span>
               <span> ラベル名</span>
               <span style="text-align:center">現在値</span>
@@ -4732,18 +4732,18 @@
 
         const row = document.createElement('div');
         row.className = 'koma-label-row';
-        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 56px 56px 22px 22px;gap:3px;margin-bottom:0;';
+        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 72px 72px 22px 22px;gap:3px;margin-bottom:0;';
 
         const nameInp = document.createElement('input');
         nameInp.type = 'text'; nameInp.placeholder = 'ラベル名（例：HP）'; nameInp.value = s.label || '';
         nameInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;min-width:0;outline:none;';
         const valInp = document.createElement('input');
-        valInp.type = 'text'; valInp.placeholder = '例：10'; valInp.value = s.value !== undefined ? s.value : '';
-        valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;';
+valInp.type = 'number'; valInp.placeholder = '数字のみ'; valInp.value = s.value !== undefined ? s.value : '';
+valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
 
-        const maxInp = document.createElement('input');
-        maxInp.type = 'text'; maxInp.placeholder = '例：10'; maxInp.value = s.max !== undefined ? s.max : '';
-        maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;';
+const maxInp = document.createElement('input');
+maxInp.type = 'number'; maxInp.placeholder = '数字のみ'; maxInp.value = s.max !== undefined ? s.max : '';
+maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
 
         const cpBtn = document.createElement('button');
         cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '📋'; cpBtn.title = 'コピー';
@@ -4850,15 +4850,15 @@
 
         const row = document.createElement('div');
         row.className = 'koma-label-row';
-        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 80px 22px 22px;gap:3px;margin-bottom:0;';
+        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 147px 22px 22px;gap:3px;margin-bottom:0;';
 
         const nameInp = document.createElement('input');
         nameInp.type = 'text'; nameInp.placeholder = 'ラベル名（例：STR）'; nameInp.value = p.label || '';
         nameInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;min-width:0;outline:none;';
 
         const valInp = document.createElement('input');
-        valInp.type = 'text'; valInp.placeholder = '例：15'; valInp.value = p.value !== undefined ? p.value : '';
-        valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;';
+        valInp.type = 'text'; valInp.placeholder = '数字・txt'; valInp.value = p.value !== undefined ? p.value : '';
+        valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;';
 
         const cpBtn = document.createElement('button');
         cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '📋';
