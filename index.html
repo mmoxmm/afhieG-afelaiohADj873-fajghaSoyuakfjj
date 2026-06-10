@@ -503,7 +503,7 @@ appearance: textfield;min-width:0}
           <span class="acc-badge" id="badge-sk">0</span>
         </div>
         <label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;color:var(--text3)" title="チェック時：技能名に({🎲})を追加">
-          <input type="checkbox" id="chk-sk-dice" onchange="buildSkRows();renderPalettePreview();updateExport()" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px">
+          <input type="checkbox" id="chk-sk-dice" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px">
           <span style="font-size:11px">🎲</span>
         </label>
       </div>
@@ -675,15 +675,15 @@ appearance: textfield;min-width:0}
       <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px">⚙️ コマ設定</div>
       <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-          <input type="checkbox" id="koma-hide-status" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
           ステータスを非公開
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-          <input type="checkbox" id="koma-hide-chat" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
           発言時に表示しない
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-          <input type="checkbox" id="koma-invisible" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+          <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
           キャラ一覧に表示しない
         </label>
       </div>
@@ -938,9 +938,13 @@ appearance: textfield;min-width:0}
       <input type="checkbox" id="chk-hide-chat-char" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
       発言時に表示しない
     </label>
-    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
       <input type="checkbox" id="chk-invisible" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
       キャラ一覧に表示しない
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="checkbox" id="chk-sk-dice-save" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      🎲 CC({🎲})<=出力
     </label>
   </div>
 <!-- 秘匿コマンドブロック（個人） -->
@@ -1035,7 +1039,7 @@ appearance: textfield;min-width:0}
             6판으로 출력
           </label>
         </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:4px 0">
   <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
     <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
@@ -1060,6 +1064,25 @@ appearance: textfield;min-width:0}
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
       <input type="radio" name="cmd-order2" value="atk-first" onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
       ⚔️ 攻撃 → 🎯 技能
+    </label>
+  </div>
+  <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ コマ設定</div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="checkbox" id="chk-hide-status2" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      ステータスを非公開
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="checkbox" id="chk-hide-chat-char2" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      発言時に表示しない
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+      <input type="checkbox" id="chk-invisible2" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      キャラ一覧に表示しない
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+      <input type="checkbox" id="chk-sk-dice2" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+      🎲 CC({🎲})<=出力
     </label>
   </div>
 <!-- 秘匿コマンドブロック（共有） -->
@@ -1193,9 +1216,9 @@ function updateKomaJsonPreview() {
   const faces = currentKoma.labels
     .filter(l => !l._sep && l.text)
     .map(l => ({ label: l.text, iconUrl: null }));
-  const isHideStatus = document.getElementById('koma-hide-status')?.checked || false;
-  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked || false;
-  const invisible = document.getElementById('koma-invisible')?.checked || false;
+  const isHideStatus = document.getElementById('koma-hide-status')?.checked||document.getElementById('chk-hide-status')?.checked||document.getElementById('chk-hide-status2')?.checked||false;
+  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked||document.getElementById('chk-hide-chat-char')?.checked||document.getElementById('chk-hide-chat-char2')?.checked||false;
+  const invisible = document.getElementById('koma-invisible')?.checked||document.getElementById('chk-invisible')?.checked||document.getElementById('chk-invisible2')?.checked||false;
   const obj = {
     kind: 'character',
     data: {
@@ -1215,9 +1238,9 @@ function copyKomaJson() {
   const faces = currentKoma.labels
     .filter(l => !l._sep && l.text)
     .map(l => ({ label: l.text, iconUrl: null }));
-  const isHideStatus = document.getElementById('koma-hide-status')?.checked || false;
-  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked || false;
-  const invisible = document.getElementById('koma-invisible')?.checked || false;
+  const isHideStatus = document.getElementById('koma-hide-status')?.checked||document.getElementById('chk-hide-status')?.checked||document.getElementById('chk-hide-status2')?.checked||false;
+  const isHideChatCharacter = document.getElementById('koma-hide-chat')?.checked||document.getElementById('chk-hide-chat-char')?.checked||document.getElementById('chk-hide-chat-char2')?.checked||false;
+  const invisible = document.getElementById('koma-invisible')?.checked||document.getElementById('chk-invisible')?.checked||document.getElementById('chk-invisible2')?.checked||false;
   const obj = {
     kind: 'character',
     data: {
@@ -1773,7 +1796,7 @@ function renderPalettePreview(){
     const dh=makeHandle();dh.style.fontSize="11px";
     const txt=document.createElement("span");
     txt.style.cssText="flex:1;font-size:12px;cursor:pointer;";
-    const diceM=document.getElementById("chk-sk-dice")?.checked||false;const ccPfx=diceM?"CC({🎲})<=":"CC<=";txt.textContent=ccPfx+s.val+" 【"+s.name+"】";
+    const diceM=isSkDice();const ccPfx=diceM?"CC({🎲})<=":"CC<=";txt.textContent=ccPfx+s.val+" 【"+s.name+"】";
     txt.addEventListener("click",()=>{
       const cmd="CC<="+s.val+" 【"+s.name+"】";
       navigator.clipboard.writeText(cmd).then(()=>{txt.style.color="var(--success)";setTimeout(()=>txt.style.color="",700);addHistory(cmd);showToast("コピー: "+cmd);});
@@ -2067,7 +2090,7 @@ function buildAtkRows(){
 }
 function addAtkSep(){atkList.push({id:nxtId++,_sep:true,label:""});buildAtkRows();openAcc("atk");}
 function updAtkBadge(){document.getElementById("badge-atk").textContent=atkList.filter(a=>a.name&&(a.pct||0)>0).length;}
-function buildSkRows(){const wrap=document.getElementById("sk-rows");wrap.innerHTML="";skList.forEach((sk,idx)=>{if(sk._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=sk.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();renderPalettePreview();});row.append(inp,dh,rm);wrap.appendChild(row);bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});return;}const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u6280\u80fd\u540d...";nameInp.value=sk.name||"";nameInp.style.justifySelf="stretch";const valInp=document.createElement("input");valInp.type="number";valInp.min="0";valInp.max="999";valInp.placeholder="\u2014";valInp.value=sk.val||"";valInp.style.justifySelf="stretch";const hDiv=document.createElement("div");hDiv.className="skill-val";hDiv.textContent=h!=null?h:"\u2014";const fDiv=document.createElement("div");fDiv.className="skill-val";fDiv.textContent=f!=null?f:"\u2014";const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="\ud83d\udccb";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";row.append(nameInp,valInp,hDiv,fDiv,cpBtn,dh,rm);wrap.appendChild(row);nameInp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,name:e.target.value}:x);updateExport();updSkBadge();renderPalettePreview();});valInp.addEventListener("input",e=>{const nv=parseInt(e.target.value)||0;skList=skList.map(x=>x.id===sk.id?{...x,val:nv}:x);buildSkRows();updateExport();updSkBadge();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const s=skList.find(x=>x.id===sk.id);if(!s||!s.name)return;const diceMode=document.getElementById("chk-sk-dice")?.checked||false;const ccPrefix=diceMode?"CC({🎲})<=":"CC<=";const cmd=ccPrefix+(s.val||0)+" 【"+s.name+"】";navigator.clipboard.writeText(cmd).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(cmd);});});rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();updSkBadge();renderPalettePreview();}else{skList=[{id:sk.id,name:"",val:0}];buildSkRows();updateExport();updSkBadge();renderPalettePreview();}});bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});});updSkBadge();}
+function buildSkRows(){const wrap=document.getElementById("sk-rows");wrap.innerHTML="";skList.forEach((sk,idx)=>{if(sk._sep){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;gap:3px;margin-bottom:3px;";row.dataset.dnd=idx;const dh=makeHandle();const inp=document.createElement("input");inp.type="text";inp.placeholder="\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501";inp.value=sk.label||"";inp.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;";inp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,label:e.target.value}:x);updateExport();renderPalettePreview();});const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";rm.addEventListener("click",()=>{skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();renderPalettePreview();});row.append(inp,dh,rm);wrap.appendChild(row);bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});return;}const v=sk.val||0,h=v?Math.floor(v/2):null,f=v?Math.floor(v/5):null;const row=document.createElement("div");row.className="sk-row";row.dataset.dnd=idx;const nameInp=document.createElement("input");nameInp.type="text";nameInp.placeholder="\u6280\u80fd\u540d...";nameInp.value=sk.name||"";nameInp.style.justifySelf="stretch";const valInp=document.createElement("input");valInp.type="number";valInp.min="0";valInp.max="999";valInp.placeholder="\u2014";valInp.value=sk.val||"";valInp.style.justifySelf="stretch";const hDiv=document.createElement("div");hDiv.className="skill-val";hDiv.textContent=h!=null?h:"\u2014";const fDiv=document.createElement("div");fDiv.className="skill-val";fDiv.textContent=f!=null?f:"\u2014";const cpBtn=document.createElement("button");cpBtn.className="row-copy-btn";cpBtn.textContent="\ud83d\udccb";const dh=makeHandle();const rm=document.createElement("button");rm.className="btn-remove";rm.textContent="\u00d7";row.append(nameInp,valInp,hDiv,fDiv,cpBtn,dh,rm);wrap.appendChild(row);nameInp.addEventListener("input",e=>{skList=skList.map(x=>x.id===sk.id?{...x,name:e.target.value}:x);updateExport();updSkBadge();renderPalettePreview();});valInp.addEventListener("input",e=>{const nv=parseInt(e.target.value)||0;skList=skList.map(x=>x.id===sk.id?{...x,val:nv}:x);buildSkRows();updateExport();updSkBadge();renderPalettePreview();});cpBtn.addEventListener("click",()=>{const s=skList.find(x=>x.id===sk.id);if(!s||!s.name)return;const diceMode=isSkDice();const ccPrefix=diceMode?"CC({🎲})<=":"CC<=";const cmd=ccPrefix+(s.val||0)+" 【"+s.name+"】";navigator.clipboard.writeText(cmd).then(()=>{cpBtn.textContent="\u2713";cpBtn.classList.add("copied");setTimeout(()=>{cpBtn.textContent="\ud83d\udccb";cpBtn.classList.remove("copied");},1200);addHistory(cmd);});});rm.addEventListener("click",()=>{if(skList.length>1){skList=skList.filter(x=>x.id!==sk.id);buildSkRows();updateExport();updSkBadge();renderPalettePreview();}else{skList=[{id:sk.id,name:"",val:0}];buildSkRows();updateExport();updSkBadge();renderPalettePreview();}});bindDnD(row,skList,idx,()=>{buildSkRows();updateExport();renderPalettePreview();});});updSkBadge();}
 function addSkSep(){skList.push({id:nxtId++,_sep:true,label:""});buildSkRows();}
 function updSkBadge(){document.getElementById("badge-sk").textContent=skList.filter(s=>s.name&&(s.val||0)>0).length;}
 
@@ -2209,7 +2232,7 @@ function getPaletteLines(forExport = false) {
   skList.forEach(s=>{
     if(s._sep){skBlock.push({text:s.label||"━━━",key:"ssep_"+s.id,isSep:true});return;}
     if(!s.name||(s.val||0)<=0)return;
-    const dM=document.getElementById("chk-sk-dice")?.checked||false;const ccPx=dM?"CC({🎲})<=":"CC<=";skBlock.push({text:ccPx+cv(s.val)+" 【"+s.name+"】",key:"sk_"+s.id});
+    const dM=isSkDice();const ccPx=dM?"CC({🎲})<=":"CC<=";skBlock.push({text:ccPx+cv(s.val)+" 【"+s.name+"】",key:"sk_"+s.id});
   });
 
   return atkFirst ? [...atkBlock,...skBlock] : [...skBlock,...atkBlock];
@@ -2218,9 +2241,34 @@ function getPaletteLines(forExport = false) {
 function resetPaletteOrder(){paletteCustomOrder=null;renderPalettePreview();showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f");}
 function copyPalettePreview(){const lines=getPaletteLines();if(!lines.length){showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093");return;}const txt=lines.map(l=>l.isSep?"━━━━━━━━━━":l.text).join("\n");navigator.clipboard.writeText(txt).then(()=>showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(()=>showToast("\u30b3\u30d4\u30fc\u5931\u6557"));}
 function setExportMode(mode){exportMode=mode;["json","text"].forEach(m=>{const b=document.getElementById("exp-btn-"+m);if(b)b.className="export-btn"+(m===mode?"":" sec");const b2=document.getElementById("exp-btn-"+m+"2");if(b2)b2.className="export-btn"+(m===mode?"":" sec");});const dl=document.getElementById("btn-dl-json");if(dl)dl.style.display=mode==="json"?"inline-flex":"none";const dl2=document.getElementById("btn-dl-json2");if(dl2)dl2.style.display=mode==="json"?"inline-flex":"none";updateExport();}
+function syncKomaSetting(el){
+  const idMap = {
+    'chk-hide-status':['chk-hide-status','chk-hide-status2','koma-hide-status'],
+    'chk-hide-status2':['chk-hide-status','chk-hide-status2','koma-hide-status'],
+    'koma-hide-status':['chk-hide-status','chk-hide-status2','koma-hide-status'],
+    'chk-hide-chat-char':['chk-hide-chat-char','chk-hide-chat-char2','koma-hide-chat'],
+    'chk-hide-chat-char2':['chk-hide-chat-char','chk-hide-chat-char2','koma-hide-chat'],
+    'koma-hide-chat':['chk-hide-chat-char','chk-hide-chat-char2','koma-hide-chat'],
+    'chk-invisible':['chk-invisible','chk-invisible2','koma-invisible'],
+    'chk-invisible2':['chk-invisible','chk-invisible2','koma-invisible'],
+    'koma-invisible':['chk-invisible','chk-invisible2','koma-invisible'],
+    'chk-sk-dice':['chk-sk-dice','chk-sk-dice-save','chk-sk-dice2'],
+    'chk-sk-dice-save':['chk-sk-dice','chk-sk-dice-save','chk-sk-dice2'],
+    'chk-sk-dice2':['chk-sk-dice','chk-sk-dice-save','chk-sk-dice2'],
+  };
+  const ids = idMap[el.id] || [];
+  ids.forEach(id => {
+    const t = document.getElementById(id);
+    if(t && t !== el) t.checked = el.checked;
+  });
+  buildSkRows();
+  renderPalettePreview();
+  updateExport();
+}
 function syncBothDbCheck(el){const other=el.id==="chk-both-db"?document.getElementById("chk-both-db2"):document.getElementById("chk-both-db");if(other)other.checked=el.checked;updateExport();}
 function syncUseV6Check(el){const other=el.id==="chk-use-v6"?document.getElementById("chk-use-v6-2"):document.getElementById("chk-use-v6");if(other)other.checked=el.checked;updateExport();}
 function isUseV6(){return document.getElementById("chk-use-v6")?.checked||document.getElementById("chk-use-v6-2")?.checked||false;}
+function isSkDice(){return document.getElementById("chk-sk-dice")?.checked||document.getElementById("chk-sk-dice-save")?.checked||document.getElementById("chk-sk-dice2")?.checked||false;}
 function buildCocoforiaJson(){
   const name=document.getElementById("npc-name").value||"NPC";
   const status=[];
@@ -2229,7 +2277,7 @@ function buildCocoforiaJson(){
   if(mp>0||ovManual.mp)status.push({label:"MP",value:mp,max:mp});
   if(san>0||ovManual.san)status.push({label:"SAN",value:san,max:san});
   if(luck>0||ovManual.luck)status.push({label:"幸運",value:luck,max:luck});
-  if(document.getElementById("chk-sk-dice")?.checked){
+  if(isSkDice()){
     status.push({label:"暴走率",value:0,max:0});
     status.push({label:"🎲",value:0,max:0});
   }
@@ -2313,11 +2361,11 @@ function buildCocoforiaJson(){
     getSecretCmdLines().forEach(l => cmdLines.push(l));
     cmdLines.push("");
   }
-  cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）"));
+  cmdLines=cmdLines.map(l=>l.replace(/\(/g,"（").replace(/\)/g,"）").replace(/（\{🎲\}）/g,"({🎲})"));
   while(cmdLines.length && cmdLines[cmdLines.length-1]==='') cmdLines.pop();
-  const isHideStatus = document.getElementById("chk-hide-status")?.checked || false;
-  const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || false;
-  const invisible = document.getElementById("chk-invisible")?.checked || false;
+  const isHideStatus = document.getElementById("chk-hide-status")?.checked || document.getElementById("chk-hide-status2")?.checked || false;
+  const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || document.getElementById("chk-hide-chat-char2")?.checked || false;
+  const invisible = document.getElementById("chk-invisible")?.checked || document.getElementById("chk-invisible2")?.checked || false;
   return JSON.stringify({
     kind:"character",
     data:{
