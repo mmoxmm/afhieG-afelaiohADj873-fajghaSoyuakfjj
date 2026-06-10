@@ -2404,6 +2404,7 @@ if(v>0) statVarLines.push(ccPx+(useV6?Math.round(v/5):v)+" 【"+key.toUpperCase(
       if(statVarLines.length){
         cmdLines.push('');
         cmdLines.push("＝＝＝ ステータス ＝＝＝");
+        cmdLines.push('');
         statVarLines.forEach(l=>cmdLines.push(l));
         cmdLines.push('');
       }
@@ -2425,7 +2426,8 @@ if(v>0) statVarLines.push(ccPx+(useV6?Math.round(v/5):v)+" 【"+key.toUpperCase(
   const addSecretCmd = document.getElementById("chk-secret-cmd")?.checked || false;
   if(addSecretCmd){
     cmdLines.push("");
-    cmdLines.push("＝＝＝ 秘匈管理 ＝＝＝");
+    cmdLines.push("＝＝＝ 秘匿管理 ＝＝＝");
+    cmdLines.push('');
     getSecretCmdLines().forEach(l => cmdLines.push(l));
     cmdLines.push("");
   }
