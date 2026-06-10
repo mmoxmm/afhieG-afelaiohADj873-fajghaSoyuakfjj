@@ -1222,11 +1222,11 @@ function updateKomaJsonPreview() {
   const obj = {
     kind: 'character',
     data: {
-      name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces
-    },
-    isHideStatus: isHideStatus,
-    isHideChatCharacter: isHideChatCharacter,
-    invisible: invisible
+      name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces,
+      isHideStatus: isHideStatus,
+      isHideChatCharacter: isHideChatCharacter,
+      invisible: invisible
+    }
   };
   el.textContent = JSON.stringify(obj);
 }
@@ -1244,11 +1244,11 @@ function copyKomaJson() {
   const obj = {
     kind: 'character',
     data: {
-      name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces
-    },
-    isHideStatus: isHideStatus,
-    isHideChatCharacter: isHideChatCharacter,
-    invisible: invisible
+      name, memo: '', initiative: 0, status: [], params: [], commands: paletteText, faces,
+      isHideStatus: isHideStatus,
+      isHideChatCharacter: isHideChatCharacter,
+      invisible: invisible
+    }
   };
   navigator.clipboard.writeText(JSON.stringify(obj))
     .then(() => showToast('JSONをコピーしました'))
@@ -2374,11 +2374,11 @@ function buildCocoforiaJson(){
       params,
       initiative:useV6?Math.round((vals.dex||0)/5):(vals.dex||0),
       commands:cmdLines.join("\n"),
-      memo:memoLines.join("\n")
-    },
-    isHideStatus:isHideStatus,
-    isHideChatCharacter:isHideChatCharacter,
-    invisible:invisible
+      memo:memoLines.join("\n"),
+      isHideStatus:isHideStatus,
+      isHideChatCharacter:isHideChatCharacter,
+      invisible:invisible
+    }
   });
 }
 function buildCocoforiaText(){const name=document.getElementById("npc-name").value||"NPC";const lines=["\u300a"+name+"\u300b",""];const sl=[];STATS.forEach(({key,label})=>{const v=vals[key]||0;if(v>0)sl.push(label+":"+v);});if(sl.length)lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09",sl.join(" / "),"");const strV=vals.str||0,sizV=vals.siz||0;if(strV+sizV>0){const db=getDB(strV+sizV);lines.push("DB: "+db.label+" / \u30d3\u30eb\u30c9: "+db.build,"");}const rl=[];const hp=getEff("hp"),mp=getEff("mp"),san=getEff("san"),luck=getEff("luck");if(hp>0||ovManual.hp)rl.push("HP:"+hp);if(mp>0||ovManual.mp)rl.push("MP:"+mp);if(san>0||ovManual.san)rl.push("SAN:"+san);if(luck>0||ovManual.luck)rl.push("\u5e78\u904b:"+luck);consumables.filter(c=>c.label).forEach(c=>{const cur=parseInt(c.cur)||0,max=parseInt(c.max)||0;rl.push(c.label+":"+cur+(max?"/"+max:""));});if(rl.length)lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9",rl.join(" / "),"");const af=atkList.filter(a=>a.name);if(af.length){lines.push("\u25a0 \u653b\u6483");af.forEach(a=>{lines.push((a.name+": "+(a.pct?a.pct+"%":"")+" "+(a.dmg?"\u30c0\u30e1:"+a.dmg:"")).trim());});lines.push("");}const skf=skList.filter(s=>s.name&&(s.val||0)>0);if(skf.length){lines.push("\u25a0 \u6280\u80fd");skf.forEach(s=>{lines.push(s.name+": "+s.val+"%");});lines.push("");}const mf=memoList.filter(m=>m.label||m.content);if(mf.length){lines.push("\u25a0 \u30e1\u30e2");mf.forEach(m=>{lines.push((m.label?m.label+"\u3000":"")+m.content);});lines.push("");}return lines.join("\n").trim();}
