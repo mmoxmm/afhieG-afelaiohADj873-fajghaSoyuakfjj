@@ -2165,6 +2165,7 @@
     .koma-label-text {
       flex: 1;
       font-size: 14px;
+      font-weight: 700;
       background: transparent;
       border: none;
       outline: none;
@@ -2644,7 +2645,8 @@
           </div>
           <!-- ステータスタブ -->
           <div id="koma-panel-status" style="display:none">
-            <div style="display:grid;grid-template-columns:16px minmax(0,1fr) 56px 56px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
+            <div
+              style="display:grid;grid-template-columns:16px minmax(0,1fr) 56px 56px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
               <span></span>
               <span> ラベル名</span>
               <span style="text-align:center">現在値</span>
@@ -2659,7 +2661,8 @@
           </div>
           <!-- パラメータタブ -->
           <div id="koma-panel-param" style="display:none">
-            <div style="display:grid;grid-template-columns:16px minmax(0,1fr) 80px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
+            <div
+              style="display:grid;grid-template-columns:16px minmax(0,1fr) 80px 22px 22px;gap:3px;padding:5px 6px 4px;font-size:12px;color:var(--text2);font-weight:700">
               <span></span>
               <span> ラベル名</span>
               <span>値</span>
@@ -2667,9 +2670,9 @@
             </div>
             <div id="koma-param-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
-            <button class="btn-add" onclick="addKomaParam()" style="flex:2">＋ ラベル追加</button>
-            <button class="btn-add" onclick="addKomaParamSep()" style="flex:1;font-size:12px">━ 区切り</button>
-          </div>
+              <button class="btn-add" onclick="addKomaParam()" style="flex:2">＋ ラベル追加</button>
+              <button class="btn-add" onclick="addKomaParamSep()" style="flex:1;font-size:12px">━ 区切り</button>
+            </div>
           </div>
         </div>
         <!-- パレットプレビュー -->
@@ -3499,8 +3502,8 @@
         btn.addEventListener("click", () => loadKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
       });
       wrap.querySelectorAll(".btn-update").forEach(btn => {
-    btn.addEventListener("click", () => overwriteKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
-});
+        btn.addEventListener("click", () => overwriteKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
+      });
       wrap.querySelectorAll(".btn-koma-delete").forEach(btn => {
         btn.addEventListener("click", () => deleteKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
       });
@@ -3683,8 +3686,8 @@
         const atWrap = document.createElement("div");
         atWrap.className = "koma-at-toggle";
 
-       　const btnDefault = document.createElement("button");
-btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt === "＠" ? " active-full" : " active-half") : "");
+        const btnDefault = document.createElement("button");
+        btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt === "＠" ? " active-full" : " active-half") : "");
         btnDefault.textContent = "全体";
         btnDefault.title = "全体設定に従う";
 
@@ -3872,9 +3875,19 @@ btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt 
         if (ta) {
           ta.value = currentKoma.manualPalette || "";
           autoExpand(ta);
+          if (ta.value.trim()) {
+            document.getElementById('kpsrc-manual').checked = true;
+            komaPaletteSrc = 'manual';
+            updateKomaJsonPreview();
+          }
           ta.oninput = e => {
             currentKoma.manualPalette = e.target.value;
             autoExpand(ta);
+            if (e.target.value.trim()) {
+              document.getElementById('kpsrc-manual').checked = true;
+              komaPaletteSrc = 'manual';
+              updateKomaJsonPreview();
+            }
           };  // ← ここでta.oninputを閉じる
         }
         // 仮置き：currentKoma.draftPalette に連動
@@ -4012,6 +4025,8 @@ btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt 
         savedAt: new Date().toISOString(),
         globalAt: currentKoma.globalAt,
         labels: JSON.parse(JSON.stringify(currentKoma.labels)),
+        statusList: JSON.parse(JSON.stringify(currentKoma.statusList || [])),
+        paramList: JSON.parse(JSON.stringify(currentKoma.paramList || [])),
         manualPalette: currentKoma.manualPalette || ""
       };
       if (isShared) {
@@ -5340,76 +5355,77 @@ btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt 
       const actions = '<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u524a\u9664</button>';
       return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + (chips || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>') + extraChips + '</div><div class="save-card-actions">' + actions + '</div></div>';
     }
-    function bindSaveListEvents(wrap) { wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); switchTab("stats"); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const isShared = btn.dataset.shared === "1";
-    const id = +btn.dataset.id;
-    const list = isShared ? lSharedSaves() : currentSaves;
-    const sv = list.find(s => s.id === id);
-    if (!sv) return;
+    function bindSaveListEvents(wrap) {
+      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); switchTab("stats"); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const isShared = btn.dataset.shared === "1";
+          const id = +btn.dataset.id;
+          const list = isShared ? lSharedSaves() : currentSaves;
+          const sv = list.find(s => s.id === id);
+          if (!sv) return;
 
-    const isKoma = !!sv._isKoma;
+          const isKoma = !!sv._isKoma;
 
-    // ポップアップ作成
-    const overlay = document.createElement("div");
-    overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";
-    overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)">'
-  + '<div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + esc(sv.name) + '\u300d\u3092\u4e0a\u66f8\u304d</div>'
-  + '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">'
-  + (isKoma ? '\u30b3\u30de\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059' : '\u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059')
-  + '</div>'
-  + '<button id="ow-confirm" style="width:100%;background:' + (isKoma ? 'var(--warn)' : 'var(--accent)') + ';border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">'
-  + (isKoma ? '\ud83c\udfad \u30b3\u30de\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d' : '\ud83d\udc64 \u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d')
-  + '</button>'
-  + '<button id="ow-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button>'
-  + '</div>';
-    document.body.appendChild(overlay);
+          // ポップアップ作成
+          const overlay = document.createElement("div");
+          overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px";
+          overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)">'
+            + '<div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + esc(sv.name) + '\u300d\u3092\u4e0a\u66f8\u304d</div>'
+            + '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">'
+            + (isKoma ? '\u30b3\u30de\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059' : '\u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059')
+            + '</div>'
+            + '<button id="ow-confirm" style="width:100%;background:' + (isKoma ? 'var(--warn)' : 'var(--accent)') + ';border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">'
+            + (isKoma ? '\ud83c\udfad \u30b3\u30de\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d' : '\ud83d\udc64 \u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d')
+            + '</button>'
+            + '<button id="ow-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button>'
+            + '</div>';
+          document.body.appendChild(overlay);
 
-    const close = () => document.body.removeChild(overlay);
-    document.getElementById("ow-cancel").addEventListener("click", close);
-    overlay.addEventListener("click", e => { if (e.target === overlay) close(); });
+          const close = () => document.body.removeChild(overlay);
+          document.getElementById("ow-cancel").addEventListener("click", close);
+          overlay.addEventListener("click", e => { if (e.target === overlay) close(); });
 
-    document.getElementById("ow-confirm").addEventListener("click", async () => {
-      close();
+          document.getElementById("ow-confirm").addEventListener("click", async () => {
+            close();
 
-      if (isKoma) {
-        // コマタブの内容で上書き
-        overwriteKomaData(id, isShared);
-      } else {
-        // ステータスタブの内容で上書き
-        if (isShared) {
-          const shared = lSharedSaves();
-          const idx = shared.findIndex(s => s.id === id);
-          if (idx < 0) return;
-          const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
-          shared[idx] = fresh;
-          wSharedSaves(shared);
-          renderSharedList();
-          showToast("「" + fresh.name + "」を上書きしました");
-          if (sharedToken) {
-            setSharedSt("同期中…", "ing");
-            const ok = await sharedGistSet({ saves: lSharedSaves() });
-            setSharedSt(ok ? "✓ 共有に同期しました" : "⚠ 同期失敗", ok ? "ok" : "err");
-          }
-        } else {
-          const idx = currentSaves.findIndex(s => s.id === id);
-          if (idx < 0) return;
-          const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
-          currentSaves[idx] = fresh;
-          writeSaves(currentSaves);
-          renderSaveList();
-          showToast("「" + fresh.name + "」を上書きしました");
-          if (syncToken) {
-            setSyncSt("同期中…", "ing");
-            const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
-            setSyncSt(ok ? "✓ クラウドに上書きしました" : "⚠ 同期失敗", ok ? "ok" : "err");
-          }
-        }
-      }
-    });
-  });
-});
-}
+            if (isKoma) {
+              // コマタブの内容で上書き
+              overwriteKomaData(id, isShared);
+            } else {
+              // ステータスタブの内容で上書き
+              if (isShared) {
+                const shared = lSharedSaves();
+                const idx = shared.findIndex(s => s.id === id);
+                if (idx < 0) return;
+                const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
+                shared[idx] = fresh;
+                wSharedSaves(shared);
+                renderSharedList();
+                showToast("「" + fresh.name + "」を上書きしました");
+                if (sharedToken) {
+                  setSharedSt("同期中…", "ing");
+                  const ok = await sharedGistSet({ saves: lSharedSaves() });
+                  setSharedSt(ok ? "✓ 共有に同期しました" : "⚠ 同期失敗", ok ? "ok" : "err");
+                }
+              } else {
+                const idx = currentSaves.findIndex(s => s.id === id);
+                if (idx < 0) return;
+                const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
+                currentSaves[idx] = fresh;
+                writeSaves(currentSaves);
+                renderSaveList();
+                showToast("「" + fresh.name + "」を上書きしました");
+                if (syncToken) {
+                  setSyncSt("同期中…", "ing");
+                  const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
+                  setSyncSt(ok ? "✓ クラウドに上書きしました" : "⚠ 同期失敗", ok ? "ok" : "err");
+                }
+              }
+            }
+          });
+        });
+      });
+    }
     function renderSaveList() { const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => f === "char" ? !sv._isKoma : f === "koma" ? !!sv._isKoma : true); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false)).join("") + '</div>'; bindSaveListEvents(wrap); }
     function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); document.getElementById("pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); document.getElementById("pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); document.getElementById("pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
@@ -5527,7 +5543,28 @@ btnDefault.className = "koma-at-btn" + (!lbl.atOverride ? (currentKoma.globalAt 
         if (ta) {
           ta.value = manualPaletteText;
           autoExpand(ta);
-          ta.oninput = e => { manualPaletteText = e.target.value; saveManualPalette(); autoExpand(ta); updateExport(); };
+          if (ta.value.trim()) {
+            const inclManual = document.getElementById('chk-incl-manual');
+            const manualOnly = document.getElementById('chk-manual-only');
+            if (inclManual && manualOnly && !inclManual.checked && !manualOnly.checked) {
+              manualOnly.checked = true;
+              updateExport();
+            }
+          }
+          ta.oninput = e => {
+            manualPaletteText = e.target.value;
+            saveManualPalette();
+            autoExpand(ta);
+            if (e.target.value.trim()) {
+              const inclManual = document.getElementById('chk-incl-manual');
+              const manualOnly = document.getElementById('chk-manual-only');
+              if (inclManual && manualOnly && !inclManual.checked && !manualOnly.checked) {
+                manualOnly.checked = true;
+                updateExport();
+              }
+            }
+            updateExport();
+          };
         }
         // 仮置きの自動伸縮
         const draft = document.getElementById('manual-palette-draft');
