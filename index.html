@@ -5581,6 +5581,17 @@
             }
           });
         });
+        wrap.querySelectorAll(".btn-delete").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const isShared = btn.dataset.shared === "1";
+          const id = +btn.dataset.id;
+          if (isShared) {
+            showSharedDeleteDialog(id);
+          } else {
+            showPersonalDeleteDialog(id);
+          }
+        });
+      });
       });
     }
     function renderSaveList() { const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => f === "char" ? !sv._isKoma : f === "koma" ? !!sv._isKoma : true); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false)).join("") + '</div>'; bindSaveListEvents(wrap); }
