@@ -2212,9 +2212,9 @@
       flex: 1;
       font-size: 13px;
       font-weight: 700;
-      color: var(--text3);
-      background: var(--bg2);
-      border: 0.5px dashed var(--border2);
+      color: var(--text2);
+      background: var(--bg3);
+      border: 0.5px solid var(--border2);
       border-radius: var(--radius);
       padding: 3px 7px;
       height: 28px
@@ -2788,21 +2788,34 @@
                   ステータスを非公開
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  発言時に表示しない
-                </label>
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  キャラ一覧に表示しない
+                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" checked style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+  発言時に表示しない
+</label>
+<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" checked style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+  キャラ一覧に表示しない
                 </label>
               </div>
             </div>
             <div>
-              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 ラベル設定</div>
+             <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 区切り設定</div>
               <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-incl-sep" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  区切り行をラベルへ追加する
+                  <input type="checkbox" id="koma-incl-sep" onchange="syncKomaSetting(this)"
+                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  行をラベルへ追加
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="radio" name="koma-sep-space" id="koma-sep-before" value="before" checked
+                    onchange="updateKomaJsonPreview()"
+                    style="cursor:pointer;accent-color:var(--accent)">
+                  前に空行を入れる
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="radio" name="koma-sep-space" id="koma-sep-both" value="both"
+                    onchange="updateKomaJsonPreview()"
+                    style="cursor:pointer;accent-color:var(--accent)">
+                  前後に空行を入れる
                 </label>
               </div>
             </div>
@@ -2816,7 +2829,6 @@
           <div class="export-note" style="margin-top:4px">※ ococフォリアで ⌘+V（Ctrl+V）で貼り付けてコマを作成。立ち絵にラベルが差分として追加されます。</div>
         </div>
 
-        <!-- 保存・一覧 -->
         <!-- 保存・一覧 -->
         <div class="full-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -3131,7 +3143,7 @@
                   6판으로 출력
                 </label>
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:4px 0">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:4px 0">
                 <div id="chk-manual-wrap"
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
                   <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
@@ -3196,6 +3208,30 @@
                     <input type="checkbox" id="chk-sk-dice-save" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                     🎲 CC({🎲})<=出力 </label>
+                </div>
+                <div
+                  style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 区切り設定</div>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                    <input type="checkbox" id="chk-incl-sep" onchange="syncKomaSetting(this)"
+                      style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                    行をラベルへ追加
+                  </label>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                    <input type="radio" name="koma-sep-space2" id="koma-sep-before2" value="before" checked
+                      onchange="updateKomaJsonPreview()"
+                      style="cursor:pointer;accent-color:var(--accent)">
+                    前に空行を入れる
+                  </label>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                    <input type="radio" name="koma-sep-space2" id="koma-sep-both2" value="both"
+                      onchange="updateKomaJsonPreview()"
+                      style="cursor:pointer;accent-color:var(--accent)">
+                    前後に空行を入れる
+                  </label>
                 </div>
                 <!-- 秘匿コマンドブロック（個人） -->
                 <div style="margin-top:4px;grid-column:1/-1;">
@@ -3313,7 +3349,7 @@
                   6판으로 출력
                 </label>
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:4px 0">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:4px 0">
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
                   <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 手書きパレット出力設定</div>
@@ -3378,6 +3414,30 @@
                     <input type="checkbox" id="chk-sk-dice2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                     🎲 CC({🎲})<=出力 </label>
+                </div>
+                <div
+                  style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 区切り設定</div>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                    <input type="checkbox" id="chk-incl-sep2" onchange="syncKomaSetting(this)"
+                      style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                    行をラベルへ追加
+                  </label>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                    <input type="radio" name="koma-sep-space3" id="koma-sep-before3"value="before" checked
+                      onchange="updateKomaJsonPreview()"
+                      style="cursor:pointer;accent-color:var(--accent)">
+                    前に空行を入れる
+                  </label>
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                    <input type="radio" name="koma-sep-space3" id="koma-sep-both3" value="both"
+                      onchange="updateKomaJsonPreview()"
+                      style="cursor:pointer;accent-color:var(--accent)">
+                    前後に空行を入れる
+                  </label>
                 </div>
                 <!-- 秘匿コマンドブロック（共有） -->
                 <div style="margin-top:4px;grid-column:1/-1;">
@@ -3517,12 +3577,13 @@
       if (!lines.length) return '';
 
       const result = [];
+      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value || 'before';
       lines.forEach((l, idx) => {
         if (l.isSep) {
           const isFirst = idx === 0;
-          if (!isFirst) result.push(''); // 先頭以外は前に空白行
+          if (!isFirst) result.push('');
           result.push(l.text);
-          result.push(''); // 後ろは常に空白行
+          if (sepSpace === 'both') result.push('');
         } else {
           result.push(l.text);
         }
@@ -3977,7 +4038,8 @@ currentKoma.labels.forEach(l => {
         labels: JSON.parse(JSON.stringify(currentKoma.labels)),
         statusList: JSON.parse(JSON.stringify(currentKoma.statusList || [])),
         paramList: JSON.parse(JSON.stringify(currentKoma.paramList || [])),
-        manualPalette: currentKoma.manualPalette || ""
+        manualPalette: currentKoma.manualPalette || "",
+        settings: getSettings()
       };
 
       if (dest === "shared") {
@@ -4029,6 +4091,8 @@ currentKoma.labels.forEach(l => {
       buildKomaStatusRows();
       buildKomaParamRows();
       renderKomaPalettePreview();
+      applySettings(d.settings);
+      updateKomaJsonPreview();
       showToast("「" + d.name + "」を読み込みました");
       switchTab("koma");
     }
@@ -4154,6 +4218,36 @@ currentKoma.labels.forEach(l => {
         el.textContent = statOn && statLines.length ? statLines.join("\n") : "（特性値を入力すると表示）";
       });
     }
+    function getSettings() {
+  return {
+    hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || false,
+    hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || false,
+    invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || false,
+    skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || false,
+    inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || false,
+    sepSpace: document.getElementById('koma-sep-before')?.checked ? 'before' : 'both',
+    komaPaletteSrc,
+    paletteMode: document.querySelector('input[name="palette-mode"]:checked')?.value || 'auto',
+    cmdOrder: document.querySelector('input[name="cmd-order"]:checked')?.value || 'sk-first'
+  };
+}
+
+function applySettings(s) {
+  if (!s) return;
+  ['chk-hide-status','chk-hide-status2','koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
+  ['chk-hide-chat-char','chk-hide-chat-char2','koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
+  ['chk-invisible','chk-invisible2','koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
+  ['chk-sk-dice','chk-sk-dice-save','chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
+  ['koma-incl-sep','chk-incl-sep','chk-incl-sep2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
+  const sep = s.sepSpace || 'before';
+  ['koma-sep-before','koma-sep-before2','koma-sep-before3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
+  ['koma-sep-both','koma-sep-both2','koma-sep-both3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
+  if (s.komaPaletteSrc) { komaPaletteSrc = s.komaPaletteSrc; const el = document.getElementById('kpsrc-' + s.komaPaletteSrc); if (el) el.checked = true; }
+  const pm = s.paletteMode || 'auto';
+  document.querySelectorAll('input[name="palette-mode"], input[name="palette-mode2"]').forEach(el => el.checked = el.value === pm);
+  const co = s.cmdOrder || 'sk-first';
+  document.querySelectorAll('input[name="cmd-order"], input[name="cmd-order2"]').forEach(el => el.checked = el.value === co);
+}
     const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
@@ -4468,7 +4562,7 @@ currentKoma.labels.forEach(l => {
           const dh = makeHandle();
           const inp = document.createElement("input");
           inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = a.label || "";
-          inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:26px;";
+          inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:3px 7px;height:26px;";
           inp.addEventListener("input", e => { atkList = atkList.map(x => x.id === a.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { atkList = atkList.filter(x => x.id !== a.id); buildAtkRows(); updateExport(); renderPalettePreview(); });
@@ -4562,7 +4656,7 @@ currentKoma.labels.forEach(l => {
     function updAtkBadge() { document.getElementById("badge-atk").textContent = atkList.filter(a => a.name && (a.pct || 0) > 0).length; }
     function buildSkRows() {
       const wrap = document.getElementById("sk-rows"); wrap.innerHTML = ""; skList.forEach((sk, idx) => {
-        if (sk._sep) { const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;"; inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return; } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, valInp, hDiv, fDiv, cpBtn, dh, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
+        if (sk._sep) { const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;"; inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return; } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, valInp, hDiv, fDiv, cpBtn, dh, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
           valInp.focus();
@@ -5027,8 +5121,9 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'koma-incl-sep':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-    'chk-incl-sep':   ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-    'chk-incl-sep2':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+       'chk-incl-sep':   ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+       'chk-incl-sep2':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+    
   };
       const ids = idMap[el.id] || [];
       ids.forEach(id => {
@@ -5316,7 +5411,8 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
         manualPalette: manualPaletteText,
         dmgLabel: db ? db.label : null,
         build: db ? db.build : null,
-        customFields: JSON.parse(JSON.stringify(customFields))
+        customFields: JSON.parse(JSON.stringify(customFields)),
+        settings: getSettings()
       };
     }
     function loadDataIntoEditor(data) {
@@ -5359,6 +5455,8 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
       saveCustomFields();
       buildCustomFieldRows();
       updateStatDisplay(); reExpandAllMemos();
+      applySettings(data.settings);
+      updateExport();
     }
     function renderSaveCard(sv, isShared) {
       const d = new Date(sv.savedAt), ds = d.getFullYear() + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getDate().toString().padStart(2, "0") + " " + d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
