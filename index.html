@@ -2211,13 +2211,18 @@
     .koma-sep-inp {
       flex: 1;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: normal;
       color: var(--text2);
       background: var(--bg3);
-      border: 0.5px solid var(--border2);
+      border: none;
       border-radius: var(--radius);
       padding: 3px 7px;
       height: 28px
+    }
+
+    .koma-sep-inp::placeholder {
+      color: var(--text3);
+      opacity: 0.6;
     }
 
     .koma-save-card {
@@ -2478,7 +2483,9 @@
               <div id="atk-rows"></div>
               <div style="display:flex;gap:3px;margin-top:3px">
                 <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
-                <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                <button class="btn-add" onclick="addAtkSep()"
+                  style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                  区切り</button>
               </div>
             </div>
           </div>
@@ -2534,7 +2541,9 @@
               <div id="sk-rows"></div>
               <div style="display:flex;gap:3px;margin-top:3px">
                 <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
-                <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                <button class="btn-add" onclick="addSkSep()"
+                  style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                  区切り</button>
               </div>
             </div>
           </div>
@@ -2640,7 +2649,9 @@
             <div id="koma-label-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaLabel()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaSep()"
+                style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                区切り</button>
             </div>
           </div>
           <!-- ステータスタブ -->
@@ -2656,7 +2667,9 @@
             <div id="koma-status-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaStatus()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaStatusSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaStatusSep()"
+                style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                区切り</button>
             </div>
           </div>
           <!-- パラメータタブ -->
@@ -2671,7 +2684,9 @@
             <div id="koma-param-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaParam()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaParamSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaParamSep()"
+                style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                区切り</button>
             </div>
           </div>
         </div>
@@ -2762,44 +2777,54 @@
         <div class="full-card" style="margin-bottom:5px">
           <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア コマJSON出力</div>
           <!-- チャットパレット反映元選択 -->
-         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
-              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px" id="koma-palette-src-bar">
+              <div
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px"
+                id="koma-palette-src-bar">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-simple" value="simple" checked onchange="setKomaPaletteSrc('simple')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-simple" value="simple" checked
+                    onchange="setKomaPaletteSrc('simple')" style="cursor:pointer;accent-color:var(--accent)">
                   🔄 自動シンプル
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-named" value="named" onchange="setKomaPaletteSrc('named')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-named" value="named"
+                    onchange="setKomaPaletteSrc('named')" style="cursor:pointer;accent-color:var(--accent)">
                   🔄 自動タイトル付き
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-manual" value="manual" onchange="setKomaPaletteSrc('manual')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-manual" value="manual"
+                    onchange="setKomaPaletteSrc('manual')" style="cursor:pointer;accent-color:var(--accent)">
                   ✏️ 手書き
                 </label>
               </div>
             </div>
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">⚙️ コマ設定</div>
-              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+              <div
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)"
+                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                   ステータスを非公開
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" checked style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-  発言時に表示しない
-</label>
-<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" checked style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-  キャラ一覧に表示しない
+                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" checked
+                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  発言時に表示しない
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" checked
+                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  キャラ一覧に表示しない
                 </label>
               </div>
             </div>
             <div>
-             <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 区切り設定</div>
-              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 区切り設定</div>
+              <div
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="checkbox" id="koma-incl-sep" onchange="syncKomaSetting(this)"
                     style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
@@ -2807,14 +2832,12 @@
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-sep-space" id="koma-sep-before" value="before" checked
-                    onchange="updateKomaJsonPreview()"
-                    style="cursor:pointer;accent-color:var(--accent)">
+                    onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                   前に空行を入れる
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-sep-space" id="koma-sep-both" value="both"
-                    onchange="updateKomaJsonPreview()"
-                    style="cursor:pointer;accent-color:var(--accent)">
+                    onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                   前後に空行を入れる
                 </label>
               </div>
@@ -3221,15 +3244,13 @@
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="koma-sep-space2" id="koma-sep-before2" value="before" checked
-                      onchange="updateKomaJsonPreview()"
-                      style="cursor:pointer;accent-color:var(--accent)">
+                      onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                     前に空行を入れる
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="koma-sep-space2" id="koma-sep-both2" value="both"
-                      onchange="updateKomaJsonPreview()"
-                      style="cursor:pointer;accent-color:var(--accent)">
+                      onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                     前後に空行を入れる
                   </label>
                 </div>
@@ -3426,16 +3447,14 @@
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                    <input type="radio" name="koma-sep-space3" id="koma-sep-before3"value="before" checked
-                      onchange="updateKomaJsonPreview()"
-                      style="cursor:pointer;accent-color:var(--accent)">
+                    <input type="radio" name="koma-sep-space3" id="koma-sep-before3" value="before" checked
+                      onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                     前に空行を入れる
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="koma-sep-space3" id="koma-sep-both3" value="both"
-                      onchange="updateKomaJsonPreview()"
-                      style="cursor:pointer;accent-color:var(--accent)">
+                      onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
                     前後に空行を入れる
                   </label>
                 </div>
@@ -3606,32 +3625,32 @@
 
       const inclSep = document.getElementById('koma-incl-sep')?.checked || false;
 
-const faces = [];
+      const faces = [];
 
-// 差分ラベル
-currentKoma.labels.forEach(l => {
-  if (l._sep) {
-    if (inclSep) faces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null });
-  } else if (l.text) {
-    faces.push({ label: l.text, iconUrl: null });
-  }
-});
+      // 差分ラベル
+      currentKoma.labels.forEach(l => {
+        if (l._sep) {
+          if (inclSep) faces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null });
+        } else if (l.text) {
+          faces.push({ label: l.text, iconUrl: null });
+        }
+      });
 
-// ステータス
-(currentKoma.statusList || []).forEach(s => {
-  if (s._sep) {
-    if (inclSep) faces.push({ label: s.label || '━━━━━━━━━━', iconUrl: null });
-  } else if (s.label) {
-    // ステータスはfacesには含めない（ラベルでない）
-  }
-});
+      // ステータス
+      (currentKoma.statusList || []).forEach(s => {
+        if (s._sep) {
+          if (inclSep) faces.push({ label: s.label || '━━━━━━━━━━', iconUrl: null });
+        } else if (s.label) {
+          // ステータスはfacesには含めない（ラベルでない）
+        }
+      });
 
-// パラメータ
-(currentKoma.paramList || []).forEach(p => {
-  if (p._sep) {
-    if (inclSep) faces.push({ label: p.label || '━━━━━━━━━━', iconUrl: null });
-  }
-});
+      // パラメータ
+      (currentKoma.paramList || []).forEach(p => {
+        if (p._sep) {
+          if (inclSep) faces.push({ label: p.label || '━━━━━━━━━━', iconUrl: null });
+        }
+      });
 
       const status = (currentKoma.statusList || [])
         .filter(s => s.label)
@@ -3707,9 +3726,10 @@ currentKoma.labels.forEach(l => {
           const dh = makeHandle();
           const inp = document.createElement("input");
           inp.type = "text";
+
           inp.placeholder = "━━━ 区切り ━━━";
           inp.value = lbl.label || "";
-          inp.className = "koma-sep-inp";
+          inp.className = "koma-label-text";
           inp.addEventListener("input", e => {
             currentKoma.labels[idx] = { ...currentKoma.labels[idx], label: e.target.value };
             renderKomaPalettePreview();
@@ -3743,6 +3763,8 @@ currentKoma.labels.forEach(l => {
         // ラベルテキスト入力
         const inp = document.createElement("input");
         inp.type = "text";
+        inp.style.color = 'var(--text3)';
+        inp.style.fontWeight = 'normal';
         inp.placeholder = "ラベル名（例：朝）";
         inp.value = lbl.text || "";
         inp.className = "koma-label-text";
@@ -4219,35 +4241,35 @@ currentKoma.labels.forEach(l => {
       });
     }
     function getSettings() {
-  return {
-    hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || false,
-    hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || false,
-    invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || false,
-    skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || false,
-    inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || false,
-    sepSpace: document.getElementById('koma-sep-before')?.checked ? 'before' : 'both',
-    komaPaletteSrc,
-    paletteMode: document.querySelector('input[name="palette-mode"]:checked')?.value || 'auto',
-    cmdOrder: document.querySelector('input[name="cmd-order"]:checked')?.value || 'sk-first'
-  };
-}
+      return {
+        hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || false,
+        hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || false,
+        invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || false,
+        skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || false,
+        inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || false,
+        sepSpace: document.getElementById('koma-sep-before')?.checked ? 'before' : 'both',
+        komaPaletteSrc,
+        paletteMode: document.querySelector('input[name="palette-mode"]:checked')?.value || 'auto',
+        cmdOrder: document.querySelector('input[name="cmd-order"]:checked')?.value || 'sk-first'
+      };
+    }
 
-function applySettings(s) {
-  if (!s) return;
-  ['chk-hide-status','chk-hide-status2','koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
-  ['chk-hide-chat-char','chk-hide-chat-char2','koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
-  ['chk-invisible','chk-invisible2','koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
-  ['chk-sk-dice','chk-sk-dice-save','chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
-  ['koma-incl-sep','chk-incl-sep','chk-incl-sep2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
-  const sep = s.sepSpace || 'before';
-  ['koma-sep-before','koma-sep-before2','koma-sep-before3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
-  ['koma-sep-both','koma-sep-both2','koma-sep-both3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
-  if (s.komaPaletteSrc) { komaPaletteSrc = s.komaPaletteSrc; const el = document.getElementById('kpsrc-' + s.komaPaletteSrc); if (el) el.checked = true; }
-  const pm = s.paletteMode || 'auto';
-  document.querySelectorAll('input[name="palette-mode"], input[name="palette-mode2"]').forEach(el => el.checked = el.value === pm);
-  const co = s.cmdOrder || 'sk-first';
-  document.querySelectorAll('input[name="cmd-order"], input[name="cmd-order2"]').forEach(el => el.checked = el.value === co);
-}
+    function applySettings(s) {
+      if (!s) return;
+      ['chk-hide-status', 'chk-hide-status2', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
+      ['chk-hide-chat-char', 'chk-hide-chat-char2', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
+      ['chk-invisible', 'chk-invisible2', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
+      ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
+      ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
+      const sep = s.sepSpace || 'before';
+      ['koma-sep-before', 'koma-sep-before2', 'koma-sep-before3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
+      ['koma-sep-both', 'koma-sep-both2', 'koma-sep-both3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
+      if (s.komaPaletteSrc) { komaPaletteSrc = s.komaPaletteSrc; const el = document.getElementById('kpsrc-' + s.komaPaletteSrc); if (el) el.checked = true; }
+      const pm = s.paletteMode || 'auto';
+      document.querySelectorAll('input[name="palette-mode"], input[name="palette-mode2"]').forEach(el => el.checked = el.value === pm);
+      const co = s.cmdOrder || 'sk-first';
+      document.querySelectorAll('input[name="cmd-order"], input[name="cmd-order2"]').forEach(el => el.checked = el.value === co);
+    }
     const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
@@ -4257,7 +4279,6 @@ function applySettings(s) {
     const vals = {}; STATS.forEach(s => vals[s.key] = 0);
     // カスタムフィールド（特性値セクション下部）
     let customFields = [{ id: 'cf1', label: '', value: '' }, { id: 'cf2', label: '', value: '' }, { id: 'cf3', label: '', value: '' }, { id: 'cf4', label: '', value: '' }];
-    try { const _cf = localStorage.getItem('coc_custom_fields'); if (_cf) customFields = JSON.parse(_cf); } catch { }
     function saveCustomFields() { localStorage.setItem('coc_custom_fields', JSON.stringify(customFields)); }
     let inputMode = 6;
     const ov = { hp: 0, mp: 0, san: 0, luck: 0 };
@@ -4557,16 +4578,15 @@ function applySettings(s) {
       atkList.forEach((a, idx) => {
         if (a._sep) {
           const row = document.createElement("div");
-          row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:5px;";
-          row.dataset.dnd = idx;
+          row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:5px;"; row.dataset.dnd = idx;
           const dh = makeHandle();
           const inp = document.createElement("input");
           inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = a.label || "";
-          inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:3px 7px;height:26px;";
+          inp.className = 'koma-sep-inp';
           inp.addEventListener("input", e => { atkList = atkList.map(x => x.id === a.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { atkList = atkList.filter(x => x.id !== a.id); buildAtkRows(); updateExport(); renderPalettePreview(); });
-          row.append(dh, inp, rm); wrap.appendChild(row);
+          row.append(inp, dh, rm); wrap.appendChild(row);
           bindDnD(row, atkList, idx, () => { buildAtkRows(); updateExport(); renderPalettePreview(); });
           return;
         }
@@ -4656,7 +4676,10 @@ function applySettings(s) {
     function updAtkBadge() { document.getElementById("badge-atk").textContent = atkList.filter(a => a.name && (a.pct || 0) > 0).length; }
     function buildSkRows() {
       const wrap = document.getElementById("sk-rows"); wrap.innerHTML = ""; skList.forEach((sk, idx) => {
-        if (sk._sep) { const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.style.cssText = "flex:1;font-size:13px;font-weight:700;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:3px 7px;height:28px;"; inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return; } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, valInp, hDiv, fDiv, cpBtn, dh, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
+        if (sk._sep) {
+          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.className = 'koma-sep-inp';
+          inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return;
+        } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, valInp, hDiv, fDiv, cpBtn, dh, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
           valInp.focus();
@@ -4835,7 +4858,8 @@ function applySettings(s) {
           const dh = makeHandle();
           const inp = document.createElement('input');
           inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = s.label || '';
-          inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--text2)';
+          inp.style.fontWeight = 'normal';
           inp.addEventListener('input', e => { currentKoma.statusList[idx] = { ...currentKoma.statusList[idx], label: e.target.value }; });
           const rm = document.createElement('button');
           rm.className = 'btn-remove'; rm.textContent = '×';
@@ -4857,12 +4881,12 @@ function applySettings(s) {
         nameInp.type = 'text'; nameInp.placeholder = ' ラベル名（例：HP）'; nameInp.value = s.label || '';
         nameInp.style.cssText = 'height:36px;padding:0 6px;font-size:14.5px;font-weight:700;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;min-width:0;outline:none;';
         const valInp = document.createElement('input');
-valInp.type = 'number'; valInp.placeholder = '数字のみ'; valInp.value = s.value !== undefined ? s.value : '';
-valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
+        valInp.type = 'number'; valInp.placeholder = '数字のみ'; valInp.value = s.value !== undefined ? s.value : '';
+        valInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
 
-const maxInp = document.createElement('input');
-maxInp.type = 'number'; maxInp.placeholder = '数字のみ'; maxInp.value = s.max !== undefined ? s.max : '';
-maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
+        const maxInp = document.createElement('input');
+        maxInp.type = 'number'; maxInp.placeholder = '数字のみ'; maxInp.value = s.max !== undefined ? s.max : '';
+        maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;-moz-appearance:textfield;';
 
         const cpBtn = document.createElement('button');
         cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '📋'; cpBtn.title = 'コピー';
@@ -4953,7 +4977,8 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
           const dh = makeHandle();
           const inp = document.createElement('input');
           inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = p.label || '';
-          inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--text2)';
+          inp.style.fontWeight = 'normal';
           inp.addEventListener('input', e => { currentKoma.paramList[idx] = { ...currentKoma.paramList[idx], label: e.target.value }; });
           const rm = document.createElement('button');
           rm.className = 'btn-remove'; rm.textContent = '×';
@@ -5120,11 +5145,11 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
         'koma-invisible': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'koma-incl-sep':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-       'chk-incl-sep':   ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-       'chk-incl-sep2':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-    
-  };
+        'koma-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+        'chk-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+        'chk-incl-sep2': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+
+      };
       const ids = idMap[el.id] || [];
       ids.forEach(id => {
         const t = document.getElementById(id);
