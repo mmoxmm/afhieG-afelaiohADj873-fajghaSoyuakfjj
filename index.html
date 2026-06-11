@@ -2478,7 +2478,7 @@
               <div id="atk-rows"></div>
               <div style="display:flex;gap:3px;margin-top:3px">
                 <button class="btn-add" id="btn-add-atk" style="flex:2">＋ 追加</button>
-                <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+                <button class="btn-add" onclick="addAtkSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
               </div>
             </div>
           </div>
@@ -2534,7 +2534,7 @@
               <div id="sk-rows"></div>
               <div style="display:flex;gap:3px;margin-top:3px">
                 <button class="btn-add" id="btn-add-sk" style="flex:2">＋ 追加</button>
-                <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px">━ 区切り</button>
+                <button class="btn-add" onclick="addSkSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
               </div>
             </div>
           </div>
@@ -2640,7 +2640,7 @@
             <div id="koma-label-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaLabel()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaSep()" style="flex:1;font-size:12px">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
             </div>
           </div>
           <!-- ステータスタブ -->
@@ -2656,7 +2656,7 @@
             <div id="koma-status-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaStatus()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaStatusSep()" style="flex:1;font-size:12px">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaStatusSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
             </div>
           </div>
           <!-- パラメータタブ -->
@@ -2671,7 +2671,7 @@
             <div id="koma-param-rows"></div>
             <div style="display:flex;gap:3px;margin-top:3px">
               <button class="btn-add" onclick="addKomaParam()" style="flex:2">＋ ラベル追加</button>
-              <button class="btn-add" onclick="addKomaParamSep()" style="flex:1;font-size:12px">━ 区切り</button>
+              <button class="btn-add" onclick="addKomaParamSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
             </div>
           </div>
         </div>
@@ -2762,47 +2762,47 @@
         <div class="full-card" style="margin-bottom:5px">
           <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア コマJSON出力</div>
           <!-- チャットパレット反映元選択 -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
-              <div
-                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px"
-                id="koma-palette-src-bar">
+              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px" id="koma-palette-src-bar">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-simple" value="simple" checked
-                    onchange="setKomaPaletteSrc('simple')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-simple" value="simple" checked onchange="setKomaPaletteSrc('simple')" style="cursor:pointer;accent-color:var(--accent)">
                   🔄 自動シンプル
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-named" value="named"
-                    onchange="setKomaPaletteSrc('named')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-named" value="named" onchange="setKomaPaletteSrc('named')" style="cursor:pointer;accent-color:var(--accent)">
                   🔄 自動タイトル付き
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="radio" name="koma-palette-src" id="kpsrc-manual" value="manual"
-                    onchange="setKomaPaletteSrc('manual')" style="cursor:pointer;accent-color:var(--accent)">
+                  <input type="radio" name="koma-palette-src" id="kpsrc-manual" value="manual" onchange="setKomaPaletteSrc('manual')" style="cursor:pointer;accent-color:var(--accent)">
                   ✏️ 手書き
                 </label>
               </div>
             </div>
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">⚙️ コマ設定</div>
-              <div
-                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)"
-                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                   ステータスを非公開
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)"
-                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                   発言時に表示しない
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
-                  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)"
-                    style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                   キャラ一覧に表示しない
+                </label>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 ラベル設定</div>
+              <div style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="checkbox" id="koma-incl-sep" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                  区切り行をラベルへ追加する
                 </label>
               </div>
             </div>
@@ -3543,9 +3543,34 @@
       const name = document.getElementById('koma-name')?.value || 'コマ';
       const paletteText = getKomaPaletteText();
 
-      const faces = currentKoma.labels
-        .filter(l => !l._sep && l.text)
-        .map(l => ({ label: l.text, iconUrl: null }));
+      const inclSep = document.getElementById('koma-incl-sep')?.checked || false;
+
+const faces = [];
+
+// 差分ラベル
+currentKoma.labels.forEach(l => {
+  if (l._sep) {
+    if (inclSep) faces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null });
+  } else if (l.text) {
+    faces.push({ label: l.text, iconUrl: null });
+  }
+});
+
+// ステータス
+(currentKoma.statusList || []).forEach(s => {
+  if (s._sep) {
+    if (inclSep) faces.push({ label: s.label || '━━━━━━━━━━', iconUrl: null });
+  } else if (s.label) {
+    // ステータスはfacesには含めない（ラベルでない）
+  }
+});
+
+// パラメータ
+(currentKoma.paramList || []).forEach(p => {
+  if (p._sep) {
+    if (inclSep) faces.push({ label: p.label || '━━━━━━━━━━', iconUrl: null });
+  }
+});
 
       const status = (currentKoma.statusList || [])
         .filter(s => s.label)
@@ -5001,8 +5026,10 @@ maxInp.style.cssText = 'height:36px;padding:0 6px;font-size:14px;font-weight:700
         'koma-invisible': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'chk-sk-dice2': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-      };
+        'koma-incl-sep':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+    'chk-incl-sep':   ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+    'chk-incl-sep2':  ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+  };
       const ids = idMap[el.id] || [];
       ids.forEach(id => {
         const t = document.getElementById(id);
