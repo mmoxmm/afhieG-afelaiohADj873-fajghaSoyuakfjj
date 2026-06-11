@@ -5214,7 +5214,7 @@ function getPaletteLines(forExport = false) {
     }
 
     function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f"); }
-    function copyPalettePreview() { const lines = getPaletteLines(); if (!lines.length) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const txt = lines.map(l => l.isSep ? "━━━━━━━━━━" : l.text).join("\n"); navigator.clipboard.writeText(txt).then(() => showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }
+    function copyPalettePreview() { const lines = getPaletteLines(); if (!lines.length) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const txt = lines.filter(l => !l._empty).map(l => l.text).join("\n"); navigator.clipboard.writeText(txt).then(() => showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }
     function setExportMode(mode) { exportMode = mode;["json", "text"].forEach(m => { const b = document.getElementById("exp-btn-" + m); if (b) b.className = "export-btn" + (m === mode ? "" : " sec"); const b2 = document.getElementById("exp-btn-" + m + "2"); if (b2) b2.className = "export-btn" + (m === mode ? "" : " sec"); }); const dl = document.getElementById("btn-dl-json"); if (dl) dl.style.display = mode === "json" ? "inline-flex" : "none"; const dl2 = document.getElementById("btn-dl-json2"); if (dl2) dl2.style.display = mode === "json" ? "inline-flex" : "none"; updateExport(); }
     function syncKomaSetting(el) {
       const idMap = {
