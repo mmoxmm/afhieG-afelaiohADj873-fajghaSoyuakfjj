@@ -2697,7 +2697,7 @@
           </div>
           <div class="export-preview" id="export-preview3" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
           <div class="export-btn-row" style="margin-top:5px">
-            <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+            <button class="export-btn" onclick="copyExport()">📋 JSONコピー</button>
             <button class="export-btn sec" onclick="updateExport()">🔄 更新</button>
           </div>
         </div>
@@ -3718,10 +3718,11 @@
       if (!wrap) return;
       const personal = lSaves().filter(k => k._isKoma || k.komaData);
       const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
-      const all = [
-        ...personal.map(s => ({ ...s, _fromShared: false })),
-        ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
-      ].sort((a, b) => b.id - a.id);
+ const all = [
+  ...personal.map(s => ({ ...s, _fromShared: false })),
+  ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
+].sort((a, b) => b.id - a.id)
+.filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
       const filtered = all.filter(sv => {
         if (_komaTabFilter === "personal") return !sv._fromShared;
         if (_komaTabFilter === "shared") return !!sv._fromShared;
@@ -5360,6 +5361,7 @@ valInp.addEventListener("change", e => {
         nameInp.addEventListener('input', e => {
           currentKoma.statusList[idx] = { ...currentKoma.statusList[idx], label: e.target.value };
           renderKomaPalettePreview();
+          updKomaTabBadges();
         });
         valInp.addEventListener('input', e => {
           currentKoma.statusList[idx] = { ...currentKoma.statusList[idx], value: e.target.value };
@@ -5473,6 +5475,7 @@ valInp.addEventListener("change", e => {
         nameInp.addEventListener('input', e => {
           currentKoma.paramList[idx] = { ...currentKoma.paramList[idx], label: e.target.value };
           renderKomaPalettePreview();
+          updKomaTabBadges();
         });
         valInp.addEventListener('input', e => {
           currentKoma.paramList[idx] = { ...currentKoma.paramList[idx], value: e.target.value };
@@ -5788,8 +5791,11 @@ valInp.addEventListener("change", e => {
             if (cf.label && cf.value) cmdLines.push("CC<={" + cf.label + "} 【" + cf.label + "】");
           });
         }
+        
 
       } else {
+
+        
         if (manualPaletteText.trim()) {
           cmdLines = manualPaletteText.split("\n").map(l => l.trimEnd());
         }
@@ -5826,7 +5832,7 @@ valInp.addEventListener("change", e => {
           invisible: invisible
         }
       });
-    }
+      }
     function buildCocoforiaText() { const name = document.getElementById("npc-name").value || "NPC"; const lines = ["\u300a" + name + "\u300b", ""]; const sl = []; STATS.forEach(({ key, label }) => { const v = vals[key] || 0; if (v > 0) sl.push(label + ":" + v); }); if (sl.length) lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09", sl.join(" / "), ""); const strV = vals.str || 0, sizV = vals.siz || 0; if (strV + sizV > 0) { const db = getDB(strV + sizV); lines.push("DB: " + db.label + " / \u30d3\u30eb\u30c9: " + db.build, ""); } const rl = []; const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck"); if (hp > 0 || ovManual.hp) rl.push("HP:" + hp); if (mp > 0 || ovManual.mp) rl.push("MP:" + mp); if (san > 0 || ovManual.san) rl.push("SAN:" + san); if (luck > 0 || ovManual.luck) rl.push("\u5e78\u904b:" + luck); consumables.filter(c => c.label).forEach(c => { const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0; rl.push(c.label + ":" + cur + (max ? "/" + max : "")); }); if (rl.length) lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9", rl.join(" / "), ""); const af = atkList.filter(a => a.name); if (af.length) { lines.push("\u25a0 \u653b\u6483"); af.forEach(a => { lines.push((a.name + ": " + (a.pct ? a.pct + "%" : "") + " " + (a.dmg ? "\u30c0\u30e1:" + a.dmg : "")).trim()); }); lines.push(""); } const skf = skList.filter(s => s.name && (s.val || 0) > 0); if (skf.length) { lines.push("\u25a0 \u6280\u80fd"); skf.forEach(s => { lines.push(s.name + ": " + s.val + "%"); }); lines.push(""); } const mf = memoList.filter(m => m.label || m.content); if (mf.length) { lines.push("\u25a0 \u30e1\u30e2"); mf.forEach(m => { lines.push((m.label ? m.label + "\u3000" : "") + m.content); }); lines.push(""); } return lines.join("\n").trim(); }
     function updateExport() {
       const name = document.getElementById("npc-name").value || "";
@@ -6144,11 +6150,12 @@ valInp.addEventListener("change", e => {
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id);
-      const filtered = allSaves.filter(sv => {
-        if (_statSaveFilter === "personal") return !sv._fromShared;
-        if (_statSaveFilter === "shared") return !!sv._fromShared;
-        return true;
-      });
+const filtered = allSaves.filter(sv => {
+  if (sv._isKoma) return false; // ← 追加：コマのみ除外
+  if (_statSaveFilter === "personal") return !sv._fromShared;
+  if (_statSaveFilter === "shared") return !!sv._fromShared;
+  return true;
+});
       if (!filtered.length) {
         wrap.innerHTML = '<p class="save-empty">保存データがありません</p>';
         return;
@@ -6186,13 +6193,14 @@ valInp.addEventListener("change", e => {
       const badge = sv._shared ? '<span class="shared-badge">\u5171\u6709</span>' : "";
       const sharedBg = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
       let chips = "";
-      if (isKoma) {
-        const lbls = (sv.labels || []).filter(l => !l._sep && l.text);
-        const preview = lbls.map(l => l.text).join("\u30fb");
-        chips = '<span class="stat-chip">\u30e9\u30d9\u30eb ' + lbls.length + '\u4ef6</span>' + (preview ? '<span class="stat-chip" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100% - 80px);display:inline-block;vertical-align:middle">' + esc(preview) + '</span>' : "");
-      } else {
-        chips = STATS.filter(({ key }) => (parseInt(sv.vals?.[key]) || 0) > 0).map(({ key, label }) => '<span class="stat-chip"><strong>' + label + '</strong> ' + (parseInt(sv.vals[key]) || 0) + '</span>').join("");
-      }
+if (isKoma || sv.komaData) {
+  const komaD = sv.komaData || sv;
+  const lbls = (komaD.labels || []).filter(l => !l._sep && l.text).length;
+  const stN = (komaD.statusList || []).filter(s => !s._sep && s.label).length;
+  const prN = (komaD.paramList || []).filter(p => !p._sep && p.label).length;
+  const total = lbls + stN + prN;
+  chips = `<span class="stat-chip">差分 ${lbls}</span><span class="stat-chip">ST ${stN}</span><span class="stat-chip">PR ${prN}</span><span class="stat-chip" style="font-weight:700">計 ${total}</span>`;
+}
       const extraChips = isKoma ? "" : (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
       const actions = '<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u524a\u9664</button>';
       return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + (chips || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>') + extraChips + '</div><div class="save-card-actions">' + actions + '</div></div>';
@@ -6322,25 +6330,27 @@ valInp.addEventListener("change", e => {
         }
       });
     }
-    function renderSharedList() {
-      const wrap = document.getElementById("shared-list-wrap");
-      const shared = lSharedSaves();
-      const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
-        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "all" ? " active" : "") + '" onclick="setSharedFilter(\'all\')">📋 全て</button>'
-        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "char" ? " active" : "") + '" onclick="setSharedFilter(\'char\')">👤 キャラ</button>'
-        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "koma" ? " active" : "") + '" onclick="setSharedFilter(\'koma\')">🎭 コマ</button>'
-        + '</div>';
-      const filtered = shared.filter(sv => {
-        if ((_sharedFilter || "all") === "char") return !sv._isKoma;
-        if ((_sharedFilter || "all") === "koma") return !!sv._isKoma;
-        return true;
-      });
+function renderSharedList() {
+  const wrap = document.getElementById("shared-list-wrap");
+  const shared = lSharedSaves();
+  const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
+    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "all" ? " active" : "") + '" onclick="setSharedFilter(\'all\')">📋 全て</button>'
+    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "char" ? " active" : "") + '" onclick="setSharedFilter(\'char\')">👤 キャラ</button>'
+    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "koma" ? " active" : "") + '" onclick="setSharedFilter(\'koma\')">🎭 コマ</button>'
+    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "both" ? " active" : "") + '" onclick="setSharedFilter(\'both\')">📚 両方</button>'
+    + '</div>';
+  const filtered = shared.filter(sv => {
+    if ((_sharedFilter || "all") === "char") return !sv._isKoma && !sv.komaData;
+    if ((_sharedFilter || "all") === "koma") return !!sv._isKoma && !sv.komaData;
+    if ((_sharedFilter || "all") === "both") return !!sv.komaData;
+    return true;
+  });
       if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">\u5171\u6709\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093</p>'; return; }
       wrap.innerHTML = filterBar + '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08' + filtered.length + '\u4ef6\uff09</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true)).join("") + '</div>';
       bindSaveListEvents(wrap);
     }
     async function saveDataTo(dest) {
-      const d = getCurrentData();
+      const d = getCurrentData({ includeKoma: true });
       manualPaletteText = '';
       try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch { }
       const ta = document.getElementById('manual-palette-textarea');
@@ -6608,7 +6618,7 @@ valInp.addEventListener("change", e => {
       document.getElementById("btn-temp-all").addEventListener("click", () => renderMadnessList(TEMP_MADNESS, "temp-mad-result"));
       document.getElementById("btn-perm-mad").addEventListener("click", () => randMad(PERM_MADNESS, "perm-mad-result"));
       document.getElementById("btn-perm-all").addEventListener("click", () => renderMadnessList(PERM_MADNESS, "perm-mad-result"));
-      document.getElementById("btn-save-current").addEventListener("click", showSaveDestPicker);
+document.getElementById("btn-save-current").addEventListener("click", () => saveDataTo("personal"));
       document.getElementById("btn-save-shared-current").addEventListener("click", () => saveDataTo("shared"));
       document.getElementById("btn-apply-key").addEventListener("click", () => applyKey(document.getElementById("sync-key-input").value));
       document.getElementById("btn-set-pgist").addEventListener("click", setPersonalGistId);
@@ -6714,21 +6724,6 @@ valInp.addEventListener("change", e => {
       return _origGistSet(payload);
     };
 
-    const _origGistGet = gistGet;
-    gistGet = async function () {
-      const data = await _origGistGet();
-      if (!data) return data;
-      // リモートのkomas（旧形式）をsavesにマージ
-      const remoteKomas = (data.komas || []).filter(k => k._isKoma);
-      if (remoteKomas.length) {
-        const remoteSaves = data.saves || [];
-        remoteKomas.forEach(k => {
-          if (!remoteSaves.find(r => String(r.id) === String(k.id))) remoteSaves.push(k);
-        });
-        data.saves = remoteSaves;
-      }
-      return data;
-    };
   </script>
 </body>
 
