@@ -5163,7 +5163,8 @@ function getPaletteLines(forExport = false) {
       const hasSk  = skBlock.some(l => !l.isSep);
 
       // 技能 と (攻撃 or 呪文) の両方に中身があるときヘッダーを付ける
-      const needHeaders = hasSk && (hasAtk || hasSpl);
+      const activeCount = (hasSk ? 1 : 0) + (hasAtk ? 1 : 0) + (hasSpl ? 1 : 0);
+      const needHeaders = activeCount >= 2;
 
       // 区切り設定を読む（コマタブと同じ）
       const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value
