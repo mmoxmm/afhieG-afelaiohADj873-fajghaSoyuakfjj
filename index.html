@@ -3730,6 +3730,8 @@
           inp.placeholder = "━━━ 区切り ━━━";
           inp.value = lbl.label || "";
           inp.className = "koma-label-text";
+          inp.style.fontWeight = '400';
+          inp.style.color = 'var(--text2)';
           inp.addEventListener("input", e => {
             currentKoma.labels[idx] = { ...currentKoma.labels[idx], label: e.target.value };
             renderKomaPalettePreview();
@@ -3763,8 +3765,8 @@
         // ラベルテキスト入力
         const inp = document.createElement("input");
         inp.type = "text";
-        inp.style.color = 'var(--text3)';
-        inp.style.fontWeight = 'normal';
+        inp.style.color = 'var(--text)';
+        inp.style.fontWeight = '700';
         inp.placeholder = "ラベル名（例：朝）";
         inp.value = lbl.text || "";
         inp.className = "koma-label-text";
@@ -4149,6 +4151,7 @@
         renderSharedList();
         renderKomaSaveList();
         showToast("「" + name + "」を上書きしました");
+        if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
       } else {
         const allSaves = lSaves();
         const idx = allSaves.findIndex(k => k.id === id);
@@ -4158,8 +4161,12 @@
         currentSaves = lSaves();
         renderSaveList();
         renderKomaSaveList();
-        showToast("「" + name + "」を上書きしました");
-        if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+        if (syncToken) {
+          gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } })
+            .then(ok => showToast(ok ? "「" + name + "」を上書き・同期しました" : "「" + name + "」を上書きしました（同期失敗）"));
+        } else {
+          showToast("「" + name + "」を上書きしました");
+        }
       }
     }
 
