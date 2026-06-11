@@ -599,7 +599,7 @@
     .metric {
       background: var(--bg2);
       border-radius: var(--radius);
-      padding: 5px 3px;
+      padding: 2px 3px;
       text-align: center;
       border: 0.5px solid var(--border)
     }
@@ -770,7 +770,7 @@
     /* 呪文行 */
     .spl-headers {
       display: grid;
-      grid-template-columns: 1fr 38px 1fr 22px 22px;
+      grid-template-columns: 16px 1fr 38px 1fr 22px 22px;
       gap: 2px;
       padding: 0 2px 3px;
       font-size: 11px;
@@ -779,7 +779,7 @@
 
     .spl-row {
       display: grid;
-      grid-template-columns: 1fr 38px 1fr 22px 22px;
+      grid-template-columns: 16px 1fr 38px 1fr 22px 22px;
       gap: 2px;
       align-items: center;
       margin-bottom: 3px
@@ -793,7 +793,7 @@
     /* 消耗品行 */
     .cons-headers {
       display: grid;
-      grid-template-columns: 1fr 38px 38px 22px 22px;
+      grid-template-columns: 16px 1fr 38px 38px 22px 22px;
       gap: 2px;
       padding: 0 2px 3px;
       font-size: 11px;
@@ -807,7 +807,7 @@
 
     .cons-row {
       display: grid;
-      grid-template-columns: 1fr 38px 38px 22px 22px;
+      grid-template-columns: 16px 1fr 38px 38px 22px 22px;
       gap: 2px;
       align-items: center;
       margin-bottom: 3px
@@ -2395,6 +2395,7 @@
               <div class="dv-col-hd" style="color:#2855a0">⅕(E)</div>
             </div>
             <div class="dv-grid-wrap" id="derived-rows"></div>
+            <div id="custom-field-rows"></div>
             <div class="derived-mini" id="derived-mini" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-top:4px">
             </div>
           </div>
@@ -2462,8 +2463,9 @@
                   <textarea id="manual-palette-draft" placeholder="下書き・メモ用スペース..."
                     style="width:100%;min-height:80px;height:auto;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
                   <div style="display:flex;gap:3px;margin-top:3px">
-                  <button class="btn-add" onclick="copyDraftPalette()" style="flex:1">📋 仮置きコピー</button>
-                  <button class="btn-add" onclick="pasteDraftPalette('manual-palette-draft')" style="flex:1">📥 ペースト</button>
+                    <button class="btn-add" onclick="copyDraftPalette()" style="flex:1">📋 仮置きコピー</button>
+                    <button class="btn-add" onclick="pasteDraftPalette('manual-palette-draft')" style="flex:1">📥
+                      ペースト</button>
                   </div>
                   <button class="btn-add" onclick="clearDraftPalette()" style="font-size:12px;color:var(--danger)">🗑
                     仮置きクリア</button>
@@ -2508,14 +2510,22 @@
             </div>
             <div class="acc-body open" id="body-cons">
               <div id="panel-cons">
-                <div class="cons-headers"><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
+                <div class="cons-headers">
+                  <span></span><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
                 <div id="cons-rows"></div>
-                <button class="btn-add" onclick="addConsumable()">＋ 追加</button>
+                <div style="display:flex;gap:3px">
+                  <button class="btn-add" onclick="addConsumable()" style="flex:2">＋ 追加</button>
+                  <button class="btn-add" onclick="addConsSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                </div>
               </div>
               <div id="panel-spl-inner" style="display:none">
-                <div class="spl-headers"><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span></div>
+                <div class="spl-headers">
+                  <span></span><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span></div>
                 <div id="spl-rows"></div>
-                <button class="btn-add" id="btn-add-spl">＋ 追加</button>
+                <div style="display:flex;gap:3px">
+                  <button class="btn-add" id="btn-add-spl" style="flex:2">＋ 追加</button>
+                  <button class="btn-add" onclick="addSplSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                </div>
               </div>
             </div>
           </div>
@@ -2552,16 +2562,36 @@
           </div>
 
           <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
-            <div class="memo-hd" onclick="toggleMemo()"
-              style="padding:5px 9px;background:var(--bg2);min-height:34px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
-              <div class="acc-hd-left"><span class="acc-title">📝 MEMO</span><span class="acc-badge"
-                  id="badge-memo">0</span></div>
-              <span class="acc-arrow open" id="arrow-memo">▼</span>
+            <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch">
+              <button id="memostat-tab-param" onclick="switchMemoStatTab('param')"
+                style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">
+                📊 パラメータ <span class="acc-badge" id="badge-extra-param">0</span>
+              </button>
+              <button id="memostat-tab-memo" onclick="switchMemoStatTab('memo')"
+                style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">
+                📝 MEMO <span class="acc-badge" id="badge-memo">0</span>
+              </button>
+              <button onclick="toggleMemo()"
+                style="background:none;border:none;border-left:0.5px solid var(--border2);border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;padding:6px 8px;font-size:11px;flex-shrink:0"
+                id="memo-fold-btn">▼</button>
             </div>
             <div class="memo-body open" id="body-memo" style="padding:6px;background:var(--bg)">
-              <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
-              <div id="memo-rows"></div>
-              <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
+              <div id="panel-extra-param">
+                <div
+                  style="display:grid;grid-template-columns:16px 1fr 80px 22px 22px;gap:3px;padding:0 2px 3px;font-size:11px;color:var(--text3)">
+                  <span></span><span>ラベル名</span><span style="text-align:center">値</span><span></span><span></span>
+                </div>
+                <div id="extra-param-rows"></div>
+                <div style="display:flex;gap:3px">
+  <button class="btn-add" onclick="addExtraParam()" style="flex:2">＋ 追加</button>
+  <button class="btn-add" onclick="addExtraParamSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+</div>
+              </div>
+              <div id="panel-memo-inner" style="display:none">
+                <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
+                <div id="memo-rows"></div>
+                <button class="btn-add" onclick="addMemoRow()">＋ メモ行を追加</button>
+              </div>
             </div>
           </div>
         </div><!-- /技能・メモ 2カラム ここまで -->
@@ -2628,11 +2658,14 @@
         <div
           style="display:flex;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;margin-bottom:0">
           <button id="koma-data-tab-diff" onclick="switchKomaDataTab('diff')"
-            style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">差分</button>
+            style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">差分
+            <span id="badge-koma-diff" class="acc-badge">0</span></button>
           <button id="koma-data-tab-status" onclick="switchKomaDataTab('status')"
-            style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">ステータス</button>
+            style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">ステータス
+            <span id="badge-koma-status" class="acc-badge">0</span></button>
           <button id="koma-data-tab-param" onclick="switchKomaDataTab('param')"
-            style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">パラメータ</button>
+            style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:6px 3px">パラメータ
+            <span id="badge-koma-param" class="acc-badge">0</span></button>
           <button id="koma-data-tab-clear" onclick="clearCurrentKomaDataTab()"
             style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--text3);cursor:pointer;font-size:12px;padding:6px 10px">🗑️クリア</button>
         </div>
@@ -2768,8 +2801,9 @@
                   <textarea id="koma-manual-draft" placeholder="下書き・メモ用スペース..."
                     style="width:100%;min-height:80px;font-family:'SF Mono',Consolas,monospace;font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:6px 8px;line-height:1.6;resize:none;overflow:hidden"></textarea>
                   <div style="display:flex;gap:3px;margin-top:3px">
-                  <button class="btn-add" onclick="copyKomaDraft()" style="flex:1">📋 仮置きコピー</button>
-                  <button class="btn-add" onclick="pasteDraftPalette('koma-manual-draft')" style="flex:1">📥 ペースト</button>
+                    <button class="btn-add" onclick="copyKomaDraft()" style="flex:1">📋 仮置きコピー</button>
+                    <button class="btn-add" onclick="pasteDraftPalette('koma-manual-draft')" style="flex:1">📥
+                      ペースト</button>
                   </div>
                   <button class="btn-add" onclick="clearKomaDraft()" style="font-size:12px;color:var(--danger)">🗑
                     仮置きクリア</button>
@@ -3568,13 +3602,16 @@
         const isShared = !!shared.find(s => s.id === k.id);
         const badge = isShared ? '<span class="shared-badge">共有</span>' : '';
         const lbls = (k.labels || []).filter(l => !l._sep && l.text);
+        const stN = (k.statusList || []).filter(s => !s._sep && s.label).length;
+        const prN = (k.paramList || []).filter(p => !p._sep && p.label).length;
+        const totalN = lbls.length + stN + prN;
         const preview = lbls.map(l => l.text).join('・');
         const bgStyle = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
         return '<div class="koma-save-card" style="' + bgStyle + '">'
           + '<div class="koma-save-head"><span class="koma-save-name">' + esc(k.name) + badge + '</span>'
           + '<span class="koma-save-date">' + ds + '</span></div>'
           + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px;display:flex;align-items:center;gap:4px;overflow:hidden">'
-          + '<span style="flex-shrink:0;font-weight:700">ラベル ' + lbls.length + '件</span>'
+          + '<span style="flex-shrink:0;font-weight:700">差分' + lbls.length + ' / ステ' + stN + ' / パラ' + prN + '（計' + totalN + '件）</span>'
           + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' + esc(preview) + '</span></div>'
           + '<div class="koma-save-actions">'
           + '<button class="btn-pri btn-koma-load" style="font-size:13px;padding:4px 8px" data-id="' + k.id + '" data-shared="' + (isShared ? 1 : 0) + '">読み込む</button>'
@@ -3864,6 +3901,7 @@
       currentKoma.labels.push({ id: komaNxtId++, text: "", atOverride: null });
       buildKomaLabelRows();
       renderKomaPalettePreview();
+      updKomaTabBadges();
     }
 
     function addKomaSep() {
@@ -4291,16 +4329,19 @@
     const WEAPONS = [["素手", "1d3"], ["短剣", "1d4"], ["棍棒", "1d6"], ["槍", "1d6"], ["大剣", "1d8"], ["斧", "1d6"], ["ライフル", "2d6"], ["拳銃", "1d8"]];
     const vals = {}; STATS.forEach(s => vals[s.key] = 0);
     // カスタムフィールド（特性値セクション下部）
-    let customFields = [{ id: 'cf1', label: '', value: '' }, { id: 'cf2', label: '', value: '' }, { id: 'cf3', label: '', value: '' }, { id: 'cf4', label: '', value: '' }];
+    let customFields = [{ id: 'cf1', label: '', value: '', max: '' }, { id: 'cf2', label: '', value: '', max: '' }, { id: 'cf3', label: '', value: '', max: '' }, { id: 'cf4', label: '', value: '', max: '' }];
     function saveCustomFields() { localStorage.setItem('coc_custom_fields', JSON.stringify(customFields)); }
     let inputMode = 6;
     const ov = { hp: 0, mp: 0, san: 0, luck: 0 };
     let ovManual = { hp: false, mp: false, san: false, luck: false };
     let skList = [{ id: 0, name: "", val: 0 }];
+    let extraParams = [];
+    try { const _ep = JSON.parse(localStorage.getItem('coc_extra_params') || '[]'); extraParams = _ep.length ? _ep : [{ id: 0, label: '', value: '' }]; } catch { extraParams = [{ id: 0, label: '', value: '' }]; }
+    function saveExtraParams() { localStorage.setItem('coc_extra_params', JSON.stringify(extraParams)); }
     let atkList = [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }];
     let splList = [{ id: 0, name: "", mp: "", note: "" }];
     let memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
-    let consumables = [];
+    let consumables = [{ id: 0, label: '', cur: '', max: '' }];
     let nxtId = 1;
     let exportMode = "json";
     let customBeings = [], customSpells = [];
@@ -4312,7 +4353,7 @@
     let currentSavePage = "personal";
     let sharedToken = "", sharedGistId = "";
     const L_SAVES = "coc_v4_saves", L_KEY = "coc_gist_token", L_GIST = "coc_gist_id", L_GIST_TS = "coc_gist_token_ts", L_STOKEN = "coc_shared_token", L_SGIST = "coc_shared_gist_id";
-  function renderPalettePreview() {
+    function renderPalettePreview() {
       if (!document.getElementById("body-palette")?.classList.contains("open")) return;
       const skEl = document.getElementById("palette-sortable-sk");
       const atkEl = document.getElementById("palette-sortable-atk");
@@ -4334,11 +4375,11 @@
 
       // linesをsk系とatk系に再分離（keyで判断）
       // ヘッダー・空行はどちらに属するかをフラグで管理
-     const skLines = [];
+      const skLines = [];
       const atkLines = [];
 
       // ヘッダーなし（技能か攻撃どちらか一方のみ）の場合の振り分け
-      const hasSkHeader  = lines.some(l => l._header && l.text === '━━━🎯技能━━━');
+      const hasSkHeader = lines.some(l => l._header && l.text === '━━━🎯技能━━━');
       const hasAtkHeader = lines.some(l => l._header && (l.text === '━━━⚔️攻撃━━━' || l.text === '━━━✨呪文━━━'));
 
       // ヘッダーが一切ない場合：キーで判断して振り分け
@@ -4478,40 +4519,32 @@
       }); buildDerivedRows(); setTimeout(buildCustomFieldRows, 0);
     }
     function buildCustomFieldRows() {
-      let wrap = document.getElementById('custom-field-rows');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'custom-field-rows';
-        wrap.style.cssText = 'display:flex;flex-direction:column;gap:0;';
-        const mini = document.getElementById('derived-mini');
-        if (mini && mini.parentNode) mini.parentNode.insertBefore(wrap, mini);
-        else return;
-      }
+      const wrap = document.getElementById('custom-field-rows');
+      if (!wrap) return;
       wrap.innerHTML = '';
-      const hdr = document.createElement('div');
-      hdr.style.cssText = 'font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.06em;padding:4px 0 2px;';
-      hdr.textContent = '自由欄';
-      wrap.appendChild(hdr);
+      const colHdr = document.createElement('div');
+      colHdr.style.cssText = 'display:grid;grid-template-columns:1fr 52px 52px;gap:4px;margin:2px 2px 2px;align-items:center;';
+      colHdr.innerHTML = '<span style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.06em">追加ステータス</span><span style="font-size:10px;color:var(--text3);text-align:center">現在値</span><span style="font-size:10px;color:var(--text3);text-align:center">最大値</span>';
+      wrap.appendChild(colHdr);
       customFields.forEach((cf, idx) => {
         const row = document.createElement('div');
-        row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 2px;';
-        const lblCell = document.createElement('div');
-        lblCell.style.cssText = 'display:flex;align-items:center;justify-content:center;height:var(--cell-h);';
+        row.style.cssText = 'display:grid;grid-template-columns:1fr 52px 52px;gap:4px;margin:0 2px 2px;align-items:center;';
         const lbl = document.createElement('input');
         lbl.type = 'text';
         lbl.placeholder = 'ラベル';
         lbl.value = cf.label || '';
-        lbl.style.cssText = 'width:100%;height:32px;padding:0 4px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;';
-        lblCell.appendChild(lbl);
-        const valCell = document.createElement('div');
-        valCell.className = 'sg-inp-cell';
+        lbl.style.cssText = 'height:32px;padding:0 4px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;width:100%;';
         const val = document.createElement('input');
-        val.type = 'text';
-        val.placeholder = '値';
+        val.type = 'number';
+        val.placeholder = '現在';
         val.value = cf.value || '';
-        val.style.cssText = 'width:100%;height:32px;padding:0 8px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;';
-        valCell.appendChild(val);
-        row.append(lblCell, valCell);
+        val.style.cssText = 'height:32px;padding:0 4px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;width:100%;-moz-appearance:textfield;';
+        const maxVal = document.createElement('input');
+        maxVal.type = 'number';
+        maxVal.placeholder = '最大';
+        maxVal.value = cf.max || '';
+        maxVal.style.cssText = 'height:32px;padding:0 4px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;width:100%;-moz-appearance:textfield;';
+        row.append(lbl, val, maxVal);
         wrap.appendChild(row);
         lbl.addEventListener('input', e => {
           customFields[idx] = { ...customFields[idx], label: e.target.value };
@@ -4519,6 +4552,10 @@
         });
         val.addEventListener('input', e => {
           customFields[idx] = { ...customFields[idx], value: e.target.value };
+          saveCustomFields(); updateExport();
+        });
+        maxVal.addEventListener('input', e => {
+          customFields[idx] = { ...customFields[idx], max: e.target.value };
           saveCustomFields(); updateExport();
         });
       });
@@ -4538,10 +4575,125 @@
     }
     const DERIVED_LABELS = { hp: "HP", mp: "MP", san: "SAN", luck: "\u5e78\u904b" };
     function updDerived(k) { const v = getEff(k), a = calcAuto(k), lbl = DERIVED_LABELS[k] || k; const hv = v ? Math.floor(v / 2) : 0, fv = v ? Math.floor(v / 5) : 0; const vd = document.getElementById("dv-" + k); if (vd) makeClickCopy(vd, ccCmd(lbl, v), v || null); const hd = document.getElementById("dh-" + k); if (hd) makeClickCopy(hd, ccCmd(lbl, hv), hv || null); const fd = document.getElementById("df-" + k); if (fd) makeClickCopy(fd, ccCmd(lbl, fv), fv || null); const inp = document.getElementById("di-" + k); if (inp) inp.placeholder = k === "luck" ? "\u624b\u5165\u529b" : (a || "\u81ea\u52d5"); }
-    function updDerivedMini() { const str = vals.str || 0, siz = vals.siz || 0, dex = vals.dex || 0, db = getDB(str + siz); const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck"); const any = STATS.some(s => (vals[s.key] || 0) > 0); document.getElementById("derived-mini").innerHTML = any ? [{ l: "HP", v: hp || "\u2014", d: "(CON+SIZ)\u00f710" }, { l: "MP", v: mp || "\u2014", d: "=POW" }, { l: "DB", v: (str + siz) ? db.label : "\u2014", d: "STR+SIZ" }, { l: "MOV", v: getMOV(str, dex, siz), d: "" }].map(m => '<div class="metric"><div class="metric-label">' + m.l + '</div><div class="metric-val">' + m.v + '</div><div class="metric-desc">' + m.d + '</div></div>').join("") : ""; }
+    function updDerivedMini() {
+      const str = vals.str || 0, siz = vals.siz || 0, dex = vals.dex || 0, db = getDB(str + siz);
+      const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
+      const any = STATS.some(s => (vals[s.key] || 0) > 0);
+      const el = document.getElementById("derived-mini");
+      if (!el) return;
+      if (!any) { el.innerHTML = ""; return; }
+      const baseItems = [
+        { l: "HP", v: hp || "\u2014", d: "(CON+SIZ)\u00f710" },
+        { l: "MP", v: mp || "\u2014", d: "=POW" },
+        { l: "DB", v: (str + siz) ? db.label : "\u2014", d: "STR+SIZ" },
+        { l: "MOV", v: getMOV(str, dex, siz), d: "" }
+      ];
+      const cfItems = customFields
+        .filter(cf => cf.label && (cf.value || cf.max))
+        .map(cf => ({ l: cf.label, v: cf.value || "\u2014", d: cf.max ? "MAX " + cf.max : "" }));
+      const allItems = [...baseItems, ...cfItems];
+      el.style.gridTemplateColumns = allItems.map(() => '1fr').join(' ');
+      el.innerHTML = allItems.map(m =>
+        '<div class="metric"><div style="display:flex;align-items:baseline;justify-content:center;gap:3px"><span class="metric-label">' + m.l + '</span><span class="metric-val" style="font-size:14px">' + m.v + '</span></div><div class="metric-desc">' + m.d + '</div></div>'
+      ).join("");
+    }
 
     function buildMemoRows() { const wrap = document.getElementById("memo-rows"); wrap.innerHTML = ""; memoList.forEach((m, idx) => { if (!m.dest) m.dest = "cmd"; const row = document.createElement("div"); row.style.cssText = "display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden"; row.dataset.dnd = idx; const hd = document.createElement("div"); hd.style.cssText = "display:flex;align-items:center;gap:3px;padding:3px 5px;background:var(--bg3);cursor:pointer;min-height:30px;flex-wrap:nowrap"; const dh = makeHandle(); dh.style.fontSize = "12px"; const lbl = document.createElement("textarea"); lbl.placeholder = "\u30e9\u30d9\u30eb\u5165\u529b\u6b04"; lbl.value = m.label; lbl.rows = 1; lbl.style.cssText = "flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;resize:none;overflow:hidden;outline:none;color:var(--text)"; const tBtn = document.createElement("button"); tBtn.style.cssText = "background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s"; tBtn.textContent = "\u25bc"; const dr = document.createElement("div"); dr.className = "memo-dest-toggle"; const bM = document.createElement("button"); bM.className = "memo-dest-btn" + (m.dest === "memo" ? " act-memo" : ""); bM.textContent = "\u30e1\u30e2"; const bC = document.createElement("button"); bC.className = "memo-dest-btn" + (m.dest === "cmd" ? " act-cmd" : ""); bC.textContent = "\u30d1\u30ec"; const bB = document.createElement("button"); bB.className = "memo-dest-btn" + (m.dest === "both" ? " act-memo" : ""); bB.textContent = "\u4e21\u65b9"; const bN = document.createElement("button"); bN.className = "memo-dest-btn" + (m.dest === "none" ? " act-none" : ""); bN.textContent = "\u306a\u3057"; dr.append(bM, bC, bB, bN); const cpBtn = document.createElement("button"); cpBtn.className = "memo-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dlBtn = document.createElement("button"); dlBtn.textContent = "\u00d7"; dlBtn.style.cssText = "background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0"; hd.append(dh, lbl, tBtn, dr, cpBtn, dlBtn); const bd = document.createElement("div"); bd.style.cssText = "padding:4px 6px;background:var(--bg2);" + (m._collapsed ? "display:none" : "display:block"); const ct = document.createElement("textarea"); ct.placeholder = "\u30e1\u30e2\u5185\u5bb9..."; ct.value = m.content; ct.rows = 1; ct.style.cssText = "width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px;resize:none;overflow:hidden;outline:none;color:var(--text)"; bd.appendChild(ct); row.append(hd, bd); wrap.appendChild(row); const setD = (d) => { m.dest = d; bM.className = "memo-dest-btn" + (d === "memo" || d === "both" ? " act-memo" : ""); bC.className = "memo-dest-btn" + (d === "cmd" || d === "both" ? " act-cmd" : ""); bB.className = "memo-dest-btn" + (d === "both" ? " act-memo" : ""); bN.className = "memo-dest-btn" + (d === "none" ? " act-none" : ""); saveMemoLocal(); updateExport(); }; bM.addEventListener("click", e => { e.stopPropagation(); setD("memo"); }); bC.addEventListener("click", e => { e.stopPropagation(); setD("cmd"); }); bB.addEventListener("click", e => { e.stopPropagation(); setD("both"); }); bN.addEventListener("click", e => { e.stopPropagation(); setD("none"); }); const doTg = () => { m._collapsed = !m._collapsed; bd.style.display = m._collapsed ? "none" : "block"; tBtn.style.transform = m._collapsed ? "rotate(-90deg)" : ""; if (!m._collapsed) reExpandAllMemos(); }; tBtn.addEventListener("click", e => { e.stopPropagation(); doTg(); }); hd.addEventListener("click", e => { if ([lbl, cpBtn, dlBtn, tBtn, dh].includes(e.target) || dr.contains(e.target)) return; doTg(); }); lbl.addEventListener("input", () => { m.label = lbl.value; autoExpand(lbl); updMemoBadge(); saveMemoLocal(); updateExport(); }); lbl.addEventListener("click", e => e.stopPropagation()); ct.addEventListener("input", () => { m.content = ct.value; autoExpand(ct); updMemoBadge(); saveMemoLocal(); updateExport(); }); cpBtn.addEventListener("click", e => { e.stopPropagation(); const txt = (m.label ? m.label + "\u3000" : "") + (m.content || ""); navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); }).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }); dlBtn.addEventListener("click", e => { e.stopPropagation(); memoList = memoList.filter(x => x.id !== m.id); buildMemoRows(); updMemoBadge(); saveMemoLocal(); updateExport(); }); bindAutoExpand(lbl); bindAutoExpand(ct); let sy2 = 0; dh.addEventListener("pointerdown", e => { e.preventDefault(); dh.setPointerCapture(e.pointerId); sy2 = e.clientY; const allR = [...wrap.querySelectorAll("[data-dnd]")].map(r => ({ el: r, idx: +r.dataset.dnd, top: r.getBoundingClientRect().top })); row.classList.add("row-dragging"); function mv2(ev) { allR.forEach(r => r.el.classList.remove("row-dragover")); const t = allR.find(r => r.idx !== idx && Math.abs(ev.clientY - r.top) < 22); if (t) t.el.classList.add("row-dragover"); } function up2(ev) { dh.removeEventListener("pointermove", mv2); row.classList.remove("row-dragging"); allR.forEach(r => r.el.classList.remove("row-dragover")); if (Math.abs(ev.clientY - sy2) < 6) return; let ti = idx; for (const r of allR) if (r.idx !== idx && Math.abs(ev.clientY - r.top - 12) < 26) { ti = r.idx; break; } if (ti === idx) return; const item = memoList.splice(idx, 1)[0]; memoList.splice(ti, 0, item); buildMemoRows(); saveMemoLocal(); updateExport(); } dh.addEventListener("pointermove", mv2); dh.addEventListener("pointerup", up2, { once: true }); }); }); updMemoBadge(); }
     function addMemoRow() { memoList.push({ id: nxtId++, label: "", content: "", dest: "cmd" }); buildMemoRows(); openMemo(); }
+
+    function switchMemoStatTab(tab) {
+      const tP = document.getElementById('memostat-tab-param');
+      const tM = document.getElementById('memostat-tab-memo');
+      const pP = document.getElementById('panel-extra-param');
+      const pM = document.getElementById('panel-memo-inner');
+      if (!tP || !tM) return;
+      tP.style.borderBottomColor = tab === 'param' ? 'var(--accent)' : 'transparent';
+      tP.style.color = tab === 'param' ? 'var(--text)' : 'var(--text3)';
+      tM.style.borderBottomColor = tab === 'memo' ? 'var(--accent)' : 'transparent';
+      tM.style.color = tab === 'memo' ? 'var(--text)' : 'var(--text3)';
+      if (pP) pP.style.display = tab === 'param' ? '' : 'none';
+      if (pM) pM.style.display = tab === 'memo' ? '' : 'none';
+    }
+
+    function buildExtraParamRows() {
+      const wrap = document.getElementById('extra-param-rows');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      extraParams.forEach((p, idx) => {
+        // 区切り行
+        if (p._sep) {
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:3px;';
+          row.dataset.dnd = idx;
+          const dh = makeHandle();
+          const inp = document.createElement('input');
+          inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = p.label || '';
+          inp.className = 'koma-sep-inp';
+          inp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], label: e.target.value }; saveExtraParams(); });
+          const rm = document.createElement('button');
+          rm.className = 'btn-remove'; rm.textContent = '×';
+          rm.addEventListener('click', () => { extraParams.splice(idx, 1); saveExtraParams(); buildExtraParamRows(); updExtraParamBadge(); });
+          row.append(dh, inp, rm);
+          wrap.appendChild(row);
+          bindDnD(row, extraParams, idx, () => { saveExtraParams(); buildExtraParamRows(); });
+          return;
+        }
+
+        const row = document.createElement('div');
+        row.style.cssText = 'display:grid;grid-template-columns:16px 1fr 80px 22px 22px;gap:3px;align-items:center;margin-bottom:3px;';
+        row.dataset.dnd = idx;
+        const dh = makeHandle();
+        const nameInp = document.createElement('input');
+        nameInp.type = 'text'; nameInp.placeholder = 'ラベル名...'; nameInp.value = p.label || '';
+        nameInp.style.cssText = 'padding:4px;font-size:13px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;';
+        const valInp = document.createElement('input');
+        valInp.type = 'text'; valInp.placeholder = '値'; valInp.value = p.value || '';
+        valInp.style.cssText = 'padding:4px;font-size:13px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;';
+        const cpBtn = document.createElement('button');
+        cpBtn.className = 'row-copy-btn'; cpBtn.textContent = '📋';
+        const rm = document.createElement('button');
+        rm.className = 'btn-remove'; rm.textContent = '×';
+        row.append(dh, nameInp, valInp, cpBtn, rm);
+        wrap.appendChild(row);
+        nameInp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); valInp.focus(); });
+        valInp.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return; e.preventDefault();
+          if (idx < extraParams.length - 1) {
+            wrap.children[idx + 1]?.querySelector('input')?.focus();
+          } else { addExtraParam(); requestAnimationFrame(() => wrap.lastElementChild?.querySelector('input')?.focus()); }
+        });
+        nameInp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], label: e.target.value }; saveExtraParams(); updExtraParamBadge(); updateExport(); });
+        valInp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], value: e.target.value }; saveExtraParams(); updateExport(); });
+        cpBtn.addEventListener('click', () => {
+          const ep = extraParams[idx]; if (!ep || !ep.label) return;
+          const txt = ep.label + (ep.value ? ' ' + ep.value : '');
+          navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = '✓'; setTimeout(() => cpBtn.textContent = '📋', 900); addHistory(txt); });
+        });
+        rm.addEventListener('click', () => {
+          if (extraParams.length > 1) { extraParams.splice(idx, 1); } else { extraParams[idx] = { ...extraParams[idx], label: '', value: '' }; }
+          saveExtraParams(); buildExtraParamRows(); updExtraParamBadge(); updateExport();
+        });
+        bindDnD(row, extraParams, idx, () => { saveExtraParams(); buildExtraParamRows(); });
+      });
+      updExtraParamBadge();
+    }
+
+    function addExtraParam() {
+      extraParams.push({ id: nxtId++, label: '', value: '' });
+      saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
+    }
+
+    function addExtraParamSep() {
+  extraParams.push({ id: nxtId++, _sep: true, label: '' });
+  saveExtraParams(); buildExtraParamRows();
+}
+
+    function updExtraParamBadge() {
+      const el = document.getElementById('badge-extra-param');
+      if (el) el.textContent = extraParams.filter(p => !p._sep && p.label).length;
+    }
+
+
     function updMemoBadge() { document.getElementById("badge-memo").textContent = memoList.filter(m => m.label || m.content).length; }
     function copyAllMemo() { const lines = memoList.filter(m => m.label || m.content).map(m => (m.label ? m.label + "\u3000" : "") + m.content).join("\n"); if (!lines) { showToast("\u30e1\u30e2\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(lines).then(() => showToast("\u5168\u30e1\u30e2\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }
     function buildAtkRows() {
@@ -4593,10 +4745,8 @@
         const dbCI = document.createElement("input"); dbCI.type = "text"; dbCI.placeholder = "+1d4"; dbCI.className = "db-custom-inp" + (dbState === "custom" ? " show" : ""); dbCI.value = customDbVal;
         const dbWrap = document.createElement("div"); dbWrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:1px;width:26px;overflow:hidden;"; dbWrap.append(dbBtn, dbCI);
         const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "📋";
-        const dh = makeHandle();
-        const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-        row.append(nameInp, pctInp, dmgInp, dbWrap, cpBtn, dh, rm);
-        wrap.appendChild(row);
+    const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+    row.append(nameInp, pctInp, dmgInp, dbWrap, cpBtn, dh, rm); wrap.appendChild(row);
         function updA() { const udb = s2U(dbState, customDbVal); atkList = atkList.map(x => x.id === a.id ? { ...x, useDB: udb } : x); updateExport(); renderPalettePreview(); updAtkBadge(); }
         let pt = null;
         dbBtn.addEventListener("pointerdown", () => { pt = setTimeout(() => { pt = null; dbState = "custom"; dbBtn.className = dBC(dbState); dbBtn.textContent = dBL(dbState, customDbVal); dbCI.classList.add("show"); dbCI.focus(); updA(); }, 600); });
@@ -4689,33 +4839,99 @@
         }); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => { const nv = parseInt(e.target.value) || 0; skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); }); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
       }); updSkBadge();
     }
+    function updKomaTabBadges() {
+      const diffN = currentKoma.labels.filter(l => !l._sep && l.text).length;
+      const stN = (currentKoma.statusList || []).filter(s => !s._sep && s.label).length;
+      const prN = (currentKoma.paramList || []).filter(p => !p._sep && p.label).length;
+      const el1 = document.getElementById("badge-koma-diff");
+      const el2 = document.getElementById("badge-koma-status");
+      const el3 = document.getElementById("badge-koma-param");
+      if (el1) el1.textContent = diffN;
+      if (el2) el2.textContent = stN;
+      if (el3) el3.textContent = prN;
+    }
     function addSkSep() { skList.push({ id: nxtId++, _sep: true, label: "" }); buildSkRows(); }
     function updSkBadge() { document.getElementById("badge-sk").textContent = skList.filter(s => s.name && (s.val || 0) > 0).length; }
-
-    function buildSplRows() { const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => { const row = document.createElement("div"); row.style.cssText = "display:grid;grid-template-columns:1fr 38px 1fr 22px 22px;gap:2px;align-items:center;margin-bottom:3px;"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "呪文名..."; nameInp.value = s.name || ""; nameInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const mpInp = document.createElement("input"); mpInp.type = "text"; mpInp.placeholder = "3MP"; mpInp.value = s.mp || ""; mpInp.style.cssText = "padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const noteInp = document.createElement("input"); noteInp.type = "text"; noteInp.placeholder = "\u52b9\u679c..."; noteInp.value = s.note || ""; noteInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; 
-    row.append(nameInp, mpInp, noteInp, dh, rm); wrap.appendChild(row);
-        nameInp.addEventListener("keydown", e => {
-          if (e.key !== "Enter") return; e.preventDefault(); mpInp.focus();
-        });
-        mpInp.addEventListener("keydown", e => {
-          if (e.key !== "Enter") return; e.preventDefault(); noteInp.focus();
-        });
+    
+    function buildSplRows() {
+      const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => {
+        if (s._sep) {
+          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
+          const dh = makeHandle();
+          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = s.label || ""; inp.className = 'koma-sep-inp';
+          inp.addEventListener("input", e => { splList[idx] = {...splList[idx], label: e.target.value}; renderPalettePreview(); });
+          const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7";
+          rm.addEventListener("click", () => { splList.splice(idx, 1); if (!splList.filter(x => !x._sep).length) splList.push({ id: nxtId++, name: '', mp: '', note: '' }); buildSplRows(); renderPalettePreview(); });
+          row.append(dh, inp, rm); wrap.appendChild(row);
+          bindDnD(row, splList, idx, () => { buildSplRows(); renderPalettePreview(); });
+          return;
+        }
+        const row = document.createElement("div"); row.className = "spl-row"; row.dataset.dnd = idx;
+        const dh = makeHandle();
+        const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "呪文名..."; nameInp.value = s.name || ""; nameInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+        const mpInp = document.createElement("input"); mpInp.type = "text"; mpInp.placeholder = "3MP"; mpInp.value = s.mp || ""; mpInp.style.cssText = "padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+        const noteInp = document.createElement("input"); noteInp.type = "text"; noteInp.placeholder = "\u52b9\u679c..."; noteInp.value = s.note || ""; noteInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;";
+        const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "📋";
+        const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7";
+        row.append(dh, nameInp, mpInp, noteInp, cpBtn, rm); wrap.appendChild(row);
+        nameInp.addEventListener("keydown", e => { if (e.key !== "Enter") return; e.preventDefault(); mpInp.focus(); });
+        mpInp.addEventListener("keydown", e => { if (e.key !== "Enter") return; e.preventDefault(); noteInp.focus(); });
         noteInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return; e.preventDefault();
-          const idx2 = splList.indexOf(s);
-          if (idx2 >= 0 && idx2 < splList.length - 1) {
-            wrap.children[idx2 + 1]?.querySelector("input")?.focus();
+          const nonSep = splList.filter(x => !x._sep);
+          const curNonSep = nonSep.indexOf(nonSep.find(x => x.id === s.id));
+          if (curNonSep >= 0 && curNonSep < nonSep.length - 1) {
+            const nextId = nonSep[curNonSep + 1].id;
+            const rows = [...wrap.children];
+            const nextRow = rows.find(r => r.dataset && splList[+r.dataset.dnd]?.id === nextId);
+            nextRow?.querySelector("input")?.focus();
           } else {
             splList.push({ id: nxtId++, name: "", mp: "", note: "" });
             buildSplRows();
-            requestAnimationFrame(() => wrap.lastElementChild?.querySelector("input")?.focus());
+            requestAnimationFrame(() => {
+              const lastNonSep = [...wrap.children].filter(r => r.className === 'spl-row').pop();
+              lastNonSep?.querySelector("input")?.focus();
+            });
           }
         });
+        cpBtn.addEventListener("click", () => {
+          const sp = splList.find(x => x.id === s.id); if (!sp || !sp.name) return;
+          const txt = sp.name + (sp.mp ? ' (MP:' + sp.mp + ')' : '') + (sp.note ? '\n' + sp.note : '');
+          navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = '✓'; setTimeout(() => cpBtn.textContent = '📋', 900); addHistory(txt); });
+        });
         nameInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, name: e.target.value } : x); updSplBadge(); renderPalettePreview(); });
-    mpInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, mp: e.target.value } : x); renderPalettePreview(); }); noteInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, note: e.target.value } : x); renderPalettePreview(); }); rm.addEventListener("click", () => { if (splList.length > 1) { splList = splList.filter(x => x.id !== s.id); buildSplRows(); renderPalettePreview(); } }); bindDnD(row, splList, idx, buildSplRows); }); updSplBadge(); }
+        mpInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, mp: e.target.value } : x); renderPalettePreview(); });
+        noteInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, note: e.target.value } : x); renderPalettePreview(); });
+        rm.addEventListener("click", () => {
+          if (splList.filter(x => !x._sep).length > 1) { splList = splList.filter(x => x.id !== s.id); }
+          else { splList = splList.map(x => x.id === s.id ? { ...x, name: '', mp: '', note: '' } : x); }
+          buildSplRows(); renderPalettePreview();
+        });
+        bindDnD(row, splList, idx, () => { buildSplRows(); renderPalettePreview(); });
+      }); updSplBadge(); }
+    
     function updSplBadge() { const n = splList.filter(s => s.name).length; const el = document.getElementById("badge-spl"); if (el) el.textContent = n; const el2 = document.getElementById("badge-spl2"); if (el2) el2.textContent = n; }
-    function buildConsumableRows() { const wrap = document.getElementById("cons-rows"); wrap.innerHTML = ""; consumables.forEach((c, idx) => { const row = document.createElement("div"); row.className = "cons-row"; row.dataset.dnd = idx; const lInp = document.createElement("input"); lInp.type = "text"; lInp.placeholder = "\u5f3e\u4e38\u30fb\u30a2\u30a4\u30c6\u30e0"; lInp.value = c.label || ""; const cInp = document.createElement("input"); cInp.type = "number"; cInp.placeholder = "\u73fe\u5728"; cInp.value = c.cur || ""; const mInp = document.createElement("input"); mInp.type = "number"; mInp.placeholder = "\u6700\u5927"; mInp.value = c.max || ""; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; 
-    row.append(lInp, cInp, mInp, dh, rm); wrap.appendChild(row);
+    function buildConsumableRows() {
+      const wrap = document.getElementById("cons-rows"); wrap.innerHTML = ""; consumables.forEach((c, idx) => {
+        if (c._sep) {
+          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
+          const dh = makeHandle();
+          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = c.label || ""; inp.className = 'koma-sep-inp';
+          inp.addEventListener("input", e => { consumables[idx] = {...consumables[idx], label: e.target.value}; updateExport(); });
+          const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+          rm.addEventListener("click", () => { consumables.splice(idx, 1); if (!consumables.filter(x => !x._sep).length) consumables.push({ id: nxtId++, label: '', cur: '', max: '' }); buildConsumableRows(); updateExport(); });
+          row.append(dh, inp, rm); wrap.appendChild(row);
+          bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); });
+          return;
+        }
+        const row = document.createElement("div"); row.className = "cons-row"; row.dataset.dnd = idx;
+        const dh = makeHandle();
+        const lInp = document.createElement("input"); lInp.type = "text"; lInp.placeholder = "\u5f3e\u4e38\u30fb\u30a2\u30a4\u30c6\u30e0"; lInp.value = c.label || "";
+        const cInp = document.createElement("input"); cInp.type = "number"; cInp.placeholder = "\u73fe\u5728"; cInp.value = c.cur || "";
+        const mInp = document.createElement("input"); mInp.type = "number"; mInp.placeholder = "\u6700\u5927"; mInp.value = c.max || "";
+        const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "📋";
+        const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7";
+        row.append(dh, lInp, cInp, mInp, cpBtn, rm); wrap.appendChild(row);
         lInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return; e.preventDefault(); cInp.focus();
         });
@@ -4733,9 +4949,18 @@
             requestAnimationFrame(() => wrap.lastElementChild?.querySelector("input")?.focus());
           }
         });
+        cpBtn.addEventListener("click", () => {
+          const cc = consumables.find(x => x.id === c.id); if (!cc || !cc.label) return;
+          const txt = cc.label + (cc.cur !== '' ? ' ' + cc.cur : '') + (cc.max !== '' ? '/' + cc.max : '');
+          navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = '✓'; setTimeout(() => cpBtn.textContent = '📋', 900); addHistory(txt); });
+        });
         lInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, label: e.target.value } : x); updConsBadge(); updateExport(); });
-    cInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, cur: e.target.value } : x); updateExport(); }); mInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, max: e.target.value } : x); updateExport(); }); rm.addEventListener("click", () => { consumables = consumables.filter(x => x.id !== c.id); buildConsumableRows(); updateExport(); }); bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); }); }); updConsBadge(); }
+        cInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, cur: e.target.value } : x); updateExport(); }); mInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, max: e.target.value } : x); updateExport(); }); rm.addEventListener("click", () => { consumables = consumables.filter(x => x.id !== c.id); buildConsumableRows(); updateExport(); }); bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); });
+      }); updConsBadge();
+    }
     function addConsumable() { consumables.push({ id: nxtId++, label: "", cur: "", max: "" }); buildConsumableRows(); openAcc("cons"); }
+    function addConsSep() { consumables.push({ id: nxtId++, _sep: true, label: "" }); buildConsumableRows(); openAcc("cons"); }
+    function addSplSep() { splList.push({ id: nxtId++, _sep: true, label: "" }); buildSplRows(); }
     function updConsBadge() { const n = consumables.filter(c => c.label).length; const el = document.getElementById("badge-cons"); if (el) el.textContent = n; const el2 = document.getElementById("badge-cons2"); if (el2) el2.textContent = n; }
     function normalizeNpcText(t) { t = t.replace(/"([^"]*?)"/g, (m, inner) => inner.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim());; return t.replace(/[A-Z\uff21-\uff3a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[a-z\uff41-\uff5a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\uff1a/g, ':').replace(/\uff0b/g, '+').replace(/[\uff0d\u2212]/g, '-').replace(/\u3000/g, ' ').replace(/[%\uff05]/g, '%').replace(/\uff0f/g, '/').replace(/\uff08/g, '(').replace(/\uff09/g, ')').replace(/\u3002/g, '.'); }
     function stripDB(dmgRaw) { const halfPat = /\s*\+?\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g; const hasHalf = halfPat.test(dmgRaw); if (hasHalf) return { dmg: dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g, "").trim(), useDB: "half" }; const hasDB = /\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g.test(dmgRaw); return { dmg: dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g, "").trim(), useDB: hasDB }; }
@@ -4753,7 +4978,7 @@
         showToast("クリップボードへのアクセスが拒否されました");
       }
     }
-    function applyParsed(p) { Object.keys(p.stats).forEach(key => { const rawVal = p.stats[key]; const newV7 = inputMode === 7 ? rawVal : rawVal * 5; vals[key] = newV7; const inp = document.querySelector('.sg-inp[data-key="' + key + '"]'); if (inp) { inp.value = inputMode === 6 ? rawVal : newV7; inp.parentElement.querySelector(".sg-clr").style.display = "block"; } }); if (p.hp !== null) { ov.hp = p.hp; ovManual.hp = true; const i = document.getElementById("di-hp"); if (i) { i.value = p.hp; const c = document.getElementById("dc-hp"); if (c) c.style.display = "block"; } } if (p.mp !== null) { ov.mp = p.mp; ovManual.mp = true; const i = document.getElementById("di-mp"); if (i) { i.value = p.mp; const c = document.getElementById("dc-mp"); if (c) c.style.display = "block"; } } if (p.san !== null) { ov.san = p.san; ovManual.san = true; const i = document.getElementById("di-san"); if (i) { i.value = p.san; const c = document.getElementById("dc-san"); if (c) c.style.display = "block"; } } if (p.luck != null) { ov.luck = p.luck; ovManual.luck = true; const i = document.getElementById("di-luck"); if (i) { i.value = p.luck; const c = document.getElementById("dc-luck"); if (c) c.style.display = "block"; } } if (p.attacks.length) { atkList = atkList.filter(a => a.name); p.attacks.forEach(a => { if (!atkList.find(x => x.name === a.name)) atkList.push({ id: nxtId++, name: a.name, pct: parseInt(a.pct) || 0, dmg: a.dmg, note: a.note || "", useDB: a.useDB || false }); }); if (!atkList.length) atkList = [{ id: nxtId++, name: "", pct: 0, dmg: "", note: "", useDB: false }]; buildAtkRows(); openAcc("atk"); } if (p.skills.length) { skList = skList.filter(s => s.name && (s.val || 0) > 0); p.skills.forEach(s => { if (!skList.find(x => x.name === s.name)) skList.push({ id: nxtId++, name: s.name, val: s.val }); }); if (!skList.length) skList = [{ id: nxtId++, name: "", val: 0 }]; buildSkRows(); } if (p.memos.length) { memoList = memoList.filter(m => m.label || m.content); p.memos.forEach(m => { if (!memoList.find(x => x.label === m.label)) memoList.push({ id: nxtId++, label: m.label, content: m.content, dest: "cmd" }); }); buildMemoRows(); openMemo(); saveMemoLocal(); } if (p._characterName && !document.getElementById("npc-name").value) { document.getElementById("npc-name").value = p._characterName; document.getElementById("w-npcname").classList.add("hv"); } updateStatDisplay(); }
+    function applyParsed(p) { Object.keys(p.stats).forEach(key => { const rawVal = p.stats[key]; const newV7 = inputMode === 7 ? rawVal : rawVal * 5; vals[key] = newV7; const inp = document.querySelector('.sg-inp[data-key="' + key + '"]'); if (inp) { inp.value = inputMode === 6 ? rawVal : newV7; inp.parentElement.querySelector(".sg-clr").style.display = "block"; } }); if (p.hp !== null) { ov.hp = p.hp; ovManual.hp = true; const i = document.getElementById("di-hp"); if (i) { i.value = p.hp; const c = document.getElementById("dc-hp"); if (c) c.style.display = "block"; } } if (p.mp !== null) { ov.mp = p.mp; ovManual.mp = true; const i = document.getElementById("di-mp"); if (i) { i.value = p.mp; const c = document.getElementById("dc-mp"); if (c) c.style.display = "block"; } } if (p.san !== null) { ov.san = p.san; ovManual.san = true; const i = document.getElementById("di-san"); if (i) { i.value = p.san; const c = document.getElementById("dc-san"); if (c) c.style.display = "block"; } } if (p.luck != null) { ov.luck = p.luck; ovManual.luck = true; const i = document.getElementById("di-luck"); if (i) { i.value = p.luck; const c = document.getElementById("dc-luck"); if (c) c.style.display = "block"; } } if (p.attacks.length) { atkList = atkList.filter(a => a._sep || a.name); p.attacks.forEach(a => { if (!atkList.find(x => x.name === a.name)) atkList.push({ id: nxtId++, name: a.name, pct: parseInt(a.pct) || 0, dmg: a.dmg, note: a.note || "", useDB: a.useDB || false }); }); if (!atkList.length) atkList = [{ id: nxtId++, name: "", pct: 0, dmg: "", note: "", useDB: false }]; buildAtkRows(); openAcc("atk"); } if (p.skills.length) { skList = skList.filter(s => s._sep || (s.name && (s.val || 0) > 0)); p.skills.forEach(s => { if (!skList.find(x => x.name === s.name)) skList.push({ id: nxtId++, name: s.name, val: s.val }); }); if (!skList.length) skList = [{ id: nxtId++, name: "", val: 0 }]; buildSkRows(); } if (p.memos.length) { memoList = memoList.filter(m => m.label || m.content); p.memos.forEach(m => { if (!memoList.find(x => x.label === m.label)) memoList.push({ id: nxtId++, label: m.label, content: m.content, dest: "cmd" }); }); buildMemoRows(); openMemo(); saveMemoLocal(); } if (p._characterName && !document.getElementById("npc-name").value) { document.getElementById("npc-name").value = p._characterName; document.getElementById("w-npcname").classList.add("hv"); } updateStatDisplay(); }
     function fullReset() {
       if (!confirm("全データをリセットしますか？")) return;
       document.getElementById("npc-name").value = "";
@@ -4774,16 +4999,20 @@
       splList = [{ id: 0, name: "", mp: "", note: "" }];
       memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
       saveMemoLocal();
-      consumables = []; nxtId = 1;
-      customFields = [{ id: 'cf1', label: '', value: '' }, { id: 'cf2', label: '', value: '' }, { id: 'cf3', label: '', value: '' }, { id: 'cf4', label: '', value: '' }];
+      consumables = [{ id: 0, label: '', cur: '', max: '' }]; nxtId = 1;
+      customFields = [{ id: 'cf1', label: '', value: '', max: '' }, { id: 'cf2', label: '', value: '', max: '' }, { id: 'cf3', label: '', value: '', max: '' }, { id: 'cf4', label: '', value: '', max: '' }];
       saveCustomFields();
       buildCustomFieldRows();
+      extraParams = [{ id: 0, label: '', value: '' }];
+      saveExtraParams();
+      buildExtraParamRows();
+      updExtraParamBadge();
       manualPaletteText = ""; saveManualPalette();
       const ta = document.getElementById("manual-palette-textarea");
       if (ta) ta.value = "";
       const draft = document.getElementById("manual-palette-draft");
       if (draft) { draft.value = ""; }
-      try { localStorage.removeItem('coc_manual_palette_draft'); } catch {}
+      try { localStorage.removeItem('coc_manual_palette_draft'); } catch { }
       buildConsumableRows(); clearParse(); buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows();
       // コマタブもリセット
       currentKoma = { id: 0, name: "", globalAt: "@", labels: [], manualPalette: "" };
@@ -4991,6 +5220,7 @@
       if (!currentKoma.statusList) currentKoma.statusList = [];
       for (let i = 0; i < count; i++) currentKoma.statusList.push({ label: '', value: '', max: '' });
       buildKomaStatusRows();
+      updKomaTabBadges();
     }
 
     // ===== パラメータ行 =====
@@ -5097,11 +5327,12 @@
       if (!currentKoma.paramList) currentKoma.paramList = [];
       for (let i = 0; i < count; i++) currentKoma.paramList.push({ label: '', value: '' });
       buildKomaParamRows();
+      updKomaTabBadges();
     }
 
     let paletteCustomOrder = null;
 
-function getPaletteLines(forExport = false) {
+    function getPaletteLines(forExport = false) {
       const strV = vals.str || 0, sizV = vals.siz || 0;
       const db = (strV + sizV > 0) ? getDB(strV + sizV) : null;
       const gB = document.getElementById("chk-both-db")?.checked || document.getElementById("chk-both-db2")?.checked || false;
@@ -5169,7 +5400,7 @@ function getPaletteLines(forExport = false) {
       // ===== ヘッダー挿入判定 =====
       const hasAtk = atkBlock.some(l => !l.isSep);
       const hasSpl = splBlock.length > 0;
-      const hasSk  = skBlock.some(l => !l.isSep);
+      const hasSk = skBlock.some(l => !l.isSep);
 
       // 技能 と (攻撃 or 呪文) の両方に中身があるときヘッダーを付ける
       const activeCount = (hasSk ? 1 : 0) + (hasAtk ? 1 : 0) + (hasSpl ? 1 : 0);
@@ -5205,9 +5436,9 @@ function getPaletteLines(forExport = false) {
       if (atkFirst) {
         appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
         appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
-        appendBlock(skBlock,  needHeaders && hasSk  ? '━━━🎯技能━━━' : null);
+        appendBlock(skBlock, needHeaders && hasSk ? '━━━🎯技能━━━' : null);
       } else {
-        appendBlock(skBlock,  needHeaders && hasSk  ? '━━━🎯技能━━━' : null);
+        appendBlock(skBlock, needHeaders && hasSk ? '━━━🎯技能━━━' : null);
         appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
         appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
       }
@@ -5238,16 +5469,49 @@ function getPaletteLines(forExport = false) {
         'koma-invisible': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
+        'chk-sk-dice2': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'koma-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
         'chk-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
         'chk-incl-sep2': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-
       };
       const ids = idMap[el.id] || [];
       ids.forEach(id => {
         const t = document.getElementById(id);
         if (t && t !== el) t.checked = el.checked;
       });
+
+      // 🎲チェック連動：追加ステータス欄1・2行目に自動入力
+      const diceIds = ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'];
+      if (diceIds.includes(el.id)) {
+        const isOn = el.checked;
+        if (isOn) {
+          // チェックON：1・2行目に既存データがあれば警告
+          const cf0 = customFields[0];
+          const cf1 = customFields[1];
+          const hasData0 = cf0.label || cf0.value || cf0.max;
+          const hasData1 = cf1.label || cf1.value || cf1.max;
+          if (hasData0 || hasData1) {
+            if (!confirm('追加ステータス欄の1・2行目に既存データがあります。上書きしますか？')) {
+              // キャンセル時はチェックを戻す
+              diceIds.forEach(id => {
+                const t = document.getElementById(id);
+                if (t) t.checked = false;
+              });
+              buildSkRows(); renderPalettePreview(); updateExport();
+              return;
+            }
+          }
+          customFields[0] = { ...customFields[0], label: '暴走率', value: '0', max: '0' };
+          customFields[1] = { ...customFields[1], label: '🎲', value: '0', max: '0' };
+        } else {
+          // チェックOFF：1・2行目が暴走率・🎲ならクリア
+          if (customFields[0].label === '暴走率') customFields[0] = { ...customFields[0], label: '', value: '', max: '' };
+          if (customFields[1].label === '🎲') customFields[1] = { ...customFields[1], label: '', value: '', max: '' };
+        }
+        saveCustomFields();
+        buildCustomFieldRows();
+      }
+
       buildSkRows();
       renderPalettePreview();
       updateExport();
@@ -5264,10 +5528,6 @@ function getPaletteLines(forExport = false) {
       if (mp > 0 || ovManual.mp) status.push({ label: "MP", value: mp, max: mp });
       if (san > 0 || ovManual.san) status.push({ label: "SAN", value: san, max: san });
       if (luck > 0 || ovManual.luck) status.push({ label: "幸運", value: luck, max: luck });
-      if (isSkDice()) {
-        status.push({ label: "暴走率", value: 0, max: 0 });
-        status.push({ label: "🎲", value: 0, max: 0 });
-      }
       consumables.filter(c => c.label).forEach(c => {
         const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0;
         status.push({ label: c.label, value: cur, max: max || cur });
@@ -5280,7 +5540,15 @@ function getPaletteLines(forExport = false) {
         if (v > 0) params.push({ label, value: String(useV6 ? Math.round(v / 5) : v) });
       });
       customFields.forEach(cf => {
-        if (cf.label && cf.value) params.push({ label: cf.label, value: String(cf.value) });
+        if (cf.label) {
+          const cur = parseInt(cf.value) || 0;
+          const max = parseInt(cf.max) || cur;
+          status.push({ label: cf.label, value: cur, max: max });
+        }
+      });
+      // extraParams をparamsに追加
+      extraParams.filter(p => p.label).forEach(p => {
+        params.push({ label: p.label, value: String(p.value || '') });
       });
 
       const inclManual = document.querySelector('input[name="palette-mode"][value="both"]')?.checked || document.querySelector('input[name="palette-mode2"][value="both"]')?.checked || false;
@@ -5450,13 +5718,16 @@ function getPaletteLines(forExport = false) {
     function setMythosSt(msg, cls = "") { const el = document.getElementById("mythos-sync-status"); if (el) { el.textContent = msg; el.className = "sync-status" + (cls ? " " + cls : ""); } }
     function updGistDisplay() { const el = document.getElementById("gist-id-display"); if (el) el.textContent = gistId ? "Gist ID: " + gistId : ""; }
     function updSharedGistDisplay() { const el = document.getElementById("shared-gist-display"); if (el) el.textContent = sharedGistId ? "\u5171\u6709Gist ID: " + sharedGistId : ""; }
-    async function applyKey(token) {
-      token = (token || "").trim(); if (!token) { setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; document.getElementById("btn-download").disabled = false; setSyncSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try {
+    async function applyKey(token, isInit = false) {
+      token = (token || "").trim(); if (!token) { setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; }
+      if (!isInit) { gistId = ""; localStorage.removeItem(L_GIST); const pgInp = document.getElementById("personal-gist-id-input"); if (pgInp) pgInp.value = ""; updGistDisplay(); }
+      syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; document.getElementById("btn-download").disabled = false; setSyncSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try {
         const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) {
           const u = await r.json(); setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok");
           gistId = localStorage.getItem(L_GIST) || "";
           updGistDisplay(); currentSaves = lSaves(); loadCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); if (currentSavePage === "personal") renderSaveList();
-        } else { syncToken = ""; setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-upload").disabled = true; document.getElementById("btn-download").disabled = true; }
+          const bd2 = document.getElementById("btn-download2"); if (bd2) bd2.disabled = false;
+        } else { syncToken = ""; setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-upload").disabled = true; document.getElementById("btn-download").disabled = true; const bd2e = document.getElementById("btn-download2"); if (bd2e) bd2e.disabled = true; }
       } catch { syncToken = ""; setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); }
     }
     async function gistSet(payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Data", public: false, files: { "coc_saves.json": { content } } }; try { let r; if (gistId) r = await fetch("https://api.github.com/gists/" + gistId, { method: "PATCH", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); gistId = d.id; localStorage.setItem(L_GIST, gistId); updGistDisplay(); return true; } catch { return false; } }
@@ -5517,7 +5788,7 @@ function getPaletteLines(forExport = false) {
     async function sharedGistSet(payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Shared Data", public: false, files: { "coc_shared.json": { content } } }; try { let r; if (sharedGistId) r = await fetch("https://api.github.com/gists/" + sharedGistId, { method: "PATCH", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); sharedGistId = d.id; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); return true; } catch { return false; } }
     async function sharedGistGet() { if (!sharedGistId) return null; try { const headers = { "Accept": "application/vnd.github.v3+json" }; if (sharedToken) headers["Authorization"] = "token " + sharedToken; const r = await fetch("https://api.github.com/gists/" + sharedGistId, { headers }); if (!r.ok) return null; const d = await r.json(); const content = d.files?.["coc_shared.json"]?.content; if (!content) return null; return JSON.parse(content); } catch { return null; } }
     async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves }); if (ok) { setSharedSt("\u2713 \u5b8c\u4e86\uff08" + saves.length + "\u4ef6\uff09", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
-    async function downloadFromShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } if (!sharedGistId) { setSharedSt("\u26a0 \u5171\u6709Gist ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } setSharedSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const data = await sharedGistGet(); if (!data) { setSharedSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057", "err"); showToast("\u30c7\u30fc\u30bf\u306a\u3057"); return; } const remote = data.saves || []; if (remote.length) { const local = lSharedSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); wSharedSaves(merged); setSharedSt("\u2713 \u5b8c\u4e86\uff08" + merged.length + "\u4ef6\uff09", "ok"); showToast(merged.length + "\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f"); renderSharedList(); } else setSharedSt("\u26a0 \u30af\u30e9\u30a6\u30c9\u306b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093", "err"); }
+    async function downloadFromShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } if (!sharedGistId) { setSharedSt("\u26a0 \u5171\u6709Gist ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } setSharedSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const data = await sharedGistGet(); if (!data) { setSharedSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057", "err"); showToast("\u30c7\u30fc\u30bf\u306a\u3057"); return; } const remote = data.saves || []; if (remote.length) { const local = lSharedSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); wSharedSaves(merged); setSharedSt("\u2713 \u5b8c\u4e86\uff08" + merged.length + "\u4ef6\uff09", "ok"); showToast(merged.length + "\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f"); renderSharedList(); renderKomaSaveList(); } else setSharedSt("\u26a0 \u30af\u30e9\u30a6\u30c9\u306b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093", "err"); }
     function setSharedGistId() { const raw = document.getElementById("shared-gist-id-input").value.trim(); if (!raw) { setSharedSt("Gist ID\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } const m = raw.match(/([a-f0-9]{20,40})/i); if (!m) { setSharedSt("\u26a0 \u6709\u52b9\u306aGist ID\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093", "err"); return; } sharedGistId = m[1]; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); setSharedSt("\u2713 Gist ID\u8a2d\u5b9a\u6e08", "ok"); showToast("Gist ID\u3092\u8a2d\u5b9a\u3057\u307e\u3057\u305f"); }
 
     function getCurrentData() {
@@ -5535,7 +5806,7 @@ function getPaletteLines(forExport = false) {
         memoList: JSON.parse(JSON.stringify(memoList)),
         consumables: JSON.parse(JSON.stringify(consumables)),
         manualPalette: manualPaletteText,
-draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_draft') || ''; } catch { return ''; } })(),
+        draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_draft') || ''; } catch { return ''; } })(),
         dmgLabel: db ? db.label : null,
         build: db ? db.build : null,
         customFields: JSON.parse(JSON.stringify(customFields)),
@@ -5566,27 +5837,36 @@ draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_dra
       atkList = (data.atkList || [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }]).map(a => ({ useDB: false, ...a, pct: parseInt(a.pct) || 0 }));
       splList = data.splList || [{ id: 0, name: "", mp: "", note: "" }];
       memoList = (data.memoList || [{ id: 0, label: "", content: "", dest: "cmd" }]).map(m => ({ ...m, dest: m.dest || "cmd" }));
-      consumables = data.consumables || [];
+      consumables = (data.consumables && data.consumables.length) ? data.consumables : [{ id: 0, label: '', cur: '', max: '' }];
       const allIds = [...skList, ...atkList, ...splList, ...memoList, ...consumables].map(x => Number(x.id) || 0).filter(id => id > 0);
       nxtId = allIds.length ? Math.max(...allIds) + 1 : 1;
       // 手書きパレットをキャラクター単位で復元
-     manualPaletteText = data.manualPalette || "";
-saveManualPalette();
-const ta = document.getElementById("manual-palette-textarea");
-if (ta) { ta.value = manualPaletteText; autoExpand(ta); }
-const draft2 = document.getElementById("manual-palette-draft");
-if (draft2) {
-  const draftText = data.draftPalette || '';
-  draft2.value = draftText;
-  autoExpand(draft2);
-  try { localStorage.setItem('coc_manual_palette_draft', draftText); } catch {}
-}
+      manualPaletteText = data.manualPalette || "";
+      saveManualPalette();
+      const ta = document.getElementById("manual-palette-textarea");
+      if (ta) { ta.value = manualPaletteText; autoExpand(ta); }
+      const draft2 = document.getElementById("manual-palette-draft");
+      if (draft2) {
+        const draftText = data.draftPalette || '';
+        draft2.value = draftText;
+        autoExpand(draft2);
+        try { localStorage.setItem('coc_manual_palette_draft', draftText); } catch { }
+      }
 
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
       if (atkList.some(a => a.name)) openAcc("atk");
       if (consumables.some(c => c.label)) openAcc("cons");
       if (memoList.some(m => m.label || m.content)) openMemo();
-      customFields = data.customFields || [{ id: 'cf1', label: '', value: '' }, { id: 'cf2', label: '', value: '' }];
+      customFields = (data.customFields || []).map((cf, i) => ({
+        id: cf.id || 'cf' + (i + 1),
+        label: cf.label || '',
+        value: cf.value || '',
+        max: cf.max || ''
+      }));
+      // 4件に満たない場合は補完
+      while (customFields.length < 4) {
+        customFields.push({ id: 'cf' + (customFields.length + 1), label: '', value: '', max: '' });
+      }
       saveCustomFields();
       buildCustomFieldRows();
       updateStatDisplay(); reExpandAllMemos();
@@ -5754,12 +6034,12 @@ if (draft2) {
     }
     async function saveDataTo(dest) {
       const d = getCurrentData();
-manualPaletteText = '';
-try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch {}
-const ta = document.getElementById('manual-palette-textarea');
-if (ta) { ta.value = ''; autoExpand(ta); }
-const draft = document.getElementById('manual-palette-draft');
-if (draft) { draft.value = ''; autoExpand(draft); }
+      manualPaletteText = '';
+      try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch { }
+      const ta = document.getElementById('manual-palette-textarea');
+      if (ta) { ta.value = ''; autoExpand(ta); }
+      const draft = document.getElementById('manual-palette-draft');
+      if (draft) { draft.value = ''; autoExpand(draft); }
       if (dest === "personal") {
         writeSaves([d, ...currentSaves]);
         if (currentSavePage === "personal") renderSaveList();
@@ -5790,7 +6070,7 @@ if (draft) { draft.value = ''; autoExpand(draft); }
     // ===== パレット手書きタブ =====
     let manualPaletteText = '';
     manualPaletteText = '';
-try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch {}
+    try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch { }
     // 旧形式(配列)からの移行
     try {
       const old = localStorage.getItem('coc_manual_palette');
@@ -5904,7 +6184,7 @@ try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeIte
         el.value = text;
         autoExpand(el);
         if (targetId === 'manual-palette-draft') {
-          try { localStorage.setItem('coc_manual_palette_draft', text); } catch {}
+          try { localStorage.setItem('coc_manual_palette_draft', text); } catch { }
         } else if (targetId === 'koma-manual-draft') {
           currentKoma.draftPalette = text;
         }
@@ -6093,6 +6373,7 @@ try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeIte
     loadMemoLocal();
     buildStatRows();
     buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
+    buildExtraParamRows();
     updateStatDisplay();
     loadKp();
     initMythosSelect();
@@ -6109,7 +6390,7 @@ try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeIte
       updGistDisplay();
     }
     const savedToken = localStorage.getItem(L_KEY) || "";
-    if (savedToken) { const inp = document.getElementById("sync-key-input"); if (inp) inp.value = savedToken; applyKey(savedToken); }
+    if (savedToken) { const inp = document.getElementById("sync-key-input"); if (inp) inp.value = savedToken; applyKey(savedToken, true); }
     const savedSToken = localStorage.getItem(L_STOKEN) || "";
     if (savedSToken) { const inp = document.getElementById("shared-token-input"); if (inp) inp.value = savedSToken; applySharedKey(savedSToken); }
     const savedSGist = localStorage.getItem(L_SGIST) || "";
