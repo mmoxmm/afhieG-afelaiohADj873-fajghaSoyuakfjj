@@ -5710,7 +5710,7 @@ valInp.addEventListener("change", e => {
     function syncUseV6Check(el) { ["chk-use-v6","chk-use-v6-2","chk-use-v6-3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
     function isUseV6() { return document.getElementById("chk-use-v6")?.checked || document.getElementById("chk-use-v6-2")?.checked || false; }
     function isSkDice() { return document.getElementById("chk-sk-dice")?.checked || document.getElementById("chk-sk-dice-save")?.checked || document.getElementById("chk-sk-dice2")?.checked || false; }
-    function buildCocoforiaJson() {
+    function buildCocoforiaJson(includeKoma = false) {
       const name = document.getElementById("npc-name").value || "NPC";
       const status = [];
       const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
@@ -5825,6 +5825,64 @@ valInp.addEventListener("change", e => {
       const isHideStatus = document.getElementById("chk-hide-status")?.checked || document.getElementById("chk-hide-status2")?.checked || false;
       const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || document.getElementById("chk-hide-chat-char2")?.checked || false;
       const invisible = document.getElementById("chk-invisible")?.checked || document.getElementById("chk-invisible2")?.checked || false;
+      // コマタブのfaces・status・paramsを統合（保存タブからの出力時のみ）
+      if (!includeKoma) {
+        while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
+        return JSON.stringify({ kind: "character", data: { name, status, params, initiative: vals.dex || 0, commands: cmdLines.join("\n"), memo: memoLines.join("\n"), secret: isHideStatus, hideStatus: isHideChatCharacter, invisible: invisible } });
+      }
+      const komaFaces = [];
+      const inclSep = document.getElementById('koma-incl-sep')?.checked || document.getElementById('chk-incl-sep')?.checked || false;
+      (currentKoma.labels || []).forEach(l => {
+        if (l._sep) { if (inclSep) komaFaces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null }); }
+        else if (l.text) komaFaces.push({ label: l.text, iconUrl: null });
+      });
+
+      (currentKoma.statusList || []).filter(s => !s._sep && s.label).forEach(s => {
+        const cur = s.value !== '' && s.value !== undefined ? (parseInt(s.value) || 0) : 0;
+        const max = s.max !== '' && s.max !== undefined ? (parseInt(s.max) || cur) : cur;
+        // statusに重複がなければ追加
+        if (!status.find(st => st.label === s.label)) {
+          status.push({ label: s.label, value: cur, max });
+        }
+      });
+
+      (currentKoma.paramList || []).filter(p => !p._sep && p.label).forEach(p => {
+        // paramsに重複がなければ追加
+        if (!params.find(pr => pr.label === p.label)) {
+          params.push({ label: p.label, value: String(p.value || '') });
+        }
+      });
+
+      // コマの手書きパレットをcmdLinesに追加
+      const komaPaletteForExport = (() => {
+        const src = komaPaletteSrc;
+        if (src === 'manual') return (currentKoma.manualPalette || '').trim();
+        const lines = getKomaLines(src === 'named' ? 'named' : 'simple');
+        if (!lines.length) return '';
+        const result = [];
+        const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value || 'before';
+        lines.forEach((l, idx) => {
+          if (l.isSep) {
+            if (idx > 0) result.push('');
+            result.push(l.text);
+            if (sepSpace === 'both') result.push('');
+          } else {
+            result.push(l.text);
+          }
+        });
+        while (result.length && result[result.length - 1] === '') result.pop();
+        return result.join('\n');
+      })();
+
+      if (komaPaletteForExport) {
+        cmdLines.push('');
+        cmdLines.push('＝＝＝ コマパレット ＝＝＝');
+        cmdLines.push('');
+        komaPaletteForExport.split('\n').forEach(l => cmdLines.push(l));
+      }
+
+      while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
+
       return JSON.stringify({
         kind: "character",
         data: {
@@ -5834,6 +5892,7 @@ valInp.addEventListener("change", e => {
           initiative: vals.dex || 0,
           commands: cmdLines.join("\n"),
           memo: memoLines.join("\n"),
+          faces: komaFaces,
           secret: isHideStatus,
           hideStatus: isHideChatCharacter,
           invisible: invisible
@@ -5846,7 +5905,8 @@ valInp.addEventListener("change", e => {
       const any = name || STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0
         || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0)
         || extraParams.some(p => p.label);
-      const txt = any ? (exportMode === "json" ? buildCocoforiaJson() : buildCocoforiaText()) : "（스테이터스를 입력하면 출력됩니다）";
+      const useKoma = document.getElementById('tab-save')?.style.display !== 'none';
+      const txt = any ? (exportMode === "json" ? buildCocoforiaJson(useKoma) : buildCocoforiaText()) : "（스테이터스를 입력하면 출력됩니다）";
       const el = document.getElementById("export-preview");
       if (el) el.textContent = txt;
       const el2 = document.getElementById("export-preview2");
@@ -5855,7 +5915,7 @@ valInp.addEventListener("change", e => {
       if (el3) el3.textContent = txt;
       updateSecretCmdPreview();
     }
-    function copyExport() { if (exportMode === "json") { const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0); if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const obj = JSON.parse(buildCocoforiaJson()); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
+    function copyExport() { if (exportMode === "json") { const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0); if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const useKoma = document.getElementById('tab-save')?.style.display !== 'none'; const obj = JSON.parse(buildCocoforiaJson(useKoma)); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
     function downloadExport() { const el = document.getElementById("export-preview"); if (!el) return; const txt = el.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const name = (document.getElementById("npc-name").value || "npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g, "_"); const blob = new Blob([txt], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + ".json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); showToast("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); }
     function renderHpList() { const w = document.getElementById("hp-list"); if (!hpList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPC\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = hpList.map((h, i) => { const p = Math.max(0, h.cur / h.max * 100), c = p > 50 ? "#1a9e72" : p > 25 ? "#d09028" : "#c03030"; return '<div class="hp-item"><span class="hp-name">' + esc(h.name) + '</span><div class="hp-bar-wrap"><div class="hp-bar" style="width:' + p + '%;background:' + c + '"></div></div><span class="hp-nums" style="color:' + c + '">' + h.cur + '/' + h.max + '</span><div class="hp-btns"><button class="hp-btn" data-i="' + i + '" data-d="-1">\u2212</button><button class="hp-btn" data-i="' + i + '" data-d="1">\uff0b</button><button class="hp-btn" data-i="' + i + '" data-d="del" style="color:var(--text3)">\u2715</button></div></div>'; }).join(""); w.querySelectorAll(".hp-btn").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i, d = e.currentTarget.dataset.d; if (d === "del") hpList.splice(i, 1); else hpList[i].cur = Math.max(0, Math.min(hpList[i].max, hpList[i].cur + parseInt(d))); renderHpList(); saveKp(); })); }
     function renderInitList() { const w = document.getElementById("init-list"); if (!initList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">\u53c2\u52a0\u8005\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = initList.map((it, i) => '<div class="init-item' + (i === initTurn ? " active" : "") + '"><span class="init-val">' + it.dex + '</span><span class="init-name">' + esc(it.name) + (i === initTurn ? " \u25c4" : "") + '</span><button class="init-del" data-i="' + i + '">\u2715</button></div>').join(""); w.querySelectorAll(".init-del").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i; initList.splice(i, 1); if (initTurn >= initList.length) initTurn = 0; renderInitList(); saveKp(); })); }
