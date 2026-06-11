@@ -5535,6 +5535,7 @@ function getPaletteLines(forExport = false) {
         memoList: JSON.parse(JSON.stringify(memoList)),
         consumables: JSON.parse(JSON.stringify(consumables)),
         manualPalette: manualPaletteText,
+draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_draft') || ''; } catch { return ''; } })(),
         dmgLabel: db ? db.label : null,
         build: db ? db.build : null,
         customFields: JSON.parse(JSON.stringify(customFields)),
@@ -5569,12 +5570,18 @@ function getPaletteLines(forExport = false) {
       const allIds = [...skList, ...atkList, ...splList, ...memoList, ...consumables].map(x => Number(x.id) || 0).filter(id => id > 0);
       nxtId = allIds.length ? Math.max(...allIds) + 1 : 1;
       // 手書きパレットをキャラクター単位で復元
-      manualPaletteText = data.manualPalette || "";
-      saveManualPalette();
-      const ta = document.getElementById("manual-palette-textarea");
-      if (ta) { ta.value = manualPaletteText; autoExpand(ta); }
-      const draft2 = document.getElementById("manual-palette-draft");
-      if (draft2) { draft2.value = ""; try { localStorage.removeItem('coc_manual_palette_draft'); } catch {} }
+     manualPaletteText = data.manualPalette || "";
+saveManualPalette();
+const ta = document.getElementById("manual-palette-textarea");
+if (ta) { ta.value = manualPaletteText; autoExpand(ta); }
+const draft2 = document.getElementById("manual-palette-draft");
+if (draft2) {
+  const draftText = data.draftPalette || '';
+  draft2.value = draftText;
+  autoExpand(draft2);
+  try { localStorage.setItem('coc_manual_palette_draft', draftText); } catch {}
+}
+
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
       if (atkList.some(a => a.name)) openAcc("atk");
       if (consumables.some(c => c.label)) openAcc("cons");
@@ -5747,6 +5754,12 @@ function getPaletteLines(forExport = false) {
     }
     async function saveDataTo(dest) {
       const d = getCurrentData();
+manualPaletteText = '';
+try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch {}
+const ta = document.getElementById('manual-palette-textarea');
+if (ta) { ta.value = ''; autoExpand(ta); }
+const draft = document.getElementById('manual-palette-draft');
+if (draft) { draft.value = ''; autoExpand(draft); }
       if (dest === "personal") {
         writeSaves([d, ...currentSaves]);
         if (currentSavePage === "personal") renderSaveList();
@@ -5776,7 +5789,8 @@ function getPaletteLines(forExport = false) {
 
     // ===== パレット手書きタブ =====
     let manualPaletteText = '';
-    try { manualPaletteText = localStorage.getItem('coc_manual_palette_text') || ''; } catch { manualPaletteText = ''; }
+    manualPaletteText = '';
+try { localStorage.removeItem('coc_manual_palette_text'); localStorage.removeItem('coc_manual_palette_draft'); } catch {}
     // 旧形式(配列)からの移行
     try {
       const old = localStorage.getItem('coc_manual_palette');
