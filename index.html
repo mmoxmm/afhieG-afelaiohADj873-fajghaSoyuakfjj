@@ -4306,55 +4306,101 @@
     let currentSavePage = "personal";
     let sharedToken = "", sharedGistId = "";
     const L_SAVES = "coc_v4_saves", L_KEY = "coc_gist_token", L_GIST = "coc_gist_id", L_GIST_TS = "coc_gist_token_ts", L_STOKEN = "coc_shared_token", L_SGIST = "coc_shared_gist_id";
-    function renderPalettePreview() {
+  function renderPalettePreview() {
       if (!document.getElementById("body-palette")?.classList.contains("open")) return;
       const skEl = document.getElementById("palette-sortable-sk");
       const atkEl = document.getElementById("palette-sortable-atk");
       if (!skEl || !atkEl) return;
 
-      const strV = vals.str || 0, sizV = vals.siz || 0;
-      const db = (strV + sizV > 0) ? getDB(strV + sizV) : null;
-      const gB = document.getElementById("chk-both-db")?.checked || document.getElementById("chk-both-db2")?.checked || false;
-
-      // ===== 技能パネル =====
       skEl.innerHTML = "";
-      skList.forEach((s, idx) => {
-        if (s._sep) {
-          const row = document.createElement("div");
-          row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;border-top:1px dashed var(--border);margin:2px 0;";
-          row.dataset.dnd = idx;
-          const dh = makeHandle(); dh.style.fontSize = "11px";
-          const lbl = document.createElement("span");
-          lbl.style.cssText = "flex:1;font-size:11px;color:var(--text3);";
-          lbl.textContent = s.label || "━━━";
-          row.append(dh, lbl);
-          skEl.appendChild(row);
-          bindDnD(row, skList, idx, () => { buildSkRows(); renderPalettePreview(); updateExport(); });
-          return;
-        }
-        if (!s.name || (s.val || 0) <= 0) return;
-        const row = document.createElement("div");
-        row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;word-break:break-all;";
-        row.dataset.dnd = idx;
-        const dh = makeHandle(); dh.style.fontSize = "11px";
-        const txt = document.createElement("span");
-        txt.style.cssText = "flex:1;font-size:12px;cursor:pointer;";
-        const diceM = isSkDice(); const ccPfx = diceM ? "CC({🎲})<=" : "CC<="; txt.textContent = ccPfx + s.val + " 【" + s.name + "】";
-        txt.addEventListener("click", () => {
-          const cmd = "CC<=" + s.val + " 【" + s.name + "】";
-          navigator.clipboard.writeText(cmd).then(() => { txt.style.color = "var(--success)"; setTimeout(() => txt.style.color = "", 700); addHistory(cmd); showToast("コピー: " + cmd); });
+      atkEl.innerHTML = "";
+
+      const lines = getPaletteLines(false);
+
+      // どちらのパネルに入れるか判定するため、技能キーか攻撃系キーかで振り分け
+      // getPaletteLines は技能・攻撃・呪文・消耗・MEMOを1本のリストで返すので
+      // 全部atkElに表示し、skElは廃止してもいいが、レイアウト維持のため
+      // skElには技能ブロック、atkElには攻撃以降を表示する
+
+      // atkFirstの判定
+      const atkFirst = document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked
+        || document.querySelector('input[name="cmd-order2"][value="atk-first"]')?.checked || false;
+
+      // linesをsk系とatk系に再分離（keyで判断）
+      // ヘッダー・空行はどちらに属するかをフラグで管理
+     const skLines = [];
+      const atkLines = [];
+
+      // ヘッダーなし（技能か攻撃どちらか一方のみ）の場合の振り分け
+      const hasSkHeader  = lines.some(l => l._header && l.text === '━━━🎯技能━━━');
+      const hasAtkHeader = lines.some(l => l._header && (l.text === '━━━⚔️攻撃━━━' || l.text === '━━━✨呪文━━━'));
+
+      // ヘッダーが一切ない場合：キーで判断して振り分け
+      if (!hasSkHeader && !hasAtkHeader) {
+        lines.forEach(l => {
+          if (l._empty) return;
+          const isSk = l.key && (l.key.startsWith('sk_') || l.key.startsWith('ssep_'));
+          if (isSk) skLines.push(l);
+          else atkLines.push(l);
         });
-        row.append(dh, txt);
-        skEl.appendChild(row);
-        bindDnD(row, skList, idx, () => { buildSkRows(); renderPalettePreview(); updateExport(); });
-      });
-      if (!skEl.children.length) {
-        const empty = document.createElement("div");
-        empty.style.cssText = "color:var(--text3);font-size:12px;padding:4px;";
-        empty.textContent = "技能なし";
-        skEl.appendChild(empty);
+      } else {
+        // ヘッダーあり：ヘッダーで技能/攻撃セクションを切り替え
+        let inSkSection = false;
+        lines.forEach(l => {
+          if (l._header) {
+            if (l.text === '━━━🎯技能━━━') { inSkSection = true; }
+            else { inSkSection = false; }
+          }
+          if (l._empty) return;
+          if (inSkSection) skLines.push(l);
+          else atkLines.push(l);
+        });
       }
-      // 技能パネル下：区切り追加ボタン
+
+      function renderLines(el, lineArr, listRef, rebuildFn) {
+        lineArr.forEach((l, idx) => {
+          const row = document.createElement("div");
+          if (l._header) {
+            // 自動ヘッダー
+            row.style.cssText = "font-size:11px;font-weight:700;color:var(--accent);padding:3px 0 1px;margin-top:2px;border-top:1px solid var(--border2);";
+            row.textContent = l.text;
+          } else if (l.isSep) {
+            // 手動区切り
+            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;border-top:1px dashed var(--border);margin:2px 0;";
+            const lbl = document.createElement("span");
+            lbl.style.cssText = "flex:1;font-size:11px;color:var(--text3);";
+            lbl.textContent = l.text;
+            row.append(lbl);
+          } else {
+            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;";
+            const txt = document.createElement("span");
+            txt.style.cssText = "flex:1;font-size:12px;word-break:break-all;cursor:pointer;";
+            txt.textContent = l.text;
+            txt.addEventListener("click", () => {
+              navigator.clipboard.writeText(l.text).then(() => {
+                txt.style.color = "var(--success)";
+                setTimeout(() => txt.style.color = "", 700);
+                addHistory(l.text);
+                showToast("コピー: " + l.text.slice(0, 20) + (l.text.length > 20 ? "…" : ""));
+              });
+            });
+            row.append(txt);
+          }
+          el.appendChild(row);
+        });
+
+        if (!el.children.length) {
+          const empty = document.createElement("div");
+          empty.style.cssText = "color:var(--text3);font-size:12px;padding:4px;";
+          empty.textContent = "データなし";
+          el.appendChild(empty);
+        }
+      }
+
+      renderLines(skEl, skLines);
+      renderLines(atkEl, atkLines);
+
+      // 区切り追加ボタン
       const skSepBtn = document.createElement("button");
       skSepBtn.className = "btn-add";
       skSepBtn.style.cssText = "margin-top:4px;font-size:11px;";
@@ -4362,83 +4408,6 @@
       skSepBtn.addEventListener("click", () => { addSkSep(); renderPalettePreview(); });
       skEl.appendChild(skSepBtn);
 
-      // ===== 攻撃/呪文/MEMOパネル =====
-      atkEl.innerHTML = "";
-      const atkItems = [];
-      if (db && db.cmd && atkList.some(a => !a._sep && a.name && a.useDB))
-        atkItems.push({ text: db.cmd + " 【ダメージボーナス】", key: "_db" });
-      atkList.forEach(a => {
-        if (a._sep) { atkItems.push({ text: a.label || "━━━", key: "sep_" + a.id, isSep: true, id: a.id }); return; }
-        if (!a.name) return;
-        if (a.pct) atkItems.push({ text: "CC<=" + a.pct + " 【" + a.name + "】", key: "atk_" + a.id });
-        if (a.dmg) {
-          const isCus = typeof a.useDB === "string" && a.useDB !== "half" && a.useDB !== "false";
-          if (a.useDB === "half" && db && db.cmd) {
-            const hc = db.cmd + "/2";
-            if (gB) {
-              atkItems.push({ text: a.dmg + " 【" + a.name + "ダメージ（DBなし）】", key: "dmg_n_" + a.id });
-              atkItems.push({ text: a.dmg + "+" + hc + " 【" + a.name + "ダメージ（DB/2込み）】", key: "dmg_h_" + a.id });
-            } else atkItems.push({ text: a.dmg + "+" + hc + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
-          } else if (a.useDB === true && db && db.cmd) {
-            if (gB) {
-              atkItems.push({ text: a.dmg + " 【" + a.name + "ダメージ（DBなし）】", key: "dmg_n_" + a.id });
-              atkItems.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ（DB込み）】", key: "dmg_h_" + a.id });
-            } else atkItems.push({ text: a.dmg + "+" + db.cmd + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
-          } else if (isCus) atkItems.push({ text: a.dmg + a.useDB + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
-          else atkItems.push({ text: a.dmg + " 【" + a.name + "ダメージ】", key: "dmg_" + a.id });
-        }
-      });
-      splList.forEach(s => {
-        if (!s.name) return;
-        atkItems.push({ text: s.name + (s.mp ? " (MP:" + s.mp + ")" : ""), key: "spl_" + s.id });
-        if (s.note) atkItems.push({ text: "// " + s.note, key: "splnote_" + s.id, isNote: true });
-      });
-      consumables.forEach(c => {
-        if (!c.label) return;
-        const cur = c.cur !== undefined && c.cur !== "" ? c.cur : "?";
-        const max = c.max !== undefined && c.max !== "" ? "/" + c.max : "";
-        atkItems.push({ text: c.label + " " + cur + max, key: "cons_" + c.id });
-      });
-      memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
-        .forEach(m => atkItems.push({ text: (m.label ? m.label + "　" : "") + m.content, key: "memo_" + m.id }));
-
-      atkItems.forEach((item, idx) => {
-        const row = document.createElement("div");
-        if (item.isSep) {
-          row.style.cssText = "display:flex;align-items:center;gap:3px;border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;";
-          const dh = makeHandle(); dh.style.fontSize = "11px";
-          const lbl = document.createElement("span");
-          lbl.style.cssText = "flex:1;font-size:11px;color:var(--text3);";
-          lbl.textContent = item.text;
-          row.append(dh, lbl);
-          // 区切りはatkListのDnDに連動させるため、atkListを直接操作
-          row.dataset.dndAtk = idx;
-        } else if (item.isNote) {
-          row.style.cssText = "display:flex;padding:1px 0 1px 14px;";
-          const lbl = document.createElement("span");
-          lbl.style.cssText = "font-size:11px;color:var(--text3);";
-          lbl.textContent = item.text;
-          row.append(lbl);
-        } else {
-          row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;";
-          const dh = makeHandle(); dh.style.fontSize = "11px";
-          const txt = document.createElement("span");
-          txt.style.cssText = "flex:1;font-size:12px;word-break:break-all;cursor:pointer;";
-          txt.textContent = item.text;
-          txt.addEventListener("click", () => {
-            navigator.clipboard.writeText(item.text).then(() => { txt.style.color = "var(--success)"; setTimeout(() => txt.style.color = "", 700); addHistory(item.text); showToast("コピー: " + item.text.slice(0, 20) + (item.text.length > 20 ? "…" : "")); });
-          });
-          row.append(dh, txt);
-        }
-        atkEl.appendChild(row);
-      });
-      if (!atkItems.length) {
-        const empty = document.createElement("div");
-        empty.style.cssText = "color:var(--text3);font-size:12px;padding:4px;";
-        empty.textContent = "データなし";
-        atkEl.appendChild(empty);
-      }
-      // 攻撃パネル下：区切り追加ボタン
       const atkSepBtn = document.createElement("button");
       atkSepBtn.className = "btn-add";
       atkSepBtn.style.cssText = "margin-top:4px;font-size:11px;";
@@ -4641,17 +4610,19 @@
         dmgInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
-          const allNames = [...document.querySelectorAll("#atk-rows input[type='text']")];
-          const i = allNames.indexOf(nameInp);
-          if (i >= 0 && i < allNames.length - 1) {
-            allNames[i + 1].focus();
+          const currentAtk = atkList.find(x => x.id === a.id);
+          if (!currentAtk?.name) { nameInp.focus(); return; }
+          const rows = [...wrap.children].filter(r => !r.querySelector('.koma-sep-inp'));
+          const idx2 = rows.indexOf(row);
+          if (idx2 >= 0 && idx2 < rows.length - 1) {
+            rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
           } else {
             atkList.push({ id: nxtId++, name: "", pct: 0, dmg: "", note: "", useDB: false });
             buildAtkRows();
             openAcc("atk");
             requestAnimationFrame(() => {
-              const all = [...document.querySelectorAll("#atk-rows input[type='text']")];
-              all[all.length - 1]?.focus();
+              const rows2 = [...wrap.children].filter(r => !r.querySelector('.koma-sep-inp'));
+              rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
             });
           }
         });
@@ -4694,17 +4665,19 @@
         valInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
-          const allNames = [...document.querySelectorAll("#sk-rows .sk-row input[type='text']")];
-          const i = allNames.indexOf(nameInp);
-          if (i >= 0 && i < allNames.length - 1) {
-            allNames[i + 1].focus();
+          const currentSk = skList.find(x => x.id === sk.id);
+          if (!currentSk?.name) { nameInp.focus(); return; }
+          const rows = [...wrap.children].filter(r => r.classList.contains('sk-row'));
+          const idx2 = rows.indexOf(row);
+          if (idx2 >= 0 && idx2 < rows.length - 1) {
+            rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
           } else {
             skList.push({ id: nxtId++, name: "", val: 0 });
             buildSkRows();
             updSkBadge();
             requestAnimationFrame(() => {
-              const all = [...document.querySelectorAll("#sk-rows .sk-row input[type='text']")];
-              all[all.length - 1]?.focus();
+              const rows2 = [...wrap.children].filter(r => r.classList.contains('sk-row'));
+              rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
             });
           }
         }); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => { const nv = parseInt(e.target.value) || 0; skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); }); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
@@ -4713,9 +4686,49 @@
     function addSkSep() { skList.push({ id: nxtId++, _sep: true, label: "" }); buildSkRows(); }
     function updSkBadge() { document.getElementById("badge-sk").textContent = skList.filter(s => s.name && (s.val || 0) > 0).length; }
 
-    function buildSplRows() { const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => { const row = document.createElement("div"); row.style.cssText = "display:grid;grid-template-columns:1fr 38px 1fr 22px 22px;gap:2px;align-items:center;margin-bottom:3px;"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "呪文名..."; nameInp.value = s.name || ""; nameInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const mpInp = document.createElement("input"); mpInp.type = "text"; mpInp.placeholder = "3MP"; mpInp.value = s.mp || ""; mpInp.style.cssText = "padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const noteInp = document.createElement("input"); noteInp.type = "text"; noteInp.placeholder = "\u52b9\u679c..."; noteInp.value = s.note || ""; noteInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, mpInp, noteInp, dh, rm); wrap.appendChild(row); nameInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, name: e.target.value } : x); updSplBadge(); renderPalettePreview(); }); mpInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, mp: e.target.value } : x); renderPalettePreview(); }); noteInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, note: e.target.value } : x); renderPalettePreview(); }); rm.addEventListener("click", () => { if (splList.length > 1) { splList = splList.filter(x => x.id !== s.id); buildSplRows(); renderPalettePreview(); } }); bindDnD(row, splList, idx, buildSplRows); }); updSplBadge(); }
+    function buildSplRows() { const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => { const row = document.createElement("div"); row.style.cssText = "display:grid;grid-template-columns:1fr 38px 1fr 22px 22px;gap:2px;align-items:center;margin-bottom:3px;"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "呪文名..."; nameInp.value = s.name || ""; nameInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const mpInp = document.createElement("input"); mpInp.type = "text"; mpInp.placeholder = "3MP"; mpInp.value = s.mp || ""; mpInp.style.cssText = "padding:4px;font-size:14px;text-align:center;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const noteInp = document.createElement("input"); noteInp.type = "text"; noteInp.placeholder = "\u52b9\u679c..."; noteInp.value = s.note || ""; noteInp.style.cssText = "padding:4px;font-size:14px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; 
+    row.append(nameInp, mpInp, noteInp, dh, rm); wrap.appendChild(row);
+        nameInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault(); mpInp.focus();
+        });
+        mpInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault(); noteInp.focus();
+        });
+        noteInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault();
+          const idx2 = splList.indexOf(s);
+          if (idx2 >= 0 && idx2 < splList.length - 1) {
+            wrap.children[idx2 + 1]?.querySelector("input")?.focus();
+          } else {
+            splList.push({ id: nxtId++, name: "", mp: "", note: "" });
+            buildSplRows();
+            requestAnimationFrame(() => wrap.lastElementChild?.querySelector("input")?.focus());
+          }
+        });
+        nameInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, name: e.target.value } : x); updSplBadge(); renderPalettePreview(); });
+    mpInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, mp: e.target.value } : x); renderPalettePreview(); }); noteInp.addEventListener("input", e => { splList = splList.map(x => x.id === s.id ? { ...x, note: e.target.value } : x); renderPalettePreview(); }); rm.addEventListener("click", () => { if (splList.length > 1) { splList = splList.filter(x => x.id !== s.id); buildSplRows(); renderPalettePreview(); } }); bindDnD(row, splList, idx, buildSplRows); }); updSplBadge(); }
     function updSplBadge() { const n = splList.filter(s => s.name).length; const el = document.getElementById("badge-spl"); if (el) el.textContent = n; const el2 = document.getElementById("badge-spl2"); if (el2) el2.textContent = n; }
-    function buildConsumableRows() { const wrap = document.getElementById("cons-rows"); wrap.innerHTML = ""; consumables.forEach((c, idx) => { const row = document.createElement("div"); row.className = "cons-row"; row.dataset.dnd = idx; const lInp = document.createElement("input"); lInp.type = "text"; lInp.placeholder = "\u5f3e\u4e38\u30fb\u30a2\u30a4\u30c6\u30e0"; lInp.value = c.label || ""; const cInp = document.createElement("input"); cInp.type = "number"; cInp.placeholder = "\u73fe\u5728"; cInp.value = c.cur || ""; const mInp = document.createElement("input"); mInp.type = "number"; mInp.placeholder = "\u6700\u5927"; mInp.value = c.max || ""; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(lInp, cInp, mInp, dh, rm); wrap.appendChild(row); lInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, label: e.target.value } : x); updConsBadge(); updateExport(); }); cInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, cur: e.target.value } : x); updateExport(); }); mInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, max: e.target.value } : x); updateExport(); }); rm.addEventListener("click", () => { consumables = consumables.filter(x => x.id !== c.id); buildConsumableRows(); updateExport(); }); bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); }); }); updConsBadge(); }
+    function buildConsumableRows() { const wrap = document.getElementById("cons-rows"); wrap.innerHTML = ""; consumables.forEach((c, idx) => { const row = document.createElement("div"); row.className = "cons-row"; row.dataset.dnd = idx; const lInp = document.createElement("input"); lInp.type = "text"; lInp.placeholder = "\u5f3e\u4e38\u30fb\u30a2\u30a4\u30c6\u30e0"; lInp.value = c.label || ""; const cInp = document.createElement("input"); cInp.type = "number"; cInp.placeholder = "\u73fe\u5728"; cInp.value = c.cur || ""; const mInp = document.createElement("input"); mInp.type = "number"; mInp.placeholder = "\u6700\u5927"; mInp.value = c.max || ""; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; 
+    row.append(lInp, cInp, mInp, dh, rm); wrap.appendChild(row);
+        lInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault(); cInp.focus();
+        });
+        cInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault(); mInp.focus();
+        });
+        mInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return; e.preventDefault();
+          const idx2 = consumables.indexOf(c);
+          if (idx2 >= 0 && idx2 < consumables.length - 1) {
+            wrap.children[idx2 + 1]?.querySelector("input")?.focus();
+          } else {
+            consumables.push({ id: nxtId++, label: "", cur: "", max: "" });
+            buildConsumableRows();
+            requestAnimationFrame(() => wrap.lastElementChild?.querySelector("input")?.focus());
+          }
+        });
+        lInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, label: e.target.value } : x); updConsBadge(); updateExport(); });
+    cInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, cur: e.target.value } : x); updateExport(); }); mInp.addEventListener("input", e => { consumables = consumables.map(x => x.id === c.id ? { ...x, max: e.target.value } : x); updateExport(); }); rm.addEventListener("click", () => { consumables = consumables.filter(x => x.id !== c.id); buildConsumableRows(); updateExport(); }); bindDnD(row, consumables, idx, () => { buildConsumableRows(); updateExport(); }); }); updConsBadge(); }
     function addConsumable() { consumables.push({ id: nxtId++, label: "", cur: "", max: "" }); buildConsumableRows(); openAcc("cons"); }
     function updConsBadge() { const n = consumables.filter(c => c.label).length; const el = document.getElementById("badge-cons"); if (el) el.textContent = n; const el2 = document.getElementById("badge-cons2"); if (el2) el2.textContent = n; }
     function normalizeNpcText(t) { t = t.replace(/"([^"]*?)"/g, (m, inner) => inner.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim());; return t.replace(/[A-Z\uff21-\uff3a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[a-z\uff41-\uff5a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\uff1a/g, ':').replace(/\uff0b/g, '+').replace(/[\uff0d\u2212]/g, '-').replace(/\u3000/g, ' ').replace(/[%\uff05]/g, '%').replace(/\uff0f/g, '/').replace(/\uff08/g, '(').replace(/\uff09/g, ')').replace(/\u3002/g, '.'); }
@@ -5079,7 +5092,7 @@
 
     let paletteCustomOrder = null;
 
-    function getPaletteLines(forExport = false) {
+function getPaletteLines(forExport = false) {
       const strV = vals.str || 0, sizV = vals.siz || 0;
       const db = (strV + sizV > 0) ? getDB(strV + sizV) : null;
       const gB = document.getElementById("chk-both-db")?.checked || document.getElementById("chk-both-db2")?.checked || false;
@@ -5087,6 +5100,7 @@
       const v6out = (forExport && isUseV6());
       const cv = (v) => v6out ? Math.round(v / 5) : v;
 
+      // ===== 攻撃ブロック =====
       const atkBlock = [];
       if (db && db.cmd && atkList.some(a => !a._sep && a.name && a.useDB))
         atkBlock.push({ text: db.cmd + " 【ダメージボーナス】", key: "_db" });
@@ -5112,20 +5126,30 @@
           else atkBlock.push({ text: a.dmg + " 【" + dmgLabel + a.name + "】", key: "dmg_" + a.id });
         }
       });
+
+      // ===== 呪文ブロック =====
+      const splBlock = [];
       splList.forEach(s => {
         if (!s.name) return;
         const mainTxt = s.name + (s.mp ? " (MP:" + s.mp + ")" : "");
-        atkBlock.push({ text: mainTxt, sub: s.note || undefined, key: "spl_" + s.id });
+        splBlock.push({ text: mainTxt, sub: s.note || undefined, key: "spl_" + s.id });
       });
+
+      // ===== 消耗品ブロック =====
+      const consBlock = [];
       consumables.forEach(c => {
         if (!c.label) return;
         const cur = c.cur !== undefined && c.cur !== "" ? c.cur : "?";
         const max = c.max !== undefined && c.max !== "" ? ("/" + c.max) : "";
-        atkBlock.push({ text: c.label + " " + cur + max, key: "cons_" + c.id });
+        consBlock.push({ text: c.label + " " + cur + max, key: "cons_" + c.id });
       });
-      memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
-        .forEach(m => atkBlock.push({ text: (m.label ? m.label + "　" : "") + m.content, key: "memo_" + m.id }));
 
+      // ===== MEMOブロック =====
+      const memoBlock = [];
+      memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
+        .forEach(m => memoBlock.push({ text: (m.label ? m.label + "　" : "") + m.content, key: "memo_" + m.id }));
+
+      // ===== 技能ブロック =====
       const skBlock = [];
       skList.forEach(s => {
         if (s._sep) { skBlock.push({ text: s.label || "━━━", key: "ssep_" + s.id, isSep: true }); return; }
@@ -5133,7 +5157,59 @@
         const dM = isSkDice(); const ccPx = dM ? "CC({🎲})<=" : "CC<="; skBlock.push({ text: ccPx + cv(s.val) + " 【" + s.name + "】", key: "sk_" + s.id });
       });
 
-      return atkFirst ? [...atkBlock, ...skBlock] : [...skBlock, ...atkBlock];
+      // ===== ヘッダー挿入判定 =====
+      const hasAtk = atkBlock.some(l => !l.isSep);
+      const hasSpl = splBlock.length > 0;
+      const hasSk  = skBlock.some(l => !l.isSep);
+
+      // 技能 と (攻撃 or 呪文) の両方に中身があるときヘッダーを付ける
+      const needHeaders = hasSk && (hasAtk || hasSpl);
+
+      // 区切り設定を読む（コマタブと同じ）
+      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value
+        || document.querySelector('input[name="koma-sep-space2"]:checked')?.value
+        || 'before';
+
+      // ヘッダー行を生成するヘルパー
+      function makeHeader(text) {
+        const lines = [];
+        lines.push({ text: '', isSep: false, _empty: true });   // 前の空行（常に入れる）
+        lines.push({ text: text, isSep: true, _header: true });
+        if (sepSpace === 'both') lines.push({ text: '', isSep: false, _empty: true });
+        return lines;
+      }
+
+      // ===== ブロックを順序通りに組み立て =====
+      // 順序：技能 → 攻撃 → 呪文 → 消耗品 → MEMO（atkFirstなら攻撃・呪文 → 技能）
+      const result = [];
+
+      function appendBlock(block, headerText) {
+        if (!block.length) return;
+        if (needHeaders && headerText) {
+          const hdr = makeHeader(headerText);
+          hdr.forEach(l => result.push(l));
+        }
+        block.forEach(l => result.push(l));
+      }
+
+      if (atkFirst) {
+        appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
+        appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
+        appendBlock(skBlock,  needHeaders && hasSk  ? '━━━🎯技能━━━' : null);
+      } else {
+        appendBlock(skBlock,  needHeaders && hasSk  ? '━━━🎯技能━━━' : null);
+        appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
+        appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
+      }
+
+      // 消耗品・MEMOはヘッダーなし（現状どおり）
+      consBlock.forEach(l => result.push(l));
+      memoBlock.forEach(l => result.push(l));
+
+      // 先頭の空行を除去
+      while (result.length && result[0]._empty) result.shift();
+
+      return result;
     }
 
     function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f"); }
@@ -5205,11 +5281,19 @@
       if (!useManualOnly) {
         const lines = getPaletteLines(true);  // ← true を渡す
         lines.forEach((l, idx) => {
-          // 区切り行の前後に空行
+          // 空行フラグ（ヘッダー前後の空行）
+          if (l._empty) { cmdLines.push(''); return; }
+          // 区切り行
           if (l.isSep) {
-            if (idx > 0 && cmdLines.length && cmdLines[cmdLines.length - 1] !== '') cmdLines.push('');
-            cmdLines.push(l.text || '━━━━━━━━━━');
-            cmdLines.push('');
+            if (!l._header) {
+              // 手動区切り：前後に空行
+              if (idx > 0 && cmdLines.length && cmdLines[cmdLines.length - 1] !== '') cmdLines.push('');
+              cmdLines.push(l.text || '━━━━━━━━━━');
+              cmdLines.push('');
+            } else {
+              // 自動ヘッダー：_emptyで制御済みなのでそのまま出力
+              cmdLines.push(l.text);
+            }
             return;
           }
           if (l.sub) {
