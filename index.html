@@ -2793,6 +2793,8 @@
             <span id="badge-koma-param" class="acc-badge">0</span></button>
           <button id="koma-data-tab-clear" onclick="clearCurrentKomaDataTab()"
             style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--text3);cursor:pointer;font-size:12px;padding:6px 10px">🗑️クリア</button>
+          <button onclick="transferKomaParamToStatParam()"
+            style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--accent);cursor:pointer;font-size:11px;padding:6px 8px;white-space:nowrap" title="コマパラメータをステータスタブのパラメータに一括移行">📤→パラメータ</button>
         </div>
         <div
           style="border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);padding:7px;background:var(--bg);margin-bottom:0">
@@ -6153,7 +6155,7 @@ valInp.addEventListener("change", e => {
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id);
 const filtered = allSaves.filter(sv => {
-  if (sv._isKoma) return false; // ← 追加：コマのみ除外
+  if (sv._isKoma && !sv.komaData) return false; // コマのみ（ステータスなし）は除外
   if (_statSaveFilter === "personal") return !sv._fromShared;
   if (_statSaveFilter === "shared") return !!sv._fromShared;
   return true;
@@ -6195,6 +6197,7 @@ const filtered = allSaves.filter(sv => {
       const badge = sv._shared ? '<span class="shared-badge">\u5171\u6709</span>' : "";
       const sharedBg = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
       let chips = "";
+      const isKoma = getSaveKind(sv) === "koma";
 if (isKoma || sv.komaData) {
   const komaD = sv.komaData || sv;
   const lbls = (komaD.labels || []).filter(l => !l._sep && l.text).length;
@@ -6726,6 +6729,33 @@ document.getElementById("btn-save-current").addEventListener("click", () => save
       return _origGistSet(payload);
     };
 
+  function transferKomaParamToStatParam() {
+      const params = (currentKoma.paramList || []).filter(p => !p._sep && p.label);
+      if (!params.length) { showToast('コマパラメータにデータがありません'); return; }
+      const count = params.length;
+      let added = 0, skipped = 0;
+      params.forEach(p => {
+        const existing = extraParams.find(ep => ep.label === p.label && String(ep.value || '') === String(p.value || ''));
+        if (existing) {
+          // 名前も値も完全一致 → スキップ
+          skipped++;
+        } else {
+          // 名前が新規 or 同名でも値が違う → 新規追加
+          extraParams.push({ id: nxtId++, label: p.label, value: String(p.value || '') });
+          added++;
+        }
+      });
+      // 先頭の空行（label・valueが両方空）を詰めて移行データを先頭に
+      const filled = extraParams.filter(ep => ep.label || ep.value);
+      extraParams.length = 0;
+      filled.forEach(ep => extraParams.push(ep));
+      if (!extraParams.length) extraParams.push({ id: nxtId++, label: '', value: '' });
+      saveExtraParams();
+      buildExtraParamRows();
+      updExtraParamBadge();
+      updateExport();
+      showToast(added + '件を移行・更新しました（変更なし' + skipped + '件）');
+    }
   </script>
 </body>
 
