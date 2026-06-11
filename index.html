@@ -4486,7 +4486,7 @@
     let extraParams = [];
 try { const _ep = localStorage.getItem('coc_extra_params'); extraParams = _ep ? JSON.parse(_ep) : []; } catch { extraParams = []; }
 if (!extraParams.length) extraParams = [{ id: 'ep1', label: '', value: '' }];
-function saveExtraParams() { localStorage.setItem('coc_extra_params', JSON.stringify(extraParams)); }
+function saveExtraParams() {  }
     let atkList = [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }];
     let splList = [{ id: 0, name: "", mp: "", note: "" }];
     let memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
@@ -4804,12 +4804,24 @@ function saveExtraParams() { localStorage.setItem('coc_extra_params', JSON.strin
         rm.className = 'btn-remove'; rm.textContent = '×';
         row.append(dh, nameInp, valInp, cpBtn, rm);
         wrap.appendChild(row);
-        nameInp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); valInp.focus(); });
+        　nameInp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); valInp.focus(); });
         valInp.addEventListener('keydown', e => {
-          if (e.key !== 'Enter') return; e.preventDefault();
+          if (e.key !== 'Enter') return; 
+          e.preventDefault();
           if (idx < extraParams.length - 1) {
+            // 次の行がある場合は、次の行の名前欄へ移動
             wrap.children[idx + 1]?.querySelector('input')?.focus();
-          } else { addExtraParam(); requestAnimationFrame(() => wrap.lastElementChild?.querySelector('input')?.focus()); }
+          } else {
+            // 最後の行の場合の判定
+            if (nameInp.value.trim() !== '') {
+              // 名前欄に入力があれば、新しい行を追加して移動
+              addExtraParam(); 
+              requestAnimationFrame(() => wrap.lastElementChild?.querySelector('input')?.focus());
+            } else {
+              // 名前欄が空なら、行を追加せずに今の行の名前欄に戻る
+              nameInp.focus();
+            }
+          }
         });
         nameInp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], label: e.target.value }; saveExtraParams(); updExtraParamBadge(); updateExport(); });
         valInp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], value: e.target.value }; saveExtraParams(); updateExport(); });
