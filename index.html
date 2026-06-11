@@ -2341,9 +2341,9 @@
     <div class="tabs">
       <button class="tab active" data-tab="stats">📋 ステータス</button>
       <button class="tab" data-tab="koma">🎭 コマ</button>
-      <button class="tab" data-tab="dice">📝 メモ/履歴</button>
+      <!-- <button class="tab" data-tab="dice">📝 メモ/履歴</button> -->
       <button class="tab" data-tab="kp">🛠 KP支援</button>
-      <button class="tab" data-tab="save">💾 保存</button>
+      <button class="tab" data-tab="save">💾 2タブ保存/出力</button>
     </div>
   </div>
   <div class="app-body">
@@ -2608,6 +2608,119 @@
           </div>
         </div><!-- /技能・メモ 2カラム ここまで -->
 
+        <!-- ステータスタブ 出力＆保存 -->
+        <!-- 📤 出力ブロック -->
+        <div class="full-card" style="margin-top:6px;margin-bottom:5px">
+          <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア出力</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:5px">
+            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 팔레트 출력 설정</div>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="palette-mode3" value="auto" checked onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">🔄 자동 생성만
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="palette-mode3" value="both" onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">🔄자동＋✏️직접 입력
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                <input type="radio" name="palette-mode3" value="manual" onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">✏️ 직접 입력만
+              </label>
+            </div>
+            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 자동 커맨드 순서</div>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="cmd-order3" value="sk-first" checked onchange="syncStatTabSetting(this,'cmd-order')" style="cursor:pointer;accent-color:var(--accent)">🎯 기능 → ⚔️ 공격
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                <input type="radio" name="cmd-order3" value="atk-first" onchange="syncStatTabSetting(this,'cmd-order')" style="cursor:pointer;accent-color:var(--accent)">⚔️ 공격 → 🎯 기능
+              </label>
+            </div>
+            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ 코마 설정</div>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-hide-status3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">스테이터스 비공개
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-hide-chat-char3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">발언 시 표시하지 않음
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                <input type="checkbox" id="chk-invisible3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">캐릭터 목록 제외
+              </label>
+            </div>
+            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 구분선 설정</div>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-incl-sep3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">줄을 라벨에 추가
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="koma-sep-space4" id="koma-sep-before4" value="before" checked onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞에 빈 줄 삽입
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                <input type="radio" name="koma-sep-space4" id="koma-sep-both4" value="both" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞뒤에 빈 줄 삽입
+              </label>
+            </div>
+          </div>
+          <!-- DB/6版チェック -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+              <input type="checkbox" id="chk-both-db3" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+              DB 포함/미포함 둘 다 생성
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+              <input type="checkbox" id="chk-use-v6-3" onchange="syncUseV6Check(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+              6판으로 출력
+            </label>
+          </div>
+          <!-- 自動追加コマンド詳細設定 -->
+          <div style="margin-bottom:6px">
+            <div class="acc-hd" onclick="toggleAcc('secret-cmd3')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
+              <span style="font-size:12px;font-weight:700;color:var(--text2)">💡 自動追加コマンド詳細設定</span>
+              <span class="acc-arrow" id="arrow-secret-cmd3">▼</span>
+            </div>
+            <div class="acc-body" id="body-secret-cmd3" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+                    <input type="checkbox" id="chk-stat-vars-stat" checked onchange="syncStatVarsCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                    📊 特性値コマンド
+                  </label>
+                  <div class="secret-cmd-preview" id="stat-vars-preview3">（特性値を入力すると表示）</div>
+                </div>
+                <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+                    <input type="checkbox" id="chk-secret-cmd-stat" checked onchange="syncSecretCmdCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                    🔒 秘匿タブ向けコマンド
+                  </label>
+                  <div class="secret-cmd-preview" id="secret-cmd-preview3">（チェックをONにすると表示）</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="export-preview" id="export-preview3" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+          <div class="export-btn-row" style="margin-top:5px">
+            <button class="export-btn" onclick="copyExport()">📋 コピー</button>
+            <button class="export-btn sec" onclick="updateExport()">🔄 更新</button>
+          </div>
+        </div>
+
+        <!-- 💾 保存ブロック -->
+        <div class="full-card" style="margin-bottom:5px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="kp-card-title" style="margin-bottom:0;color:var(--text);font-size:15px">💾 ステータスタブのみ保存</div>
+            <div style="display:flex;gap:4px">
+  <button class="btn-pri" onclick="quickSaveStatus('personal')" style="font-size:13px;padding:5px 10px">👤 個人に保存</button>
+  <button class="btn-pri" onclick="quickSaveStatus('shared')" style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
+  <button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();" style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
+</div>
+          </div>
+          <div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">
+            <button class="save-filter-btn active" id="stat-sfb-all" onclick="setStatSaveFilter('all')">📋 全て</button>
+<button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤 個人</button>
+<button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
+          </div>
+          
+          <div id="stat-save-list-wrap"></div>
+        </div>
+
         <!-- 変換リファレンス -->
         <div class="ref-inline" style="margin-top:6px">
           <div class="ref-inline-title">📖 変換クイックリファレンス</div>
@@ -2827,70 +2940,70 @@
 
         <!-- コマ出力ブロック -->
         <div class="full-card" style="margin-bottom:5px">
-          <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア コマJSON出力</div>
+          <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア出力</div>
           <!-- チャットパレット反映元選択 -->
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">💬 チャットパレットに反映する内容</div>
               <div
-                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px"
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px;border:0.5px solid var(--border2);border:0.5px solid var(--border2);border:0.5px solid var(--border2);border:0.5px solid var(--border2)"
                 id="koma-palette-src-bar">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-palette-src" id="kpsrc-simple" value="simple" checked
                     onchange="setKomaPaletteSrc('simple')" style="cursor:pointer;accent-color:var(--accent)">
-                  🔄 自動シンプル
+                  🔄 자동 심플
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-palette-src" id="kpsrc-named" value="named"
                     onchange="setKomaPaletteSrc('named')" style="cursor:pointer;accent-color:var(--accent)">
-                  🔄 自動タイトル付き
+                  🔄 자동【제목 포함】
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-palette-src" id="kpsrc-manual" value="manual"
                     onchange="setKomaPaletteSrc('manual')" style="cursor:pointer;accent-color:var(--accent)">
-                  ✏️ 手書き
+                  ✏️ 직접 입력만
                 </label>
               </div>
             </div>
             <div>
-              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">⚙️ コマ設定</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">⚙️ 코마 설정</div>
               <div
-                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px;border:0.5px solid var(--border2);border:0.5px solid var(--border2);border:0.5px solid var(--border2)">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="checkbox" id="koma-hide-status" onchange="syncKomaSetting(this)"
                     style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  ステータスを非公開
+                  스테이터스 비공개
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="checkbox" id="koma-hide-chat" onchange="syncKomaSetting(this)" checked
                     style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  発言時に表示しない
+                  발언 시 표시하지 않음
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="checkbox" id="koma-invisible" onchange="syncKomaSetting(this)" checked
                     style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  キャラ一覧に表示しない
+                  캐릭터 목록 제외
                 </label>
               </div>
             </div>
             <div>
-              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 区切り行の設定</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">🔧 구분선 설정</div>
               <div
-                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px">
+                style="display:flex;flex-direction:column;gap:4px;background:var(--bg2);border-radius:var(--radius-lg);padding:6px 8px;border:0.5px solid var(--border2);border:0.5px solid var(--border2);border:0.5px solid var(--border2)">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="checkbox" id="koma-incl-sep" onchange="syncKomaSetting(this)"
                     style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                  行をラベルへ追加
+                  줄을 라벨에 추가
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-sep-space" id="koma-sep-before" value="before" checked
                     onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                  前に空行を入れる
+                  앞에 빈 줄 삽입
                 </label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
                   <input type="radio" name="koma-sep-space" id="koma-sep-both" value="both"
                     onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                  前後に空行を入れる
+                  앞뒤에 빈 줄 삽입
                 </label>
               </div>
             </div>
@@ -2907,14 +3020,11 @@
         <!-- 保存・一覧 -->
         <div class="full-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div class="kp-card-title" style="margin-bottom:0">💾 コマ保存</div>
+            <div class="kp-card-title" style="margin-bottom:0;color:var(--text);font-size:15px">💾 コマタブのみ保存</div>
             <div style="display:flex;gap:4px">
-              <button class="btn-pri" onclick="saveKomaData('personal')" style="font-size:13px;padding:5px 10px">👤
-                個人保存</button>
-              <button class="btn-pri" onclick="saveKomaData('shared')"
-                style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有保存</button>
-              <button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();"
-                style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
+             <button class="btn-pri" onclick="saveKomaData('personal')" style="font-size:13px;padding:5px 10px">👤 個人に保存</button>
+<button class="btn-pri" onclick="saveKomaData('shared')" style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
+<button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();" style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
             </div>
           </div>
           <div id="koma-save-list-wrap">
@@ -3221,62 +3331,62 @@
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:4px 0">
                 <div id="chk-manual-wrap"
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 パレット出力設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 팔레트 출력 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="palette-mode" id="chk-auto-only" value="auto" checked
                       onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-                    🔄 自動生成のみ
+                    🔄 자동 생성만
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="palette-mode" id="chk-incl-manual" value="both" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    🔄＋自動＋✏️ 手書き
+                    🔄자동＋✏️직접 입력
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="palette-mode" id="chk-manual-only" value="manual"
                       onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-                    ✏️ 手書きのみ
+                    ✏️ 직접 입력만
                   </label>
                 </div>
                 <div id="chk-order-wrap"
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 自動コマンド順序</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 자동 커맨드 순서</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="cmd-order" id="chk-order-sk-first" value="sk-first" checked
                       onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-                    🎯 技能 → ⚔️ 攻撃
+                    🎯 기능 → ⚔️ 공격
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="cmd-order" id="chk-order-atk-first" value="atk-first"
                       onchange="updateExport()" style="cursor:pointer;accent-color:var(--accent)">
-                    ⚔️ 攻撃 → 🎯 技能
+                    ⚔️ 공격 → 🎯 기능
                   </label>
                 </div>
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ コマ設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ 코마 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-hide-status" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    ステータスを非公開
+                    스테이터스 비공개
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-hide-chat-char" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    発言時に表示しない
+                    발언 시 표시하지 않음
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-invisible" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    キャラ一覧に表示しない
+                    캐릭터 목록 제외
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
@@ -3286,24 +3396,24 @@
                 </div>
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 区切り行の設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 구분선 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-incl-sep" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    行をラベルへ追加
+                    줄을 라벨에 추가
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="koma-sep-space2" id="koma-sep-before2" value="before" checked
                       onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                    前に空行を入れる
+                    앞에 빈 줄 삽입
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="koma-sep-space2" id="koma-sep-both2" value="both"
                       onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                    前後に空行を入れる
+                    앞뒤에 빈 줄 삽입
                   </label>
                 </div>
                 <!-- 秘匿コマンドブロック（個人） -->
@@ -3360,6 +3470,7 @@
             <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
             <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
             <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
+            <button class="save-filter-btn" id="sfb-both" onclick="setSaveFilter('both')">📚 両方</button>
           </div>
           <div id="save-list-wrap"></div>
         </div>
@@ -3425,89 +3536,89 @@
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:4px 0">
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 パレット出力設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 팔레트 출력 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="palette-mode2" value="auto" checked onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    🔄 自動生成のみ
+                    🔄 자동 생성만
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="palette-mode2" value="both" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    🔄＋自動＋✏️ 手書き
+                    🔄자동＋✏️직접 입력
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="palette-mode2" value="manual" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    ✏️ 手書きのみ
+                    ✏️ 직접 입력만
                   </label>
                 </div>
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 自動コマンド順序</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 자동 커맨드 순서</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="cmd-order2" value="sk-first" checked onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    🎯 技能 → ⚔️ 攻撃
+                    🎯 기능 → ⚔️ 공격
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="cmd-order2" value="atk-first" onchange="updateExport()"
                       style="cursor:pointer;accent-color:var(--accent)">
-                    ⚔️ 攻撃 → 🎯 技能
+                    ⚔️ 공격 → 🎯 기능
                   </label>
                 </div>
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ コマ設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ 코마 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-hide-status2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    ステータスを非公開
+                    스테이터스 비공개
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-hide-chat-char2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    発言時に表示しない
+                    발언 시 표시하지 않음
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-invisible2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    キャラ一覧に表示しない
+                    캐릭터 목록 제외
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="checkbox" id="chk-sk-dice2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    🎲 CC({🎲})<=出力 </label>
+                    🎲 CC({🎲})<=출력 </label>
                 </div>
                 <div
                   style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 区切り行の設定</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 구분선 설정</div>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="checkbox" id="chk-incl-sep2" onchange="syncKomaSetting(this)"
                       style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
-                    行をラベルへ追加
+                    줄을 라벨에 추가
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
                     <input type="radio" name="koma-sep-space3" id="koma-sep-before3" value="before" checked
                       onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                    前に空行を入れる
+                    앞에 빈 줄 삽입
                   </label>
                   <label
                     style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
                     <input type="radio" name="koma-sep-space3" id="koma-sep-both3" value="both"
                       onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">
-                    前後に空行を入れる
+                    앞뒤에 빈 줄 삽입
                   </label>
                 </div>
                 <!-- 秘匿コマンドブロック（共有） -->
@@ -3595,52 +3706,40 @@
       updateKomaJsonPreview();
     }
 
+    let _komaTabFilter = "all";
+
+    function setKomaTabFilter(f) {
+      _komaTabFilter = f;
+      renderKomaSaveList();
+    }
+
     function renderKomaSaveList() {
       const wrap = document.getElementById("koma-save-list-wrap");
       if (!wrap) return;
-      const personal = lSaves().filter(k => k._isKoma);
-      const shared = lSharedSaves().filter(k => k._isKoma);
-      const all = [...personal, ...shared].sort((a, b) => b.id - a.id);
-
-      if (!all.length) {
-        wrap.innerHTML = '<p class="save-empty">まだ保存されたコマはありません</p>';
+      const personal = lSaves().filter(k => k._isKoma || k.komaData);
+      const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
+      const all = [
+        ...personal.map(s => ({ ...s, _fromShared: false })),
+        ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
+      ].sort((a, b) => b.id - a.id);
+      const filtered = all.filter(sv => {
+        if (_komaTabFilter === "personal") return !sv._fromShared;
+        if (_komaTabFilter === "shared") return !!sv._fromShared;
+        return true;
+      });
+      const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
+        + '<button class="save-filter-btn' + (_komaTabFilter === "all" ? " active" : "") + '" onclick="setKomaTabFilter(\'all\')">📋 全て</button>'
+        + '<button class="save-filter-btn' + (_komaTabFilter === "personal" ? " active" : "") + '" onclick="setKomaTabFilter(\'personal\')">👤 個人</button>'
+        + '<button class="save-filter-btn' + (_komaTabFilter === "shared" ? " active" : "") + '" onclick="setKomaTabFilter(\'shared\')">👥 共有</button>'
+        + '</div>';
+      if (!filtered.length) {
+        wrap.innerHTML = filterBar + '<p class="save-empty">保存データがありません</p>';
         return;
       }
-
-      wrap.innerHTML = '<div class="save-list">' + all.map(k => {
-        const d = new Date(k.savedAt);
-        const ds = d.getFullYear() + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + String(d.getDate()).padStart(2, "0")
-          + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
-        const isShared = !!shared.find(s => s.id === k.id);
-        const badge = isShared ? '<span class="shared-badge">共有</span>' : '';
-        const lbls = (k.labels || []).filter(l => !l._sep && l.text);
-        const stN = (k.statusList || []).filter(s => !s._sep && s.label).length;
-        const prN = (k.paramList || []).filter(p => !p._sep && p.label).length;
-        const totalN = lbls.length + stN + prN;
-        const preview = lbls.map(l => l.text).join('・');
-        const bgStyle = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
-        return '<div class="koma-save-card" style="' + bgStyle + '">'
-          + '<div class="koma-save-head"><span class="koma-save-name">' + esc(k.name) + badge + '</span>'
-          + '<span class="koma-save-date">' + ds + '</span></div>'
-          + '<div style="font-size:12px;color:var(--text3);margin-bottom:3px;display:flex;align-items:center;gap:4px;overflow:hidden">'
-          + '<span style="flex-shrink:0;font-weight:700">差分' + lbls.length + ' / ステ' + stN + ' / パラ' + prN + '（計' + totalN + '件）</span>'
-          + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' + esc(preview) + '</span></div>'
-          + '<div class="koma-save-actions">'
-          + '<button class="btn-pri btn-koma-load" style="font-size:13px;padding:4px 8px" data-id="' + k.id + '" data-shared="' + (isShared ? 1 : 0) + '">読み込む</button>'
-          + '<button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + k.id + '" data-shared="' + (isShared ? 1 : 0) + '">上書き</button>'
-          + '<button class="btn-dng btn-koma-delete" data-id="' + k.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>'
-          + '</div></div>';
-      }).join("") + '</div>';
-
-      wrap.querySelectorAll(".btn-koma-load").forEach(btn => {
-        btn.addEventListener("click", () => loadKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
-      });
-      wrap.querySelectorAll(".btn-update").forEach(btn => {
-        btn.addEventListener("click", () => overwriteKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
-      });
-      wrap.querySelectorAll(".btn-koma-delete").forEach(btn => {
-        btn.addEventListener("click", () => deleteKomaData(+btn.dataset.id, btn.dataset.shared === "1"));
-      });
+      wrap.innerHTML = filterBar + '<div class="save-list">'
+        + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared)).join("")
+        + '</div>';
+      bindSaveListEvents(wrap);
     }
 
     function getKomaPaletteText() {
@@ -4107,6 +4206,19 @@
 
     // ===== コマ保存・一覧 =====
 
+    function getCurrentKomaData() {
+      return {
+        name: document.getElementById("koma-name")?.value || "",
+        globalAt: currentKoma.globalAt || "@",
+        labels: structuredClone(currentKoma.labels || []),
+        statusList: structuredClone(currentKoma.statusList || []),
+        paramList: structuredClone(currentKoma.paramList || []),
+        manualPalette: currentKoma.manualPalette || "",
+        draftPalette: currentKoma.draftPalette || "",
+        settings: getSettings()
+      };
+    }
+
     function saveKomaData(dest) {
       const name = (document.getElementById("koma-name")?.value || "").trim() || "（名称なし）";
       const d = {
@@ -4148,6 +4260,30 @@
           showToast("「" + name + "」を個人に保存しました");
         }
       }
+    }
+
+    function loadKomaIntoEditor(komaData) {
+      if (!komaData) return;
+      currentKoma.globalAt = komaData.globalAt || "@";
+      currentKoma.labels = structuredClone(komaData.labels || []);
+      currentKoma.statusList = structuredClone(komaData.statusList || []);
+      currentKoma.paramList = structuredClone(komaData.paramList || []);
+      currentKoma.manualPalette = komaData.manualPalette || "";
+      currentKoma.draftPalette = komaData.draftPalette || "";
+      komaNxtId = currentKoma.labels.length
+        ? Math.max(...currentKoma.labels.map(l => Number(l.id) || 0)) + 1
+        : 1;
+      const nameEl = document.getElementById("koma-name");
+      if (nameEl) {
+        nameEl.value = (komaData.name && komaData.name !== "（名称なし）") ? komaData.name : "";
+        watchInp(nameEl, document.getElementById("w-komaname"));
+      }
+      setKomaGlobal(currentKoma.globalAt);
+      buildKomaLabelRows();
+      buildKomaStatusRows();
+      buildKomaParamRows();
+      renderKomaPalettePreview();
+      updateKomaJsonPreview();
     }
 
     function loadKomaData(id, isShared) {
@@ -4229,7 +4365,7 @@
     // ===== 保存フィルター =====
     function setSaveFilter(f) {
       currentSaveFilter = f;
-      ["all", "char", "koma"].forEach(k => {
+      ["all", "char", "koma", "both"].forEach(k => {
         document.getElementById("sfb-" + k)?.classList.toggle("active", k === f);
       });
       if (currentSavePage === "personal") renderSaveList();
@@ -4238,7 +4374,7 @@
     // ===== 秘匿コマンド =====
     function syncSecretCmdCheck(el) {
       const checked = el.checked;
-      ["chk-secret-cmd", "chk-secret-cmd2"].forEach(id => {
+      ["chk-secret-cmd", "chk-secret-cmd2", "chk-secret-cmd-stat"].forEach(id => {
         const el2 = document.getElementById(id);
         if (el2) el2.checked = checked;
       });
@@ -4249,7 +4385,7 @@
     function syncStatVarsCheck(el) {
       const checked = el.checked;
       // 既存のchk-stat-vars / chk-stat-vars2 も連動
-      ["chk-stat-vars", "chk-stat-vars2", "chk-stat-vars2-detail", "chk-stat-vars3-detail"].forEach(id => {
+      ["chk-stat-vars", "chk-stat-vars2", "chk-stat-vars2-detail", "chk-stat-vars3-detail", "chk-stat-vars-stat"].forEach(id => {
         const el2 = document.getElementById(id);
         if (el2) el2.checked = checked;
       });
@@ -4281,7 +4417,7 @@
     function updateSecretCmdPreview() {
       const on = document.getElementById("chk-secret-cmd")?.checked || false;
       const lines = on ? getSecretCmdLines() : [];
-      ["secret-cmd-preview", "secret-cmd-preview2"].forEach(id => {
+      ["secret-cmd-preview", "secret-cmd-preview2", "secret-cmd-preview3"].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.textContent = on ? lines.join("\n") : "（チェックをONにすると表示）";
@@ -4297,7 +4433,7 @@
       customFields.forEach(cf => {
         if (cf.label && cf.value) statLines.push("CC<={" + cf.label + "} 【" + cf.label + "】");
       });
-      ["stat-vars-preview", "stat-vars-preview2"].forEach(id => {
+      ["stat-vars-preview", "stat-vars-preview2", "stat-vars-preview3"].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.textContent = statOn && statLines.length ? statLines.join("\n") : "（特性値を入力すると表示）";
@@ -4319,9 +4455,9 @@
 
     function applySettings(s) {
       if (!s) return;
-      ['chk-hide-status', 'chk-hide-status2', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
-      ['chk-hide-chat-char', 'chk-hide-chat-char2', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
-      ['chk-invisible', 'chk-invisible2', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
+      ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
+      ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
+      ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
       ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
       ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
       const sep = s.sepSpace || 'before';
@@ -4348,8 +4484,9 @@
     let ovManual = { hp: false, mp: false, san: false, luck: false };
     let skList = [{ id: 0, name: "", val: 0 }];
     let extraParams = [];
-    try { const _ep = JSON.parse(localStorage.getItem('coc_extra_params') || '[]'); extraParams = _ep.length ? _ep : [{ id: 0, label: '', value: '' }]; } catch { extraParams = [{ id: 0, label: '', value: '' }]; }
-    function saveExtraParams() { localStorage.setItem('coc_extra_params', JSON.stringify(extraParams)); }
+try { const _ep = localStorage.getItem('coc_extra_params'); extraParams = _ep ? JSON.parse(_ep) : []; } catch { extraParams = []; }
+if (!extraParams.length) extraParams = [{ id: 'ep1', label: '', value: '' }];
+function saveExtraParams() { localStorage.setItem('coc_extra_params', JSON.stringify(extraParams)); }
     let atkList = [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }];
     let splList = [{ id: 0, name: "", mp: "", note: "" }];
     let memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
@@ -4770,11 +4907,11 @@
           e.preventDefault();
           pctInp.focus();
         });
-        pctInp.addEventListener("keydown", e => {
-          if (e.key !== "Enter") return;
-          e.preventDefault();
-          dmgInp.focus();
-        });
+        nameInp.addEventListener("keydown", e => {
+ 　　　 if (e.key !== "Enter") return;
+  　　　e.preventDefault();
+ 　　　 valInp.focus();
+});
         dmgInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
@@ -4830,25 +4967,39 @@
           e.preventDefault();
           valInp.focus();
         });
-        valInp.addEventListener("keydown", e => {
-          if (e.key !== "Enter") return;
-          e.preventDefault();
-          const currentSk = skList.find(x => x.id === sk.id);
-          if (!currentSk?.name) { nameInp.focus(); return; }
-          const rows = [...wrap.children].filter(r => r.classList.contains('sk-row'));
-          const idx2 = rows.indexOf(row);
-          if (idx2 >= 0 && idx2 < rows.length - 1) {
-            rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
-          } else {
-            skList.push({ id: nxtId++, name: "", val: 0 });
-            buildSkRows();
-            updSkBadge();
-            requestAnimationFrame(() => {
-              const rows2 = [...wrap.children].filter(r => r.classList.contains('sk-row'));
-              rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
-            });
-          }
-        }); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => { const nv = parseInt(e.target.value) || 0; skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); }); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
+// valInp の keydown（既存を置き換え）
+valInp.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const nv = parseInt(valInp.value) || 0;
+  if (nv > 0) {
+    // 値があれば次の行のラベル名へ
+    const rows = [...document.querySelectorAll('#sk-rows .sk-row')];
+    const idx2 = rows.indexOf(row);
+    if (idx2 >= 0 && idx2 < rows.length - 1) {
+      rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
+    } else {
+      skList.push({ id: nxtId++, name: "", val: 0 });
+      buildSkRows(); updSkBadge();
+      requestAnimationFrame(() => {
+        const rows2 = [...document.querySelectorAll('#sk-rows .sk-row')];
+        rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
+      });
+    }
+  } else {
+    // 値がなければラベル名欄に戻る
+    nameInp.focus();
+  }
+}); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => {
+  const nv = parseInt(e.target.value) || 0;
+  skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x);
+  hDiv.textContent = nv ? Math.floor(nv / 2) : "—";
+  fDiv.textContent = nv ? Math.floor(nv / 5) : "—";
+  updateExport(); updSkBadge(); renderPalettePreview();
+});
+valInp.addEventListener("change", e => {
+  buildSkRows();
+}); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
       }); updSkBadge();
     }
     function updKomaTabBadges() {
@@ -5016,7 +5167,7 @@
       customFields = [{ id: 'cf1', label: '', value: '', max: '' }, { id: 'cf2', label: '', value: '', max: '' }, { id: 'cf3', label: '', value: '', max: '' }, { id: 'cf4', label: '', value: '', max: '' }];
       saveCustomFields();
       buildCustomFieldRows();
-      extraParams = [{ id: 0, label: '', value: '' }];
+      extraParams = [];
       saveExtraParams();
       buildExtraParamRows();
       updExtraParamBadge();
@@ -5471,21 +5622,25 @@
     function setExportMode(mode) { exportMode = mode;["json", "text"].forEach(m => { const b = document.getElementById("exp-btn-" + m); if (b) b.className = "export-btn" + (m === mode ? "" : " sec"); const b2 = document.getElementById("exp-btn-" + m + "2"); if (b2) b2.className = "export-btn" + (m === mode ? "" : " sec"); }); const dl = document.getElementById("btn-dl-json"); if (dl) dl.style.display = mode === "json" ? "inline-flex" : "none"; const dl2 = document.getElementById("btn-dl-json2"); if (dl2) dl2.style.display = mode === "json" ? "inline-flex" : "none"; updateExport(); }
     function syncKomaSetting(el) {
       const idMap = {
-        'chk-hide-status': ['chk-hide-status', 'chk-hide-status2', 'koma-hide-status'],
-        'chk-hide-status2': ['chk-hide-status', 'chk-hide-status2', 'koma-hide-status'],
-        'koma-hide-status': ['chk-hide-status', 'chk-hide-status2', 'koma-hide-status'],
-        'chk-hide-chat-char': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'koma-hide-chat'],
-        'chk-hide-chat-char2': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'koma-hide-chat'],
-        'koma-hide-chat': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'koma-hide-chat'],
-        'chk-invisible': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
-        'chk-invisible2': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
-        'koma-invisible': ['chk-invisible', 'chk-invisible2', 'koma-invisible'],
+        'chk-hide-status': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
+        'chk-hide-status2': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
+        'chk-hide-status3': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
+        'koma-hide-status': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
+        'chk-hide-chat-char': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'],
+        'chk-hide-chat-char2': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'],
+        'chk-hide-chat-char3': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'],
+        'koma-hide-chat': ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'],
+        'chk-invisible': ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'],
+        'chk-invisible2': ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'],
+        'chk-invisible3': ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'],
+        'koma-invisible': ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'],
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice2': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'koma-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-        'chk-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
-        'chk-incl-sep2': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'],
+        'koma-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
+        'chk-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
+        'chk-incl-sep2': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
+        'chk-incl-sep3': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
       };
       const ids = idMap[el.id] || [];
       ids.forEach(id => {
@@ -5529,8 +5684,8 @@
       renderPalettePreview();
       updateExport();
     }
-    function syncBothDbCheck(el) { const other = el.id === "chk-both-db" ? document.getElementById("chk-both-db2") : document.getElementById("chk-both-db"); if (other) other.checked = el.checked; updateExport(); }
-    function syncUseV6Check(el) { const other = el.id === "chk-use-v6" ? document.getElementById("chk-use-v6-2") : document.getElementById("chk-use-v6"); if (other) other.checked = el.checked; updateExport(); }
+    function syncBothDbCheck(el) { ["chk-both-db","chk-both-db2","chk-both-db3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
+    function syncUseV6Check(el) { ["chk-use-v6","chk-use-v6-2","chk-use-v6-3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
     function isUseV6() { return document.getElementById("chk-use-v6")?.checked || document.getElementById("chk-use-v6-2")?.checked || false; }
     function isSkDice() { return document.getElementById("chk-sk-dice")?.checked || document.getElementById("chk-sk-dice-save")?.checked || document.getElementById("chk-sk-dice2")?.checked || false; }
     function buildCocoforiaJson() {
@@ -5662,12 +5817,17 @@
     }
     function buildCocoforiaText() { const name = document.getElementById("npc-name").value || "NPC"; const lines = ["\u300a" + name + "\u300b", ""]; const sl = []; STATS.forEach(({ key, label }) => { const v = vals[key] || 0; if (v > 0) sl.push(label + ":" + v); }); if (sl.length) lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09", sl.join(" / "), ""); const strV = vals.str || 0, sizV = vals.siz || 0; if (strV + sizV > 0) { const db = getDB(strV + sizV); lines.push("DB: " + db.label + " / \u30d3\u30eb\u30c9: " + db.build, ""); } const rl = []; const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck"); if (hp > 0 || ovManual.hp) rl.push("HP:" + hp); if (mp > 0 || ovManual.mp) rl.push("MP:" + mp); if (san > 0 || ovManual.san) rl.push("SAN:" + san); if (luck > 0 || ovManual.luck) rl.push("\u5e78\u904b:" + luck); consumables.filter(c => c.label).forEach(c => { const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0; rl.push(c.label + ":" + cur + (max ? "/" + max : "")); }); if (rl.length) lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9", rl.join(" / "), ""); const af = atkList.filter(a => a.name); if (af.length) { lines.push("\u25a0 \u653b\u6483"); af.forEach(a => { lines.push((a.name + ": " + (a.pct ? a.pct + "%" : "") + " " + (a.dmg ? "\u30c0\u30e1:" + a.dmg : "")).trim()); }); lines.push(""); } const skf = skList.filter(s => s.name && (s.val || 0) > 0); if (skf.length) { lines.push("\u25a0 \u6280\u80fd"); skf.forEach(s => { lines.push(s.name + ": " + s.val + "%"); }); lines.push(""); } const mf = memoList.filter(m => m.label || m.content); if (mf.length) { lines.push("\u25a0 \u30e1\u30e2"); mf.forEach(m => { lines.push((m.label ? m.label + "\u3000" : "") + m.content); }); lines.push(""); } return lines.join("\n").trim(); }
     function updateExport() {
-      const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0);
-      const txt = any ? (exportMode === "json" ? buildCocoforiaJson() : buildCocoforiaText()) : "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09";
+      const name = document.getElementById("npc-name").value || "";
+      const any = name || STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0
+        || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0)
+        || extraParams.some(p => p.label);
+      const txt = any ? (exportMode === "json" ? buildCocoforiaJson() : buildCocoforiaText()) : "（스테이터스를 입력하면 출력됩니다）";
       const el = document.getElementById("export-preview");
       if (el) el.textContent = txt;
       const el2 = document.getElementById("export-preview2");
       if (el2) el2.textContent = txt;
+      const el3 = document.getElementById("export-preview3");
+      if (el3) el3.textContent = txt;
       updateSecretCmdPreview();
     }
     function copyExport() { if (exportMode === "json") { const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0); if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const obj = JSON.parse(buildCocoforiaJson()); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
@@ -5734,13 +5894,13 @@
     async function applyKey(token, isInit = false) {
       token = (token || "").trim(); if (!token) { setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; }
       if (!isInit) { gistId = ""; localStorage.removeItem(L_GIST); const pgInp = document.getElementById("personal-gist-id-input"); if (pgInp) pgInp.value = ""; updGistDisplay(); }
-      syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; document.getElementById("btn-download").disabled = false; setSyncSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try {
+    　syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; setSyncSt("確認中…", "ing"); try {
         const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) {
           const u = await r.json(); setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok");
           gistId = localStorage.getItem(L_GIST) || "";
           updGistDisplay(); currentSaves = lSaves(); loadCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); if (currentSavePage === "personal") renderSaveList();
           const bd2 = document.getElementById("btn-download2"); if (bd2) bd2.disabled = false;
-        } else { syncToken = ""; setSyncSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-upload").disabled = true; document.getElementById("btn-download").disabled = true; const bd2e = document.getElementById("btn-download2"); if (bd2e) bd2e.disabled = true; }
+        } else { syncToken = ""; setSyncSt("⚠ 認証失敗", "err"); document.getElementById("btn-upload").disabled = true; }
       } catch { syncToken = ""; setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); }
     }
     async function gistSet(payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Data", public: false, files: { "coc_saves.json": { content } } }; try { let r; if (gistId) r = await fetch("https://api.github.com/gists/" + gistId, { method: "PATCH", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); gistId = d.id; localStorage.setItem(L_GIST, gistId); updGistDisplay(); return true; } catch { return false; } }
@@ -5804,9 +5964,9 @@
     async function downloadFromShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } if (!sharedGistId) { setSharedSt("\u26a0 \u5171\u6709Gist ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } setSharedSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const data = await sharedGistGet(); if (!data) { setSharedSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057", "err"); showToast("\u30c7\u30fc\u30bf\u306a\u3057"); return; } const remote = data.saves || []; if (remote.length) { const local = lSharedSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); wSharedSaves(merged); setSharedSt("\u2713 \u5b8c\u4e86\uff08" + merged.length + "\u4ef6\uff09", "ok"); showToast(merged.length + "\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f"); renderSharedList(); renderKomaSaveList(); } else setSharedSt("\u26a0 \u30af\u30e9\u30a6\u30c9\u306b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093", "err"); }
     function setSharedGistId() { const raw = document.getElementById("shared-gist-id-input").value.trim(); if (!raw) { setSharedSt("Gist ID\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } const m = raw.match(/([a-f0-9]{20,40})/i); if (!m) { setSharedSt("\u26a0 \u6709\u52b9\u306aGist ID\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093", "err"); return; } sharedGistId = m[1]; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); setSharedSt("\u2713 Gist ID\u8a2d\u5b9a\u6e08", "ok"); showToast("Gist ID\u3092\u8a2d\u5b9a\u3057\u307e\u3057\u305f"); }
 
-    function getCurrentData() {
+    function getCurrentData(opts = {}) {
       const strV = vals.str || 0, sizV = vals.siz || 0, db = (strV || sizV) ? getDB(strV + sizV) : null;
-      return {
+      const data = {
         id: Date.now(),
         name: document.getElementById("npc-name").value || "（名称なし）",
         savedAt: new Date().toISOString(),
@@ -5817,14 +5977,19 @@
         atkList: JSON.parse(JSON.stringify(atkList)),
         splList: JSON.parse(JSON.stringify(splList)),
         memoList: JSON.parse(JSON.stringify(memoList)),
-        consumables: JSON.parse(JSON.stringify(consumables)),
-        manualPalette: manualPaletteText,
+         consumables: JSON.parse(JSON.stringify(consumables)),
+      extraParams: JSON.parse(JSON.stringify(extraParams)),
+      manualPalette: manualPaletteText,
         draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_draft') || ''; } catch { return ''; } })(),
         dmgLabel: db ? db.label : null,
         build: db ? db.build : null,
         customFields: JSON.parse(JSON.stringify(customFields)),
         settings: getSettings()
       };
+      if (opts.includeKoma) {
+        data.komaData = getCurrentKomaData();
+      }
+      return data;
     }
     function loadDataIntoEditor(data) {
       document.getElementById("npc-name").value = data.name === "（名称なし）" ? "" : data.name;
@@ -5870,6 +6035,8 @@
       if (atkList.some(a => a.name)) openAcc("atk");
       if (consumables.some(c => c.label)) openAcc("cons");
       if (memoList.some(m => m.label || m.content)) openMemo();
+      extraParams = Array.isArray(data.extraParams) ? JSON.parse(JSON.stringify(data.extraParams)) : [];
+      saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
       customFields = (data.customFields || []).map((cf, i) => ({
         id: cf.id || 'cf' + (i + 1),
         label: cf.label || '',
@@ -5884,8 +6051,118 @@
       buildCustomFieldRows();
       updateStatDisplay(); reExpandAllMemos();
       applySettings(data.settings);
+      if (data.komaData) {
+        loadKomaIntoEditor(data.komaData);
+        if (data.komaData.settings) applySettings(data.komaData.settings);
+      }
       updateExport();
     }
+    async function quickSaveStatus(dest) {
+      const d = getCurrentData();
+      d.id = Date.now();
+      d.savedAt = new Date().toISOString();
+      if (dest === "personal") {
+        writeSaves([d, ...currentSaves]);
+        renderStatSaveList();
+        if (currentSavePage === "personal") renderSaveList();
+        showToast("「" + d.name + "」を個人に保存しました");
+        if (syncToken) {
+          setGlobalSt("同期中…", "ing");
+          const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+          setGlobalSt(ok ? "✓ 保存しました" : "⚠ 同期失敗", ok ? "ok" : "err");
+        }
+      } else {
+        const shared = lSharedSaves();
+        wSharedSaves([d, ...shared]);
+        renderStatSaveList();
+        if (currentSavePage === "shared") renderSharedList();
+        showToast("「" + d.name + "」を共有に保存しました");
+        if (sharedToken) {
+          setGlobalSt("共有同期中…", "ing");
+          const ok = await sharedGistSet({ saves: lSharedSaves() });
+          setGlobalSt(ok ? "✓ 共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err");
+        }
+      }
+    }
+
+    async function quickSaveBoth(dest) {
+      const d = getCurrentData({ includeKoma: true });
+      d.id = Date.now();
+      d.savedAt = new Date().toISOString();
+      if (dest === "personal") {
+        writeSaves([d, ...currentSaves]);
+        renderStatSaveList();
+        if (currentSavePage === "personal") renderSaveList();
+        showToast("「" + d.name + "」を📚両方保存しました");
+        if (syncToken) {
+          setGlobalSt("同期中…", "ing");
+          const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+          setGlobalSt(ok ? "✓ 保存しました" : "⚠ 同期失敗", ok ? "ok" : "err");
+        }
+      } else {
+        const shared = lSharedSaves();
+        wSharedSaves([d, ...shared]);
+        renderStatSaveList();
+        if (currentSavePage === "shared") renderSharedList();
+        showToast("「" + d.name + "」を📚両方・共有保存しました");
+        if (sharedToken) {
+          setGlobalSt("共有同期中…", "ing");
+          const ok = await sharedGistSet({ saves: lSharedSaves() });
+          setGlobalSt(ok ? "✓ 共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err");
+        }
+      }
+    }
+
+    let _statSaveFilter = "all";
+
+    function setStatSaveFilter(f) {
+      _statSaveFilter = f;
+      ["all", "personal", "shared"].forEach(k => {
+        document.getElementById("stat-sfb-" + k)?.classList.toggle("active", k === f);
+      });
+      renderStatSaveList();
+    }
+
+    function renderStatSaveList() {
+      const wrap = document.getElementById("stat-save-list-wrap");
+      if (!wrap) return;
+      const personal = currentSaves;
+      const shared = lSharedSaves();
+      const allSaves = [
+        ...personal.map(s => ({ ...s, _fromShared: false })),
+        ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
+      ].sort((a, b) => b.id - a.id);
+      const filtered = allSaves.filter(sv => {
+        if (_statSaveFilter === "personal") return !sv._fromShared;
+        if (_statSaveFilter === "shared") return !!sv._fromShared;
+        return true;
+      });
+      if (!filtered.length) {
+        wrap.innerHTML = '<p class="save-empty">保存データがありません</p>';
+        return;
+      }
+      wrap.innerHTML = '<div class="save-list">' + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared)).join("") + '</div>';
+      bindSaveListEvents(wrap);
+    }
+
+    function syncStatTabSetting(el, groupName) {
+      const val = el.value;
+      document.querySelectorAll('input[name="' + groupName + '"], input[name="' + groupName + '2"]').forEach(r => {
+        r.checked = r.value === val;
+      });
+      updateExport();
+    }
+
+    function getSaveKind(sv) {
+      if (sv.type === "both" || sv.komaData) return "both";
+      if (sv.type === "koma" || sv._isKoma) return "koma";
+      return "char";
+    }
+
+    function getSaveEmoji(sv) {
+      return { char: "👤", koma: "🎭", both: "📚" }[getSaveKind(sv)] || "👤";
+    }
+
     function renderSaveCard(sv, isShared) {
       const d = new Date(sv.savedAt), ds = d.getFullYear() + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getDate().toString().padStart(2, "0") + " " + d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
       const isKoma = !!sv._isKoma;
@@ -5990,7 +6267,12 @@
         });
       });
     }
-    function renderSaveList() { const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => f === "char" ? !sv._isKoma : f === "koma" ? !!sv._isKoma : true); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false)).join("") + '</div>'; bindSaveListEvents(wrap); }
+    function renderSaveList() { const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => {
+        if (f === "char") return getSaveKind(sv) === "char";
+        if (f === "koma") return getSaveKind(sv) === "koma";
+        if (f === "both") return getSaveKind(sv) === "both";
+        return true;
+      }); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false)).join("") + '</div>'; bindSaveListEvents(wrap); }
     function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
       const shared = lSharedSaves();
@@ -6290,6 +6572,9 @@
         buildKomaLabelRows();
         renderKomaPalettePreview();
         renderKomaSaveList();
+      }
+      if (t === "stats") {
+        renderStatSaveList();
       }
     }
     document.addEventListener("DOMContentLoaded", function () {
