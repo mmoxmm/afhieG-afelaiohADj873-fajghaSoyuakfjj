@@ -4732,7 +4732,7 @@
           inp.addEventListener("input", e => { atkList = atkList.map(x => x.id === a.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { atkList = atkList.filter(x => x.id !== a.id); buildAtkRows(); updateExport(); renderPalettePreview(); });
-          row.append(inp, dh, rm); wrap.appendChild(row);
+          row.append(dh, inp, rm); wrap.appendChild(row);
           bindDnD(row, atkList, idx, () => { buildAtkRows(); updateExport(); renderPalettePreview(); });
           return;
         }
@@ -4824,7 +4824,7 @@
       const wrap = document.getElementById("sk-rows"); wrap.innerHTML = ""; skList.forEach((sk, idx) => {
         if (sk._sep) {
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.className = 'koma-sep-inp';
-          inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return;
+          inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(dh, inp, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return;
         } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(dh, nameInp, valInp, hDiv, fDiv, cpBtn, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
@@ -5358,7 +5358,7 @@
       if (db && db.cmd && atkList.some(a => !a._sep && a.name && a.useDB))
         atkBlock.push({ text: db.cmd + " 【ダメージボーナス】", key: "_db" });
       atkList.forEach(a => {
-        if (a._sep) { atkBlock.push({ text: a.label || "━━━", key: "sep_" + a.id, isSep: true }); return; }
+        if (a._sep) { atkBlock.push({ text: a.label || "━━━━━━━━━━━━━━━━━━", key: "sep_" + a.id, isSep: true }); return; }
         if (!a.name) return;
         if (a.pct) atkBlock.push({ text: "CC<=" + cv(a.pct) + " 【" + a.name + "】", key: "atk_" + a.id });
         if (a.dmg) {
@@ -5405,7 +5405,7 @@
       // ===== 技能ブロック =====
       const skBlock = [];
       skList.forEach(s => {
-        if (s._sep) { skBlock.push({ text: s.label || "━━━", key: "ssep_" + s.id, isSep: true }); return; }
+        if (s._sep) { skBlock.push({ text: s.label || "━━━━━━━━━━━━━━━━━━", key: "ssep_" + s.id, isSep: true }); return; }
         if (!s.name || (s.val || 0) <= 0) return;
         const dM = isSkDice(); const ccPx = dM ? "CC({🎲})<=" : "CC<="; skBlock.push({ text: ccPx + cv(s.val) + " 【" + s.name + "】", key: "sk_" + s.id });
       });
