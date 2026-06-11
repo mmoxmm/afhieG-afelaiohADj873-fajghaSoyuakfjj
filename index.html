@@ -2323,10 +2323,13 @@
     <h1>CoC 変換ツール</h1>
     <p class="subtitle">NPC・モンスターのステータス変換＆KP支援</p>
     <div class="mode-bar">
-      <button class="seg-btn active" id="btn-mode-6" onclick="setInputMode(6)">6版入力</button>
-      <button class="seg-btn" id="btn-mode-7" onclick="setInputMode(7)">7版入力</button>
-      <span id="mode-hint" style="font-size:11px;color:var(--text3)">6版値→7版%に自動変換</span>
-    </div>
+        <button class="seg-btn active" id="btn-mode-6" onclick="setInputMode(6)">6版入力</button>
+        <button class="seg-btn" id="btn-mode-7" onclick="setInputMode(7)">7版入力</button>
+        <button class="seg-btn" onclick="convertInputMode()" id="btn-mode-conv"
+          style="background:var(--warn-bg);border-color:var(--warn);color:var(--warn);font-size:11px"
+          title="入力済みの値をそのまま別バージョンに変換して切り替え">上書き：６版 🔀７版</button>
+        <span id="mode-hint" style="font-size:11px;color:var(--text3)">6版値→7版%に自動変換</span>
+      </div>
     <div style="display:flex;gap:4px;align-items:center;margin-bottom:5px">
       <div class="inp-wrap" id="w-npcname" style="flex:1"><input type="text" id="npc-name"
           placeholder="NPC / モンスター名..."><button class="inp-clear" onclick="clrInp('npc-name','w-npcname')">×</button>
@@ -6729,7 +6732,24 @@ document.getElementById("btn-save-current").addEventListener("click", () => save
       return _origGistSet(payload);
     };
 
-  function transferKomaParamToStatParam() {
+  function convertInputMode() {
+      const newMode = inputMode === 6 ? 7 : 6;
+      STATS.forEach(({ key }) => {
+        const v = vals[key] || 0;
+        if (!v) return;
+        if (inputMode === 6) {
+          // 6版モードで入力 → vals は入力値×5 → 入力値そのまま7版%として再解釈
+          vals[key] = Math.round(v / 5); // ×5を戻して生の入力値に
+        } else {
+          // 7版モードで入力 → vals は入力値そのまま → ×5して6版基準に変換
+          vals[key] = v * 5;
+        }
+      });
+      setInputMode(newMode);
+      showToast(newMode === 7 ? '🔄 6版入力値→7版%として再解釈しました' : '🔄 7版%→6版値として再解釈しました');
+    }
+
+    function transferKomaParamToStatParam() {
       const params = (currentKoma.paramList || []).filter(p => !p._sep && p.label);
       if (!params.length) { showToast('コマパラメータにデータがありません'); return; }
       const count = params.length;
