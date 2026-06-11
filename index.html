@@ -725,7 +725,7 @@
     /* 技能行 */
     .sk-headers {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 48px 32px 32px 16px 18px 18px;
+      grid-template-columns: 16px minmax(0, 1fr) 48px 32px 32px 18px 18px;
       gap: 2px;
       padding: 0 2px 3px;
       font-size: 11px;
@@ -733,13 +733,14 @@
       text-align: center
     }
 
-    .sk-headers span:first-child {
-      text-align: left
-    }
+    .sk-headers span:first-child,
+.sk-headers span:nth-child(2) {
+  text-align: left
+}
 
     .sk-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 48px 32px 32px 22px 18px 18px;
+      grid-template-columns: 16px minmax(0, 1fr) 48px 32px 32px 18px 18px;
       gap: 2px;
       align-items: center;
       justify-items: center;
@@ -801,9 +802,10 @@
       text-align: center
     }
 
-    .cons-headers span:first-child {
-      text-align: left
-    }
+   .cons-headers span:first-child,
+.cons-headers span:nth-child(2) {
+  text-align: left
+}
 
     .cons-row {
       display: grid;
@@ -2071,7 +2073,7 @@
 
       .sk-row,
       .sk-headers {
-        grid-template-columns: minmax(0, 1fr) 38px 26px 26px 14px 14px
+        grid-template-columns: 14px minmax(0, 1fr) 38px 26px 26px 14px 14px
       }
 
       .spl-headers,
@@ -2511,20 +2513,27 @@
             <div class="acc-body open" id="body-cons">
               <div id="panel-cons">
                 <div class="cons-headers">
-                  <span></span><span>名前</span><span>現在</span><span>最大</span><span></span><span></span></div>
+                  <span></span><span
+                    style="text-align:left">消耗品名</span><span>現在</span><span>最大</span><span></span><span></span>
+                </div>
                 <div id="cons-rows"></div>
                 <div style="display:flex;gap:3px">
                   <button class="btn-add" onclick="addConsumable()" style="flex:2">＋ 追加</button>
-                  <button class="btn-add" onclick="addConsSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                  <button class="btn-add" onclick="addConsSep()"
+                    style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                    区切り</button>
                 </div>
               </div>
               <div id="panel-spl-inner" style="display:none">
                 <div class="spl-headers">
-                  <span></span><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span></div>
+                  <span></span><span>呪文名</span><span>MP</span><span>効果</span><span></span><span></span>
+                </div>
                 <div id="spl-rows"></div>
                 <div style="display:flex;gap:3px">
                   <button class="btn-add" id="btn-add-spl" style="flex:2">＋ 追加</button>
-                  <button class="btn-add" onclick="addSplSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
+                  <button class="btn-add" onclick="addSplSep()"
+                    style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                    区切り</button>
                 </div>
               </div>
             </div>
@@ -2549,7 +2558,8 @@
             </div>
             <div style="padding:7px;background:var(--bg)">
               <div class="sk-headers">
-                <span>技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span><span></span>
+                <span></span><span
+                  style="text-align:left">技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span>
               </div>
               <div id="sk-rows"></div>
               <div style="display:flex;gap:3px;margin-top:3px">
@@ -2583,9 +2593,11 @@
                 </div>
                 <div id="extra-param-rows"></div>
                 <div style="display:flex;gap:3px">
-  <button class="btn-add" onclick="addExtraParam()" style="flex:2">＋ 追加</button>
-  <button class="btn-add" onclick="addExtraParamSep()" style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━ 区切り</button>
-</div>
+                  <button class="btn-add" onclick="addExtraParam()" style="flex:2">＋ 追加</button>
+                  <button class="btn-add" onclick="addExtraParamSep()"
+                    style="flex:1;font-size:12px;color:var(--text2);border-color:var(--border2);border-style:solid;background:var(--bg3);">━
+                    区切り</button>
+                </div>
               </div>
               <div id="panel-memo-inner" style="display:none">
                 <button class="memo-copy-all" onclick="copyAllMemo()">📋 全メモをまとめてコピー</button>
@@ -4684,9 +4696,9 @@
     }
 
     function addExtraParamSep() {
-  extraParams.push({ id: nxtId++, _sep: true, label: '' });
-  saveExtraParams(); buildExtraParamRows();
-}
+      extraParams.push({ id: nxtId++, _sep: true, label: '' });
+      saveExtraParams(); buildExtraParamRows();
+    }
 
     function updExtraParamBadge() {
       const el = document.getElementById('badge-extra-param');
@@ -4701,8 +4713,8 @@
       wrap.innerHTML = "";
       const hdr = document.createElement("div");
       // ダメージ列を広く(2fr)、DB列を少し縮める(28px)、行間縮小(margin-bottom:2px)
-      hdr.style.cssText = "display:grid;grid-template-columns:5fr 40px 2fr 26px 16px 18px 18px;gap:1px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
-      hdr.innerHTML = "<span style='text-align:left'>武器名・技能名</span><span>命中%</span><span>ダメ</span><span>DB</span><span></span><span></span><span></span>";
+      hdr.style.cssText = "display:grid;grid-template-columns:16px 5fr 40px 2fr 26px 18px 18px;gap:1px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
+      hdr.innerHTML = "<span></span><span style='text-align:left'>武器名・技能名</span><span>命中%</span><span>ダメ</span><span>DB</span><span></span><span></span>";
       wrap.appendChild(hdr);
       function gDS(u) { if (!u || u === false) return "none"; if (u === true) return "full"; if (u === "half") return "half"; return "custom"; }
       function nDS(c) { if (c === "none") return "full"; if (c === "full") return "half"; if (c === "half") return "none"; return "none"; }
@@ -4728,7 +4740,7 @@
         let customDbVal = (typeof a.useDB === "string" && a.useDB !== "half") ? a.useDB : "";
         const row = document.createElement("div");
         // グリッド列をヘッダーと同じに
-        row.style.cssText = "display:grid;grid-template-columns:5fr 40px 2fr 26px 16px 18px 18px;gap:1px;align-items:center;justify-items:center;margin-bottom:2px;";
+        row.style.cssText = "display:grid;grid-template-columns:16px 5fr 40px 2fr 26px 18px 18px;gap:1px;align-items:center;justify-items:center;margin-bottom:2px;";
         row.dataset.dnd = idx;
         const nameInp = document.createElement("input");
         nameInp.type = "text"; nameInp.placeholder = "素手・近接（格闘）"; nameInp.value = a.name || "";
@@ -4745,8 +4757,8 @@
         const dbCI = document.createElement("input"); dbCI.type = "text"; dbCI.placeholder = "+1d4"; dbCI.className = "db-custom-inp" + (dbState === "custom" ? " show" : ""); dbCI.value = customDbVal;
         const dbWrap = document.createElement("div"); dbWrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:1px;width:26px;overflow:hidden;"; dbWrap.append(dbBtn, dbCI);
         const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "📋";
-    const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
-    row.append(nameInp, pctInp, dmgInp, dbWrap, cpBtn, dh, rm); wrap.appendChild(row);
+        const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
+        row.append(dh, nameInp, pctInp, dmgInp, dbWrap, cpBtn, rm); wrap.appendChild(row);
         function updA() { const udb = s2U(dbState, customDbVal); atkList = atkList.map(x => x.id === a.id ? { ...x, useDB: udb } : x); updateExport(); renderPalettePreview(); updAtkBadge(); }
         let pt = null;
         dbBtn.addEventListener("pointerdown", () => { pt = setTimeout(() => { pt = null; dbState = "custom"; dbBtn.className = dBC(dbState); dbBtn.textContent = dBL(dbState, customDbVal); dbCI.classList.add("show"); dbCI.focus(); updA(); }, 600); });
@@ -4813,7 +4825,7 @@
         if (sk._sep) {
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.className = 'koma-sep-inp';
           inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(inp, dh, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return;
-        } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(nameInp, valInp, hDiv, fDiv, cpBtn, dh, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
+        } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(dh, nameInp, valInp, hDiv, fDiv, cpBtn, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
           valInp.focus();
@@ -4852,14 +4864,14 @@
     }
     function addSkSep() { skList.push({ id: nxtId++, _sep: true, label: "" }); buildSkRows(); }
     function updSkBadge() { document.getElementById("badge-sk").textContent = skList.filter(s => s.name && (s.val || 0) > 0).length; }
-    
+
     function buildSplRows() {
       const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => {
         if (s._sep) {
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
           const dh = makeHandle();
           const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = s.label || ""; inp.className = 'koma-sep-inp';
-          inp.addEventListener("input", e => { splList[idx] = {...splList[idx], label: e.target.value}; renderPalettePreview(); });
+          inp.addEventListener("input", e => { splList[idx] = { ...splList[idx], label: e.target.value }; renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7";
           rm.addEventListener("click", () => { splList.splice(idx, 1); if (!splList.filter(x => !x._sep).length) splList.push({ id: nxtId++, name: '', mp: '', note: '' }); buildSplRows(); renderPalettePreview(); });
           row.append(dh, inp, rm); wrap.appendChild(row);
@@ -4908,8 +4920,9 @@
           buildSplRows(); renderPalettePreview();
         });
         bindDnD(row, splList, idx, () => { buildSplRows(); renderPalettePreview(); });
-      }); updSplBadge(); }
-    
+      }); updSplBadge();
+    }
+
     function updSplBadge() { const n = splList.filter(s => s.name).length; const el = document.getElementById("badge-spl"); if (el) el.textContent = n; const el2 = document.getElementById("badge-spl2"); if (el2) el2.textContent = n; }
     function buildConsumableRows() {
       const wrap = document.getElementById("cons-rows"); wrap.innerHTML = ""; consumables.forEach((c, idx) => {
@@ -4917,7 +4930,7 @@
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
           const dh = makeHandle();
           const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = c.label || ""; inp.className = 'koma-sep-inp';
-          inp.addEventListener("input", e => { consumables[idx] = {...consumables[idx], label: e.target.value}; updateExport(); });
+          inp.addEventListener("input", e => { consumables[idx] = { ...consumables[idx], label: e.target.value }; updateExport(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { consumables.splice(idx, 1); if (!consumables.filter(x => !x._sep).length) consumables.push({ id: nxtId++, label: '', cur: '', max: '' }); buildConsumableRows(); updateExport(); });
           row.append(dh, inp, rm); wrap.appendChild(row);
