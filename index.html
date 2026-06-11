@@ -4776,7 +4776,8 @@
       const ta = document.getElementById("manual-palette-textarea");
       if (ta) ta.value = "";
       const draft = document.getElementById("manual-palette-draft");
-      if (draft) { draft.value = ""; try { localStorage.removeItem('coc_manual_palette_draft'); } catch {} }
+      if (draft) { draft.value = ""; }
+      try { localStorage.removeItem('coc_manual_palette_draft'); } catch {}
       buildConsumableRows(); clearParse(); buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows();
       // コマタブもリセット
       currentKoma = { id: 0, name: "", globalAt: "@", labels: [], manualPalette: "" };
@@ -5566,6 +5567,8 @@ function getPaletteLines(forExport = false) {
       saveManualPalette();
       const ta = document.getElementById("manual-palette-textarea");
       if (ta) { ta.value = manualPaletteText; autoExpand(ta); }
+      const draft2 = document.getElementById("manual-palette-draft");
+      if (draft2) { draft2.value = ""; try { localStorage.removeItem('coc_manual_palette_draft'); } catch {} }
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
       if (atkList.some(a => a.name)) openAcc("atk");
       if (consumables.some(c => c.label)) openAcc("cons");
