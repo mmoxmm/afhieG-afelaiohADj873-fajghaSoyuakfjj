@@ -6277,7 +6277,7 @@ const filtered = allSaves.filter(sv => {
   if (san > 0) s.push('<span class="stat-chip">SAN<strong>' + san + '</strong></span>');
   return s;
 })();
-statChips = dvChips.join("") + (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
+const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2 = sv.ov?.san || 0; const s = []; if (hp2 > 0) s.push('<span class="stat-chip">HP<strong>' + hp2 + '</strong></span>'); if (mp2 > 0) s.push('<span class="stat-chip">MP<strong>' + mp2 + '</strong></span>'); if (san2 > 0) s.push('<span class="stat-chip">SAN<strong>' + san2 + '</strong></span>'); return s; })(); statChips = dvChips2.join("") + (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
       }
 
       let komaChips = "";
