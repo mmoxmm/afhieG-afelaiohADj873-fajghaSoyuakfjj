@@ -6264,18 +6264,30 @@ const filtered = allSaves.filter(sv => {
       const badge = sv._shared ? '<span class="shared-badge">\u5171\u6709</span>' : "";
       const sharedBg = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
       let chips = "";
-      const isKoma = getSaveKind(sv) === "koma";
-if (isKoma || sv.komaData) {
-  const komaD = sv.komaData || sv;
-  const lbls = (komaD.labels || []).filter(l => !l._sep && l.text).length;
-  const stN = (komaD.statusList || []).filter(s => !s._sep && s.label).length;
-  const prN = (komaD.paramList || []).filter(p => !p._sep && p.label).length;
-  const total = lbls + stN + prN;
-  chips = `<span class="stat-chip">差分 ${lbls}</span><span class="stat-chip">ST ${stN}</span><span class="stat-chip">PR ${prN}</span><span class="stat-chip" style="font-weight:700">計 ${total}</span>`;
-}
-      const extraChips = isKoma ? "" : (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
+const isKoma = getSaveKind(sv) === "koma";
+      const hasStatData = !isKoma;
+      const hasKomaData = isKoma || !!sv.komaData;
+
+      let statChips = "";
+      if (hasStatData) {
+        statChips = derivedChips.join("") + (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
+      }
+
+      let komaChips = "";
+      if (hasKomaData) {
+        const komaD = sv.komaData || sv;
+        const lbls = (komaD.labels || []).filter(l => !l._sep && l.text).length;
+        const stN = (komaD.statusList || []).filter(s => !s._sep && s.label).length;
+        const prN = (komaD.paramList || []).filter(p => !p._sep && p.label).length;
+        const total = lbls + stN + prN;
+        komaChips = `<span class="stat-chip">差分 ${lbls}</span><span class="stat-chip">ST ${stN}</span><span class="stat-chip">PR ${prN}</span><span class="stat-chip" style="font-weight:700">計 ${total}</span>`;
+      }
+
+      const chips = statChips;
+      const extraChips = komaChips;
       const actions = '<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u524a\u9664</button>';
-      return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + (chips || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>') + extraChips + '</div><div class="save-card-actions">' + actions + '</div></div>';
+      const statsHtml = (statChips + komaChips) || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>';
+      return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + statsHtml + '</div><div class="save-card-actions">' + actions + '</div></div>';
     }
     function bindSaveListEvents(wrap) {
       wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); switchTab("stats"); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
