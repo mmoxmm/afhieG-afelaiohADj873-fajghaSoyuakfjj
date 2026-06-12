@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>CoC 変換ツール</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -734,9 +735,9 @@
     }
 
     .sk-headers span:first-child,
-.sk-headers span:nth-child(2) {
-  text-align: left
-}
+    .sk-headers span:nth-child(2) {
+      text-align: left
+    }
 
     .sk-row {
       display: grid;
@@ -802,10 +803,10 @@
       text-align: center
     }
 
-   .cons-headers span:first-child,
-.cons-headers span:nth-child(2) {
-  text-align: left
-}
+    .cons-headers span:first-child,
+    .cons-headers span:nth-child(2) {
+      text-align: left
+    }
 
     .cons-row {
       display: grid;
@@ -2214,7 +2215,7 @@
       flex: 1;
       font-size: 13px;
       font-weight: normal;
-      color: var(--text2);
+      color: var(--accent);
       background: var(--bg3);
       border: none;
       border-radius: var(--radius);
@@ -2315,6 +2316,20 @@
       color: var(--text3);
       font-weight: 400;
     }
+
+    #koma-name:focus {
+      border-color: var(--border2) !important;
+      background: var(--bg2) !important;
+    }
+
+    .koma-sep-inp::placeholder {
+      color: var(--text3);
+      opacity: 0.6;
+    }
+
+    .koma-sep-inp:placeholder-shown::placeholder {
+      content: '未反映';
+    }
   </style>
 </head>
 
@@ -2323,13 +2338,13 @@
     <h1>CoC 変換ツール</h1>
     <p class="subtitle">NPC・モンスターのステータス変換＆KP支援</p>
     <div class="mode-bar">
-        <button class="seg-btn active" id="btn-mode-6" onclick="setInputMode(6)">6版入力</button>
-        <button class="seg-btn" id="btn-mode-7" onclick="setInputMode(7)">7版入力</button>
-        <button class="seg-btn" onclick="convertInputMode()" id="btn-mode-conv"
-          style="background:var(--warn-bg);border-color:var(--warn);color:var(--warn);font-size:11px"
-          title="入力済みの値をそのまま別バージョンに変換して切り替え">上書き：６版 🔀７版</button>
-        <span id="mode-hint" style="font-size:11px;color:var(--text3)">6版値→7版%に自動変換</span>
-      </div>
+      <button class="seg-btn active" id="btn-mode-6" onclick="setInputMode(6)">6版入力</button>
+      <button class="seg-btn" id="btn-mode-7" onclick="setInputMode(7)">7版入力</button>
+      <button class="seg-btn" onclick="convertInputMode()" id="btn-mode-conv"
+        style="background:var(--warn-bg);border-color:var(--warn);color:var(--warn);font-size:11px"
+        title="入力済みの値をそのまま別バージョンに変換して切り替え">上書き：６版 🔀７版</button>
+      <span id="mode-hint" style="font-size:11px;color:var(--text3)">6版値→7版%に自動変換</span>
+    </div>
     <div style="display:flex;gap:4px;align-items:center;margin-bottom:5px">
       <div class="inp-wrap" id="w-npcname" style="flex:1"><input type="text" id="npc-name"
           placeholder="NPC / モンスター名..."><button class="inp-clear" onclick="clrInp('npc-name','w-npcname')">×</button>
@@ -2427,7 +2442,13 @@
             </div>
             <!-- 自動タブ -->
             <div id="palette-panel-auto">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文</div>
+                  <div id="palette-sortable-atk"
+                    style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto">
+                  </div>
+                </div>
                 <div>
                   <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">🎯 技能</div>
                   <div id="palette-sortable-sk"
@@ -2435,17 +2456,29 @@
                   </div>
                 </div>
                 <div>
-                  <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">⚔️ 攻撃/呪文・MEMO</div>
-                  <div id="palette-sortable-atk"
+                  <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:2px">📝 MEMO</div>
+                  <div id="palette-sortable-memo"
                     style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px;max-height:240px;overflow-y:auto">
                   </div>
                 </div>
               </div>
-              <div style="display:flex;gap:3px;margin-top:3px">
-                <button class="btn-add" onclick="copyPalettePreview()" style="flex:1">📋 コピー</button>
-                <button class="btn-add" onclick="renderPalettePreview()" style="flex:1;font-size:12px">🔄 更新</button>
-                <button class="btn-add" onclick="resetPaletteOrder()" style="flex:1;font-size:12px;color:var(--text3)">↺
-                  リセット</button>
+              <div style="display:flex;gap:4px;margin-top:4px;align-items:center;flex-wrap:nowrap">
+                <label style="display:flex;align-items:center;gap:2px;font-size:12px;cursor:pointer;white-space:nowrap">
+                  <input type="checkbox" id="chk-copy-atk" checked style="accent-color:var(--accent)">⚔️攻撃
+                </label>
+                <label style="display:flex;align-items:center;gap:2px;font-size:12px;cursor:pointer;white-space:nowrap">
+                  <input type="checkbox" id="chk-copy-spl" checked style="accent-color:var(--accent)">✨呪文
+                </label>
+                <label style="display:flex;align-items:center;gap:2px;font-size:12px;cursor:pointer;white-space:nowrap">
+                  <input type="checkbox" id="chk-copy-sk" checked style="accent-color:var(--accent)">🎯技能
+                </label>
+                <label style="display:flex;align-items:center;gap:2px;font-size:12px;cursor:pointer;white-space:nowrap">
+                  <input type="checkbox" id="chk-copy-memo" checked style="accent-color:var(--accent)">📝MEMO
+                </label>
+                <button class="btn-add" onclick="copyPaletteChecked()"
+                  style="flex:2;min-width:80px;margin-top:0;border-style:solid">📋 一括コピー</button>
+                <button class="btn-add" onclick="renderPalettePreview()"
+                  style="flex:1;min-width:80px;margin-top:0;border-style:solid">🔄 更新</button>
               </div>
             </div>
             <!-- 手書きタブ -->
@@ -2616,81 +2649,118 @@
         <div class="full-card" style="margin-top:6px;margin-bottom:5px">
           <div class="kp-card-title" style="color:var(--text2);font-size:14px">📤 ココフォリア出力</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:5px">
-            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+            <div
+              style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
               <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">📝 팔레트 출력 설정</div>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="radio" name="palette-mode3" value="auto" checked onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">🔄 자동 생성만
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="palette-mode3" value="auto" checked
+                  onchange="syncStatTabSetting(this,'palette-mode')"
+                  style="cursor:pointer;accent-color:var(--accent)">🔄 자동 생성만
               </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="radio" name="palette-mode3" value="both" onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">🔄자동＋✏️직접 입력
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="palette-mode3" value="both" onchange="syncStatTabSetting(this,'palette-mode')"
+                  style="cursor:pointer;accent-color:var(--accent)">🔄자동＋✏️직접 입력
               </label>
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-                <input type="radio" name="palette-mode3" value="manual" onchange="syncStatTabSetting(this,'palette-mode')" style="cursor:pointer;accent-color:var(--accent)">✏️ 직접 입력만
+                <input type="radio" name="palette-mode3" value="manual"
+                  onchange="syncStatTabSetting(this,'palette-mode')"
+                  style="cursor:pointer;accent-color:var(--accent)">✏️ 직접 입력만
               </label>
             </div>
-            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+            <div
+              style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
               <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 자동 커맨드 순서</div>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="radio" name="cmd-order3" value="sk-first" checked onchange="syncStatTabSetting(this,'cmd-order')" style="cursor:pointer;accent-color:var(--accent)">🎯 기능 → ⚔️ 공격
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="cmd-order3" value="sk-first" checked
+                  onchange="syncStatTabSetting(this,'cmd-order')" style="cursor:pointer;accent-color:var(--accent)">🎯
+                기능 → ⚔️ 공격
               </label>
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-                <input type="radio" name="cmd-order3" value="atk-first" onchange="syncStatTabSetting(this,'cmd-order')" style="cursor:pointer;accent-color:var(--accent)">⚔️ 공격 → 🎯 기능
+                <input type="radio" name="cmd-order3" value="atk-first" onchange="syncStatTabSetting(this,'cmd-order')"
+                  style="cursor:pointer;accent-color:var(--accent)">⚔️ 공격 → 🎯 기능
               </label>
             </div>
-            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+            <div
+              style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
               <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">⚙️ 코마 설정</div>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="checkbox" id="chk-hide-status3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">스테이터스 비공개
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-hide-status3" onchange="syncKomaSetting(this)"
+                  style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">스테이터스 비공개
               </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="checkbox" id="chk-hide-chat-char3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">발언 시 표시하지 않음
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-hide-chat-char3" onchange="syncKomaSetting(this)"
+                  style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">발언 시 표시하지 않음
               </label>
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-                <input type="checkbox" id="chk-invisible3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">캐릭터 목록 제외
+                <input type="checkbox" id="chk-invisible3" onchange="syncKomaSetting(this)"
+                  style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">캐릭터 목록 제외
               </label>
             </div>
-            <div style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
+            <div
+              style="padding:5px 8px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border2)">
               <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px">🔧 구분선 설정</div>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="checkbox" id="chk-incl-sep3" onchange="syncKomaSetting(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">줄을 라벨에 추가
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="checkbox" id="chk-incl-sep3" onchange="syncKomaSetting(this)"
+                  style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">줄을 라벨에 추가
               </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
-                <input type="radio" name="koma-sep-space4" id="koma-sep-before4" value="before" checked onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞에 빈 줄 삽입
+              <label
+                style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:3px">
+                <input type="radio" name="koma-sep-space4" id="koma-sep-before4" value="before" checked
+                  onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞에 빈 줄 삽입
               </label>
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
-                <input type="radio" name="koma-sep-space4" id="koma-sep-both4" value="both" onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞뒤에 빈 줄 삽입
+                <input type="radio" name="koma-sep-space4" id="koma-sep-both4" value="both"
+                  onchange="updateKomaJsonPreview()" style="cursor:pointer;accent-color:var(--accent)">앞뒤에 빈 줄 삽입
               </label>
             </div>
           </div>
           <!-- DB/6版チェック -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px">
-            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
-              <input type="checkbox" id="chk-both-db3" onchange="syncBothDbCheck(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            <label
+              style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+              <input type="checkbox" id="chk-both-db3" onchange="syncBothDbCheck(this)"
+                style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
               DB 포함/미포함 둘 다 생성
             </label>
-            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
-              <input type="checkbox" id="chk-use-v6-3" onchange="syncUseV6Check(this)" style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
+            <label
+              style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--warn);font-weight:700;padding:5px 8px;background:var(--warn-bg);border-radius:var(--radius);border:0.5px solid rgba(168,96,16,.25)">
+              <input type="checkbox" id="chk-use-v6-3" onchange="syncUseV6Check(this)"
+                style="cursor:pointer;accent-color:var(--warn);width:14px;height:14px">
               6판으로 출력
             </label>
           </div>
           <!-- 自動追加コマンド詳細設定 -->
           <div style="margin-bottom:6px">
-            <div class="acc-hd" onclick="toggleAcc('secret-cmd3')" style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
+            <div class="acc-hd" onclick="toggleAcc('secret-cmd3')"
+              style="background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 9px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:32px">
               <span style="font-size:12px;font-weight:700;color:var(--text2)">💡 自動追加コマンド詳細設定</span>
               <span class="acc-arrow" id="arrow-secret-cmd3">▼</span>
             </div>
-            <div class="acc-body" id="body-secret-cmd3" style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
+            <div class="acc-body" id="body-secret-cmd3"
+              style="background:var(--bg2);border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:6px 8px">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-                <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
-                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
-                    <input type="checkbox" id="chk-stat-vars-stat" checked onchange="syncStatVarsCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                <div
+                  style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+                    <input type="checkbox" id="chk-stat-vars-stat" checked onchange="syncStatVarsCheck(this)"
+                      style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                     📊 特性値コマンド
                   </label>
                   <div class="secret-cmd-preview" id="stat-vars-preview3">（特性値を入力すると表示）</div>
                 </div>
-                <div style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
-                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
-                    <input type="checkbox" id="chk-secret-cmd-stat" checked onchange="syncSecretCmdCheck(this)" style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
+                <div
+                  style="padding:5px 7px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius)">
+                  <label
+                    style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:700">
+                    <input type="checkbox" id="chk-secret-cmd-stat" checked onchange="syncSecretCmdCheck(this)"
+                      style="cursor:pointer;accent-color:var(--accent);width:14px;height:14px">
                     🔒 秘匿タブ向けコマンド
                   </label>
                   <div class="secret-cmd-preview" id="secret-cmd-preview3">（チェックをONにすると表示）</div>
@@ -2698,7 +2768,8 @@
               </div>
             </div>
           </div>
-          <div class="export-preview" id="export-preview3" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）</div>
+          <div class="export-preview" id="export-preview3" onclick="copyExport()" title="タップでコピー">（ステータスを入力すると出力されます）
+          </div>
           <div class="export-btn-row" style="margin-top:5px">
             <button class="export-btn" onclick="copyExport()">📋 JSONコピー</button>
             <button class="export-btn sec" onclick="updateExport()">🔄 更新</button>
@@ -2710,17 +2781,21 @@
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
             <div class="kp-card-title" style="margin-bottom:0;color:var(--text);font-size:15px">💾 ステータスタブのみ保存</div>
             <div style="display:flex;gap:4px">
-  <button class="btn-pri" onclick="quickSaveStatus('personal')" style="font-size:13px;padding:5px 10px">👤 個人に保存</button>
-  <button class="btn-pri" onclick="quickSaveStatus('shared')" style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
-  <button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();" style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
-</div>
+              <button class="btn-pri" onclick="quickSaveStatus('personal')" style="font-size:13px;padding:5px 10px">👤
+                個人に保存</button>
+              <button class="btn-pri" onclick="quickSaveStatus('shared')"
+                style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
+              <button class="btn-sec" onclick="downloadFromCloud();if(sharedToken)downloadFromShared();"
+                style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
+            </div>
           </div>
           <div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">
             <button class="save-filter-btn active" id="stat-sfb-all" onclick="setStatSaveFilter('all')">📋 全て</button>
-<button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤 個人</button>
-<button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
+            <button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤
+              個人</button>
+            <button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
           </div>
-          
+
           <div id="stat-save-list-wrap"></div>
         </div>
 
@@ -2775,7 +2850,8 @@
             <div style="flex:7;display:flex;align-items:center;gap:4px">
               <span class="kp-card-title" style="margin-bottom:0;white-space:nowrap">🎭 コマ設定</span>
               <div class="inp-wrap" id="w-komaname" style="flex:1">
-                <input type="text" id="koma-name" placeholder="コマ名（例：天候・時間帯）">
+                <input type="text" id="koma-name" placeholder="コマ名（例：天候・時間帯）"
+                  style="background:var(--bg2);border-color:var(--border2)">
                 <button class="inp-clear" onclick="clrInp('koma-name','w-komaname')">×</button>
               </div>
             </div>
@@ -2797,7 +2873,8 @@
           <button id="koma-data-tab-clear" onclick="clearCurrentKomaDataTab()"
             style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--text3);cursor:pointer;font-size:12px;padding:6px 10px">🗑️クリア</button>
           <button onclick="transferKomaParamToStatParam()"
-            style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--accent);cursor:pointer;font-size:11px;padding:6px 8px;white-space:nowrap" title="コマパラメータをステータスタブのパラメータに一括移行">📤→パラメータ</button>
+            style="flex-shrink:0;background:none;border:none;border-left:0.5px solid var(--border2);color:var(--accent);cursor:pointer;font-size:11px;padding:6px 8px;white-space:nowrap"
+            title="コマパラメータをステータスタブのパラメータに一括移行">📤→パラメータ</button>
         </div>
         <div
           style="border:0.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);padding:7px;background:var(--bg);margin-bottom:0">
@@ -2903,11 +2980,13 @@
                   <div class="koma-preview-block" id="koma-preview-named"></div>
                 </div>
               </div>
-              <div style="display:flex;gap:3px">
-                <button class="btn-add" onclick="copyKomaPalette('simple')" style="flex:1">📋 シンプルコピー</button>
-                <button class="btn-add" onclick="copyKomaPalette('named')" style="flex:1">📋 コマ名付きコピー</button>
-                <button class="btn-add" onclick="renderKomaPalettePreview()" style="flex:1;font-size:11px">🔄
-                  更新</button>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+                <button class="btn-add" onclick="copyKomaPalette('simple')">📋 シンプルコピー</button>
+                <button class="btn-add" onclick="copyKomaPalette('named')">📋 コマ名付きコピー</button>
+                <button class="btn-add" onclick="copyKomaPaletteAll('simple')" style="font-size:11px">📋
+                  全一括（シンプル）</button>
+                <button class="btn-add" onclick="copyKomaPaletteAll('named')" style="font-size:11px">📋
+                  全一括（コマ名付き）</button>
               </div>
             </div>
 
@@ -3027,9 +3106,12 @@
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
             <div class="kp-card-title" style="margin-bottom:0;color:var(--text);font-size:15px">💾 コマタブのみ保存</div>
             <div style="display:flex;gap:4px">
-             <button class="btn-pri" onclick="saveKomaData('personal')" style="font-size:13px;padding:5px 10px">👤 個人に保存</button>
-<button class="btn-pri" onclick="saveKomaData('shared')" style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
-<button class="btn-sec" onclick="downloadFromCloud();downloadFromShared();" style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
+              <button class="btn-pri" onclick="saveKomaData('personal')" style="font-size:13px;padding:5px 10px">👤
+                個人に保存</button>
+              <button class="btn-pri" onclick="saveKomaData('shared')"
+                style="font-size:13px;padding:5px 10px;background:var(--success)">👥 共有に保存</button>
+              <button class="btn-sec" onclick="downloadFromCloud();if(sharedToken)downloadFromShared();"
+                style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
             </div>
           </div>
           <div id="koma-save-list-wrap">
@@ -3723,11 +3805,11 @@
       if (!wrap) return;
       const personal = lSaves().filter(k => k._isKoma || k.komaData);
       const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
- const all = [
-  ...personal.map(s => ({ ...s, _fromShared: false })),
-  ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
-].sort((a, b) => b.id - a.id)
-.filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
+      const all = [
+        ...personal.map(s => ({ ...s, _fromShared: false })),
+        ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
+      ].sort((a, b) => b.id - a.id)
+        .filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
       const filtered = all.filter(sv => {
         if (_komaTabFilter === "personal") return !sv._fromShared;
         if (_komaTabFilter === "shared") return !!sv._fromShared;
@@ -3743,7 +3825,7 @@
         return;
       }
       wrap.innerHTML = filterBar + '<div class="save-list">'
-        + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared)).join("")
+        + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'koma')).join("")
         + '</div>';
       bindSaveListEvents(wrap);
     }
@@ -3788,9 +3870,10 @@
       const faces = [];
 
       // 差分ラベル
+      const hasRealLabelForFaces = currentKoma.labels.some(l => !l._sep && l.text);
       currentKoma.labels.forEach(l => {
         if (l._sep) {
-          if (inclSep) faces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null });
+          if (inclSep && hasRealLabelForFaces) faces.push({ label: l.label || '━━━━━━━━━━', iconUrl: null });
         } else if (l.text) {
           faces.push({ label: l.text, iconUrl: null });
         }
@@ -3889,9 +3972,7 @@
 
           inp.placeholder = "━━━ 区切り ━━━";
           inp.value = lbl.label || "";
-          inp.className = "koma-label-text";
-          inp.style.fontWeight = '400';
-          inp.style.color = 'var(--text2)';
+          inp.className = "koma-sep-inp";
           inp.addEventListener("input", e => {
             currentKoma.labels[idx] = { ...currentKoma.labels[idx], label: e.target.value };
             renderKomaPalettePreview();
@@ -4039,7 +4120,9 @@
           diffLines.push({ isSep: true, text: lbl.label || "━━━━━━━━━━" });
           return;
         }
-        if (!lbl.text) return;
+        if (!lbl.text) {
+          return;
+        }
         const at = getKomaAt(lbl);
         diffLines.push({ text: type === "named" ? at + lbl.text + (name ? " 【" + name + "】" : "") : at + lbl.text });
       });
@@ -4068,7 +4151,7 @@
       });
 
       // 2セクション以上ある場合のみヘッダーを追加
-      const hasDiff = diffLines.some(l => !l.isSep);
+      const hasDiff = diffLines.some(l => !l.isSep && !l._emptyLabel);
       const hasStatus = statusLines.length > 0;
       const hasParam = paramLines.length > 0;
       const sectionCount = (hasDiff ? 1 : 0) + (hasStatus ? 1 : 0) + (hasParam ? 1 : 0);
@@ -4107,6 +4190,8 @@
           if (l.isSep) {
             row.style.cssText = "font-size:11px;color:var(--text3);border-top:1px dashed var(--border);padding:2px 0;margin:2px 0;";
             row.textContent = l.text;
+          } else if (l._emptyLabel) {
+            return;
           } else {
             row.className = "koma-preview-line";
             row.textContent = l.text;
@@ -4180,6 +4265,25 @@
       const txt = all.map(l => l.text).join("\n");
       const cnt = all.filter(l => !l.isSep).length;
       navigator.clipboard.writeText(txt).then(() => showToast("コピーしました（" + cnt + "行）"));
+    }
+
+    function copyKomaPaletteAll(type) {
+      const lines = getKomaLines(type);
+      if (!lines.length) { showToast("ラベルがありません"); return; }
+      const result = [];
+      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value || 'before';
+      lines.forEach((l, idx) => {
+        if (l.isSep) {
+          if (idx > 0) result.push('');
+          result.push(l.text);
+          if (sepSpace === 'both') result.push('');
+        } else {
+          result.push(l.text);
+        }
+      });
+      while (result.length && result[result.length - 1] === '') result.pop();
+      navigator.clipboard.writeText(result.join('\n')).then(() =>
+        showToast("全一括コピーしました（" + lines.filter(l => !l.isSep).length + "行）"));
     }
 
     function copyKomaManual() {
@@ -4314,11 +4418,11 @@
       buildKomaStatusRows();
       buildKomaParamRows();
       renderKomaPalettePreview();
- 　　　applySettings(d.settings);
-　　　updateKomaJsonPreview();
-  　　updKomaTabBadges();  // ← 追加
-  　　showToast("「" + d.name + "」を読み込みました");
-  　　switchTab("koma");
+      applySettings(d.settings);
+      updateKomaJsonPreview();
+      updKomaTabBadges();  // ← 追加
+      showToast("「" + d.name + "」を読み込みました");
+      switchTab("koma");
     }
 
     function deleteKomaData(id, isShared) {
@@ -4346,26 +4450,41 @@
         const shared = lSharedSaves();
         const idx = shared.findIndex(k => k.id === id);
         if (idx < 0) return;
-        shared[idx] = fresh;
+        const existing = shared[idx];
+        // 既存のステータスデータ（vals/ov等）を保持してコマデータのみ上書き
+        const merged = { ...existing, ...fresh };
+        if (existing.vals) merged.vals = existing.vals;
+        if (existing.ov) merged.ov = existing.ov;
+        if (existing.ovManual) merged.ovManual = existing.ovManual;
+        if (existing.skList) merged.skList = existing.skList;
+        if (existing.atkList) merged.atkList = existing.atkList;
+        if (existing.dmgLabel) merged.dmgLabel = existing.dmgLabel;
+        shared[idx] = merged;
         wSharedSaves(shared);
-        renderSharedList();
-        renderKomaSaveList();
-        showToast("「" + name + "」を上書きしました");
+        renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+        showToast("「" + name + "」のコマを上書きしました");
         if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
       } else {
         const allSaves = lSaves();
         const idx = allSaves.findIndex(k => k.id === id);
         if (idx < 0) return;
-        allSaves[idx] = fresh;
+        const existing = allSaves[idx];
+        const merged = { ...existing, ...fresh };
+        if (existing.vals) merged.vals = existing.vals;
+        if (existing.ov) merged.ov = existing.ov;
+        if (existing.ovManual) merged.ovManual = existing.ovManual;
+        if (existing.skList) merged.skList = existing.skList;
+        if (existing.atkList) merged.atkList = existing.atkList;
+        if (existing.dmgLabel) merged.dmgLabel = existing.dmgLabel;
+        allSaves[idx] = merged;
         writeSaves(allSaves);
         currentSaves = lSaves();
-        renderSaveList();
-        renderKomaSaveList();
+        renderSaveList(); renderKomaSaveList(); renderStatSaveList();
         if (syncToken) {
           gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } })
-            .then(ok => showToast(ok ? "「" + name + "」を上書き・同期しました" : "「" + name + "」を上書きしました（同期失敗）"));
+            .then(ok => showToast(ok ? "「" + name + "」のコマを上書き・同期しました" : "「" + name + "」のコマを上書きしました（同期失敗）"));
         } else {
-          showToast("「" + name + "」を上書きしました");
+          showToast("「" + name + "」のコマを上書きしました");
         }
       }
     }
@@ -4492,9 +4611,9 @@
     let ovManual = { hp: false, mp: false, san: false, luck: false };
     let skList = [{ id: 0, name: "", val: 0 }];
     let extraParams = [];
-try { const _ep = localStorage.getItem('coc_extra_params'); extraParams = _ep ? JSON.parse(_ep) : []; } catch { extraParams = []; }
-if (!extraParams.length) extraParams = [{ id: 'ep1', label: '', value: '' }];
-function saveExtraParams() {  }
+    try { const _ep = localStorage.getItem('coc_extra_params'); extraParams = _ep ? JSON.parse(_ep) : []; } catch { extraParams = []; }
+    if (!extraParams.length) extraParams = [{ id: 'ep1', label: '', value: '' }];
+    function saveExtraParams() { }
     let atkList = [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }];
     let splList = [{ id: 0, name: "", mp: "", note: "" }];
     let memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
@@ -4544,41 +4663,70 @@ function saveExtraParams() {  }
         lines.forEach(l => {
           if (l._empty) return;
           const isSk = l.key && (l.key.startsWith('sk_') || l.key.startsWith('ssep_'));
+          const isMemo = l.key && l.key.startsWith('memo_');
           if (isSk) skLines.push(l);
-          else atkLines.push(l);
+          else if (!isMemo) atkLines.push(l);
         });
       } else {
         // ヘッダーあり：ヘッダーで技能/攻撃セクションを切り替え
         let inSkSection = false;
+        let pendingTarget = null; // 直前のヘッダーがどちらに入ったか
         lines.forEach(l => {
           if (l._header) {
-            if (l.text === '━━━🎯技能━━━') { inSkSection = true; }
+            if (l.text === skHeader.trim() || l.text.includes('🎯')) { inSkSection = true; }
             else { inSkSection = false; }
+            pendingTarget = inSkSection ? skLines : atkLines;
+            pendingTarget.push(l);
+            return;
           }
-          if (l._empty) return;
-          if (inSkSection) skLines.push(l);
-          else atkLines.push(l);
+          if (l.isSep && !l._header) {
+            const isSk = l.key && l.key.startsWith('ssep_');
+            (isSk ? skLines : atkLines).push(l);
+            return;
+          }
+          if (l._empty) {
+            if (pendingTarget) pendingTarget.push(l);
+            return;
+          }
+          const isMemo = l.key && l.key.startsWith('memo_');
+          if (isMemo) return;
+          if (inSkSection) skLines.push(l); else atkLines.push(l);
         });
       }
 
-      function renderLines(el, lineArr, listRef, rebuildFn) {
+      function renderLines(el, lineArr, listRef, rebuildFn, isMemoSection) {
         lineArr.forEach((l, idx) => {
           const row = document.createElement("div");
           if (l._header) {
-            // 自動ヘッダー
-            row.style.cssText = "font-size:11px;font-weight:700;color:var(--accent);padding:3px 0 1px;margin-top:2px;border-top:1px solid var(--border2);";
+            // 自動ヘッダー（線なし、テキストのみ）
+            row.style.cssText = "font-size:11px;font-weight:700;color:var(--accent);padding:3px 0 1px;margin-top:2px;";
             row.textContent = l.text;
           } else if (l.isSep) {
-            // 手動区切り
-            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;border-top:1px dashed var(--border);margin:2px 0;";
+            // 手動区切り（線なし、テキストのみ）
+            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;margin:2px 0;";
             const lbl = document.createElement("span");
-            lbl.style.cssText = "flex:1;font-size:11px;color:var(--text3);";
+            lbl.style.cssText = "flex:1;font-size:11px;color:var(--accent);font-weight:700;";
             lbl.textContent = l.text;
             row.append(lbl);
-          } else {
-            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;";
+          } else if (l._spellNote) {
+            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:1px 0 2px 8px;line-height:1.4;";
             const txt = document.createElement("span");
-            txt.style.cssText = "flex:1;font-size:12px;word-break:break-all;cursor:pointer;";
+            txt.style.cssText = "flex:1;font-size:11px;color:var(--text3);word-break:break-all;cursor:pointer;";
+            txt.textContent = "↳ " + l.text;
+            txt.addEventListener("click", () => {
+              navigator.clipboard.writeText(l.text).then(() => {
+                showToast("コピー: " + l.text.slice(0, 20));
+              });
+            });
+            row.append(txt);
+          } else if (l._memoDivider) {
+            row.style.cssText = "border-top:1px dashed var(--border2);margin:4px 0;height:1px;";
+          } else if (l._empty) {
+            row.style.cssText = "height:6px;";
+          } else {
+            row.style.cssText = "display:flex;align-items:center;gap:3px;padding:2px 0;line-height:1.5;" + (l._memoFirst ? "margin-top:1px;padding-top:4px;" : "");
+            const txt = document.createElement("span");
+            txt.style.cssText = "flex:1;font-size:13px;word-break:break-all;cursor:pointer;";
             txt.textContent = l.text;
             txt.addEventListener("click", () => {
               navigator.clipboard.writeText(l.text).then(() => {
@@ -4601,23 +4749,46 @@ function saveExtraParams() {  }
         }
       }
 
-      renderLines(skEl, skLines);
-      renderLines(atkEl, atkLines);
+      const memoEl = document.getElementById("palette-sortable-memo");
+      if (memoEl) memoEl.innerHTML = "";
+      const memoLines = lines.filter(l => l.key && l.key.startsWith('memo_'));
 
-      // 区切り追加ボタン
+      renderLines(skEl, skLines, null, null, false);
+      renderLines(atkEl, atkLines, null, null, false);
+      if (memoEl) renderLines(memoEl, memoLines, null, null, true);
+
+      // 技能列：区切りボタンのみ
       const skSepBtn = document.createElement("button");
       skSepBtn.className = "btn-add";
-      skSepBtn.style.cssText = "margin-top:4px;font-size:11px;";
+      skSepBtn.style.cssText = "margin-top:4px;font-size:13px;width:100%;";
       skSepBtn.textContent = "━ 区切り追加";
-      skSepBtn.addEventListener("click", () => { addSkSep(); renderPalettePreview(); });
+      skSepBtn.addEventListener("click", () => {
+        if (!skList.some(s => !s._sep && s.name && (s.val || 0) > 0)) { showToast("技能名と値を入力してください"); return; }
+        addSkSep(); renderPalettePreview();
+      });
       skEl.appendChild(skSepBtn);
 
-      const atkSepBtn = document.createElement("button");
-      atkSepBtn.className = "btn-add";
-      atkSepBtn.style.cssText = "margin-top:4px;font-size:11px;";
-      atkSepBtn.textContent = "━ 区切り追加";
-      atkSepBtn.addEventListener("click", () => { addAtkSep(); renderPalettePreview(); });
-      atkEl.appendChild(atkSepBtn);
+      // 攻撃列：区切りボタンのみ
+      const atkSepRow = document.createElement("div");
+      atkSepRow.style.cssText = "display:flex;gap:3px;margin-top:4px;";
+      const atkSepBtn1 = document.createElement("button");
+      atkSepBtn1.className = "btn-add";
+      atkSepBtn1.style.cssText = "flex:1;font-size:13px;margin-top:0;";
+      atkSepBtn1.textContent = "━ 攻撃";
+      atkSepBtn1.addEventListener("click", () => {
+        if (!atkList.some(a => !a._sep && a.name)) { showToast("攻撃名を入力してください"); return; }
+        addAtkSep(); renderPalettePreview();
+      });
+      const atkSepBtn2 = document.createElement("button");
+      atkSepBtn2.className = "btn-add";
+      atkSepBtn2.style.cssText = "flex:1;font-size:13px;margin-top:0;";
+      atkSepBtn2.textContent = "━ 呪文";
+      atkSepBtn2.addEventListener("click", () => {
+        if (!splList.some(s => !s._sep && s.name)) { showToast("呪文名を入力してください"); return; }
+        addSplSep(); renderPalettePreview();
+      });
+      atkSepRow.append(atkSepBtn1, atkSepBtn2);
+      atkEl.appendChild(atkSepRow);
     }
     function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") }
     function escA(s) { return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;") }
@@ -4643,7 +4814,7 @@ function saveExtraParams() {  }
     function loadCustomLocal() { try { customBeings = JSON.parse(localStorage.getItem("coc_custom_beings") || "[]"); } catch { customBeings = []; } try { customSpells = JSON.parse(localStorage.getItem("coc_custom_spells") || "[]"); } catch { customSpells = []; } }
     function saveCustomLocal() { localStorage.setItem("coc_custom_beings", JSON.stringify(customBeings)); localStorage.setItem("coc_custom_spells", JSON.stringify(customSpells)); }
     function saveMemoLocal() { localStorage.setItem("coc_v4_memo", JSON.stringify(memoList)); }
-    function loadMemoLocal() { try { const r = JSON.parse(localStorage.getItem("coc_v4_memo") || "null"); if (r) memoList = r.map(m => ({ ...m, dest: m.dest || "cmd" })); else memoList = [{ id: 0, label: "", content: "", dest: "cmd" }]; } catch { memoList = [{ id: 0, label: "", content: "", dest: "cmd" }]; } }
+    function loadMemoLocal() { memoList = [{ id: nxtId++, label: "", content: "", dest: "cmd" }]; }
     function switchConsSplTab(tab) { const bc = document.getElementById("cstab-btn-cons"); const bs = document.getElementById("cstab-btn-spl"); if (bc) { bc.style.borderBottomColor = tab === "cons" ? "var(--accent)" : "transparent"; bc.style.color = tab === "cons" ? "var(--text)" : "var(--text3)"; } if (bs) { bs.style.borderBottomColor = tab === "spl" ? "var(--accent)" : "transparent"; bs.style.color = tab === "spl" ? "var(--text)" : "var(--text3)"; } const pc = document.getElementById("panel-cons"); const ps = document.getElementById("panel-spl-inner"); if (pc) pc.style.display = tab === "cons" ? "" : "none"; if (ps) ps.style.display = tab === "spl" ? "" : "none"; }
     function switchSavePage(page) { currentSavePage = page;["personal", "shared"].forEach(p => { const el = document.getElementById("save-page-" + p); if (el) el.style.display = p === page ? "" : "none"; document.getElementById("spb-" + p)?.classList.toggle("active", p === page); }); if (page === "personal") { renderSaveList(); updateExport(); } if (page === "shared") { renderSharedList(); updateExport(); } }
     function setInputMode(mode) {
@@ -4717,7 +4888,7 @@ function saveExtraParams() {  }
         });
       });
     }
-    function updateStatDisplay() { STATS.forEach(({ key, label }) => { const v7 = vals[key] || 0; const ce = document.getElementById("v-conv-" + key), he = document.getElementById("v-h-" + key), fe = document.getElementById("v-f-" + key); if (inputMode === 6) { const hv = v7 ? Math.floor(v7 / 2) : 0, fv = v7 ? Math.floor(v7 / 5) : 0; if (ce) makeClickCopy(ce, ccCmd(label, v7), v7 || null); if (he) makeClickCopy(he, ccCmd(label, hv), hv || null); if (fe) makeClickCopy(fe, ccCmd(label, fv), fv || null); } else { const v6ref = v7 ? Math.round(v7 / 5) : 0; const hv = v7 ? Math.floor(v7 / 2) : 0, fv = v7 ? Math.floor(v7 / 5) : 0; if (ce) { ce.textContent = v6ref || "\u2014"; ce.style.fontSize = "13px"; ce.style.color = "var(--text3)"; ce.style.cursor = ""; } if (he) makeClickCopy(he, ccCmd(label, hv), hv || null); if (fe) makeClickCopy(fe, ccCmd(label, fv), fv || null); } });["hp", "mp", "san", "luck"].forEach(k => { if (!ovManual[k]) updDerived(k); else { const inp = document.getElementById("di-" + k); if (inp) inp.placeholder = calcAuto(k) || "\u81ea\u52d5"; } }); updDerivedMini(); updateExport(); renderPalettePreview(); }
+    function updateStatDisplay() { STATS.forEach(({ key, label }) => { const v7 = vals[key] || 0; const ce = document.getElementById("v-conv-" + key), he = document.getElementById("v-h-" + key), fe = document.getElementById("v-f-" + key); if (inputMode === 6) { const hv = v7 ? Math.floor(v7 / 2) : 0, fv = v7 ? Math.floor(v7 / 5) : 0; if (ce) makeClickCopy(ce, ccCmd(label, v7), v7 || null); if (he) makeClickCopy(he, ccCmd(label, hv), hv || null); if (fe) makeClickCopy(fe, ccCmd(label, fv), fv || null); } else { const v6ref = v7 ? Math.round(v7 / 5) : 0; const hv = v7 ? Math.floor(v7 / 2) : 0, fv = v7 ? Math.floor(v7 / 5) : 0; if (ce) { ce.textContent = v6ref || "\u2014"; ce.style.fontSize = "13px"; ce.style.color = "var(--text3)"; ce.style.cursor = ""; } if (he) makeClickCopy(he, ccCmd(label, hv), hv || null); if (fe) makeClickCopy(fe, ccCmd(label, fv), fv || null); } });["hp", "mp", "san", "luck"].forEach(k => { if (!ovManual[k]) updDerived(k); else { const inp = document.getElementById("di-" + k); if (inp) inp.placeholder = calcAuto(k) || "\u81ea\u52d5"; } }); updDerivedMini(); updateExport(); }
     function buildDerivedRows() {
       const wrap = document.getElementById("derived-rows"); wrap.innerHTML = "";[{ key: "hp", label: "HP", jp: "\u8010\u4e45\u529b" }, { key: "mp", label: "MP", jp: "\u9b54\u529b" }, { key: "san", label: "SAN", jp: "\u6b63\u6c17\u5ea6" }, { key: "luck", label: "\u5e78\u904b", jp: "LUK" }].forEach(({ key, label, jp }) => {
         const lc = document.createElement("div"); lc.className = "dv-label"; lc.innerHTML = "<strong>" + label + "</strong><em>" + jp + "</em>"; lc.addEventListener("click", () => { const v = getEff(key); if (!v) return; const cmd = ccCmd(label, v); navigator.clipboard.writeText(cmd).then(() => { lc.style.background = "var(--success-bg)"; setTimeout(() => lc.style.background = "", 700); addHistory(cmd); showToast("\u30b3\u30d4\u30fc: " + cmd); }); }); const ic = document.createElement("div"); ic.className = "dv-inp-cell"; const inp = document.createElement("input"); inp.type = "number"; inp.min = "0"; inp.className = "dv-inp"; inp.id = "di-" + key; const ea = key === "luck" ? 0 : calcAuto(key);
@@ -4755,7 +4926,43 @@ function saveExtraParams() {  }
       ).join("");
     }
 
-    function buildMemoRows() { const wrap = document.getElementById("memo-rows"); wrap.innerHTML = ""; memoList.forEach((m, idx) => { if (!m.dest) m.dest = "cmd"; const row = document.createElement("div"); row.style.cssText = "display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden"; row.dataset.dnd = idx; const hd = document.createElement("div"); hd.style.cssText = "display:flex;align-items:center;gap:3px;padding:3px 5px;background:var(--bg3);cursor:pointer;min-height:30px;flex-wrap:nowrap"; const dh = makeHandle(); dh.style.fontSize = "12px"; const lbl = document.createElement("textarea"); lbl.placeholder = "\u30e9\u30d9\u30eb\u5165\u529b\u6b04"; lbl.value = m.label; lbl.rows = 1; lbl.style.cssText = "flex:1;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;min-height:24px;resize:none;overflow:hidden;outline:none;color:var(--text)"; const tBtn = document.createElement("button"); tBtn.style.cssText = "background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s"; tBtn.textContent = "\u25bc"; const dr = document.createElement("div"); dr.className = "memo-dest-toggle"; const bM = document.createElement("button"); bM.className = "memo-dest-btn" + (m.dest === "memo" ? " act-memo" : ""); bM.textContent = "\u30e1\u30e2"; const bC = document.createElement("button"); bC.className = "memo-dest-btn" + (m.dest === "cmd" ? " act-cmd" : ""); bC.textContent = "\u30d1\u30ec"; const bB = document.createElement("button"); bB.className = "memo-dest-btn" + (m.dest === "both" ? " act-memo" : ""); bB.textContent = "\u4e21\u65b9"; const bN = document.createElement("button"); bN.className = "memo-dest-btn" + (m.dest === "none" ? " act-none" : ""); bN.textContent = "\u306a\u3057"; dr.append(bM, bC, bB, bN); const cpBtn = document.createElement("button"); cpBtn.className = "memo-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dlBtn = document.createElement("button"); dlBtn.textContent = "\u00d7"; dlBtn.style.cssText = "background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0"; hd.append(dh, lbl, tBtn, dr, cpBtn, dlBtn); const bd = document.createElement("div"); bd.style.cssText = "padding:4px 6px;background:var(--bg2);" + (m._collapsed ? "display:none" : "display:block"); const ct = document.createElement("textarea"); ct.placeholder = "\u30e1\u30e2\u5185\u5bb9..."; ct.value = m.content; ct.rows = 1; ct.style.cssText = "width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px;resize:none;overflow:hidden;outline:none;color:var(--text)"; bd.appendChild(ct); row.append(hd, bd); wrap.appendChild(row); const setD = (d) => { m.dest = d; bM.className = "memo-dest-btn" + (d === "memo" || d === "both" ? " act-memo" : ""); bC.className = "memo-dest-btn" + (d === "cmd" || d === "both" ? " act-cmd" : ""); bB.className = "memo-dest-btn" + (d === "both" ? " act-memo" : ""); bN.className = "memo-dest-btn" + (d === "none" ? " act-none" : ""); saveMemoLocal(); updateExport(); }; bM.addEventListener("click", e => { e.stopPropagation(); setD("memo"); }); bC.addEventListener("click", e => { e.stopPropagation(); setD("cmd"); }); bB.addEventListener("click", e => { e.stopPropagation(); setD("both"); }); bN.addEventListener("click", e => { e.stopPropagation(); setD("none"); }); const doTg = () => { m._collapsed = !m._collapsed; bd.style.display = m._collapsed ? "none" : "block"; tBtn.style.transform = m._collapsed ? "rotate(-90deg)" : ""; if (!m._collapsed) reExpandAllMemos(); }; tBtn.addEventListener("click", e => { e.stopPropagation(); doTg(); }); hd.addEventListener("click", e => { if ([lbl, cpBtn, dlBtn, tBtn, dh].includes(e.target) || dr.contains(e.target)) return; doTg(); }); lbl.addEventListener("input", () => { m.label = lbl.value; autoExpand(lbl); updMemoBadge(); saveMemoLocal(); updateExport(); }); lbl.addEventListener("click", e => e.stopPropagation()); ct.addEventListener("input", () => { m.content = ct.value; autoExpand(ct); updMemoBadge(); saveMemoLocal(); updateExport(); }); cpBtn.addEventListener("click", e => { e.stopPropagation(); const txt = (m.label ? m.label + "\u3000" : "") + (m.content || ""); navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); }).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }); dlBtn.addEventListener("click", e => { e.stopPropagation(); memoList = memoList.filter(x => x.id !== m.id); buildMemoRows(); updMemoBadge(); saveMemoLocal(); updateExport(); }); bindAutoExpand(lbl); bindAutoExpand(ct); let sy2 = 0; dh.addEventListener("pointerdown", e => { e.preventDefault(); dh.setPointerCapture(e.pointerId); sy2 = e.clientY; const allR = [...wrap.querySelectorAll("[data-dnd]")].map(r => ({ el: r, idx: +r.dataset.dnd, top: r.getBoundingClientRect().top })); row.classList.add("row-dragging"); function mv2(ev) { allR.forEach(r => r.el.classList.remove("row-dragover")); const t = allR.find(r => r.idx !== idx && Math.abs(ev.clientY - r.top) < 22); if (t) t.el.classList.add("row-dragover"); } function up2(ev) { dh.removeEventListener("pointermove", mv2); row.classList.remove("row-dragging"); allR.forEach(r => r.el.classList.remove("row-dragover")); if (Math.abs(ev.clientY - sy2) < 6) return; let ti = idx; for (const r of allR) if (r.idx !== idx && Math.abs(ev.clientY - r.top - 12) < 26) { ti = r.idx; break; } if (ti === idx) return; const item = memoList.splice(idx, 1)[0]; memoList.splice(ti, 0, item); buildMemoRows(); saveMemoLocal(); updateExport(); } dh.addEventListener("pointermove", mv2); dh.addEventListener("pointerup", up2, { once: true }); }); }); updMemoBadge(); }
+    function buildMemoRows() {
+      const wrap = document.getElementById("memo-rows");
+      wrap.innerHTML = "";
+      const anyContent = memoList.some(m => m.label || m.content);
+      memoList.forEach((m, idx) => {
+        if (!m.dest) m.dest = "cmd";
+        if (anyContent) m._collapsed = true;
+        const row = document.createElement("div"); row.style.cssText = "display:block;margin-bottom:4px;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden"; row.dataset.dnd = idx; const hd = document.createElement("div"); hd.style.cssText = "display:flex;align-items:center;gap:3px;padding:1px 5px;background:var(--bg3);cursor:pointer;min-height:22px;flex-wrap:nowrap"; const dh = makeHandle(); dh.style.fontSize = "12px"; const lblWrap = document.createElement("div"); lblWrap.style.cssText = "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;"; const lbl = document.createElement("input"); lbl.type = "text"; lbl.style.cssText = "width:100%;font-size:13px;font-weight:700;background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;padding:2px 5px;outline:none;color:var(--text);font-family:inherit;"; const lbl2 = document.createElement("input"); lbl2.type = "text"; lbl2.style.cssText = "width:100%;font-size:11px;font-weight:400;background:var(--bg2);border:0.5px solid var(--border);border-radius:3px;padding:2px 5px;outline:none;color:var(--text2);font-family:inherit;"; const [lblVal, lbl2Val] = (m.label || '').split('\n'); lbl.value = lblVal || ''; lbl2.value = lbl2Val || ''; lbl.placeholder = "タイトル"; lbl2.placeholder = "サブタイトル（ダブルタップで編集）";
+        lbl2.style.pointerEvents = "none"; lbl2.style.userSelect = "none";
+        lbl2.addEventListener("focus", () => { lbl2.style.pointerEvents = "auto"; lbl2.style.userSelect = "auto"; lbl2.style.background = "var(--bg2)"; lbl2.style.borderRadius = "3px"; lbl2.style.padding = "2px 4px"; });
+        lbl2.addEventListener("blur", () => { lbl2.style.pointerEvents = "none"; lbl2.style.userSelect = "none"; lbl2.style.background = "transparent"; lbl2.style.padding = "2px 0"; }); lblWrap.append(lbl, lbl2); const btnCol = document.createElement("div"); btnCol.style.cssText = "display:grid;grid-template-columns:1fr;gap:2px;flex-shrink:0;"; lbl.placeholder = "タイトル（ダブルタップで編集）"; lbl.rows = 2; lbl.style.cssText = "flex:1;min-width:0;font-size:13px;font-weight:600;background:transparent;border:none;padding:2px 0;resize:none;overflow:hidden;outline:none;color:var(--text);pointer-events:none;user-select:none;";
+        lbl.addEventListener("focus", () => { lbl.style.pointerEvents = "auto"; lbl.style.userSelect = "auto"; lbl.style.background = "var(--bg2)"; lbl.style.borderRadius = "3px"; lbl.style.padding = "2px 4px"; });
+        lbl.addEventListener("blur", () => { lbl.style.pointerEvents = "none"; lbl.style.userSelect = "none"; lbl.style.background = "transparent"; lbl.style.padding = "2px 0"; }); const tBtn = document.createElement("button"); tBtn.style.cssText = "background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:transform .2s"; tBtn.textContent = "\u25bc"; const dr = document.createElement("div"); dr.className = "memo-dest-toggle"; dr.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:2px;flex-shrink:0"; const bM = document.createElement("button"); bM.className = "memo-dest-btn" + (m.dest === "memo" ? " act-memo" : ""); bM.textContent = "\u30e1\u30e2"; const bC = document.createElement("button"); bC.className = "memo-dest-btn" + (m.dest === "cmd" ? " act-cmd" : ""); bC.textContent = "\u30d1\u30ec"; const bB = document.createElement("button"); bB.className = "memo-dest-btn" + (m.dest === "both" ? " act-memo" : ""); bB.textContent = "\u4e21\u65b9"; const bN = document.createElement("button"); bN.className = "memo-dest-btn" + (m.dest === "none" ? " act-none" : ""); bN.textContent = "\u306a\u3057"; dr.append(bM, bC, bB, bN); const cpBtn = document.createElement("button"); cpBtn.className = "memo-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dlBtn = document.createElement("button"); dlBtn.textContent = "\u00d7"; dlBtn.style.cssText = "background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0"; btnCol.append(cpBtn, dlBtn); hd.append(dh, lblWrap, tBtn, dr, btnCol); const bd = document.createElement("div"); bd.style.cssText = "padding:4px 6px;background:var(--bg2);" + (m._collapsed ? "display:none" : "display:block"); const ct = document.createElement("textarea"); ct.placeholder = "\u30e1\u30e2\u5185\u5bb9..."; ct.value = m.content; ct.rows = 1; ct.style.cssText = "width:100%;font-size:13px;background:var(--bg2);border:none;padding:2px 0;min-height:28px;resize:none;overflow:hidden;outline:none;color:var(--text)"; bd.appendChild(ct); row.append(hd, bd); wrap.appendChild(row); const setD = (d) => { m.dest = d; bM.className = "memo-dest-btn" + (d === "memo" || d === "both" ? " act-memo" : ""); bC.className = "memo-dest-btn" + (d === "cmd" || d === "both" ? " act-cmd" : ""); bB.className = "memo-dest-btn" + (d === "both" ? " act-memo" : ""); bN.className = "memo-dest-btn" + (d === "none" ? " act-none" : ""); saveMemoLocal(); updateExport(); renderPalettePreview(); }; bM.addEventListener("click", e => { e.stopPropagation(); setD("memo"); }); bC.addEventListener("click", e => { e.stopPropagation(); setD("cmd"); }); bB.addEventListener("click", e => { e.stopPropagation(); setD("both"); }); bN.addEventListener("click", e => { e.stopPropagation(); setD("none"); }); const doTg = () => { m._collapsed = !m._collapsed; bd.style.display = m._collapsed ? "none" : "block"; tBtn.style.transform = m._collapsed ? "rotate(-90deg)" : ""; if (!m._collapsed) reExpandAllMemos(); };
+        tBtn.addEventListener("click", e => { e.stopPropagation(); doTg(); });
+        hd.addEventListener("click", e => {
+          if ([cpBtn, dlBtn, tBtn, dh].includes(e.target) || dr.contains(e.target)) return;
+          if (e.target === lbl || e.target === lbl2) return;
+          doTg();
+        });
+        hd.addEventListener("dblclick", e => {
+          if ([cpBtn, dlBtn, tBtn, dh].includes(e.target) || dr.contains(e.target)) return;
+          e.preventDefault();
+          if (e.target === lbl2 || (e.clientY > lbl.getBoundingClientRect().bottom)) {
+            lbl2.style.pointerEvents = "auto"; lbl2.focus(); lbl2.select();
+          } else {
+            lbl.style.pointerEvents = "auto"; lbl.focus(); lbl.select();
+          }
+        });
+        // シングルクリックで折りたたみ（入力中は除く）
+        // ダブルクリックで編集モードに入る
+        lbl.addEventListener("click", e => e.stopPropagation());
+        lbl2.addEventListener("click", e => e.stopPropagation());
+        lbl.addEventListener("dblclick", e => { e.stopPropagation(); lbl.focus(); lbl.select(); });
+        lbl2.addEventListener("dblclick", e => { e.stopPropagation(); lbl2.focus(); lbl2.select(); });
+        lbl.addEventListener("input", () => { m.label = lbl.value + (lbl2.value ? '\n' + lbl2.value : ''); updMemoBadge(); saveMemoLocal(); updateExport(); }); lbl2.addEventListener("input", () => { m.label = lbl.value + (lbl2.value ? '\n' + lbl2.value : ''); updMemoBadge(); saveMemoLocal(); updateExport(); }); ct.addEventListener("input", () => { m.content = ct.value; autoExpand(ct); updMemoBadge(); saveMemoLocal(); updateExport(); }); cpBtn.addEventListener("click", e => { e.stopPropagation(); const txt = (m.label ? m.label + "\u3000" : "") + (m.content || ""); navigator.clipboard.writeText(txt).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); }).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }); dlBtn.addEventListener("click", e => { e.stopPropagation(); memoList = memoList.filter(x => x.id !== m.id); buildMemoRows(); updMemoBadge(); saveMemoLocal(); updateExport(); renderPalettePreview(); }); bindAutoExpand(ct); let sy2 = 0; dh.addEventListener("pointerdown", e => { e.preventDefault(); dh.setPointerCapture(e.pointerId); sy2 = e.clientY; const allR = [...wrap.querySelectorAll("[data-dnd]")].map(r => ({ el: r, idx: +r.dataset.dnd, top: r.getBoundingClientRect().top })); row.classList.add("row-dragging"); function mv2(ev) { allR.forEach(r => r.el.classList.remove("row-dragover")); const t = allR.find(r => r.idx !== idx && Math.abs(ev.clientY - r.top) < 22); if (t) t.el.classList.add("row-dragover"); } function up2(ev) { dh.removeEventListener("pointermove", mv2); row.classList.remove("row-dragging"); allR.forEach(r => r.el.classList.remove("row-dragover")); if (Math.abs(ev.clientY - sy2) < 6) return; let ti = idx; for (const r of allR) if (r.idx !== idx && Math.abs(ev.clientY - r.top - 12) < 26) { ti = r.idx; break; } if (ti === idx) return; const item = memoList.splice(idx, 1)[0]; memoList.splice(ti, 0, item); buildMemoRows(); saveMemoLocal(); updateExport(); } dh.addEventListener("pointermove", mv2); dh.addEventListener("pointerup", up2, { once: true }); });
+      }); updMemoBadge();
+    }
     function addMemoRow() { memoList.push({ id: nxtId++, label: "", content: "", dest: "cmd" }); buildMemoRows(); openMemo(); }
 
     function switchMemoStatTab(tab) {
@@ -4786,6 +4993,7 @@ function saveExtraParams() {  }
           const inp = document.createElement('input');
           inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = p.label || '';
           inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--accent)';
           inp.addEventListener('input', e => { extraParams[idx] = { ...extraParams[idx], label: e.target.value }; saveExtraParams(); });
           const rm = document.createElement('button');
           rm.className = 'btn-remove'; rm.textContent = '×';
@@ -4812,9 +5020,9 @@ function saveExtraParams() {  }
         rm.className = 'btn-remove'; rm.textContent = '×';
         row.append(dh, nameInp, valInp, cpBtn, rm);
         wrap.appendChild(row);
-        　nameInp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); valInp.focus(); });
+        nameInp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; e.preventDefault(); valInp.focus(); });
         valInp.addEventListener('keydown', e => {
-          if (e.key !== 'Enter') return; 
+          if (e.key !== 'Enter') return;
           e.preventDefault();
           if (idx < extraParams.length - 1) {
             // 次の行がある場合は、次の行の名前欄へ移動
@@ -4823,7 +5031,7 @@ function saveExtraParams() {  }
             // 最後の行の場合の判定
             if (nameInp.value.trim() !== '') {
               // 名前欄に入力があれば、新しい行を追加して移動
-              addExtraParam(); 
+              addExtraParam();
               requestAnimationFrame(() => wrap.lastElementChild?.querySelector('input')?.focus());
             } else {
               // 名前欄が空なら、行を追加せずに今の行の名前欄に戻る
@@ -4868,6 +5076,28 @@ function saveExtraParams() {  }
     function buildAtkRows() {
       const wrap = document.getElementById("atk-rows");
       wrap.innerHTML = "";
+      // ヘッダー固定行
+      const atkHdrRow = document.createElement("div");
+      atkHdrRow.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:5px;";
+      const atkHdrInp = document.createElement("input");
+      atkHdrInp.type = "text";
+      atkHdrInp.placeholder = "━━━⚔️攻撃━━━";
+      atkHdrInp.value = atkHeader;
+      atkHdrInp.className = "koma-sep-inp";
+      atkHdrInp.style.cssText = atkHdrInp.style.cssText + "color:var(--accent);font-weight:700;";
+      const atkHdrClr = document.createElement("button");
+      atkHdrClr.className = "btn-remove";
+      atkHdrClr.textContent = "×";
+      atkHdrClr.title = "ヘッダーをクリア";
+      atkHdrClr.addEventListener("click", () => { atkHeader = ""; atkHdrInp.value = ""; updateExport(); renderPalettePreview(); });
+      const atkHdrReset = document.createElement("button");
+      atkHdrReset.className = "btn-remove";
+      atkHdrReset.textContent = "🔄";
+      atkHdrReset.title = "初期値に戻す";
+      atkHdrReset.addEventListener("click", () => { atkHeader = "━━━⚔️攻撃━━━"; atkHdrInp.value = atkHeader; updateExport(); renderPalettePreview(); });
+      atkHdrInp.addEventListener("input", e => { atkHeader = e.target.value; updateExport(); renderPalettePreview(); });
+      atkHdrRow.append(atkHdrInp, atkHdrReset, atkHdrClr);
+      wrap.appendChild(atkHdrRow);
       const hdr = document.createElement("div");
       // ダメージ列を広く(2fr)、DB列を少し縮める(28px)、行間縮小(margin-bottom:2px)
       hdr.style.cssText = "display:grid;grid-template-columns:16px 5fr 40px 2fr 26px 18px 18px;gap:1px;padding:0 2px 2px;font-size:11px;color:var(--text3);text-align:center;";
@@ -4886,6 +5116,7 @@ function saveExtraParams() {  }
           const inp = document.createElement("input");
           inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = a.label || "";
           inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--accent)';
           inp.addEventListener("input", e => { atkList = atkList.map(x => x.id === a.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { atkList = atkList.filter(x => x.id !== a.id); buildAtkRows(); updateExport(); renderPalettePreview(); });
@@ -4927,11 +5158,11 @@ function saveExtraParams() {  }
           e.preventDefault();
           pctInp.focus();
         });
-        nameInp.addEventListener("keydown", e => {
- 　　　 if (e.key !== "Enter") return;
-  　　　e.preventDefault();
- 　　　 valInp.focus();
-});
+        pctInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return;
+          e.preventDefault();
+          dmgInp.focus();
+        });
         dmgInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
@@ -4975,51 +5206,78 @@ function saveExtraParams() {  }
       });
       updAtkBadge();
     }
-    function addAtkSep() { atkList.push({ id: nxtId++, _sep: true, label: "" }); buildAtkRows(); openAcc("atk"); }
+    function addAtkSep() { atkList.push({ id: nxtId++, _sep: true, label: "" }); buildAtkRows(); openAcc("atk"); renderPalettePreview(); }
+    const sepActiveStyle = 'color:var(--accent);font-weight:700;';
+    const sepInactiveStyle = 'color:var(--text3);font-weight:normal;';
+
     function updAtkBadge() { document.getElementById("badge-atk").textContent = atkList.filter(a => a.name && (a.pct || 0) > 0).length; }
     function buildSkRows() {
-      const wrap = document.getElementById("sk-rows"); wrap.innerHTML = ""; skList.forEach((sk, idx) => {
+      const wrap = document.getElementById("sk-rows"); wrap.innerHTML = "";
+      // ヘッダー固定行
+      const skHdrRow = document.createElement("div");
+      skHdrRow.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:5px;";
+      const skHdrInp = document.createElement("input");
+      skHdrInp.type = "text";
+      skHdrInp.placeholder = "━━━🎯技能━━━";
+      skHdrInp.value = skHeader;
+      skHdrInp.className = "koma-sep-inp";
+      skHdrInp.style.cssText = skHdrInp.style.cssText + "color:var(--accent);font-weight:700;";
+      const skHdrClr = document.createElement("button");
+      skHdrClr.className = "btn-remove";
+      skHdrClr.textContent = "×";
+      skHdrClr.title = "ヘッダーをクリア";
+      skHdrClr.addEventListener("click", () => { skHeader = ""; skHdrInp.value = ""; updateExport(); renderPalettePreview(); });
+      const skHdrReset = document.createElement("button");
+      skHdrReset.className = "btn-remove";
+      skHdrReset.textContent = "🔄";
+      skHdrReset.title = "初期値に戻す";
+      skHdrReset.addEventListener("click", () => { skHeader = "━━━🎯技能━━━"; skHdrInp.value = skHeader; updateExport(); renderPalettePreview(); });
+      skHdrInp.addEventListener("input", e => { skHeader = e.target.value; updateExport(); renderPalettePreview(); });
+      skHdrRow.append(skHdrInp, skHdrReset, skHdrClr);
+      wrap.appendChild(skHdrRow); skList.forEach((sk, idx) => {
         if (sk._sep) {
-          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx; const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "\u2501\u2501\u2501 \u533a\u5207\u308a \u2501\u2501\u2501"; inp.value = sk.label || ""; inp.className = 'koma-sep-inp';
+          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
+          const dh = makeHandle(); const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = sk.label || ""; inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--accent)';
           inp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, label: e.target.value } : x); updateExport(); renderPalettePreview(); }); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; rm.addEventListener("click", () => { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); renderPalettePreview(); }); row.append(dh, inp, rm); wrap.appendChild(row); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); }); return;
         } const v = sk.val || 0, h = v ? Math.floor(v / 2) : null, f = v ? Math.floor(v / 5) : null; const row = document.createElement("div"); row.className = "sk-row"; row.dataset.dnd = idx; const nameInp = document.createElement("input"); nameInp.type = "text"; nameInp.placeholder = "\u6280\u80fd\u540d..."; nameInp.value = sk.name || ""; nameInp.style.justifySelf = "stretch"; const valInp = document.createElement("input"); valInp.type = "number"; valInp.min = "0"; valInp.max = "999"; valInp.placeholder = "\u2014"; valInp.value = sk.val || ""; valInp.style.justifySelf = "stretch"; const hDiv = document.createElement("div"); hDiv.className = "skill-val"; hDiv.textContent = h != null ? h : "\u2014"; const fDiv = document.createElement("div"); fDiv.className = "skill-val"; fDiv.textContent = f != null ? f : "\u2014"; const cpBtn = document.createElement("button"); cpBtn.className = "row-copy-btn"; cpBtn.textContent = "\ud83d\udccb"; const dh = makeHandle(); const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7"; row.append(dh, nameInp, valInp, hDiv, fDiv, cpBtn, rm); wrap.appendChild(row); nameInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           e.preventDefault();
           valInp.focus();
         });
-// valInp の keydown（既存を置き換え）
-valInp.addEventListener("keydown", e => {
-  if (e.key !== "Enter") return;
-  e.preventDefault();
-  const nv = parseInt(valInp.value) || 0;
-  if (nv > 0) {
-    // 値があれば次の行のラベル名へ
-    const rows = [...document.querySelectorAll('#sk-rows .sk-row')];
-    const idx2 = rows.indexOf(row);
-    if (idx2 >= 0 && idx2 < rows.length - 1) {
-      rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
-    } else {
-      skList.push({ id: nxtId++, name: "", val: 0 });
-      buildSkRows(); updSkBadge();
-      requestAnimationFrame(() => {
-        const rows2 = [...document.querySelectorAll('#sk-rows .sk-row')];
-        rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
-      });
-    }
-  } else {
-    // 値がなければラベル名欄に戻る
-    nameInp.focus();
-  }
-}); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => {
-  const nv = parseInt(e.target.value) || 0;
-  skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x);
-  hDiv.textContent = nv ? Math.floor(nv / 2) : "—";
-  fDiv.textContent = nv ? Math.floor(nv / 5) : "—";
-  updateExport(); updSkBadge(); renderPalettePreview();
-});
-valInp.addEventListener("change", e => {
-  buildSkRows();
-}); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
+        // valInp の keydown（既存を置き換え）
+        valInp.addEventListener("keydown", e => {
+          if (e.key !== "Enter") return;
+          e.preventDefault();
+          const nv = parseInt(valInp.value) || 0;
+          if (nv > 0) {
+            // 値があれば次の行のラベル名へ
+            const rows = [...document.querySelectorAll('#sk-rows .sk-row')];
+            const idx2 = rows.indexOf(row);
+            if (idx2 >= 0 && idx2 < rows.length - 1) {
+              rows[idx2 + 1]?.querySelector("input[type='text']")?.focus();
+            } else {
+              skList.push({ id: nxtId++, name: "", val: 0 });
+              buildSkRows(); updSkBadge();
+              requestAnimationFrame(() => {
+                const rows2 = [...document.querySelectorAll('#sk-rows .sk-row')];
+                rows2[rows2.length - 1]?.querySelector("input[type='text']")?.focus();
+              });
+            }
+          } else {
+            // 値がなければラベル名欄に戻る
+            nameInp.focus();
+          }
+        }); nameInp.addEventListener("input", e => { skList = skList.map(x => x.id === sk.id ? { ...x, name: e.target.value } : x); updateExport(); updSkBadge(); renderPalettePreview(); }); valInp.addEventListener("input", e => {
+          const nv = parseInt(e.target.value) || 0;
+          skList = skList.map(x => x.id === sk.id ? { ...x, val: nv } : x);
+          hDiv.textContent = nv ? Math.floor(nv / 2) : "—";
+          fDiv.textContent = nv ? Math.floor(nv / 5) : "—";
+          updateExport(); updSkBadge(); renderPalettePreview();
+        });
+        valInp.addEventListener("change", e => {
+          buildSkRows();
+        }); cpBtn.addEventListener("click", () => { const s = skList.find(x => x.id === sk.id); if (!s || !s.name) return; const diceMode = isSkDice(); const ccPrefix = diceMode ? "CC({🎲})<=" : "CC<="; const cmd = ccPrefix + (s.val || 0) + " 【" + s.name + "】"; navigator.clipboard.writeText(cmd).then(() => { cpBtn.textContent = "\u2713"; cpBtn.classList.add("copied"); setTimeout(() => { cpBtn.textContent = "\ud83d\udccb"; cpBtn.classList.remove("copied"); }, 1200); addHistory(cmd); }); }); rm.addEventListener("click", () => { if (skList.length > 1) { skList = skList.filter(x => x.id !== sk.id); buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } else { skList = [{ id: sk.id, name: "", val: 0 }]; buildSkRows(); updateExport(); updSkBadge(); renderPalettePreview(); } }); bindDnD(row, skList, idx, () => { buildSkRows(); updateExport(); renderPalettePreview(); });
       }); updSkBadge();
     }
     function updKomaTabBadges() {
@@ -5033,15 +5291,39 @@ valInp.addEventListener("change", e => {
       if (el2) el2.textContent = stN;
       if (el3) el3.textContent = prN;
     }
-    function addSkSep() { skList.push({ id: nxtId++, _sep: true, label: "" }); buildSkRows(); }
+    function addSkSep() { skList.push({ id: nxtId++, _sep: true, label: "" }); buildSkRows(); renderPalettePreview(); }
     function updSkBadge() { document.getElementById("badge-sk").textContent = skList.filter(s => s.name && (s.val || 0) > 0).length; }
 
     function buildSplRows() {
-      const wrap = document.getElementById("spl-rows"); wrap.innerHTML = ""; splList.forEach((s, idx) => {
+      const wrap = document.getElementById("spl-rows"); wrap.innerHTML = "";
+      // ヘッダー固定行
+      const splHdrRow = document.createElement("div");
+      splHdrRow.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:5px;";
+      const splHdrInp = document.createElement("input");
+      splHdrInp.type = "text";
+      splHdrInp.placeholder = "━━━✨呪文━━━";
+      splHdrInp.value = splHeader;
+      splHdrInp.className = "koma-sep-inp";
+      splHdrInp.style.cssText = splHdrInp.style.cssText + "color:var(--accent);font-weight:700;";
+      const splHdrClr = document.createElement("button");
+      splHdrClr.className = "btn-remove";
+      splHdrClr.textContent = "×";
+      splHdrClr.title = "ヘッダーをクリア";
+      splHdrClr.addEventListener("click", () => { splHeader = ""; splHdrInp.value = ""; updateExport(); renderPalettePreview(); });
+      const splHdrReset = document.createElement("button");
+      splHdrReset.className = "btn-remove";
+      splHdrReset.textContent = "🔄";
+      splHdrReset.title = "初期値に戻す";
+      splHdrReset.addEventListener("click", () => { splHeader = "━━━✨呪文━━━"; splHdrInp.value = splHeader; updateExport(); renderPalettePreview(); });
+      splHdrInp.addEventListener("input", e => { splHeader = e.target.value; updateExport(); renderPalettePreview(); });
+      splHdrRow.append(splHdrInp, splHdrReset, splHdrClr);
+      wrap.appendChild(splHdrRow); splList.forEach((s, idx) => {
         if (s._sep) {
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
           const dh = makeHandle();
-          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = s.label || ""; inp.className = 'koma-sep-inp';
+          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = s.label || "";
+          inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--accent)';
           inp.addEventListener("input", e => { splList[idx] = { ...splList[idx], label: e.target.value }; renderPalettePreview(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "\u00d7";
           rm.addEventListener("click", () => { splList.splice(idx, 1); if (!splList.filter(x => !x._sep).length) splList.push({ id: nxtId++, name: '', mp: '', note: '' }); buildSplRows(); renderPalettePreview(); });
@@ -5100,7 +5382,9 @@ valInp.addEventListener("change", e => {
         if (c._sep) {
           const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:3px;margin-bottom:3px;"; row.dataset.dnd = idx;
           const dh = makeHandle();
-          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━"; inp.value = c.label || ""; inp.className = 'koma-sep-inp';
+          const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "━━━ 区切り ━━━";
+          inp.value = c.label || ""; inp.className = 'koma-sep-inp';
+          inp.style.color = 'var(--accent)';
           inp.addEventListener("input", e => { consumables[idx] = { ...consumables[idx], label: e.target.value }; updateExport(); });
           const rm = document.createElement("button"); rm.className = "btn-remove"; rm.textContent = "×";
           rm.addEventListener("click", () => { consumables.splice(idx, 1); if (!consumables.filter(x => !x._sep).length) consumables.push({ id: nxtId++, label: '', cur: '', max: '' }); buildConsumableRows(); updateExport(); });
@@ -5144,10 +5428,10 @@ valInp.addEventListener("change", e => {
     }
     function addConsumable() { consumables.push({ id: nxtId++, label: "", cur: "", max: "" }); buildConsumableRows(); openAcc("cons"); }
     function addConsSep() { consumables.push({ id: nxtId++, _sep: true, label: "" }); buildConsumableRows(); openAcc("cons"); }
-    function addSplSep() { splList.push({ id: nxtId++, _sep: true, label: "" }); buildSplRows(); }
+    function addSplSep() { splList.push({ id: nxtId++, _sep: true, label: "" }); buildSplRows(); renderPalettePreview(); }
     function updConsBadge() { const n = consumables.filter(c => c.label).length; const el = document.getElementById("badge-cons"); if (el) el.textContent = n; const el2 = document.getElementById("badge-cons2"); if (el2) el2.textContent = n; }
     function normalizeNpcText(t) { t = t.replace(/"([^"]*?)"/g, (m, inner) => inner.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim());; return t.replace(/[A-Z\uff21-\uff3a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[a-z\uff41-\uff5a]/g, c => c.charCodeAt(0) > 0xff00 ? String.fromCharCode(c.charCodeAt(0) - 0xFEE0) : c).replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\uff1a/g, ':').replace(/\uff0b/g, '+').replace(/[\uff0d\u2212]/g, '-').replace(/\u3000/g, ' ').replace(/[%\uff05]/g, '%').replace(/\uff0f/g, '/').replace(/\uff08/g, '(').replace(/\uff09/g, ')').replace(/\u3002/g, '.'); }
-    function stripDB(dmgRaw) { const halfPat = /\s*\+?\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g; const hasHalf = halfPat.test(dmgRaw); if (hasHalf) return { dmg: dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g, "").trim(), useDB: "half" }; const hasDB = /\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g.test(dmgRaw); return { dmg: dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g, "").trim(), useDB: hasDB }; }
+    function stripDB(dmgRaw) { const halfPat = /\s*\+?\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/; const hasHalf = halfPat.test(dmgRaw); if (hasHalf) return { dmg: dmgRaw.replace(/\s*\+?\s*\(?\s*(?:db|DB|dB|Db)\s*\/\s*2\s*\)?/g, "").trim(), useDB: "half" }; const hasDB = /\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/.test(dmgRaw); return { dmg: dmgRaw.replace(/\s*\+\s*\(?\s*(?:db|DB|dB|Db)\s*\)?/g, "").trim(), useDB: hasDB }; }
     function parseNpcText(text) { const t = normalizeNpcText(text); const r = { stats: {}, hp: null, mp: null, san: null, luck: null, attacks: [], skills: [], memos: [] };['STR', 'CON', 'SIZ', 'INT', 'POW', 'DEX', 'APP', 'EDU'].forEach(key => { const m = t.match(new RegExp('[^\\d]' + key + '\\s*[:= ]?\\s*(\\d+)', 'i')) || t.match(new RegExp(key + '\\s*[:= ]?\\s*(\\d+)', 'i')); if (m) r.stats[key.toLowerCase()] = parseInt(m[1]); }); const hM = t.match(/(?:\u8010\u4e45\u529b|HP)\s*[:= ]?\s*(\d+)/i); if (hM) r.hp = parseInt(hM[1]); const sM = t.match(/SAN\s*[:= ]?\s*(\d+)/i); if (sM) r.san = parseInt(sM[1]); const mM = t.match(/(?:MP|\u9b54\u529b)\s*[:= ]?\s*(\d+)/i); if (mM) r.mp = parseInt(mM[1]); const lM = t.match(/(?:\u5e78\u904b|LUK|LUCK)\s*[:= ]?\s*(\d+)/i); if (lM) r.luck = parseInt(lM[1]); const skillMap = {}; const skillLineRe = /^(.+?)[\t\u3000 ]+(\d{1,3})\s*%?\s*$/gm; let sm; while ((sm = skillLineRe.exec(t)) !== null) { const n = sm[1].trim(); const v = parseInt(sm[2]); if (n && v > 0 && n.length <= 20 && !/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB)$/i.test(n)) skillMap[n] = v; } const atkRe = /^([^\t\n]+?)\t+([^\t\n]+?)\t+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?)*(?:\+?\s*\(?\s*(?:db|DB)(?:\/\s*\d+)?\s*\)?)?)\s*$/gm; let am; while ((am = atkRe.exec(t)) !== null) { const wn = am[1].trim(), sn = am[2].trim(), dr = am[3].trim(); if (!wn || !sn) continue; const pct = skillMap[sn] || 0; const { dmg, useDB } = stripDB(dr); const combinedName = sn + (wn && wn !== sn ? "・" + wn : ""); if (!r.attacks.find(a => a.name === combinedName)) r.attacks.push({ name: combinedName, pct: String(pct), dmg, useDB, note: "" }); } const arB = /([^\s\d%(\n][^\n%(]{0,13}?)\s+(\d{1,3})%\s+([0-9]+[dD][0-9]+(?:[+\-][0-9]+(?:[dD][0-9]+)?(?:\+\s*(?:db|DB)(?:\/\s*\d+)?)?)*)/g; let mb; while ((mb = arB.exec(t)) !== null) { const n = mb[1].trim(); if (/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n) || n.length > 15) continue; const { dmg, useDB } = stripDB(mb[3]); if (!r.attacks.find(a => a.name === n)) r.attacks.push({ name: n, pct: mb[2], dmg, useDB, note: "" }); } Object.entries(skillMap).forEach(([name, val]) => { if (/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(name)) return; if (r.attacks.find(a => a.name === name)) return; if (!r.skills.find(s => s.name === name)) r.skills.push({ name, val }); }); const srB = /([^\s\d%(\n][^\n%(]{1,12}?)\s+(\d{1,3})%/g; let ms; while ((ms = srB.exec(t)) !== null) { const n = ms[1].trim(); if (/^(STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|CC|NPC)$/i.test(n) || n.length > 14) continue; if (r.attacks.find(a => a.name === n)) continue; if (!r.skills.find(s => s.name === n)) r.skills.push({ name: n, val: parseInt(ms[2]) }); } const dbM = t.match(/\u30c0\u30e1\u30fc\u30b8\u30dc\u30fc\u30ca\u30b9\s*[:= ]?\s*([+\-]\s*(?:\d+[dD]\d+|\d+))/i); if (dbM) r.memos.push({ label: 'DB', content: dbM[1].replace(/\s/g, '') }); const aM = text.match(/\u88c5\u7532[\uff1a:]\s*([^\u3002\n]{1,50})/); if (aM && aM[1].trim()) r.memos.push({ label: '\u88c5\u7532', content: aM[1].trim() }); const lines2 = text.trim().split(/\n/); for (const line of lines2) { const l = line.trim(); if (!l) continue; if (/STR|CON|SIZ|INT|POW|DEX|APP|EDU|HP|MP|SAN|DB|\u88c5\u7532|\u8010\u4e45/i.test(l)) break; if (/\d+[dD]\d+|\d+[%\uff05]/.test(l)) break; if (l.length <= 30 && !/[::\uff1d=]/.test(l) && l.length > 0) { r._characterName = l.replace(/^[\u300a\u300a\u300c\uff1c<]|[\u300b\u300b\u300d\uff1e>]$/g, "").trim(); break; } } return r; }
     function runParse() { const text = document.getElementById("parse-input").value.trim(); if (!text) { showToast("\u30c6\u30ad\u30b9\u30c8\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; } const p = parseNpcText(text); const hasAny = Object.keys(p.stats).length > 0 || p.hp !== null || p.attacks.length > 0 || p.skills.length > 0 || p.memos.length > 0; const el = document.getElementById("parse-result"); el.style.display = "block"; if (!hasAny) { el.innerHTML = '<div style="color:var(--danger);font-size:13px;padding:7px;background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--radius)">\u8a8d\u8b58\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002</div>'; return; } applyParsed(p); el.innerHTML = '<div class="parse-result-box" style="color:var(--success);font-size:12px">\u2705 \u89e3\u6790\u3057\u3066\u9069\u7528\u3057\u307e\u3057\u305f</div>'; setTimeout(() => { el.style.display = "none"; document.getElementById("body-parse").classList.remove("open"); document.getElementById("arrow-parse").classList.remove("open"); }, 1500); }
     function clearParse() { document.getElementById("parse-input").value = ""; const el = document.getElementById("parse-result"); el.style.display = "none"; el.innerHTML = ""; }
@@ -5181,16 +5465,17 @@ valInp.addEventListener("change", e => {
       skList = [{ id: 0, name: "", val: 0 }];
       atkList = [{ id: 0, name: "", pct: 0, dmg: "", note: "", useDB: false }];
       splList = [{ id: 0, name: "", mp: "", note: "" }];
+      atkHeader = "━━━⚔️攻撃━━━";
+      skHeader = "━━━🎯技能━━━";
+      splHeader = "━━━✨呪文━━━";
       memoList = [{ id: 0, label: "", content: "", dest: "cmd" }];
       saveMemoLocal();
       consumables = [{ id: 0, label: '', cur: '', max: '' }]; nxtId = 1;
       customFields = [{ id: 'cf1', label: '', value: '', max: '' }, { id: 'cf2', label: '', value: '', max: '' }, { id: 'cf3', label: '', value: '', max: '' }, { id: 'cf4', label: '', value: '', max: '' }];
       saveCustomFields();
       buildCustomFieldRows();
-      extraParams = [];
-      saveExtraParams();
-      buildExtraParamRows();
-      updExtraParamBadge();
+extraParams = [{ id: nxtId++, label: '', value: '' }];
+      saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
       manualPaletteText = ""; saveManualPalette();
       const ta = document.getElementById("manual-palette-textarea");
       if (ta) ta.value = "";
@@ -5199,7 +5484,7 @@ valInp.addEventListener("change", e => {
       try { localStorage.removeItem('coc_manual_palette_draft'); } catch { }
       buildConsumableRows(); clearParse(); buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows();
       // コマタブもリセット
-      currentKoma = { id: 0, name: "", globalAt: "@", labels: [], manualPalette: "" };
+      currentKoma = { id: 0, name: "", globalAt: "@", labels: [], statusList: [], paramList: [], manualPalette: "" };
       komaNxtId = 1;
       const komaNameEl = document.getElementById("koma-name");
       if (komaNameEl) komaNameEl.value = "";
@@ -5300,8 +5585,7 @@ valInp.addEventListener("change", e => {
           const dh = makeHandle();
           const inp = document.createElement('input');
           inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = s.label || '';
-          inp.style.color = 'var(--text2)';
-          inp.style.fontWeight = 'normal';
+          inp.className = 'koma-sep-inp';
           inp.addEventListener('input', e => { currentKoma.statusList[idx] = { ...currentKoma.statusList[idx], label: e.target.value }; });
           const rm = document.createElement('button');
           rm.className = 'btn-remove'; rm.textContent = '×';
@@ -5421,8 +5705,7 @@ valInp.addEventListener("change", e => {
           const dh = makeHandle();
           const inp = document.createElement('input');
           inp.type = 'text'; inp.placeholder = '━━━ 区切り ━━━'; inp.value = p.label || '';
-          inp.style.color = 'var(--text2)';
-          inp.style.fontWeight = 'normal';
+          inp.className = 'koma-sep-inp';
           inp.addEventListener('input', e => { currentKoma.paramList[idx] = { ...currentKoma.paramList[idx], label: e.target.value }; });
           const rm = document.createElement('button');
           rm.className = 'btn-remove'; rm.textContent = '×';
@@ -5516,6 +5799,9 @@ valInp.addEventListener("change", e => {
       updKomaTabBadges();
     }
 
+    let atkHeader = "━━━⚔️攻撃━━━";
+    let skHeader = "━━━🎯技能━━━";
+    let splHeader = "━━━✨呪文━━━";
     let paletteCustomOrder = null;
 
     function getPaletteLines(forExport = false) {
@@ -5535,7 +5821,7 @@ valInp.addEventListener("change", e => {
         if (!a.name) return;
         if (a.pct) atkBlock.push({ text: "CC<=" + cv(a.pct) + " 【" + a.name + "】", key: "atk_" + a.id });
         if (a.dmg) {
-          const dmgLabel = forExport ? "ダメージ判定・" : "";
+          const dmgLabel = "ダメージ判定・";
           const isCus = typeof a.useDB === "string" && a.useDB !== "half" && a.useDB !== "false";
           if (a.useDB === "half" && db && db.cmd) {
             const hc = db.cmd + "/2";
@@ -5556,24 +5842,23 @@ valInp.addEventListener("change", e => {
       // ===== 呪文ブロック =====
       const splBlock = [];
       splList.forEach(s => {
+        if (s._sep) { splBlock.push({ text: s.label || "━━━━━━━━━━━━━━━━━━", key: "splsep_" + s.id, isSep: true }); return; }
         if (!s.name) return;
         const mainTxt = s.name + (s.mp ? " (MP:" + s.mp + ")" : "");
-        splBlock.push({ text: mainTxt, sub: s.note || undefined, key: "spl_" + s.id });
-      });
-
-      // ===== 消耗品ブロック =====
-      const consBlock = [];
-      consumables.forEach(c => {
-        if (!c.label) return;
-        const cur = c.cur !== undefined && c.cur !== "" ? c.cur : "?";
-        const max = c.max !== undefined && c.max !== "" ? ("/" + c.max) : "";
-        consBlock.push({ text: c.label + " " + cur + max, key: "cons_" + c.id });
+        splBlock.push({ text: mainTxt, key: "spl_" + s.id });
+        if (s.note) splBlock.push({ text: s.note, key: "splnote_" + s.id, _spellNote: true });
       });
 
       // ===== MEMOブロック =====
+      // 「パレ」(cmd) のみ。並び順はmemoList準拠。
       const memoBlock = [];
-      memoList.filter(m => (m.label || m.content) && (m.dest === "cmd" || m.dest === "both"))
-        .forEach(m => memoBlock.push({ text: (m.label ? m.label + "　" : "") + m.content, key: "memo_" + m.id }));
+      const memoFiltered = memoList.filter(m => m.content && (m.dest === "cmd" || m.dest === "both"));
+      memoFiltered.forEach((m, mi) => {
+        if (mi > 0) memoBlock.push({ text: '', key: 'memo_div_' + m.id, _memoDivider: true });
+        m.content.split('\n').forEach((line, li) => {
+          memoBlock.push({ text: line, key: 'memo_' + m.id + '_' + li, _memoLine: true, _memoFirst: li === 0 });
+        });
+      });
 
       // ===== 技能ブロック =====
       const skBlock = [];
@@ -5588,14 +5873,13 @@ valInp.addEventListener("change", e => {
       const hasSpl = splBlock.length > 0;
       const hasSk = skBlock.some(l => !l.isSep);
 
-      // 技能 と (攻撃 or 呪文) の両方に中身があるときヘッダーを付ける
-      const activeCount = (hasSk ? 1 : 0) + (hasAtk ? 1 : 0) + (hasSpl ? 1 : 0);
-      const needHeaders = activeCount >= 2;
+      // ヘッダーはブロックに有効なラベルが1つ以上ある場合のみ表示
+      const needHeaders = true; // appendBlock内で判定
 
       // 区切り設定を読む（コマタブと同じ）
-      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value
-        || document.querySelector('input[name="koma-sep-space2"]:checked')?.value
-        || 'before';
+      const sepSpace = document.querySelector(
+        'input[name="koma-sep-space"]:checked, input[name="koma-sep-space2"]:checked, input[name="koma-sep-space3"]:checked'
+      )?.value || 'before';
 
       // ヘッダー行を生成するヘルパー
       function makeHeader(text) {
@@ -5611,36 +5895,159 @@ valInp.addEventListener("change", e => {
       const result = [];
 
       function appendBlock(block, headerText) {
-        if (!block.length) return;
-        if (needHeaders && headerText) {
+        const hasReal = block.some(l => !l.isSep && !l._empty && !l._spellNote);
+        if (!hasReal) return;
+        // 有効な行がある場合のみ、区切り行・ヘッダーも含めてすべて出力
+        if (headerText) {
           const hdr = makeHeader(headerText);
           hdr.forEach(l => result.push(l));
         }
-        block.forEach(l => result.push(l));
+        block.forEach(l => {
+          if (l.isSep) {
+            result.push(l); // 区切り行は無条件で出力
+          } else if (!l._empty && !l._spellNote) {
+            result.push(l);
+          } else if (l._spellNote) {
+            result.push(l);
+          } else if (l._empty) {
+            result.push(l);
+          }
+        });
       }
 
+      const atkHdrText = atkHeader.trim();
+      const skHdrText = skHeader.trim();
+      const splHdrText = splHeader.trim();
+
       if (atkFirst) {
-        appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
-        appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
-        appendBlock(skBlock, needHeaders && hasSk ? '━━━🎯技能━━━' : null);
+        appendBlock(atkBlock, atkHdrText || null);
+        appendBlock(splBlock, splHdrText || null);
+        appendBlock(skBlock, skHdrText || null);
       } else {
-        appendBlock(skBlock, needHeaders && hasSk ? '━━━🎯技能━━━' : null);
-        appendBlock(atkBlock, needHeaders && hasAtk ? '━━━⚔️攻撃━━━' : null);
-        appendBlock(splBlock, needHeaders && hasSpl ? '━━━✨呪文━━━' : null);
+        appendBlock(skBlock, skHdrText || null);
+        appendBlock(atkBlock, atkHdrText || null);
+        appendBlock(splBlock, splHdrText || null);
       }
 
       // 消耗品・MEMOはヘッダーなし（現状どおり）
-      consBlock.forEach(l => result.push(l));
       memoBlock.forEach(l => result.push(l));
 
-      // 先頭の空行を除去
-      while (result.length && result[0]._empty) result.shift();
+
+      // 先頭の連続空行を除去（区切り線・ヘッダーは残す）
+      while (result.length && result[0]._empty && !result[0].isSep) result.shift();
 
       return result;
     }
 
     function resetPaletteOrder() { paletteCustomOrder = null; renderPalettePreview(); showToast("\u4e26\u3073\u9806\u3092\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3057\u305f"); }
     function copyPalettePreview() { const lines = getPaletteLines(); if (!lines.length) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const txt = lines.filter(l => !l._empty).map(l => l.text).join("\n"); navigator.clipboard.writeText(txt).then(() => showToast("\u30d1\u30ec\u30c3\u30c8\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }
+    function copyPaletteBlock(type) {
+      const lines = getPaletteLines(false);
+      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value
+        || document.querySelector('input[name="koma-sep-space2"]:checked')?.value || 'before';
+
+      let filtered = [];
+      if (type === "atk") {
+        // 攻撃ブロック：atkBlock相当を抽出
+        let inAtk = false;
+        lines.forEach(l => {
+          if (l._header && (l.text === atkHeader.trim())) { inAtk = true; filtered.push(l); return; }
+          if (l._header && l.text !== atkHeader.trim()) { inAtk = false; return; }
+          if (inAtk) filtered.push(l);
+        });
+      } else if (type === "sk") {
+        let inSk = false;
+        lines.forEach(l => {
+          if (l._header && (l.text === skHeader.trim())) { inSk = true; filtered.push(l); return; }
+          if (l._header && l.text !== skHeader.trim()) { inSk = false; return; }
+          if (inSk) filtered.push(l);
+        });
+      } else if (type === "memo") {
+        filtered = lines.filter(l => l.key && l.key.startsWith('memo_'));
+      }
+
+      // ヘッダー行・空行を除いてテキスト化
+      const result = [];
+      filtered.forEach((l, idx) => {
+        if (l._header || l._empty) return;
+        if (l.isSep && idx > 0) {
+          result.push('');
+          result.push(l.text);
+          if (sepSpace === 'both') result.push('');
+        } else if (!l._spellNote) {
+          result.push(l.text);
+        } else {
+          result.push(l.text);
+        }
+      });
+      while (result.length && result[result.length - 1] === '') result.pop();
+      if (!result.length) { showToast('データがありません'); return; }
+      navigator.clipboard.writeText(result.join('\n')).then(() => showToast('📋 コピーしました（' + result.filter(l => l).length + '行）'));
+    }
+
+    function copyPaletteChecked() {
+      const atkOn = document.getElementById('chk-copy-atk')?.checked;
+      const splOn = document.getElementById('chk-copy-spl')?.checked;
+      const skOn = document.getElementById('chk-copy-sk')?.checked;
+      const memoOn = document.getElementById('chk-copy-memo')?.checked;
+      const atkFirst = document.querySelector('input[name="cmd-order"][value="atk-first"]')?.checked
+        || document.querySelector('input[name="cmd-order2"][value="atk-first"]')?.checked || false;
+      const sepSpace = document.querySelector('input[name="koma-sep-space"]:checked')?.value
+        || document.querySelector('input[name="koma-sep-space2"]:checked')?.value || 'before';
+
+      const lines = getPaletteLines(false);
+      // ブロックに分解
+      const blocks = { atk: [], sk: [], spl: [], memo: [] };
+      let currentBlock = null;
+      lines.forEach(l => {
+        if (l._header) {
+          if (l.text === atkHeader.trim()) currentBlock = 'atk';
+          else if (l.text === skHeader.trim()) currentBlock = 'sk';
+          else if (l.text === splHeader.trim()) currentBlock = 'spl';
+          else currentBlock = null;
+          return;
+        }
+        if (l.key && l.key.startsWith('memo_')) { blocks.memo.push(l); return; }
+        if (l._empty) return;
+        if (currentBlock) blocks[currentBlock].push(l);
+      });
+
+      // 順序に従って結合
+      const order = atkFirst
+        ? ['atk', 'spl', 'sk']
+        : ['sk', 'atk', 'spl'];
+      if (memoOn) order.push('memo');
+
+      const result = [];
+      order.forEach(key => {
+        if (key === 'atk' && !atkOn) return;
+        if (key === 'spl' && !splOn) return;
+        if (key === 'sk' && !skOn) return;
+        if (key === 'memo' && !memoOn) return;
+        const block = blocks[key];
+        if (!block.length) return;
+        if (result.length) {
+          result.push('');
+          if (sepSpace === 'both') result.push('');
+        }
+        block.forEach(l => {
+          if (l.isSep) {
+            if (result.length) result.push('');
+            result.push(l.text);
+            if (sepSpace === 'both') result.push('');
+          } else if (!l._spellNote) {
+            result.push(l.text);
+          } else {
+            result.push(l.text);
+          }
+        });
+      });
+
+      while (result.length && result[result.length - 1] === '') result.pop();
+      if (!result.length) { showToast('チェックされたブロックにデータがありません'); return; }
+      navigator.clipboard.writeText(result.join('\n')).then(() => showToast('📋 一括コピーしました（' + result.filter(l => l).length + '行）'));
+    }
+
     function setExportMode(mode) { exportMode = mode;["json", "text"].forEach(m => { const b = document.getElementById("exp-btn-" + m); if (b) b.className = "export-btn" + (m === mode ? "" : " sec"); const b2 = document.getElementById("exp-btn-" + m + "2"); if (b2) b2.className = "export-btn" + (m === mode ? "" : " sec"); }); const dl = document.getElementById("btn-dl-json"); if (dl) dl.style.display = mode === "json" ? "inline-flex" : "none"; const dl2 = document.getElementById("btn-dl-json2"); if (dl2) dl2.style.display = mode === "json" ? "inline-flex" : "none"; updateExport(); }
     function syncKomaSetting(el) {
       const idMap = {
@@ -5700,18 +6107,18 @@ valInp.addEventListener("change", e => {
       renderPalettePreview();
       updateExport();
     }
-    function syncBothDbCheck(el) { ["chk-both-db","chk-both-db2","chk-both-db3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
-    function syncUseV6Check(el) { ["chk-use-v6","chk-use-v6-2","chk-use-v6-3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
+    function syncBothDbCheck(el) { ["chk-both-db", "chk-both-db2", "chk-both-db3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
+    function syncUseV6Check(el) { ["chk-use-v6", "chk-use-v6-2", "chk-use-v6-3"].forEach(id => { const t = document.getElementById(id); if (t && t !== el) t.checked = el.checked; }); updateExport(); }
     function isUseV6() { return document.getElementById("chk-use-v6")?.checked || document.getElementById("chk-use-v6-2")?.checked || false; }
     function isSkDice() { return document.getElementById("chk-sk-dice")?.checked || document.getElementById("chk-sk-dice-save")?.checked || document.getElementById("chk-sk-dice2")?.checked || false; }
     function buildCocoforiaJson(includeKoma = false) {
       const name = document.getElementById("npc-name").value || "NPC";
       const status = [];
       const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
-      if (hp > 0 || ovManual.hp) status.push({ label: "HP", value: hp, max: hp });
-      if (mp > 0 || ovManual.mp) status.push({ label: "MP", value: mp, max: mp });
-      if (san > 0 || ovManual.san) status.push({ label: "SAN", value: san, max: san });
-      if (luck > 0 || ovManual.luck) status.push({ label: "幸運", value: luck, max: luck });
+     if (hp > 0) status.push({ label: "HP", value: hp, max: hp });
+if (mp > 0) status.push({ label: "MP", value: mp, max: mp });
+if (san > 0) status.push({ label: "SAN", value: san, max: san });
+if (luck > 0) status.push({ label: "幸運", value: luck, max: luck });
       consumables.filter(c => c.label).forEach(c => {
         const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0;
         status.push({ label: c.label, value: cur, max: max || cur });
@@ -5763,9 +6170,8 @@ valInp.addEventListener("change", e => {
             }
             return;
           }
-          if (l.sub) {
-            cmdLines.push(l.text);
-            cmdLines.push("// " + l.sub);
+          if (l._spellNote) {
+            cmdLines.push("// " + l.text);
           } else {
             cmdLines.push(l.text);
           }
@@ -5787,9 +6193,9 @@ valInp.addEventListener("change", e => {
             if (v > 0) statVarLines.push(ccPx + (useV6 ? Math.round(v / 5) : v) + " 【" + key.toUpperCase() + "】");
           });
           if (statVarLines.length) {
-            cmdLines.push('');
+            if (sepSpaceMode === 'both' || sepSpaceMode === 'before') cmdLines.push('');
             cmdLines.push("＝＝＝ ステータス ＝＝＝");
-            cmdLines.push('');
+            if (sepSpaceMode === 'both') cmdLines.push('');
             statVarLines.forEach(l => cmdLines.push(l));
             if (sepSpaceMode === 'both') cmdLines.push('');
           }
@@ -5797,25 +6203,25 @@ valInp.addEventListener("change", e => {
             if (cf.label && cf.value) cmdLines.push("CC<={" + cf.label + "} 【" + cf.label + "】");
           });
         }
-        
+
 
       } else {
 
-        
+
         if (manualPaletteText.trim()) {
           cmdLines = manualPaletteText.split("\n").map(l => l.trimEnd());
         }
       }
 
       const memoLines = memoList
-        .filter(m => (m.label || m.content) && (m.dest === "memo" || m.dest === "both"))
-        .map(m => (m.label ? "  " + m.label + "　" : "") + m.content);
+        .filter(m => m.content && (m.dest === "memo" || m.dest === "both"))
+        .flatMap(m => m.content.split('\n'));
       // 秘匿タブ向けコマンド
       const addSecretCmd = document.getElementById("chk-secret-cmd")?.checked || false;
       if (addSecretCmd) {
-        cmdLines.push("");
+        if (sepSpaceMode === 'both' || sepSpaceMode === 'before') cmdLines.push("");
         cmdLines.push("＝＝＝ 秘匿管理 ＝＝＝");
-        cmdLines.push('');
+        if (sepSpaceMode === 'both') cmdLines.push('');
         getSecretCmdLines().forEach(l => cmdLines.push(l));
         if (sepSpaceMode === 'both') cmdLines.push("");
       }
@@ -5898,8 +6304,9 @@ valInp.addEventListener("change", e => {
           invisible: invisible
         }
       });
-      }
+    }
     function buildCocoforiaText() { const name = document.getElementById("npc-name").value || "NPC"; const lines = ["\u300a" + name + "\u300b", ""]; const sl = []; STATS.forEach(({ key, label }) => { const v = vals[key] || 0; if (v > 0) sl.push(label + ":" + v); }); if (sl.length) lines.push("\u25a0 \u80fd\u529b\u5024\uff087\u7248%\uff09", sl.join(" / "), ""); const strV = vals.str || 0, sizV = vals.siz || 0; if (strV + sizV > 0) { const db = getDB(strV + sizV); lines.push("DB: " + db.label + " / \u30d3\u30eb\u30c9: " + db.build, ""); } const rl = []; const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck"); if (hp > 0 || ovManual.hp) rl.push("HP:" + hp); if (mp > 0 || ovManual.mp) rl.push("MP:" + mp); if (san > 0 || ovManual.san) rl.push("SAN:" + san); if (luck > 0 || ovManual.luck) rl.push("\u5e78\u904b:" + luck); consumables.filter(c => c.label).forEach(c => { const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0; rl.push(c.label + ":" + cur + (max ? "/" + max : "")); }); if (rl.length) lines.push("\u25a0 \u30ea\u30bd\u30fc\u30b9", rl.join(" / "), ""); const af = atkList.filter(a => a.name); if (af.length) { lines.push("\u25a0 \u653b\u6483"); af.forEach(a => { lines.push((a.name + ": " + (a.pct ? a.pct + "%" : "") + " " + (a.dmg ? "\u30c0\u30e1:" + a.dmg : "")).trim()); }); lines.push(""); } const skf = skList.filter(s => s.name && (s.val || 0) > 0); if (skf.length) { lines.push("\u25a0 \u6280\u80fd"); skf.forEach(s => { lines.push(s.name + ": " + s.val + "%"); }); lines.push(""); } const mf = memoList.filter(m => m.label || m.content); if (mf.length) { lines.push("\u25a0 \u30e1\u30e2"); mf.forEach(m => { lines.push((m.label ? m.label + "\u3000" : "") + m.content); }); lines.push(""); } return lines.join("\n").trim(); }
+    let _renderPaletteTimer = null;
     function updateExport() {
       const name = document.getElementById("npc-name").value || "";
       const hasKomaData = (currentKoma.labels || []).some(l => !l._sep && l.text)
@@ -5909,7 +6316,8 @@ valInp.addEventListener("change", e => {
       const any = name || STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0
         || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0)
         || extraParams.some(p => p.label) || hasKomaData;
-      const useKoma = document.getElementById('tab-save')?.style.display !== 'none';
+      const activeTab = [...document.querySelectorAll('.tab[data-tab]')].find(b => b.classList.contains('active'))?.dataset.tab;
+const useKoma = activeTab === 'save';
       const txt = any ? (exportMode === "json" ? buildCocoforiaJson(useKoma) : buildCocoforiaText()) : "（스테이터스를 입력하면 출력됩니다）";
       const el = document.getElementById("export-preview");
       if (el) el.textContent = txt;
@@ -5918,8 +6326,11 @@ valInp.addEventListener("change", e => {
       const el3 = document.getElementById("export-preview3");
       if (el3) el3.textContent = txt;
       updateSecretCmdPreview();
+      clearTimeout(_renderPaletteTimer);
+      _renderPaletteTimer = setTimeout(renderPalettePreview, 80);
     }
-    function copyExport() { if (exportMode === "json") { const hasKomaData2 = (currentKoma.labels || []).some(l => !l._sep && l.text) || (currentKoma.statusList || []).some(s => !s._sep && s.label) || (currentKoma.paramList || []).some(p => !p._sep && p.label) || (currentKoma.manualPalette || '').trim(); const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0) || hasKomaData2; if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const useKoma = document.getElementById('tab-save')?.style.display !== 'none'; const obj = JSON.parse(buildCocoforiaJson(useKoma)); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
+    function copyExport() { if (exportMode === "json") { const hasKomaData2 = (currentKoma.labels || []).some(l => !l._sep && l.text) || (currentKoma.statusList || []).some(s => !s._sep && s.label) || (currentKoma.paramList || []).some(p => !p._sep && p.label) || (currentKoma.manualPalette || '').trim(); const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0) || hasKomaData2; if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const activeTab = [...document.querySelectorAll('.tab[data-tab]')].find(b => b.classList.contains('active'))?.dataset.tab;
+const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(useKoma)); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
     function downloadExport() { const el = document.getElementById("export-preview"); if (!el) return; const txt = el.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const name = (document.getElementById("npc-name").value || "npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g, "_"); const blob = new Blob([txt], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + ".json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); showToast("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); }
     function renderHpList() { const w = document.getElementById("hp-list"); if (!hpList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPC\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = hpList.map((h, i) => { const p = Math.max(0, h.cur / h.max * 100), c = p > 50 ? "#1a9e72" : p > 25 ? "#d09028" : "#c03030"; return '<div class="hp-item"><span class="hp-name">' + esc(h.name) + '</span><div class="hp-bar-wrap"><div class="hp-bar" style="width:' + p + '%;background:' + c + '"></div></div><span class="hp-nums" style="color:' + c + '">' + h.cur + '/' + h.max + '</span><div class="hp-btns"><button class="hp-btn" data-i="' + i + '" data-d="-1">\u2212</button><button class="hp-btn" data-i="' + i + '" data-d="1">\uff0b</button><button class="hp-btn" data-i="' + i + '" data-d="del" style="color:var(--text3)">\u2715</button></div></div>'; }).join(""); w.querySelectorAll(".hp-btn").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i, d = e.currentTarget.dataset.d; if (d === "del") hpList.splice(i, 1); else hpList[i].cur = Math.max(0, Math.min(hpList[i].max, hpList[i].cur + parseInt(d))); renderHpList(); saveKp(); })); }
     function renderInitList() { const w = document.getElementById("init-list"); if (!initList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">\u53c2\u52a0\u8005\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = initList.map((it, i) => '<div class="init-item' + (i === initTurn ? " active" : "") + '"><span class="init-val">' + it.dex + '</span><span class="init-name">' + esc(it.name) + (i === initTurn ? " \u25c4" : "") + '</span><button class="init-del" data-i="' + i + '">\u2715</button></div>').join(""); w.querySelectorAll(".init-del").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i; initList.splice(i, 1); if (initTurn >= initList.length) initTurn = 0; renderInitList(); saveKp(); })); }
@@ -5983,7 +6394,7 @@ valInp.addEventListener("change", e => {
     async function applyKey(token, isInit = false) {
       token = (token || "").trim(); if (!token) { setSyncSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; }
       if (!isInit) { gistId = ""; localStorage.removeItem(L_GIST); const pgInp = document.getElementById("personal-gist-id-input"); if (pgInp) pgInp.value = ""; updGistDisplay(); }
-    　syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; setSyncSt("確認中…", "ing"); try {
+      syncToken = token; localStorage.setItem(L_KEY, token); document.getElementById("btn-upload").disabled = false; setSyncSt("確認中…", "ing"); try {
         const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) {
           const u = await r.json(); setSyncSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok");
           gistId = localStorage.getItem(L_GIST) || "";
@@ -5992,7 +6403,7 @@ valInp.addEventListener("change", e => {
         } else { syncToken = ""; setSyncSt("⚠ 認証失敗", "err"); document.getElementById("btn-upload").disabled = true; }
       } catch { syncToken = ""; setSyncSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); }
     }
-    async function gistSet(payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Data", public: false, files: { "coc_saves.json": { content } } }; try { let r; if (gistId) r = await fetch("https://api.github.com/gists/" + gistId, { method: "PATCH", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); gistId = d.id; localStorage.setItem(L_GIST, gistId); updGistDisplay(); return true; } catch { return false; } }
+    let gistSet = async function (payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Data", public: false, files: { "coc_saves.json": { content } } }; try { let r; if (gistId) r = await fetch("https://api.github.com/gists/" + gistId, { method: "PATCH", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + syncToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); gistId = d.id; localStorage.setItem(L_GIST, gistId); updGistDisplay(); return true; } catch { return false; } }
     async function gistGet() {
       if (!gistId) {
         if (!syncToken) return null;
@@ -6066,13 +6477,16 @@ valInp.addEventListener("change", e => {
         atkList: JSON.parse(JSON.stringify(atkList)),
         splList: JSON.parse(JSON.stringify(splList)),
         memoList: JSON.parse(JSON.stringify(memoList)),
-         consumables: JSON.parse(JSON.stringify(consumables)),
-      extraParams: JSON.parse(JSON.stringify(extraParams)),
-      manualPalette: manualPaletteText,
+        consumables: JSON.parse(JSON.stringify(consumables)),
+        extraParams: JSON.parse(JSON.stringify(extraParams)),
+        manualPalette: manualPaletteText,
         draftPalette: (() => { try { return localStorage.getItem('coc_manual_palette_draft') || ''; } catch { return ''; } })(),
         dmgLabel: db ? db.label : null,
         build: db ? db.build : null,
         customFields: JSON.parse(JSON.stringify(customFields)),
+        atkHeader,
+        skHeader,
+        splHeader,
         settings: getSettings()
       };
       if (opts.includeKoma) {
@@ -6120,6 +6534,9 @@ valInp.addEventListener("change", e => {
         try { localStorage.setItem('coc_manual_palette_draft', draftText); } catch { }
       }
 
+      if (data.atkHeader !== undefined) atkHeader = data.atkHeader;
+      if (data.skHeader !== undefined) skHeader = data.skHeader;
+      if (data.splHeader !== undefined) splHeader = data.splHeader;
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
       if (atkList.some(a => a.name)) openAcc("atk");
       if (consumables.some(c => c.label)) openAcc("cons");
@@ -6146,8 +6563,8 @@ valInp.addEventListener("change", e => {
       }
       updateExport();
     }
-    async function quickSaveStatus(dest) {
-      const d = getCurrentData();
+   async function quickSaveStatus(dest) {
+      const d = getCurrentData({ includeKoma: true });
       d.id = Date.now();
       d.savedAt = new Date().toISOString();
       if (dest === "personal") {
@@ -6221,17 +6638,17 @@ valInp.addEventListener("change", e => {
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id);
-const filtered = allSaves.filter(sv => {
-  if (sv._isKoma && !sv.komaData) return false; // コマのみ（ステータスなし）は除外
-  if (_statSaveFilter === "personal") return !sv._fromShared;
-  if (_statSaveFilter === "shared") return !!sv._fromShared;
-  return true;
-});
+      const filtered = allSaves.filter(sv => {
+        if (sv._isKoma && !sv.komaData) return false; // コマのみ（ステータスなし）は除外
+        if (_statSaveFilter === "personal") return !sv._fromShared;
+        if (_statSaveFilter === "shared") return !!sv._fromShared;
+        return true;
+      });
       if (!filtered.length) {
         wrap.innerHTML = '<p class="save-empty">保存データがありません</p>';
         return;
       }
-      wrap.innerHTML = '<div class="save-list">' + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared)).join("") + '</div>';
+      wrap.innerHTML = '<div class="save-list">' + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
       bindSaveListEvents(wrap);
     }
 
@@ -6244,7 +6661,7 @@ const filtered = allSaves.filter(sv => {
     }
 
     function getSaveKind(sv) {
-      if (sv.type === "both" || sv.komaData) return "both";
+      if (sv.type === "both" || (!sv._isKoma && sv.komaData)) return "both";
       if (sv.type === "koma" || sv._isKoma) return "koma";
       return "char";
     }
@@ -6253,57 +6670,95 @@ const filtered = allSaves.filter(sv => {
       return { char: "👤", koma: "🎭", both: "📚" }[getSaveKind(sv)] || "👤";
     }
 
-    function renderSaveCard(sv, isShared) {
-      const d = new Date(sv.savedAt), ds = d.getFullYear() + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getDate().toString().padStart(2, "0") + " " + d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
+    function renderSaveCard(sv, isShared, callerTab = 'save') {
+      const d = new Date(sv.savedAt);
+      const ds = (d.getMonth() + 1).toString().padStart(2, '0') + '/' + d.getDate().toString().padStart(2, '0') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
       const kind = getSaveKind(sv);
-　　　const typeEmoji = kind === 'both' ? '📚 ' : kind === 'koma' ? '🎭 ' : '👤 ';
-      const aN = (sv.atkList || []).filter(a => a.name).length;
-      const skN = (sv.skList || []).filter(s => s.name && (parseInt(s.val) || 0) > 0).length;
-      const cN = (sv.consumables || []).filter(c => c.label).length;
-      const dbChip = sv.dmgLabel && sv.dmgLabel !== "\u306a\u3057" ? '<span class="db-chip">DB ' + sv.dmgLabel + '</span>' : "";
-      const badge = sv._shared ? '<span class="shared-badge">\u5171\u6709</span>' : "";
-      const sharedBg = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
-      const isKoma = getSaveKind(sv) === "koma";
-      const hasStatData = !isKoma;
-      const hasKomaData = isKoma || !!sv.komaData;
+      const typeEmoji = kind === 'both' ? '📚 ' : kind === 'koma' ? '🎭 ' : '👤 ';
+      const sharedBg = isShared ? 'background:rgba(14,110,86,0.06);border-color:rgba(14,110,86,0.3);' : '';
+      const isKomaOnly = kind === 'koma';
+      const hasStatData = !isKomaOnly;
+      const hasKomaData = isKomaOnly || !!sv.komaData;
 
-      let statChips = "";
+      const chip = (bg, color, border, txt, bold) =>
+        '<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:5px;border:0.5px solid ' + border + ';background:' + bg + ';color:' + color + ';font-size:11px;font-weight:' + (bold ? '700' : '500') + ';line-height:1;margin:1px 1px">' + txt + '</span>';
+
+      const rows = [];
+
       if (hasStatData) {
-        const dvChips = (() => {
-  const hp = sv.ov?.hp || 0, mp = sv.ov?.mp || 0, san = sv.ov?.san || 0;
-  const s = [];
-  if (hp > 0) s.push('<span class="stat-chip">HP<strong>' + hp + '</strong></span>');
-  if (mp > 0) s.push('<span class="stat-chip">MP<strong>' + mp + '</strong></span>');
-  if (san > 0) s.push('<span class="stat-chip">SAN<strong>' + san + '</strong></span>');
-  return s;
-})();
-const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2 = sv.ov?.san || 0; const s = []; if (hp2 > 0) s.push('<span class="stat-chip">HP<strong>' + hp2 + '</strong></span>'); if (mp2 > 0) s.push('<span class="stat-chip">MP<strong>' + mp2 + '</strong></span>'); if (san2 > 0) s.push('<span class="stat-chip">SAN<strong>' + san2 + '</strong></span>'); return s; })(); statChips = dvChips2.join("") + (aN ? '<span class="stat-chip">\u653b\u6483' + aN + '</span>' : "") + (skN ? '<span class="stat-chip">\u6280\u80fd' + skN + '</span>' : "") + (cN ? '<span class="stat-chip">\u6d88\u8017\u54c1' + cN + '</span>' : "") + (dbChip);
+        const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2 = sv.ov?.san || 0;
+        const aN = (sv.atkList || []).filter(a => a.name).length;
+        const skN = (sv.skList || []).filter(s => s.name && (parseInt(s.val) || 0) > 0).length;
+        const splN = (sv.splList || []).filter(s => s.name).length;
+        const cN = (sv.consumables || []).filter(c => c.label).length;
+        const epN = (sv.extraParams || []).filter(p => p.label).length;
+        const memoN = (sv.memoList || []).filter(m => m.label || m.content).length;
+        const dbLabel = sv.dmgLabel && sv.dmgLabel !== 'なし' ? sv.dmgLabel : null;
+
+        const derivedChips = [];
+        if (hp2 > 0) derivedChips.push(chip('#fcebeb', '#a32d2d', '#f7c1c1', 'HP ' + hp2));
+        if (mp2 > 0) derivedChips.push(chip('#eaf3de', '#3b6d11', '#c0dd97', 'MP ' + mp2));
+        if (san2 > 0) derivedChips.push(chip('#eeedfe', '#534ab7', '#cecbf6', 'SAN ' + san2));
+        if (dbLabel) derivedChips.push(chip('var(--bg2)', 'var(--text)', 'var(--border2)', '<span style="font-weight:700;font-family:monospace">DB ' + dbLabel + '</span>', true));
+
+        const abilChips = [];
+        if (sv.vals) {
+          ['str', 'con', 'siz', 'int', 'pow', 'dex', 'app', 'edu'].forEach(k => {
+            const v = sv.vals[k] || 0;
+            if (v > 0) abilChips.push(chip('var(--bg2)', 'var(--text2)', 'var(--border)', '<span style="font-size:10px">' + k.toUpperCase() + '</span> <strong style="color:var(--text);font-size:11px">' + v + '</strong>'));
+          });
+        }
+        if (aN > 0) abilChips.push(chip('#fbeaf0', '#993556', '#f4c0d1', '攻撃 ' + aN));
+        if (skN > 0) abilChips.push(chip('#e6f1fb', '#185fa5', '#85b7eb', '技能 ' + skN));
+        if (cN > 0) abilChips.push(chip('#faeeda', '#854f0b', '#ef9f27', '消耗品 ' + cN));
+        if (splN > 0) abilChips.push(chip('#eeedfe', '#534ab7', '#afa9ec', '呪文 ' + splN));
+        if (epN > 0) abilChips.push(chip('#e1f5ee', '#0f6e56', '#5dcaa5', 'PR ' + epN));
+        if (memoN > 0) abilChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
+
+        if (derivedChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">派生</span>' + derivedChips.join('') + '</div>');
+        if (abilChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join('') + '</div>');
       }
 
-      let komaChips = "";
       if (hasKomaData) {
-        const komaD = sv.komaData || sv;
-        const lbls = (komaD.labels || []).filter(l => !l._sep && l.text).length;
-        const stN = (komaD.statusList || []).filter(s => !s._sep && s.label).length;
-        const prN = (komaD.paramList || []).filter(p => !p._sep && p.label).length;
-        const total = lbls + stN + prN;
-        komaChips = `<span class="stat-chip">差分 ${lbls}</span><span class="stat-chip">ST ${stN}</span><span class="stat-chip">PR ${prN}</span><span class="stat-chip" style="font-weight:700">計 ${total}</span>`;
+        const kd = sv.komaData || sv;
+        const lbls = (kd.labels || []).filter(l => !l._sep && l.text).length;
+        const stN2 = (kd.statusList || []).filter(s => !s._sep && s.label).length;
+        const prN2 = (kd.paramList || []).filter(p => !p._sep && p.label).length;
+        const total = lbls + stN2 + prN2;
+        const kc = (txt, val) => chip('var(--bg2)', 'var(--text3)', 'var(--border)', '<span style="font-size:10px">' + txt + '</span> <strong style="color:var(--text2)">' + val + '</strong>');
+        rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-top:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">コマ</span>'
+          + kc('差分', lbls) + kc('ST', stN2) + kc('PR', prN2)
+          + chip('var(--bg2)', 'var(--text-secondary)', 'var(--border-secondary)', '計 <strong style="font-weight:700">' + total + '</strong>')
+          + '</div>');
       }
 
-      const actions = '<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u524a\u9664</button>';
-      const statsHtml = (statChips + komaChips) || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>';
-      return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + statsHtml + '</div><div class="save-card-actions">' + actions + '</div></div>';
+      const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
+      const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">読込</button>'
+        + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
+        + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
+
+      const statsHtml = rows.length ? rows.join('') : '<span style="color:var(--text3);font-size:11px">データなし</span>';
+
+      return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'
+        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + esc(sv.name) + '</div>'
+        + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
+        + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
+        + '</div>'
+        + statsHtml
+        + '</div>';
     }
     function bindSaveListEvents(wrap) {
-      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); switchTab("stats"); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
+      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
         btn.addEventListener("click", () => {
           const isShared = btn.dataset.shared === "1";
           const id = +btn.dataset.id;
+          const callerTab = btn.dataset.caller || 'save';
           const list = isShared ? lSharedSaves() : currentSaves;
           const sv = list.find(s => s.id === id);
           if (!sv) return;
 
-          const isKoma = !!sv._isKoma;
+          const isKoma = callerTab === 'koma';
 
           // ポップアップ作成
           const overlay = document.createElement("div");
@@ -6314,8 +6769,7 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
             + (isKoma ? '\u30b3\u30de\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059' : '\u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059')
             + '</div>'
             + '<button id="ow-confirm" style="width:100%;background:' + (isKoma ? 'var(--warn)' : 'var(--accent)') + ';border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">'
-            + (isKoma ? '\ud83c\udfad \u30b3\u30de\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d' : '\ud83d\udc64 \u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d')
-            + '</button>'
+            + (isKoma ? '🎭 コマタブのみ上書き' : (callerTab === 'stats' ? '📊 ステータスタブのみ上書き' : '📚 ステータス＋コマで上書き'))            + '</button>'
             + '<button id="ow-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button>'
             + '</div>';
           document.body.appendChild(overlay);
@@ -6328,19 +6782,19 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
             close();
 
             if (isKoma) {
-              // コマタブの内容で上書き
               overwriteKomaData(id, isShared);
             } else {
-              // ステータスタブの内容で上書き
+              // 保存タブからの上書き：ステータス＋コマ両方更新
+              const freshBoth = getCurrentData({ includeKoma: true });
               if (isShared) {
                 const shared = lSharedSaves();
                 const idx = shared.findIndex(s => s.id === id);
                 if (idx < 0) return;
-                const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
-                shared[idx] = fresh;
+                const merged = { ...freshBoth, id, savedAt: new Date().toISOString() };
+                shared[idx] = merged;
                 wSharedSaves(shared);
-                renderSharedList();
-                showToast("「" + fresh.name + "」を上書きしました");
+                renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+                showToast("「" + merged.name + "」をステータス＋コマで上書きしました");
                 if (sharedToken) {
                   setSharedSt("同期中…", "ing");
                   const ok = await sharedGistSet({ saves: lSharedSaves() });
@@ -6349,11 +6803,11 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
               } else {
                 const idx = currentSaves.findIndex(s => s.id === id);
                 if (idx < 0) return;
-                const fresh = { ...getCurrentData(), id, savedAt: new Date().toISOString() };
-                currentSaves[idx] = fresh;
+                const merged = { ...freshBoth, id, savedAt: new Date().toISOString() };
+                currentSaves[idx] = merged;
                 writeSaves(currentSaves);
-                renderSaveList();
-                showToast("「" + fresh.name + "」を上書きしました");
+                renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+                showToast("「" + merged.name + "」をステータス＋コマで上書きしました");
                 if (syncToken) {
                   setSyncSt("同期中…", "ing");
                   const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
@@ -6376,13 +6830,15 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
         });
       });
     }
-    function renderSaveList() { const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => {
+    function renderSaveList() {
+      const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => {
         if (f === "char") return getSaveKind(sv) === "char";
         if (f === "koma") return getSaveKind(sv) === "koma";
         if (f === "both") return getSaveKind(sv) === "both";
         return true;
-      }); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false)).join("") + '</div>'; bindSaveListEvents(wrap); }
-    function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
+      }); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>'; bindSaveListEvents(wrap);
+    }
+    function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
       const shared = lSharedSaves();
       const sv = shared.find(s => s.id === id);
@@ -6403,7 +6859,7 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
       document.getElementById("sd-local").addEventListener("click", () => {
         close();
         wSharedSaves(shared.filter(s => s.id !== id));
-        renderSharedList();
+        renderSharedList(); renderKomaSaveList(); renderStatSaveList();
         showToast("自分の画面から削除しました");
       });
       document.getElementById("sd-cloud").addEventListener("click", async () => {
@@ -6419,23 +6875,23 @@ const dvChips2 = (() => { const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2
         }
       });
     }
-function renderSharedList() {
-  const wrap = document.getElementById("shared-list-wrap");
-  const shared = lSharedSaves();
-  const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
-    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "all" ? " active" : "") + '" onclick="setSharedFilter(\'all\')">📋 全て</button>'
-    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "char" ? " active" : "") + '" onclick="setSharedFilter(\'char\')">👤 キャラ</button>'
-    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "koma" ? " active" : "") + '" onclick="setSharedFilter(\'koma\')">🎭 コマ</button>'
-    + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "both" ? " active" : "") + '" onclick="setSharedFilter(\'both\')">📚 両方</button>'
-    + '</div>';
-  const filtered = shared.filter(sv => {
-    if ((_sharedFilter || "all") === "char") return !sv._isKoma && !sv.komaData;
-    if ((_sharedFilter || "all") === "koma") return !!sv._isKoma && !sv.komaData;
-    if ((_sharedFilter || "all") === "both") return !!sv.komaData;
-    return true;
-  });
+    function renderSharedList() {
+      const wrap = document.getElementById("shared-list-wrap");
+      const shared = lSharedSaves();
+      const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
+        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "all" ? " active" : "") + '" onclick="setSharedFilter(\'all\')">📋 全て</button>'
+        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "char" ? " active" : "") + '" onclick="setSharedFilter(\'char\')">👤 キャラ</button>'
+        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "koma" ? " active" : "") + '" onclick="setSharedFilter(\'koma\')">🎭 コマ</button>'
+        + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "both" ? " active" : "") + '" onclick="setSharedFilter(\'both\')">📚 両方</button>'
+        + '</div>';
+      const filtered = shared.filter(sv => {
+        if ((_sharedFilter || "all") === "char") return !sv._isKoma && !sv.komaData;
+        if ((_sharedFilter || "all") === "koma") return !!sv._isKoma && !sv.komaData;
+        if ((_sharedFilter || "all") === "both") return !!sv.komaData;
+        return true;
+      });
       if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">\u5171\u6709\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093</p>'; return; }
-      wrap.innerHTML = filterBar + '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08' + filtered.length + '\u4ef6\uff09</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true)).join("") + '</div>';
+      wrap.innerHTML = filterBar + '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08' + filtered.length + '\u4ef6\uff09</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
     }
     async function saveDataTo(dest) {
@@ -6707,7 +7163,7 @@ function renderSharedList() {
       document.getElementById("btn-temp-all").addEventListener("click", () => renderMadnessList(TEMP_MADNESS, "temp-mad-result"));
       document.getElementById("btn-perm-mad").addEventListener("click", () => randMad(PERM_MADNESS, "perm-mad-result"));
       document.getElementById("btn-perm-all").addEventListener("click", () => renderMadnessList(PERM_MADNESS, "perm-mad-result"));
-document.getElementById("btn-save-current").addEventListener("click", () => saveDataTo("personal"));
+      document.getElementById("btn-save-current").addEventListener("click", () => saveDataTo("personal"));
       document.getElementById("btn-save-shared-current").addEventListener("click", () => saveDataTo("shared"));
       document.getElementById("btn-apply-key").addEventListener("click", () => applyKey(document.getElementById("sync-key-input").value));
       document.getElementById("btn-set-pgist").addEventListener("click", setPersonalGistId);
@@ -6746,23 +7202,6 @@ document.getElementById("btn-save-current").addEventListener("click", () => save
         renderKomaPalettePreview();
         updateKomaJsonPreview();
         updateSecretCmdPreview();
-        // コマ名→最初のラベル
-        document.getElementById("koma-name")?.addEventListener("keydown", e => {
-          if (e.key !== "Enter") return;
-          e.preventDefault();
-          document.querySelector("#koma-label-rows .koma-label-text")?.focus();
-        });
-
-        // KPタブ：各ブロック内Enter移動
-        document.getElementById("tab-kp")?.addEventListener("keydown", e => {
-          if (e.key !== "Enter" || e.target.tagName !== "INPUT") return;
-          e.preventDefault();
-          const card = e.target.closest(".full-card");
-          if (!card) return;
-          const inputs = [...card.querySelectorAll("input")];
-          const i = inputs.indexOf(e.target);
-          if (i >= 0 && i < inputs.length - 1) inputs[i + 1].focus();
-        });
       });
       if (currentKoma.labels.length === 0) {
         for (let i = 0; i < 5; i++) {
@@ -6779,9 +7218,10 @@ document.getElementById("btn-save-current").addEventListener("click", () => save
       // 秘匿コマンド初期化
       updateSecretCmdPreview();
     });
-    loadMemoLocal();
-    buildStatRows();
-    buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
+// loadMemoLocal はDOMContentLoaded後に移動済みか確認。
+// グローバル実行順を明示するため以下の順序を保証
+// （現状のコードでは let nxtId=1 の後に loadMemoLocal() があるか確認必須）
+    loadMemoLocal(); buildStatRows(); buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
     buildExtraParamRows();
     updateStatDisplay();
     loadKp();
@@ -6813,7 +7253,7 @@ document.getElementById("btn-save-current").addEventListener("click", () => save
       return _origGistSet(payload);
     };
 
-  function convertInputMode() {
+    function convertInputMode() {
       const newMode = inputMode === 6 ? 7 : 6;
       STATS.forEach(({ key }) => {
         const v = vals[key] || 0;
