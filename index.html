@@ -5774,6 +5774,10 @@ valInp.addEventListener("change", e => {
         const addStatVars = document.getElementById("chk-stat-vars")?.checked
           ?? document.getElementById("chk-stat-vars2")?.checked
           ?? true;
+        const sepSpaceMode = document.querySelector('input[name="koma-sep-space"]:checked')?.value
+          || document.querySelector('input[name="koma-sep-space2"]:checked')?.value
+          || document.querySelector('input[name="koma-sep-space3"]:checked')?.value
+          || 'before';
         if (addStatVars) {
           const statVarLines = [];
           STATS.forEach(({ key, label }) => {
@@ -5786,7 +5790,7 @@ valInp.addEventListener("change", e => {
             cmdLines.push("＝＝＝ ステータス ＝＝＝");
             cmdLines.push('');
             statVarLines.forEach(l => cmdLines.push(l));
-            cmdLines.push('');
+            if (sepSpaceMode === 'both') cmdLines.push('');
           }
           customFields.forEach(cf => {
             if (cf.label && cf.value) cmdLines.push("CC<={" + cf.label + "} 【" + cf.label + "】");
@@ -5812,7 +5816,7 @@ valInp.addEventListener("change", e => {
         cmdLines.push("＝＝＝ 秘匿管理 ＝＝＝");
         cmdLines.push('');
         getSecretCmdLines().forEach(l => cmdLines.push(l));
-        cmdLines.push("");
+        if (sepSpaceMode === 'both') cmdLines.push("");
       }
       cmdLines = cmdLines.map(l => l.replace(/\(/g, "（").replace(/\)/g, "）").replace(/（\{🎲\}）/g, "({🎲})"));
       while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
@@ -5873,6 +5877,7 @@ valInp.addEventListener("change", e => {
         cmdLines.push('＝＝＝ コマパレット ＝＝＝');
         cmdLines.push('');
         komaPaletteForExport.split('\n').forEach(l => cmdLines.push(l));
+        if (sepSpaceMode === 'both') cmdLines.push('');
       }
 
       while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
