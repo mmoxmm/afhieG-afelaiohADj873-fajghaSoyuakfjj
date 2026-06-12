@@ -6263,8 +6263,6 @@ const filtered = allSaves.filter(sv => {
       const dbChip = sv.dmgLabel && sv.dmgLabel !== "\u306a\u3057" ? '<span class="db-chip">DB ' + sv.dmgLabel + '</span>' : "";
       const badge = sv._shared ? '<span class="shared-badge">\u5171\u6709</span>' : "";
       const sharedBg = isShared ? 'background:rgba(26,158,114,0.08);border-color:rgba(26,158,114,0.3);' : '';
-      let chips = "";
-const isKoma = getSaveKind(sv) === "koma";
       const hasStatData = !isKoma;
       const hasKomaData = isKoma || !!sv.komaData;
 
