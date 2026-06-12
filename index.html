@@ -6283,8 +6283,6 @@ const isKoma = getSaveKind(sv) === "koma";
         komaChips = `<span class="stat-chip">差分 ${lbls}</span><span class="stat-chip">ST ${stN}</span><span class="stat-chip">PR ${prN}</span><span class="stat-chip" style="font-weight:700">計 ${total}</span>`;
       }
 
-      const chips = statChips;
-      const extraChips = komaChips;
       const actions = '<button class="btn-pri btn-load" style="font-size:13px;padding:4px 8px" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u8aad\u307f\u8fbc\u3080</button><button class="btn-update" style="font-size:13px;padding:4px 7px;background:none;border:0.5px solid #c07010;border-radius:var(--radius);color:#c07010;cursor:pointer;font-family:inherit" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u4e0a\u66f8\u304d</button><button class="btn-dng btn-delete" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">\u524a\u9664</button>';
       const statsHtml = (statChips + komaChips) || '<span style="color:var(--text3)">\u30c7\u30fc\u30bf\u306a\u3057</span>';
       return '<div class="save-card" style="' + sharedBg + '"><div class="save-card-head"><div class="save-card-name">' + typeEmoji + esc(sv.name) + badge + '</div><div class="save-card-date">' + ds + '</div></div><div class="save-card-stats">' + statsHtml + '</div><div class="save-card-actions">' + actions + '</div></div>';
