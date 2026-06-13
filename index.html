@@ -2586,21 +2586,24 @@
 
         <!-- 技能・メモ 2カラム -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
-          <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
-            <div
-              style="display:flex;align-items:center;justify-content:space-between;padding:5px 9px;background:var(--bg2);min-height:34px">
-              <div style="display:flex;align-items:center;gap:5px">
-                <span style="font-size:14px;font-weight:700;color:var(--text2)">🎯 技能</span>
+          <div class="accordion" id="acc-sk" style="margin-top:0">
+            <div class="acc-hd" onclick="toggleAcc('sk')"
+              style="justify-content:space-between">
+              <div class="acc-hd-left">
+                <span class="acc-title">🎯 技能</span>
                 <span class="acc-badge" id="badge-sk">0</span>
               </div>
-              <label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;color:var(--text3)"
-                title="チェック時：技能名に({🎲})を追加">
-                <input type="checkbox" id="chk-sk-dice" onchange="syncKomaSetting(this)"
-                  style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px">
-                <span style="font-size:11px">🎲</span>
-              </label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;color:var(--text3)"
+                  title="チェック時：技能名に({🎲})を追加" onclick="event.stopPropagation()">
+                  <input type="checkbox" id="chk-sk-dice" onchange="syncKomaSetting(this)"
+                    style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px">
+                  <span style="font-size:11px">🎲</span>
+                </label>
+                <span class="acc-arrow open" id="arrow-sk">▼</span>
+              </div>
             </div>
-            <div style="padding:7px;background:var(--bg)">
+            <div class="acc-body open" id="body-sk">
               <div class="sk-headers">
                 <span></span><span
                   style="text-align:left">技能名</span><span>値%</span><span>½</span><span>⅕</span><span></span>
@@ -7026,9 +7029,22 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       if (data.skHeader !== undefined) skHeader = data.skHeader;
       if (data.splHeader !== undefined) splHeader = data.splHeader;
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
-      if (atkList.some(a => a.name)) openAcc("atk");
-      if (consumables.some(c => c.label)) openAcc("cons");
-      if (memoList.some(m => m.label || m.content)) openMemo();
+      // 保存データ読込時は各セクションを折りたたみ、パレットプレビューを開く
+      ["atk", "cons", "sk"].forEach(id => {
+        document.getElementById("body-" + id)?.classList.remove("open");
+        document.getElementById("arrow-" + id)?.classList.remove("open");
+      });
+      // cons折りたたみボタンの矢印更新
+      const consFoldBtn = document.getElementById("cons-fold-btn");
+      if (consFoldBtn) consFoldBtn.textContent = "▼";
+      // パラメータ/MEMOも閉じる
+      const bodyMemo = document.getElementById("body-memo");
+      const arrowMemo = document.getElementById("arrow-memo");
+      if (bodyMemo) bodyMemo.classList.remove("open");
+      if (arrowMemo) arrowMemo.classList.remove("open");
+      // パレットプレビューを開く
+      openAcc("palette");
+      renderPalettePreview();
       extraParams = Array.isArray(data.extraParams) ? JSON.parse(JSON.stringify(data.extraParams)) : [];
       saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
       customFields = (data.customFields || []).map((cf, i) => ({
