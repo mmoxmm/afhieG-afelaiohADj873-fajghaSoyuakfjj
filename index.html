@@ -2543,16 +2543,16 @@
 
           <!-- 消耗・呪文 -->
           <div class="accordion" id="acc-cons" style="margin-top:0">
-            <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch">
-              <button data-cstab="cons" onclick="switchConsSplTab('cons')" id="cstab-btn-cons"
+            <div onclick="toggleAcc('cons')" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
+              <button data-cstab="cons" onclick="event.stopPropagation();switchConsSplTab('cons')" id="cstab-btn-cons"
                 style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒
                 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
-              <button data-cstab="spl" onclick="switchConsSplTab('spl')" id="cstab-btn-spl"
+              <button data-cstab="spl" onclick="event.stopPropagation();switchConsSplTab('spl')" id="cstab-btn-spl"
                 style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">✨
                 呪文 <span id="badge-spl2" class="acc-badge">0</span></button>
-              <button onclick="toggleAcc('cons')"
-                style="background:none;border:none;border-left:0.5px solid var(--border2);border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;padding:6px 8px;font-size:11px;flex-shrink:0"
-                id="cons-fold-btn" title="折りたたみ">▼</button>
+              <span
+                style="background:none;border:none;border-left:0.5px solid var(--border2);color:var(--text3);padding:6px 8px;font-size:11px;flex-shrink:0;display:flex;align-items:center"
+                id="cons-fold-btn" title="折りたたみ">▼</span>
             </div>
             <div class="acc-body open" id="body-cons">
               <div id="panel-cons">
@@ -2619,18 +2619,18 @@
           </div>
 
           <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
-            <div style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch">
-              <button id="memostat-tab-param" onclick="switchMemoStatTab('param')"
+            <div onclick="toggleMemo()" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
+              <button id="memostat-tab-param" onclick="event.stopPropagation();switchMemoStatTab('param')"
                 style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">
                 📊 パラメータ <span class="acc-badge" id="badge-extra-param">0</span>
               </button>
-              <button id="memostat-tab-memo" onclick="switchMemoStatTab('memo')"
+              <button id="memostat-tab-memo" onclick="event.stopPropagation();switchMemoStatTab('memo')"
                 style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">
                 📝 MEMO <span class="acc-badge" id="badge-memo">0</span>
               </button>
-              <button onclick="toggleMemo()"
-                style="background:none;border:none;border-left:0.5px solid var(--border2);border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;padding:6px 8px;font-size:11px;flex-shrink:0"
-                id="memo-fold-btn">▼</button>
+              <span
+                style="background:none;border:none;border-left:0.5px solid var(--border2);color:var(--text3);padding:6px 8px;font-size:11px;flex-shrink:0;display:flex;align-items:center"
+                id="memo-fold-btn">▼</span>
             </div>
             <div class="memo-body open" id="body-memo" style="padding:6px;background:var(--bg)">
               <div id="panel-extra-param">
@@ -5224,7 +5224,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       if (id === "cons") { const fb = document.getElementById("cons-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼"; }
     }
     function openAcc(id) { document.getElementById("body-" + id)?.classList.add("open"); document.getElementById("arrow-" + id)?.classList.add("open"); }
-    function toggleMemo() { const b = document.getElementById("body-memo"), a = document.getElementById("arrow-memo"); if (!b || !a) return; b.classList.toggle("open"); a.classList.toggle("open"); }
+    function toggleMemo() { const b = document.getElementById("body-memo"); if (!b) return; const o = b.classList.toggle("open"); const fb = document.getElementById("memo-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼"; }
     function openMemo() { document.getElementById("body-memo")?.classList.add("open"); document.getElementById("arrow-memo")?.classList.add("open"); }
     function toggleParse() { const b = document.getElementById("body-parse"), a = document.getElementById("arrow-parse"); if (!b || !a) return; b.classList.toggle("open"); a.classList.toggle("open"); }
     function autoExpand(el) { el.style.height = "auto"; el.style.height = Math.max(34, el.scrollHeight) + "px"; }
@@ -7039,9 +7039,9 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       if (consFoldBtn) consFoldBtn.textContent = "▼";
       // パラメータ/MEMOも閉じる
       const bodyMemo = document.getElementById("body-memo");
-      const arrowMemo = document.getElementById("arrow-memo");
       if (bodyMemo) bodyMemo.classList.remove("open");
-      if (arrowMemo) arrowMemo.classList.remove("open");
+      const memoFoldBtn = document.getElementById("memo-fold-btn");
+      if (memoFoldBtn) memoFoldBtn.textContent = "▼";
       // パレットプレビューを開く
       openAcc("palette");
       renderPalettePreview();
