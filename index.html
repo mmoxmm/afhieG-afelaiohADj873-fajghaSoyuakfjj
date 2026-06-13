@@ -6568,7 +6568,7 @@
       updateExport();
     }
     async function quickSaveStatus(dest) {
-      const d = getCurrentData({ includeKoma: true });
+      const d = getCurrentData();
       d.id = Date.now();
       d.savedAt = new Date().toISOString();
       if (dest === "personal") {
@@ -6745,7 +6745,7 @@
 
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
         + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'
-        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + (getSaveKind(sv)!=="char"?'<span style="text-decoration:underline">':'')+esc(sv.name)+(getSaveKind(sv)!=="char"?'</span>':'') + '</div>'
+        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">'+esc(sv.name)+'</span>' + '</div>'
         + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
         + '</div>'
