@@ -7346,6 +7346,10 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
             const tag = inp.value.trim();
             if (tag && !(sv.tags || []).includes(tag)) {
               sv.tags = [...(sv.tags || []), tag];
+              if (!_tagOrder.includes(tag)) {
+                _tagOrder.push(tag);
+                await saveTagOrder();
+              }
               if (isShared) {
                 wSharedSaves(list);
                 if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
@@ -7914,6 +7918,22 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
     if (savedSToken) { const inp = document.getElementById("shared-token-input"); if (inp) inp.value = savedSToken; applySharedKey(savedSToken); }
     const savedSGist = localStorage.getItem(L_SGIST) || "";
     if (savedSGist) { sharedGistId = savedSGist; updSharedGistDisplay(); const inp = document.getElementById("shared-gist-id-input"); if (inp) inp.value = savedSGist; document.getElementById("btn-shared-upload").disabled = !savedSToken; document.getElementById("btn-shared-download").disabled = !savedSToken; }
+
+    // 起動時にタグ順をクラウドから取得（共有優先、なければ個人）
+    (async () => {
+      try {
+        if (savedSToken && savedSGist) {
+          const sd = await sharedGistGet();
+          if (sd) loadTagOrder(sd);
+        } else if (savedToken) {
+          const pd = await gistGet();
+          if (pd) loadTagOrder(pd);
+        }
+        renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
+        renderTagFilterBar('tag-filter-bar-personal', getPersonalTags(), _personalTagFilter, setPersonalTagFilter);
+        renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
+      } catch { }
+    })();
 
     // 起動時にタグ順をクラウドから取得（共有優先、なければ個人）
     (async () => {
