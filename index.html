@@ -2845,7 +2845,7 @@
       <!-- KOMA TAB -->
       <div id="tab-koma" style="display:none">
         <!-- コマ名 & @トグル -->
-        <div class="full-card" style="margin-bottom:5px">
+        <div class="full-card" style="margin-bottom:5px;position:sticky;top:0;z-index:15;background:var(--bg)">
           <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
             <div style="flex:7;display:flex;align-items:center;gap:4px">
               <span class="kp-card-title" style="margin-bottom:0;white-space:nowrap">🎭 コマ設定</span>
@@ -4444,7 +4444,8 @@
         labels: JSON.parse(JSON.stringify(currentKoma.labels)),
         statusList: JSON.parse(JSON.stringify(currentKoma.statusList || [])),
         paramList: JSON.parse(JSON.stringify(currentKoma.paramList || [])),
-        manualPalette: currentKoma.manualPalette || ""
+        manualPalette: currentKoma.manualPalette || "",
+        settings: getSettings()
       };
       if (isShared) {
         const shared = lSharedSaves();
@@ -6880,7 +6881,7 @@
       document.getElementById("sd-cloud").addEventListener("click", async () => {
         close();
         wSharedSaves(shared.filter(s => s.id !== id));
-        renderSharedList();
+        renderSharedList(); renderKomaSaveList(); renderStatSaveList();
         showToast("削除中…");
         if (sharedToken) {
           const ok = await sharedGistSet({ saves: lSharedSaves() });
