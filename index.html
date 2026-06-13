@@ -5328,7 +5328,7 @@
       })
     }
     const DERIVED_LABELS = { hp: "HP", mp: "MP", san: "SAN", luck: "\u5e78\u904b" };
-    function updDerived(k) { const v = getEff(k), a = calcAuto(k), lbl = DERIVED_LABELS[k] || k; const hv = v ? Math.floor(v / 2) : 0, fv = v ? Math.floor(v / 5) : 0; const vd = document.getElementById("dv-" + k); if (vd) makeClickCopy(vd, ccCmd(lbl, v), v || null); const hd = document.getElementById("dh-" + k); if (hd) makeClickCopy(hd, ccCmd(lbl, hv), hv || null); const fd = document.getElementById("df-" + k); if (fd) makeClickCopy(fd, ccCmd(lbl, fv), fv || null); const inp = document.getElementById("di-" + k); if (inp) { if (!ovManual[k]) { inp.value = a > 0 ? a : ""; const clr = document.getElementById("dc-" + k); if (clr) clr.style.display = "none"; } inp.placeholder = k === "luck" ? "\u624b\u5165\u529b" : (a || "\u81ea\u52d5"); } }
+    function updDerived(k) { const v = getEff(k), a = calcAuto(k), lbl = DERIVED_LABELS[k] || k; const hv = v ? Math.floor(v / 2) : 0, fv = v ? Math.floor(v / 5) : 0; const vd = document.getElementById("dv-" + k); if (vd) makeClickCopy(vd, ccCmd(lbl, v), v || null); const hd = document.getElementById("dh-" + k); if (hd) makeClickCopy(hd, ccCmd(lbl, hv), hv || null); const fd = document.getElementById("df-" + k); if (fd) makeClickCopy(fd, ccCmd(lbl, fv), fv || null); const inp = document.getElementById("di-" + k); if (inp) inp.placeholder = k === "luck" ? "\u624b\u5165\u529b" : (a || "\u81ea\u52d5"); }
     function updDerivedMini() {
       const str = vals.str || 0, siz = vals.siz || 0, dex = vals.dex || 0, db = getDB(str + siz);
       const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
@@ -6970,7 +6970,7 @@
         name: document.getElementById("npc-name").value || "（名称なし）",
         savedAt: new Date().toISOString(),
         vals: { ...vals },
-        ov: { ...ov },
+        ov: { hp: getEff("hp"), mp: getEff("mp"), san: getEff("san"), luck: getEff("luck") },
         ovManual: { ...ovManual },
         skList: JSON.parse(JSON.stringify(skList)),
         atkList: JSON.parse(JSON.stringify(atkList)),
