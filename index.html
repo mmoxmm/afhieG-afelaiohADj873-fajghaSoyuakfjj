@@ -4174,10 +4174,10 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
     }
 
     async function saveTagOrder() {
-      _tagOrder = [..._tagOrder];
+      _tagOrder = [...new Set(_tagOrder)]; // 重複除去
       // 個人Gistにも保存
       if (syncToken) {
-        gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
+        await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
       }
       // 共有Gistにも保存
       if (sharedToken && sharedGistId) {
