@@ -4018,9 +4018,11 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
             confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.remove(); });
             confirmOverlay.querySelector('#_td-ok').addEventListener('click', async () => {
               confirmOverlay.remove();
-              // _tagOrder（タグマスター）からは削除せず、フィルター一覧表示は維持する
-              // 必要なら保存データからタグを一括除去する処理をここに追加できます
-              showToast('「' + tag + '」はマスターに残るため、フィルター一覧に表示され続けます');
+              localOrder = localOrder.filter(t => t !== tag);
+              _tagOrder = _tagOrder.filter(t => t !== tag);
+              await saveTagOrder();
+              renderRows();
+              showToast('「' + tag + '」を削除しました');
             });
           });
 
