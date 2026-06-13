@@ -3808,7 +3808,7 @@
         const btn = document.createElement('button');
         btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
         btn.textContent = tag;
-        btn.style.cssText = 'font-size:11px;padding:3px 8px;line-height:1;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);overflow:hidden;';
+        btn.style.cssText = 'font-size:11px;padding:3px 4px;line-height:1;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);overflow:hidden;';
         if (currentTag === tag) btn.style.cssText += 'background:var(--accent);color:#fff;border-color:var(--accent);';
         btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
         el.appendChild(btn);
@@ -3968,21 +3968,22 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
             const commit = () => {
               const newTag = inp2.value.trim();
               if (!newTag || newTag === tag) { inp2.replaceWith(lbl); return; }
-              // localOrderを更新
+              // localOrderを更新（新規追加せず上書き）
               const oi = localOrder.indexOf(tag);
               if (oi >= 0) localOrder[oi] = newTag;
-              // 全保存データのタグも置換
-              const allSaves = [...lSaves(), ...lSharedSaves()];
-              // personal
-              const ps = lSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag?newTag:t) }));
-              writeSaves(ps);
-              currentSaves = ps;
-              // shared
-              const ss = lSharedSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag?newTag:t) }));
-              wSharedSaves(ss);
-              // _tagOrderも更新
+              else localOrder.push(newTag);
+              // _tagOrderも上書き（重複しないよう旧名を削除してから置換）
               const ti = _tagOrder.indexOf(tag);
               if (ti >= 0) _tagOrder[ti] = newTag;
+              // 重複除去
+              const seen = new Set();
+              localOrder.forEach((t, i) => { if (seen.has(t)) localOrder.splice(i, 1); else seen.add(t); });
+              // 全保存データのタグを旧名→新名に置換（上書き）
+              const ps = lSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag ? newTag : t) }));
+              writeSaves(ps);
+              currentSaves = ps;
+              const ss = lSharedSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag ? newTag : t) }));
+              wSharedSaves(ss);
               saveTagOrder();
               renderRows();
               showToast('「' + tag + '」→「' + newTag + '」に変更しました');
@@ -4014,11 +4015,9 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
             confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.remove(); });
             confirmOverlay.querySelector('#_td-ok').addEventListener('click', async () => {
               confirmOverlay.remove();
-              localOrder = localOrder.filter(t => t !== tag);
-              _tagOrder = _tagOrder.filter(t => t !== tag);
-              await saveTagOrder();
-              renderRows();
-              showToast('「' + tag + '」を削除しました');
+              // _tagOrder（タグマスター）からは削除せず、フィルター一覧表示は維持する
+              // 必要なら保存データからタグを一括除去する処理をここに追加できます
+              showToast('「' + tag + '」はマスターに残るため、フィルター一覧に表示され続けます');
             });
           });
 
@@ -4046,7 +4045,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
             renderRows();
           });
 
-          row.append(handle, lbl, upBtn, downBtn, editBtn, delBtn);
+          row.append(handle, lbl, upBtn, downBtn, editBtn);
 
           rowContainer.appendChild(row);
 
@@ -7246,7 +7245,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
 
       const tags = sv.tags || [];
 const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
-  + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
+  + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 3px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
@@ -7362,7 +7361,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
                 newTag.dataset.tagDel = tag;
                 newTag.dataset.id = String(id);
                 newTag.dataset.shared = String(isShared ? 1 : 0);
-                newTag.innerHTML = tag + ' <span style="color:var(--text3)">×</span>';
+                newTag.innerHTML = tag;
                 newTag.addEventListener('click', async () => {
                   sv.tags = (sv.tags || []).filter(t => t !== tag);
                   if (isShared) { wSharedSaves(list); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); if (sharedToken) await sharedGistSet({ saves: lSharedSaves() }); }
@@ -7382,6 +7381,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
           inp.addEventListener("keydown", e => { if (e.key === "Enter") { _enterFired = true; _tagAddConfirmed = true; confirm(); } if (e.key === "Escape") { if (isShared) renderSharedList(); else renderSaveList(); } });
           inp.addEventListener("keyup", e => { if (e.key === "Enter" && !_enterFired) { _tagAddConfirmed = true; confirm(); } _enterFired = false; });
           inp.addEventListener("blur", () => { if (!_tagAddConfirmed) { _tagAddConfirmed = true; confirm(); } });
+          inp.addEventListener("change", e => { _tagAddConfirmed = true; confirm(); });
         });
       });
 
@@ -7914,6 +7914,22 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
     if (savedSToken) { const inp = document.getElementById("shared-token-input"); if (inp) inp.value = savedSToken; applySharedKey(savedSToken); }
     const savedSGist = localStorage.getItem(L_SGIST) || "";
     if (savedSGist) { sharedGistId = savedSGist; updSharedGistDisplay(); const inp = document.getElementById("shared-gist-id-input"); if (inp) inp.value = savedSGist; document.getElementById("btn-shared-upload").disabled = !savedSToken; document.getElementById("btn-shared-download").disabled = !savedSToken; }
+
+    // 起動時にタグ順をクラウドから取得（共有優先、なければ個人）
+    (async () => {
+      try {
+        if (savedSToken && savedSGist) {
+          const sd = await sharedGistGet();
+          if (sd) loadTagOrder(sd);
+        } else if (savedToken) {
+          const pd = await gistGet();
+          if (pd) loadTagOrder(pd);
+        }
+        renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
+        renderTagFilterBar('tag-filter-bar-personal', getPersonalTags(), _personalTagFilter, setPersonalTagFilter);
+        renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
+      } catch { }
+    })();
     // コマ作成タブ：保存タブのGist同期に統合
     // gistSet / gistGet を拡張してkomasも含める
     const _origGistSet = gistSet;
