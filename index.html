@@ -6568,8 +6568,8 @@
       applySettings(data.settings);
       if (data.komaData) {
         loadKomaIntoEditor(data.komaData);
-        if (data.komaData.settings) applySettings(data.komaData.settings);
       }
+      applySettings(data.settings);
       updateExport();
     }
     async function quickSaveStatus(dest) {
