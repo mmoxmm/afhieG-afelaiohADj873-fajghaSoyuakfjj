@@ -3941,7 +3941,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         localOrder.forEach((tag, idx) => {
           const row = document.createElement('div');
           row.className = 'tag-reorder-row';
-          row.draggable = true;
+          row.draggable = false;
           row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:var(--radius);border:2px solid var(--border);margin-bottom:4px;background:var(--bg2);cursor:grab;user-select:none;font-size:13px;transition:border-color .1s,background .1s,opacity .15s;';
           row.dataset.idx = idx;
 
@@ -3983,43 +3983,59 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
 
           row.append(handle, lbl, delBtn);
 
-          // ドラッグ＆ドロップ
-          row.addEventListener('dragstart', e => {
-            dragSrc = idx;
+          rowContainer.appendChild(row);
+
+          // ポインター統合DnD（mouse/touch/pen共通）
+          handle.style.touchAction = 'none';
+          let _dragSrcIdx = null;
+          handle.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            handle.setPointerCapture(e.pointerId);
+            _dragSrcIdx = idx;
             row.style.opacity = '0.4';
             row.style.background = 'var(--bg3)';
-            e.dataTransfer.effectAllowed = 'move';
-          });
-          row.addEventListener('dragend', () => {
-            row.style.opacity = '';
-            row.style.background = 'var(--bg2)';
-            rowContainer.querySelectorAll('.tag-reorder-row').forEach(r => {
-              r.style.borderColor = 'var(--border)';
-              r.style.borderStyle = '2px solid';
-              r.style.marginTop = '4px';
-            });
-          });
-          row.addEventListener('dragover', e => {
-            e.preventDefault();
-            rowContainer.querySelectorAll('.tag-reorder-row').forEach(r => {
-              r.style.borderColor = 'var(--border)';
+            const allRows = () => [...rowContainer.querySelectorAll('.tag-reorder-row')];
+            const resetStyles = () => allRows().forEach(r => {
               r.style.borderTopColor = 'var(--border)';
+              r.style.borderTopWidth = '2px';
               r.style.marginTop = '4px';
             });
-            row.style.borderTopColor = 'var(--accent)';
-            row.style.borderTopWidth = '3px';
-            row.style.marginTop = '1px';
+            const onMove = ev => {
+              resetStyles();
+              const target = allRows().find(r => {
+                const rect = r.getBoundingClientRect();
+                return ev.clientY >= rect.top && ev.clientY < rect.bottom;
+              });
+              if (target && target !== row) {
+                target.style.borderTopColor = 'var(--accent)';
+                target.style.borderTopWidth = '3px';
+                target.style.marginTop = '1px';
+              }
+            };
+            const onUp = ev => {
+              handle.removeEventListener('pointermove', onMove);
+              handle.removeEventListener('pointerup', onUp);
+              row.style.opacity = '';
+              row.style.background = 'var(--bg2)';
+              resetStyles();
+              const allR = allRows();
+              const targetRow = allR.find(r => {
+                const rect = r.getBoundingClientRect();
+                return ev.clientY >= rect.top && ev.clientY < rect.bottom;
+              });
+              if (targetRow && targetRow !== row) {
+                const toIdx = +targetRow.dataset.idx;
+                if (_dragSrcIdx !== null && _dragSrcIdx !== toIdx) {
+                  const moved = localOrder.splice(_dragSrcIdx, 1)[0];
+                  localOrder.splice(toIdx, 0, moved);
+                  renderRows();
+                }
+              }
+              _dragSrcIdx = null;
+            };
+            handle.addEventListener('pointermove', onMove);
+            handle.addEventListener('pointerup', onUp);
           });
-          row.addEventListener('drop', e => {
-            e.preventDefault();
-            if (dragSrc === null || dragSrc === idx) return;
-            const moved = localOrder.splice(dragSrc, 1)[0];
-            localOrder.splice(idx, 0, moved);
-            dragSrc = null;
-            renderRows();
-          });
-
-          rowContainer.appendChild(row);
         });
       };
       renderRows();
