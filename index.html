@@ -4609,7 +4609,7 @@ function applySettings(s) {
     }
     let _hideChatChar = false;
 let _invisible = false;
-    let _komaSettings = { hideStatus: false, hideChat: false, invisible: false, skDice: false, inclSep: false, sepSpace: 'before' };
+   let _komaSettings = { hideStatus: false, hideChat: false, invisible: false, skDice: false, inclSep: false, sepSpace: 'before' };
 const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
@@ -7175,8 +7175,12 @@ const invisible = document.getElementById("chk-invisible")?.checked || false;
         renderStatSaveList();
       }
     }
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll(".tab[data-tab]").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+document.addEventListener("DOMContentLoaded", function () {
+  const hideChatEl = document.getElementById('koma-hide-chat');
+  if (hideChatEl) hideChatEl.checked = true;
+  const invisibleEl = document.getElementById('koma-invisible');
+  if (invisibleEl) invisibleEl.checked = true;
+  document.querySelectorAll(".tab[data-tab]").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
       document.getElementById("btn-add-atk").addEventListener("click", () => { atkList.push({ id: nxtId++, name: "", pct: 0, dmg: "", note: "", useDB: false }); buildAtkRows(); openAcc("atk"); });
       document.getElementById("btn-add-sk").addEventListener("click", () => { skList.push({ id: nxtId++, name: "", val: 0 }); buildSkRows(); });
       document.getElementById("btn-add-spl").addEventListener("click", () => { splList.push({ id: nxtId++, name: "", mp: "", note: "" }); buildSplRows(); });
