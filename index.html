@@ -4566,13 +4566,13 @@
         el.textContent = statOn && statLines.length ? statLines.join("\n") : "（特性値を入力すると表示）";
       });
     }
-    function getSettings() {
+function getSettings() {
       return {
-        hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || document.getElementById('chk-hide-status2')?.checked || document.getElementById('chk-hide-status3')?.checked || false,
-hideChat: document.getElementById('chk-hide-chat-char')?.checked ?? false,
-invisible: document.getElementById('chk-invisible')?.checked ?? false,
-        skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || document.getElementById('chk-sk-dice2')?.checked || false,
-        inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || document.getElementById('chk-incl-sep2')?.checked || document.getElementById('chk-incl-sep3')?.checked || false,
+        hideStatus: _komaSettings.hideStatus,
+        hideChat: _komaSettings.hideChat,
+        invisible: _komaSettings.invisible,
+        skDice: _komaSettings.skDice,
+        inclSep: _komaSettings.inclSep,
         sepSpace: document.querySelector('input[name="koma-sep-space"]:checked, input[name="koma-sep-space2"]:checked, input[name="koma-sep-space3"]:checked, input[name="koma-sep-space4"]:checked')?.value || 'before',
         komaPaletteSrc,
         paletteMode: document.querySelector('input[name="palette-mode"]:checked, input[name="palette-mode2"]:checked, input[name="palette-mode3"]:checked')?.value || 'auto',
@@ -4584,11 +4584,18 @@ invisible: document.getElementById('chk-invisible')?.checked ?? false,
 
 function applySettings(s) {
   s = s || {};
-      ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
-      ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
-      ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
-      ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
-      ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
+      // グローバル変数を先に更新
+      _komaSettings.hideStatus = !!s.hideStatus;
+      _komaSettings.hideChat = !!s.hideChat;
+      _komaSettings.invisible = !!s.invisible;
+      _komaSettings.skDice = !!s.skDice;
+      _komaSettings.inclSep = !!s.inclSep;
+      // チェックボックスに反映
+      ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = _komaSettings.hideStatus; });
+      ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = _komaSettings.hideChat; });
+      ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = _komaSettings.invisible; });
+      ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = _komaSettings.skDice; });
+      ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = _komaSettings.inclSep; });
       const sep = s.sepSpace || 'before';
       ['koma-sep-before', 'koma-sep-before2', 'koma-sep-before3', 'koma-sep-before4'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
       ['koma-sep-both', 'koma-sep-both2', 'koma-sep-both3', 'koma-sep-both4'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
@@ -4602,7 +4609,8 @@ function applySettings(s) {
     }
     let _hideChatChar = false;
 let _invisible = false;
-    const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
+    let _komaSettings = { hideStatus: false, hideChat: false, invisible: false, skDice: false, inclSep: false, sepSpace: 'before' };
+const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
     const TEMP_MADNESS = [{ id: 1, title: "健忘症", desc: "直前1d10時間の記憶を失う。" }, { id: 2, title: "恐怖症", desc: "特定の対象への激しい恐怖。" }, { id: 3, title: "躁状態", desc: "過度に陽気・饒舌になる。" }, { id: 4, title: "幻覚", desc: "遭遇した怪物が見え続ける。" }, { id: 5, title: "昏睡・気絶", desc: "意識を失い倒れる。" }, { id: 6, title: "パラノイア", desc: "仲間を含むすべてを疑う。" }, { id: 7, title: "ヒステリー", desc: "叫び・泣き・笑いが止まらない。" }, { id: 8, title: "凍りつく", desc: "1d10ラウンド行動不能。" }, { id: 9, title: "逃亡衝動", desc: "現場から遠ざかろうとする。" }, { id: 10, title: "転換性障害", desc: "体の一部が一時的に機能しない。" }];
@@ -6055,27 +6063,33 @@ let _invisible = false;
     }
 
     function setExportMode(mode) { exportMode = mode;["json", "text"].forEach(m => { const b = document.getElementById("exp-btn-" + m); if (b) b.className = "export-btn" + (m === mode ? "" : " sec"); const b2 = document.getElementById("exp-btn-" + m + "2"); if (b2) b2.className = "export-btn" + (m === mode ? "" : " sec"); }); const dl = document.getElementById("btn-dl-json"); if (dl) dl.style.display = mode === "json" ? "inline-flex" : "none"; const dl2 = document.getElementById("btn-dl-json2"); if (dl2) dl2.style.display = mode === "json" ? "inline-flex" : "none"; updateExport(); }
-    function syncKomaSetting(el) {
-      const idMap = {
-        'chk-hide-status': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
-        'chk-hide-status2': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
-        'chk-hide-status3': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
-        'koma-hide-status': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
-'koma-hide-chat': ['koma-hide-chat', 'chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3'],
-'koma-invisible': ['koma-invisible', 'chk-invisible', 'chk-invisible2', 'chk-invisible3'],
-        'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'chk-sk-dice2': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
-        'koma-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
-        'chk-incl-sep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
-        'chk-incl-sep2': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
-        'chk-incl-sep3': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
+
+function syncKomaSetting(el) {
+      // グローバル変数に値を保存（これが唯一の真の値）
+      const keyMap = {
+        'chk-hide-status': 'hideStatus', 'chk-hide-status2': 'hideStatus', 'chk-hide-status3': 'hideStatus', 'koma-hide-status': 'hideStatus',
+        'koma-hide-chat': 'hideChat', 'chk-hide-chat-char': 'hideChat', 'chk-hide-chat-char2': 'hideChat', 'chk-hide-chat-char3': 'hideChat',
+        'koma-invisible': 'invisible', 'chk-invisible': 'invisible', 'chk-invisible2': 'invisible', 'chk-invisible3': 'invisible',
+        'chk-sk-dice': 'skDice', 'chk-sk-dice-save': 'skDice', 'chk-sk-dice2': 'skDice',
+        'koma-incl-sep': 'inclSep', 'chk-incl-sep': 'inclSep', 'chk-incl-sep2': 'inclSep', 'chk-incl-sep3': 'inclSep',
       };
-      const ids = idMap[el.id] || [];
-      ids.forEach(id => {
-        const t = document.getElementById(id);
-        if (t && t !== el) t.checked = el.checked;
-      });
+      const key = keyMap[el.id];
+      if (key) _komaSettings[key] = el.checked;
+
+      // 全チェックボックスをグローバル変数から反映
+      const idMap = {
+        'hideStatus': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
+        'hideChat': ['koma-hide-chat', 'chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3'],
+        'invisible': ['koma-invisible', 'chk-invisible', 'chk-invisible2', 'chk-invisible3'],
+        'skDice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
+        'inclSep': ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'],
+      };
+      if (key) {
+        (idMap[key] || []).forEach(id => {
+          const t = document.getElementById(id);
+          if (t) t.checked = _komaSettings[key];
+        });
+      }
 
       // 🎲チェック連動：追加ステータス欄1・2行目に自動入力
       const diceIds = ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'];
