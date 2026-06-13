@@ -2227,6 +2227,7 @@
       color: var(--text3);
       opacity: 0.6;
     }
+
     .koma-sep-inp {
       color: var(--accent) !important;
     }
@@ -2329,6 +2330,7 @@
       color: var(--text3);
       opacity: 0.6;
     }
+
     .koma-sep-inp {
       color: var(--accent) !important;
     }
@@ -2798,7 +2800,8 @@
           <div style="display:flex;align-items:center;gap:3px;margin-bottom:6px;flex-wrap:wrap">
             <div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px;flex-shrink:0">
               <button class="save-filter-btn active" id="stat-sfb-all" onclick="setStatSaveFilter('all')">📋 全て</button>
-              <button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤 個人</button>
+              <button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤
+                個人</button>
               <button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
             </div>
             <div id="tag-filter-bar-stat-top" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center"></div>
@@ -3790,25 +3793,256 @@
     let _sharedTagFilter = null;
 
     function getPersonalTags() {
-      return [...new Set(currentSaves.flatMap(s => s.tags || []))].sort();
+      return [...new Set([..._tagOrder, ...currentSaves.flatMap(s => s.tags || [])])];
     }
     function getSharedTags() {
-      return [...new Set(lSharedSaves().flatMap(s => s.tags || []))].sort();
+      return [...new Set([..._tagOrder, ...lSharedSaves().flatMap(s => s.tags || [])])];
     }
 
     function renderTagFilterBar(containerId, tags, currentTag, onClickFn) {
       const el = document.getElementById(containerId);
       if (!el) return;
       el.innerHTML = '';
-      if (!tags.length) return;
-      tags.forEach(tag => {
+      const sorted = getSortedTags(tags);
+      sorted.forEach(tag => {
         const btn = document.createElement('button');
         btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
         btn.textContent = tag;
-        btn.style.cssText = 'font-size:11px;padding:3px 8px;';
+        btn.style.cssText = 'font-size:11px;padding:3px 8px;background:var(--bg);border:0.5px solid var(--border2);';
+        if (currentTag === tag) btn.style.cssText += 'background:var(--accent);color:#fff;border-color:var(--accent);';
         btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
         el.appendChild(btn);
       });
+
+      // ＋ボタン（タグ新規作成）
+      const addBtn = document.createElement('button');
+      addBtn.textContent = '＋';
+      addBtn.title = '長押しで並べ替え';
+      addBtn.style.cssText = 'font-size:11px;padding:2px 7px;border-radius:var(--radius);border:0.5px dashed var(--border2);background:var(--bg);color:var(--text3);cursor:pointer;white-space:nowrap;user-select:none;';
+
+      // 短押し → タグ名入力ポップアップ
+      let pressTimer = null;
+      let didLongPress = false;
+
+      addBtn.addEventListener('pointerdown', () => {
+        didLongPress = false;
+        pressTimer = setTimeout(() => {
+          didLongPress = true;
+          showTagReorderPopup(containerId, tags, onClickFn);
+        }, 600);
+      });
+      addBtn.addEventListener('pointerup', () => {
+        clearTimeout(pressTimer);
+      });
+      addBtn.addEventListener('pointercancel', () => {
+        clearTimeout(pressTimer);
+      });
+      addBtn.addEventListener('click', () => {
+        if (didLongPress) return;
+        showTagCreatePopup(addBtn, containerId, tags, currentTag, onClickFn);
+      });
+
+      el.appendChild(addBtn);
+    }
+
+    function showTagCreatePopup(anchor, containerId, tags, currentTag, onClickFn) {
+      // 既存ポップアップ除去
+      document.getElementById('_tagCreatePop')?.remove();
+      const pop = document.createElement('div');
+      pop.id = '_tagCreatePop';
+      pop.style.cssText = 'position:fixed;z-index:9999;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);box-shadow:0 4px 16px rgba(0,0,0,.25);padding:10px;min-width:180px;';
+      const rect = anchor.getBoundingClientRect();
+      pop.style.top = (rect.bottom + 4) + 'px';
+      pop.style.left = Math.min(rect.left, window.innerWidth - 200) + 'px';
+
+      const title = document.createElement('div');
+      title.textContent = '新しいタグ名';
+      title.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:700;';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.placeholder = 'タグ名...';
+      inp.style.cssText = 'width:100%;font-size:13px;padding:4px 7px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;box-sizing:border-box;';
+      const btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:4px;margin-top:6px;';
+      const okBtn = document.createElement('button');
+      okBtn.textContent = '追加';
+      okBtn.style.cssText = 'flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;padding:5px;';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.textContent = 'キャンセル';
+      cancelBtn.style.cssText = 'flex:1;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:5px;';
+      btnRow.append(okBtn, cancelBtn);
+      pop.append(title, inp, btnRow);
+      document.body.appendChild(pop);
+      inp.focus();
+
+      const close = () => pop.remove();
+      cancelBtn.addEventListener('click', close);
+const confirm = async () => {
+        const tag = inp.value.trim();
+        console.log('confirm fired, tag:', tag);  // ← 追加
+        close();
+        if (!tag) return;
+        if (!_tagOrder.includes(tag)) {
+          _tagOrder.push(tag);
+          await saveTagOrder();
+        }
+          console.log('_tagOrder after push:', _tagOrder);  // ← 追加
+        if (containerId === 'tag-filter-bar-personal') { renderSaveList(); renderTagFilterBar(containerId, getPersonalTags(), _personalTagFilter, onClickFn); }
+        else if (containerId === 'tag-filter-bar-shared') { renderSharedList(); renderTagFilterBar(containerId, getSharedTags(), _sharedTagFilter, onClickFn); }
+        else if (containerId === 'tag-filter-bar-koma') { renderKomaSaveList(); renderTagFilterBar(containerId, getKomaTags(), _komaTagFilter, onClickFn); }
+        else if (containerId === 'tag-filter-bar-stat-top') { renderStatSaveList(); renderTagFilterBar(containerId, getStatTags(), _statTagFilter, onClickFn); }
+      };
+      okBtn.addEventListener('click', confirm);
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') close(); });
+      setTimeout(() => {
+        document.addEventListener('pointerdown', function out(e) {
+          if (!pop.contains(e.target) && e.target !== anchor) { close(); document.removeEventListener('pointerdown', out); }
+        });
+      }, 300);
+    }
+
+function showTagReorderPopup(containerId, tags, onClickFn) {
+      document.getElementById('_tagReorderPop')?.remove();
+      const sorted = getSortedTags(tags);
+      const pop = document.createElement('div');
+      pop.id = '_tagReorderPop';
+      pop.style.cssText = 'position:fixed;z-index:9999;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);box-shadow:0 4px 16px rgba(0,0,0,.25);padding:10px;min-width:220px;max-height:360px;overflow-y:auto;';
+      const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+      pop.style.top = (cy - 120) + 'px';
+      pop.style.left = (cx - 110) + 'px';
+
+      const title = document.createElement('div');
+      title.textContent = '☰ タグを並べ替え・削除';
+      title.style.cssText = 'font-size:12px;font-weight:700;color:var(--text2);margin-bottom:7px;';
+      pop.appendChild(title);
+
+      const rowContainer = document.createElement('div');
+      pop.appendChild(rowContainer);
+
+      const btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:4px;margin-top:8px;';
+      const okBtn = document.createElement('button');
+      okBtn.textContent = '保存';
+      okBtn.style.cssText = 'flex:1;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;padding:6px;font-weight:700;';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.textContent = 'キャンセル';
+      cancelBtn.style.cssText = 'flex:1;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;padding:6px;';
+      btnRow.append(okBtn, cancelBtn);
+      pop.appendChild(btnRow);
+      document.body.appendChild(pop);
+
+      let dragSrc = null;
+      let localOrder = [...sorted];
+
+      const renderRows = () => {
+        rowContainer.innerHTML = '';
+        localOrder.forEach((tag, idx) => {
+          const row = document.createElement('div');
+          row.className = 'tag-reorder-row';
+          row.draggable = true;
+          row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:var(--radius);border:2px solid var(--border);margin-bottom:4px;background:var(--bg2);cursor:grab;user-select:none;font-size:13px;transition:border-color .1s,background .1s,opacity .15s;';
+          row.dataset.idx = idx;
+
+          const handle = document.createElement('span');
+          handle.textContent = '⠿';
+          handle.style.cssText = 'color:var(--text3);font-size:16px;line-height:1;flex-shrink:0;';
+
+          const lbl = document.createElement('span');
+          lbl.textContent = tag;
+          lbl.style.cssText = 'flex:1;font-weight:600;';
+
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '×';
+          delBtn.style.cssText = 'background:none;border:0.5px solid var(--danger);border-radius:3px;color:var(--danger);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;';
+          delBtn.title = 'タグを削除';
+          delBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            // 確認ポップアップ
+            const confirmOverlay = document.createElement('div');
+            confirmOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
+            confirmOverlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:260px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)">'
+              + '<div style="font-size:14px;font-weight:700;margin-bottom:6px">「' + tag + '」を削除</div>'
+              + '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">このタグをフィルター一覧から削除します。<br>保存データに付いたタグは残ります。</div>'
+              + '<button id="_td-ok" style="width:100%;background:var(--danger);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:9px;margin-bottom:7px;font-weight:700">削除する</button>'
+              + '<button id="_td-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">キャンセル</button>'
+              + '</div>';
+            document.body.appendChild(confirmOverlay);
+            confirmOverlay.querySelector('#_td-cancel').addEventListener('click', () => confirmOverlay.remove());
+            confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.remove(); });
+            confirmOverlay.querySelector('#_td-ok').addEventListener('click', async () => {
+              confirmOverlay.remove();
+              localOrder = localOrder.filter(t => t !== tag);
+              _tagOrder = _tagOrder.filter(t => t !== tag);
+              await saveTagOrder();
+              renderRows();
+              showToast('「' + tag + '」を削除しました');
+            });
+          });
+
+          row.append(handle, lbl, delBtn);
+
+          // ドラッグ＆ドロップ
+          row.addEventListener('dragstart', e => {
+            dragSrc = idx;
+            row.style.opacity = '0.4';
+            row.style.background = 'var(--bg3)';
+            e.dataTransfer.effectAllowed = 'move';
+          });
+          row.addEventListener('dragend', () => {
+            row.style.opacity = '';
+            row.style.background = 'var(--bg2)';
+            rowContainer.querySelectorAll('.tag-reorder-row').forEach(r => {
+              r.style.borderColor = 'var(--border)';
+              r.style.borderStyle = '2px solid';
+              r.style.marginTop = '4px';
+            });
+          });
+          row.addEventListener('dragover', e => {
+            e.preventDefault();
+            rowContainer.querySelectorAll('.tag-reorder-row').forEach(r => {
+              r.style.borderColor = 'var(--border)';
+              r.style.borderTopColor = 'var(--border)';
+              r.style.marginTop = '4px';
+            });
+            row.style.borderTopColor = 'var(--accent)';
+            row.style.borderTopWidth = '3px';
+            row.style.marginTop = '1px';
+          });
+          row.addEventListener('drop', e => {
+            e.preventDefault();
+            if (dragSrc === null || dragSrc === idx) return;
+            const moved = localOrder.splice(dragSrc, 1)[0];
+            localOrder.splice(idx, 0, moved);
+            dragSrc = null;
+            renderRows();
+          });
+
+          rowContainer.appendChild(row);
+        });
+      };
+      renderRows();
+
+      const close = () => pop.remove();
+      cancelBtn.addEventListener('click', close);
+      okBtn.addEventListener('click', async () => {
+        const all = getSortedTags(tags);
+        all.forEach(t => { if (!localOrder.includes(t)) localOrder.push(t); });
+        const others = _tagOrder.filter(t => !localOrder.includes(t));
+        _tagOrder = [...localOrder, ...others];
+        await saveTagOrder();
+        close();
+        const el = document.getElementById(containerId);
+        if (el) renderTagFilterBar(containerId, tags, null, onClickFn);
+        showToast('タグ順を保存しました');
+      });
+      setTimeout(() => {
+        document.addEventListener('pointerdown', function out(e) {
+          if (!pop.contains(e.target) && !document.getElementById('_tagReorderPop')?.contains(e.target)) {
+            close();
+            document.removeEventListener('pointerdown', out);
+          }
+        });
+      }, 100);
     }
 
     function setSharedFilter(f) {
@@ -3831,12 +4065,38 @@
       renderKomaSaveList();
     }
 
-let _komaTagFilter = null;
+    let _komaTagFilter = null;
+    let _tagOrder = []; // 共有Gistで管理するタグ並び順
+
+    function loadTagOrder(data) {
+      if (data && Array.isArray(data.tagOrder)) {
+        _tagOrder = data.tagOrder;
+      }
+    }
+
+    function getSortedTags(tags) {
+      if (!_tagOrder.length) return tags;
+      return [...tags].sort((a, b) => {
+        const ai = _tagOrder.indexOf(a);
+        const bi = _tagOrder.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b);
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
+    }
+
+    async function saveTagOrder() {
+      _tagOrder = [..._tagOrder]; // normalize
+      if (sharedToken && sharedGistId) {
+        await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
+      }
+    }
 
     function getKomaTags() {
       const personal = lSaves().filter(k => k._isKoma || k.komaData);
       const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
-      return [...new Set([...personal, ...shared].flatMap(s => s.tags || []))].sort();
+      return [...new Set([..._tagOrder, ...[...personal, ...shared].flatMap(s => s.tags || [])])];
     }
 
     function setKomaTagFilter(tag) {
@@ -4625,7 +4885,7 @@ let _komaTagFilter = null;
         el.textContent = statOn && statLines.length ? statLines.join("\n") : "（特性値を入力すると表示）";
       });
     }
-function getSettings() {
+    function getSettings() {
       return {
         hideStatus: _komaSettings.hideStatus,
         hideChat: _komaSettings.hideChat,
@@ -4641,8 +4901,8 @@ function getSettings() {
       };
     }
 
-function applySettings(s) {
-  s = s || {};
+    function applySettings(s) {
+      s = s || {};
       // グローバル変数を先に更新
       _komaSettings.hideStatus = !!s.hideStatus;
       _komaSettings.hideChat = !!s.hideChat;
@@ -4667,9 +4927,9 @@ function applySettings(s) {
       if (s.useV6 !== undefined) { ['chk-use-v6', 'chk-use-v6-2', 'chk-use-v6-3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.useV6; }); }
     }
     let _hideChatChar = false;
-let _invisible = false;
-   let _komaSettings = { hideStatus: false, hideChat: false, invisible: false, skDice: false, inclSep: false, sepSpace: 'before' };
-const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
+    let _invisible = false;
+    let _komaSettings = { hideStatus: false, hideChat: false, invisible: false, skDice: false, inclSep: false, sepSpace: 'before' };
+    const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
     const TEMP_MADNESS = [{ id: 1, title: "健忘症", desc: "直前1d10時間の記憶を失う。" }, { id: 2, title: "恐怖症", desc: "特定の対象への激しい恐怖。" }, { id: 3, title: "躁状態", desc: "過度に陽気・饒舌になる。" }, { id: 4, title: "幻覚", desc: "遭遇した怪物が見え続ける。" }, { id: 5, title: "昏睡・気絶", desc: "意識を失い倒れる。" }, { id: 6, title: "パラノイア", desc: "仲間を含むすべてを疑う。" }, { id: 7, title: "ヒステリー", desc: "叫び・泣き・笑いが止まらない。" }, { id: 8, title: "凍りつく", desc: "1d10ラウンド行動不能。" }, { id: 9, title: "逃亡衝動", desc: "現場から遠ざかろうとする。" }, { id: 10, title: "転換性障害", desc: "体の一部が一時的に機能しない。" }];
@@ -6120,7 +6380,7 @@ const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: 
 
     function setExportMode(mode) { exportMode = mode;["json", "text"].forEach(m => { const b = document.getElementById("exp-btn-" + m); if (b) b.className = "export-btn" + (m === mode ? "" : " sec"); const b2 = document.getElementById("exp-btn-" + m + "2"); if (b2) b2.className = "export-btn" + (m === mode ? "" : " sec"); }); const dl = document.getElementById("btn-dl-json"); if (dl) dl.style.display = mode === "json" ? "inline-flex" : "none"; const dl2 = document.getElementById("btn-dl-json2"); if (dl2) dl2.style.display = mode === "json" ? "inline-flex" : "none"; updateExport(); }
 
-function syncKomaSetting(el) {
+    function syncKomaSetting(el) {
       // グローバル変数に値を保存（これが唯一の真の値）
       const keyMap = {
         'chk-hide-status': 'hideStatus', 'chk-hide-status2': 'hideStatus', 'chk-hide-status3': 'hideStatus', 'koma-hide-status': 'hideStatus',
@@ -6303,9 +6563,9 @@ function syncKomaSetting(el) {
       }
       cmdLines = cmdLines.map(l => l.replace(/\(/g, "（").replace(/\)/g, "）").replace(/（\{🎲\}）/g, "({🎲})"));
       while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
-const isHideStatus = document.getElementById("chk-hide-status")?.checked || false;
-const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || false;
-const invisible = document.getElementById("chk-invisible")?.checked || false;
+      const isHideStatus = document.getElementById("chk-hide-status")?.checked || false;
+      const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || false;
+      const invisible = document.getElementById("chk-invisible")?.checked || false;
       // コマタブのfaces・status・paramsを統合（保存タブからの出力時のみ）
       if (!includeKoma) {
         while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
@@ -6539,67 +6799,69 @@ const invisible = document.getElementById("chk-invisible")?.checked || false;
     function wSharedSaves(l) { localStorage.setItem("coc_v4_shared_saves", JSON.stringify(l)); }
     async function applySharedKey(token) { token = (token || "").trim(); if (!token) { setSharedSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } sharedToken = token; localStorage.setItem(L_STOKEN, token); document.getElementById("btn-shared-upload").disabled = false; document.getElementById("btn-shared-download").disabled = false; const sd2 = document.getElementById("btn-shared-download2"); if (sd2) sd2.disabled = false; setSharedSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try { const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) { const u = await r.json(); setSharedSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok"); sharedGistId = localStorage.getItem(L_SGIST) || ""; updSharedGistDisplay(); } else { sharedToken = ""; setSharedSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-shared-upload").disabled = true; document.getElementById("btn-shared-download").disabled = true; } } catch { sharedToken = ""; setSharedSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); } }
     let _sharedDeletedIds = [];
-try { _sharedDeletedIds = JSON.parse(localStorage.getItem('coc_shared_deleted_ids') || '[]'); } catch { _sharedDeletedIds = []; }
-function saveSharedDeletedIds() { localStorage.setItem('coc_shared_deleted_ids', JSON.stringify(_sharedDeletedIds)); }
+    try { _sharedDeletedIds = JSON.parse(localStorage.getItem('coc_shared_deleted_ids') || '[]'); } catch { _sharedDeletedIds = []; }
+    function saveSharedDeletedIds() { localStorage.setItem('coc_shared_deleted_ids', JSON.stringify(_sharedDeletedIds)); }
 
-async function sharedGistSet(payload) {
-  // 30日以上前の削除履歴を自動掃除
-  const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
-  saveSharedDeletedIds();
-  payload.deletedIds = _sharedDeletedIds;
-  const content = JSON.stringify(payload, null, 2);
-  const body = { description: "CoC NPC Tool Shared Data", public: false, files: { "coc_shared.json": { content } } };
-  try {
-    let r;
-    if (sharedGistId) r = await fetch("https://api.github.com/gists/" + sharedGistId, { method: "PATCH", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) return false;
-    const d = await r.json();
-    sharedGistId = d.id;
-    localStorage.setItem(L_SGIST, sharedGistId);
-    updSharedGistDisplay();
-    return true;
-  } catch { return false; }
-}
+    async function sharedGistSet(payload) {
+      // 30日以上前の削除履歴を自動掃除
+      const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
+      saveSharedDeletedIds();
+      payload.deletedIds = _sharedDeletedIds;
+      if (!payload.tagOrder) payload.tagOrder = _tagOrder;
+      const content = JSON.stringify(payload, null, 2);
+      const body = { description: "CoC NPC Tool Shared Data", public: false, files: { "coc_shared.json": { content } } };
+      try {
+        let r;
+        if (sharedGistId) r = await fetch("https://api.github.com/gists/" + sharedGistId, { method: "PATCH", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        if (!r.ok) return false;
+        const d = await r.json();
+        sharedGistId = d.id;
+        localStorage.setItem(L_SGIST, sharedGistId);
+        updSharedGistDisplay();
+        return true;
+      } catch { return false; }
+    }
     async function sharedGistGet() { if (!sharedGistId) return null; try { const headers = { "Accept": "application/vnd.github.v3+json" }; if (sharedToken) headers["Authorization"] = "token " + sharedToken; const r = await fetch("https://api.github.com/gists/" + sharedGistId, { headers }); if (!r.ok) return null; const d = await r.json(); const content = d.files?.["coc_shared.json"]?.content; if (!content) return null; return JSON.parse(content); } catch { return null; } }
     async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves }); if (ok) { setSharedSt("\u2713 \u5b8c\u4e86\uff08" + saves.length + "\u4ef6\uff09", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
     async function downloadFromShared() {
-  if (!sharedToken) { showToast("共有トークンを設定してください"); return; }
-  if (!sharedGistId) { setSharedSt("⚠ 共有Gist IDを設定してください", "err"); return; }
-  setSharedSt("ダウンロード中…", "ing");
-  const data = await sharedGistGet();
-  if (!data) { setSharedSt("⚠ データなし", "err"); showToast("データなし"); return; }
-  // クラウドの削除履歴を取得してローカルにも反映
-  const remoteDeletedIds = data.deletedIds || [];
-  const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  remoteDeletedIds.forEach(d => {
-    if (!_sharedDeletedIds.find(ld => ld.id === d.id)) {
-      _sharedDeletedIds.push(d);
+      if (!sharedToken) { showToast("共有トークンを設定してください"); return; }
+      if (!sharedGistId) { setSharedSt("⚠ 共有Gist IDを設定してください", "err"); return; }
+      setSharedSt("ダウンロード中…", "ing");
+      const data = await sharedGistGet();
+      if (!data) { setSharedSt("⚠ データなし", "err"); showToast("データなし"); return; }
+      // クラウドの削除履歴を取得してローカルにも反映
+      loadTagOrder(data);
+      const remoteDeletedIds = data.deletedIds || [];
+      const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      remoteDeletedIds.forEach(d => {
+        if (!_sharedDeletedIds.find(ld => ld.id === d.id)) {
+          _sharedDeletedIds.push(d);
+        }
+      });
+      _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
+      saveSharedDeletedIds();
+      // ローカルから削除済みIDのデータを消す
+      const deletedIdSet = new Set(_sharedDeletedIds.map(d => d.id));
+      wSharedSaves(lSharedSaves().filter(s => !deletedIdSet.has(s.id)));
+      const remote = data.saves || [];
+      if (remote.length) {
+        const local = lSharedSaves(), merged = [...remote];
+        local.forEach(l => {
+          if (!merged.find(r => String(r.id) === String(l.id)) && !deletedIdSet.has(l.id)) merged.push(l);
+        });
+        merged.sort((a, b) => b.id - a.id);
+        wSharedSaves(merged);
+        setSharedSt("✓ 完了（" + merged.length + "件）", "ok");
+        showToast(merged.length + "件取得しました");
+        renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+      } else {
+        wSharedSaves([]);
+        renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+        setSharedSt("⚠ クラウドにデータがありません", "err");
+      }
     }
-  });
-  _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
-  saveSharedDeletedIds();
-  // ローカルから削除済みIDのデータを消す
-  const deletedIdSet = new Set(_sharedDeletedIds.map(d => d.id));
-  wSharedSaves(lSharedSaves().filter(s => !deletedIdSet.has(s.id)));
-  const remote = data.saves || [];
-  if (remote.length) {
-    const local = lSharedSaves(), merged = [...remote];
-    local.forEach(l => {
-      if (!merged.find(r => String(r.id) === String(l.id)) && !deletedIdSet.has(l.id)) merged.push(l);
-    });
-    merged.sort((a, b) => b.id - a.id);
-    wSharedSaves(merged);
-    setSharedSt("✓ 完了（" + merged.length + "件）", "ok");
-    showToast(merged.length + "件取得しました");
-    renderSharedList(); renderKomaSaveList(); renderStatSaveList();
-  } else {
-    wSharedSaves([]);
-    renderSharedList(); renderKomaSaveList(); renderStatSaveList();
-    setSharedSt("⚠ クラウドにデータがありません", "err");
-  }
-}
     function setSharedGistId() { const raw = document.getElementById("shared-gist-id-input").value.trim(); if (!raw) { setSharedSt("Gist ID\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } const m = raw.match(/([a-f0-9]{20,40})/i); if (!m) { setSharedSt("\u26a0 \u6709\u52b9\u306aGist ID\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093", "err"); return; } sharedGistId = m[1]; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); setSharedSt("\u2713 Gist ID\u8a2d\u5b9a\u6e08", "ok"); showToast("Gist ID\u3092\u8a2d\u5b9a\u3057\u307e\u3057\u305f"); }
 
     function getCurrentData(opts = {}) {
@@ -6766,13 +7028,13 @@ async function sharedGistSet(payload) {
       renderStatSaveList();
     }
 
-let _statTagFilter = null;
+    let _statTagFilter = null;
 
     function getStatTags() {
       const personal = currentSaves;
       const shared = lSharedSaves();
       const all = [...personal, ...shared];
-      return [...new Set(all.flatMap(s => s.tags || []))].sort();
+      return [...new Set([..._tagOrder, ...all.flatMap(s => s.tags || [])])];
     }
 
     function setStatTagFilter(tag) {
@@ -6895,13 +7157,13 @@ let _statTagFilter = null;
 
       const tags = sv.tags || [];
       const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
-        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;gap:2px;cursor:pointer;white-space:nowrap" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + ' <span style="color:var(--text3)">×</span></span>').join('')
-        + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:none;border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
+        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;gap:2px;cursor:pointer;white-space:nowrap" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + ' <span style="color:var(--text3)">×</span></span>').join('')
+        + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
         + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:nowrap">'
-        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">'+esc(sv.name)+'</span>' + '</div>'
+        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">' + esc(sv.name) + '</span>' + '</div>'
         + tagsHtml
         + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
@@ -6942,9 +7204,10 @@ let _statTagFilter = null;
           const sv = list.find(s => s.id === id);
           if (!sv) return;
           // 既存タグを候補として表示
+          const _allSaves = [...currentSaves, ...lSharedSaves()];
           const allTags = [...new Set([
-            ...currentSaves.flatMap(s => s.tags || []),
-            ...lSharedSaves().flatMap(s => s.tags || [])
+            ..._tagOrder,
+            ..._allSaves.flatMap(s => s.tags || [])
           ])].filter(t => !(sv.tags || []).includes(t));
 
           // 入力UI生成
@@ -6971,21 +7234,37 @@ let _statTagFilter = null;
               sv.tags = [...(sv.tags || []), tag];
               if (isShared) {
                 wSharedSaves(list);
-                renderSharedList(); renderKomaSaveList(); renderStatSaveList();
-                if (sharedToken) await sharedGistSet({ saves: lSharedSaves() });
+                if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
               } else {
                 writeSaves(list);
-                renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-                if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+                if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
               }
+              // カードのタグ表示部分だけ更新（リスト全体の再描画を避ける）
+              const tagArea = inp.closest('[style*="display:flex"][style*="align-items:center"][style*="gap:2px"][style*="flex-shrink:0"]');
+              if (tagArea) {
+                const newTag = document.createElement('span');
+                newTag.style.cssText = 'display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;gap:2px;cursor:pointer;white-space:nowrap';
+                newTag.dataset.tagDel = tag;
+                newTag.dataset.id = String(id);
+                newTag.dataset.shared = String(isShared ? 1 : 0);
+                newTag.innerHTML = tag + ' <span style="color:var(--text3)">×</span>';
+                newTag.addEventListener('click', async () => {
+                  sv.tags = (sv.tags || []).filter(t => t !== tag);
+                  if (isShared) { wSharedSaves(list); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); if (sharedToken) await sharedGistSet({ saves: lSharedSaves() }); }
+                  else { writeSaves(list); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); }
+                  showToast("タグを削除しました");
+                });
+                tagArea.insertBefore(newTag, inp);
+              }
+              inp.value = '';
+              _tagAddConfirmed = false;
+              inp.focus();
               showToast("タグを追加しました");
-            } else {
-              if (isShared) renderSharedList();
-              else renderSaveList();
             }
           };
           inp.addEventListener("keydown", e => { if (e.key === "Enter") confirm(); if (e.key === "Escape") { if (isShared) renderSharedList(); else renderSaveList(); } });
-          inp.addEventListener("blur", confirm);
+          let _tagAddConfirmed = false;
+          inp.addEventListener("blur", () => { if (!_tagAddConfirmed) { _tagAddConfirmed = true; confirm(); } });
         });
       });
 
@@ -7026,11 +7305,11 @@ let _statTagFilter = null;
             } else {
               // 保存タブからの上書き：ステータス＋コマ両方更新
               const existing = (isShared ? lSharedSaves() : currentSaves).find(s => s.id === id);
-              const freshBoth = callerTab === 'stats' 
+              const freshBoth = callerTab === 'stats'
                 ? { ...getCurrentData(), komaData: existing?.komaData, _isKoma: existing?._isKoma }
                 : callerTab === 'koma'
-                ? { ...existing, ...getCurrentData({ includeKoma: true }).komaData && { komaData: getCurrentData({ includeKoma: true }).komaData } }
-                : getCurrentData({ includeKoma: true });
+                  ? { ...existing, ...getCurrentData({ includeKoma: true }).komaData && { komaData: getCurrentData({ includeKoma: true }).komaData } }
+                  : getCurrentData({ includeKoma: true });
               if (isShared) {
                 const shared = lSharedSaves();
                 const idx = shared.findIndex(s => s.id === id);
@@ -7390,8 +7669,8 @@ let _statTagFilter = null;
     }
 
     function switchKpTab(t) { document.querySelectorAll("[data-kp]").forEach(b => b.classList.toggle("active", b.dataset.kp === t));["combat", "san", "mythos", "madness", "misc"].forEach(id => { const el = document.getElementById("kp-" + id); if (el) el.style.display = id === t ? "" : "none"; }); }
-     function switchTab(t) {
-      try{localStorage.setItem('coc_last_tab',t);}catch{}
+    function switchTab(t) {
+      try { localStorage.setItem('coc_last_tab', t); } catch { }
 
       document.querySelectorAll(".tab[data-tab]").forEach(b => b.classList.toggle("active", b.dataset.tab === t));
       ["stats", "dice", "kp", "save", "koma"].forEach(id => {
@@ -7412,12 +7691,12 @@ let _statTagFilter = null;
         renderStatSaveList();
       }
     }
-document.addEventListener("DOMContentLoaded", function () {
-  const hideChatEl = document.getElementById('koma-hide-chat');
-  if (hideChatEl) hideChatEl.checked = true;
-  const invisibleEl = document.getElementById('koma-invisible');
-  if (invisibleEl) invisibleEl.checked = true;
-  document.querySelectorAll(".tab[data-tab]").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+    document.addEventListener("DOMContentLoaded", function () {
+      const hideChatEl = document.getElementById('koma-hide-chat');
+      if (hideChatEl) hideChatEl.checked = true;
+      const invisibleEl = document.getElementById('koma-invisible');
+      if (invisibleEl) invisibleEl.checked = true;
+      document.querySelectorAll(".tab[data-tab]").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
       document.getElementById("btn-add-atk").addEventListener("click", () => { atkList.push({ id: nxtId++, name: "", pct: 0, dmg: "", note: "", useDB: false }); buildAtkRows(); openAcc("atk"); });
       document.getElementById("btn-add-sk").addEventListener("click", () => { skList.push({ id: nxtId++, name: "", val: 0 }); buildSkRows(); });
       document.getElementById("btn-add-spl").addEventListener("click", () => { splList.push({ id: nxtId++, name: "", mp: "", note: "" }); buildSplRows(); });
@@ -7462,8 +7741,8 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("btn-shared-upload2")?.addEventListener("click", uploadToShared);
       document.getElementById("btn-shared-download2")?.addEventListener("click", downloadFromShared);
       // diceメモ初期化
-    const _lastTab=localStorage.getItem('coc_last_tab');
-      if(_lastTab)switchTab(_lastTab);
+      const _lastTab = localStorage.getItem('coc_last_tab');
+      if (_lastTab) switchTab(_lastTab);
       buildDiceMemoRows();
       // コマ作成タブ初期化
       watchInp(document.getElementById("koma-name"), document.getElementById("w-komaname"));
