@@ -3809,7 +3809,15 @@
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id)
-        .filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
+        .filter(sv => {
+          if (sv._isKoma) return true;
+          if (!sv.komaData) return false;
+          const kd = sv.komaData;
+          return (kd.labels || []).some(l => !l._sep && l.text)
+            || (kd.statusList || []).some(s => !s._sep && s.label)
+            || (kd.paramList || []).some(p => !p._sep && p.label)
+            || (kd.manualPalette || '').trim();
+        }); // ← コマデータに中身がある保存のみ
       const filtered = all.filter(sv => {
         if (_komaTabFilter === "personal") return !sv._fromShared;
         if (_komaTabFilter === "shared") return !!sv._fromShared;
