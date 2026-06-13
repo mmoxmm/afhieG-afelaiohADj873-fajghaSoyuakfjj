@@ -2795,11 +2795,13 @@
                 style="font-size:13px;padding:5px 10px">⬇️ 取得</button>
             </div>
           </div>
-          <div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">
-            <button class="save-filter-btn active" id="stat-sfb-all" onclick="setStatSaveFilter('all')">📋 全て</button>
-            <button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤
-              個人</button>
-            <button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
+          <div style="display:flex;align-items:center;gap:3px;margin-bottom:6px;flex-wrap:wrap">
+            <div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px;flex-shrink:0">
+              <button class="save-filter-btn active" id="stat-sfb-all" onclick="setStatSaveFilter('all')">📋 全て</button>
+              <button class="save-filter-btn" id="stat-sfb-personal" onclick="setStatSaveFilter('personal')">👤 個人</button>
+              <button class="save-filter-btn" id="stat-sfb-shared" onclick="setStatSaveFilter('shared')">👥 共有</button>
+            </div>
+            <div id="tag-filter-bar-stat-top" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center"></div>
           </div>
 
           <div id="stat-save-list-wrap"></div>
@@ -3555,11 +3557,14 @@
             <button class="btn-sync" id="btn-download2" style="flex:1;min-width:0;font-size:12px" disabled
               onclick="downloadFromCloud()">⬇️ 클라우드에서 가져오기</button>
           </div>
-          <div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">
-            <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
-            <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
-            <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
-            <button class="save-filter-btn" id="sfb-both" onclick="setSaveFilter('both')">📚 両方</button>
+          <div style="display:flex;align-items:center;gap:3px;margin-bottom:6px;flex-wrap:wrap">
+            <div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px;flex-shrink:0">
+              <button class="save-filter-btn active" id="sfb-all" onclick="setSaveFilter('all')">📋 全て</button>
+              <button class="save-filter-btn" id="sfb-char" onclick="setSaveFilter('char')">👤 キャラ</button>
+              <button class="save-filter-btn" id="sfb-koma" onclick="setSaveFilter('koma')">🎭 コマ</button>
+              <button class="save-filter-btn" id="sfb-both" onclick="setSaveFilter('both')">📚 両方</button>
+            </div>
+            <div id="tag-filter-bar-personal" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center"></div>
           </div>
           <div id="save-list-wrap"></div>
         </div>
@@ -3781,6 +3786,30 @@
     let komaNxtId = 1;
     let currentSaveFilter = "all"; // "all" | "char" | "koma"
     let _sharedFilter = "all";
+    let _personalTagFilter = null; // null=全て、string=タグ名
+    let _sharedTagFilter = null;
+
+    function getPersonalTags() {
+      return [...new Set(currentSaves.flatMap(s => s.tags || []))].sort();
+    }
+    function getSharedTags() {
+      return [...new Set(lSharedSaves().flatMap(s => s.tags || []))].sort();
+    }
+
+    function renderTagFilterBar(containerId, tags, currentTag, onClickFn) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = '';
+      if (!tags.length) return;
+      tags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
+        btn.textContent = tag;
+        btn.style.cssText = 'font-size:11px;padding:3px 8px;';
+        btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
+        el.appendChild(btn);
+      });
+    }
 
     function setSharedFilter(f) {
       _sharedFilter = f;
@@ -3802,36 +3831,54 @@
       renderKomaSaveList();
     }
 
+let _komaTagFilter = null;
+
+    function getKomaTags() {
+      const personal = lSaves().filter(k => k._isKoma || k.komaData);
+      const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
+      return [...new Set([...personal, ...shared].flatMap(s => s.tags || []))].sort();
+    }
+
+    function setKomaTagFilter(tag) {
+      _komaTagFilter = tag;
+      renderKomaSaveList();
+    }
+
     function renderKomaSaveList() {
       const wrap = document.getElementById("koma-save-list-wrap");
       if (!wrap) return;
       const personal = lSaves().filter(k => k._isKoma || k.komaData);
       const shared = lSharedSaves().filter(k => k._isKoma || k.komaData);
-      const all = [
+      let all = [
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id)
-        .filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
-      const filtered = all.filter(sv => {
+        .filter(sv => sv._isKoma || sv.komaData);
+      let filtered = all.filter(sv => {
         if (_komaTabFilter === "personal") return !sv._fromShared;
         if (_komaTabFilter === "shared") return !!sv._fromShared;
         return true;
       });
-      const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
+      if (_komaTagFilter) filtered = filtered.filter(sv => (sv.tags || []).includes(_komaTagFilter));
+      const filterBar = '<div style="display:flex;align-items:center;gap:3px;margin-bottom:6px;flex-wrap:wrap">'
+        + '<div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px;flex-shrink:0">'
         + '<button class="save-filter-btn' + (_komaTabFilter === "all" ? " active" : "") + '" onclick="setKomaTabFilter(\'all\')">📋 全て</button>'
         + '<button class="save-filter-btn' + (_komaTabFilter === "personal" ? " active" : "") + '" onclick="setKomaTabFilter(\'personal\')">👤 個人</button>'
         + '<button class="save-filter-btn' + (_komaTabFilter === "shared" ? " active" : "") + '" onclick="setKomaTabFilter(\'shared\')">👥 共有</button>'
+        + '</div>'
+        + '<div id="tag-filter-bar-koma" style="flex:1;min-width:0;display:flex;gap:3px;flex-wrap:nowrap;align-items:center;overflow-x:auto"></div>'
         + '</div>';
       if (!filtered.length) {
         wrap.innerHTML = filterBar + '<p class="save-empty">保存データがありません</p>';
+        renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
         return;
       }
       wrap.innerHTML = filterBar + '<div class="save-list">'
         + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'koma')).join("")
         + '</div>';
       bindSaveListEvents(wrap);
+      renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
     }
-
     function getKomaPaletteText() {
       if (komaPaletteSrc === 'manual') {
         return (currentKoma.manualPalette || '').trim();
@@ -4498,6 +4545,16 @@
         document.getElementById("sfb-" + k)?.classList.toggle("active", k === f);
       });
       if (currentSavePage === "personal") renderSaveList();
+    }
+
+    function setPersonalTagFilter(tag) {
+      _personalTagFilter = tag;
+      renderSaveList();
+    }
+
+    function setSharedTagFilter(tag) {
+      _sharedTagFilter = tag;
+      renderSharedList();
     }
 
     // ===== 秘匿コマンド =====
@@ -6709,27 +6766,44 @@ async function sharedGistSet(payload) {
       renderStatSaveList();
     }
 
+let _statTagFilter = null;
+
+    function getStatTags() {
+      const personal = currentSaves;
+      const shared = lSharedSaves();
+      const all = [...personal, ...shared];
+      return [...new Set(all.flatMap(s => s.tags || []))].sort();
+    }
+
+    function setStatTagFilter(tag) {
+      _statTagFilter = tag;
+      renderStatSaveList();
+    }
+
     function renderStatSaveList() {
       const wrap = document.getElementById("stat-save-list-wrap");
       if (!wrap) return;
       const personal = currentSaves;
       const shared = lSharedSaves();
-      const allSaves = [
+      let allSaves = [
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id);
-      const filtered = allSaves.filter(sv => {
-        if (sv._isKoma && !sv.komaData) return false; // コマのみ（ステータスなし）は除外
+      allSaves = allSaves.filter(sv => {
+        if (sv._isKoma && !sv.komaData) return false;
         if (_statSaveFilter === "personal") return !sv._fromShared;
         if (_statSaveFilter === "shared") return !!sv._fromShared;
         return true;
       });
-      if (!filtered.length) {
+      if (_statTagFilter) allSaves = allSaves.filter(sv => (sv.tags || []).includes(_statTagFilter));
+      if (!allSaves.length) {
         wrap.innerHTML = '<p class="save-empty">保存データがありません</p>';
+        renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
         return;
       }
-      wrap.innerHTML = '<div class="save-list">' + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
+      wrap.innerHTML = '<div class="save-list">' + allSaves.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
       bindSaveListEvents(wrap);
+      renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
     }
 
     function syncStatTabSetting(el, groupName) {
@@ -6819,9 +6893,16 @@ async function sharedGistSet(payload) {
 
       const statsHtml = rows.length ? rows.join('') : '<span style="color:var(--text3);font-size:11px">データなし</span>';
 
+      const tags = sv.tags || [];
+      const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
+        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;gap:2px;cursor:pointer;white-space:nowrap" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + ' <span style="color:var(--text3)">×</span></span>').join('')
+        + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:none;border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
+        + '</div>';
+
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
-        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:nowrap">'
         + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">'+esc(sv.name)+'</span>' + '</div>'
+        + tagsHtml
         + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
         + '</div>'
@@ -6829,6 +6910,85 @@ async function sharedGistSet(payload) {
         + '</div>';
     }
     function bindSaveListEvents(wrap) {
+      // タグ削除
+      wrap.querySelectorAll("[data-tag-del]").forEach(el => {
+        el.addEventListener("click", async () => {
+          const tag = el.dataset.tagDel;
+          const id = +el.dataset.id;
+          const isShared = el.dataset.shared === "1";
+          const list = isShared ? lSharedSaves() : currentSaves;
+          const sv = list.find(s => s.id === id);
+          if (!sv) return;
+          sv.tags = (sv.tags || []).filter(t => t !== tag);
+          if (isShared) {
+            wSharedSaves(list);
+            renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+            if (sharedToken) await sharedGistSet({ saves: lSharedSaves() });
+          } else {
+            writeSaves(list);
+            renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+            if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+          }
+          showToast("タグを削除しました");
+        });
+      });
+
+      // タグ追加
+      wrap.querySelectorAll(".btn-tag-add").forEach(el => {
+        el.addEventListener("click", async () => {
+          const id = +el.dataset.id;
+          const isShared = el.dataset.shared === "1";
+          const list = isShared ? lSharedSaves() : currentSaves;
+          const sv = list.find(s => s.id === id);
+          if (!sv) return;
+          // 既存タグを候補として表示
+          const allTags = [...new Set([
+            ...currentSaves.flatMap(s => s.tags || []),
+            ...lSharedSaves().flatMap(s => s.tags || [])
+          ])].filter(t => !(sv.tags || []).includes(t));
+
+          // 入力UI生成
+          const inp = document.createElement("input");
+          inp.type = "text";
+          inp.placeholder = "タグ名...";
+          inp.style.cssText = "width:80px;height:18px;font-size:11px;padding:0 4px;border-radius:4px;border:0.5px solid var(--accent);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;";
+          el.replaceWith(inp);
+          inp.focus();
+
+          // 候補表示
+          let datalist = null;
+          if (allTags.length) {
+            datalist = document.createElement("datalist");
+            datalist.id = "tag-candidates-" + id;
+            allTags.forEach(t => { const opt = document.createElement("option"); opt.value = t; datalist.appendChild(opt); });
+            inp.setAttribute("list", datalist.id);
+            inp.parentElement?.appendChild(datalist);
+          }
+
+          const confirm = async () => {
+            const tag = inp.value.trim();
+            if (tag && !(sv.tags || []).includes(tag)) {
+              sv.tags = [...(sv.tags || []), tag];
+              if (isShared) {
+                wSharedSaves(list);
+                renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+                if (sharedToken) await sharedGistSet({ saves: lSharedSaves() });
+              } else {
+                writeSaves(list);
+                renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+                if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+              }
+              showToast("タグを追加しました");
+            } else {
+              if (isShared) renderSharedList();
+              else renderSaveList();
+            }
+          };
+          inp.addEventListener("keydown", e => { if (e.key === "Enter") confirm(); if (e.key === "Escape") { if (isShared) renderSharedList(); else renderSaveList(); } });
+          inp.addEventListener("blur", confirm);
+        });
+      });
+
       wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
         btn.addEventListener("click", () => {
           const isShared = btn.dataset.shared === "1";
@@ -6918,12 +7078,24 @@ async function sharedGistSet(payload) {
       });
     }
     function renderSaveList() {
-      const wrap = document.getElementById("save-list-wrap"); if (!wrap) return; const f = currentSaveFilter || "all"; const saves = currentSaves.filter(sv => {
+      const wrap = document.getElementById("save-list-wrap");
+      if (!wrap) return;
+      const f = currentSaveFilter || "all";
+      let saves = currentSaves.filter(sv => {
         if (f === "char") return getSaveKind(sv) === "char";
         if (f === "koma") return getSaveKind(sv) === "koma";
         if (f === "both") return getSaveKind(sv) === "both";
         return true;
-      }); if (!saves.length) { wrap.innerHTML = '<p class="save-empty">\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u3042\u308a\u307e\u305b\u3093</p>'; return; } wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u4fdd\u5b58\u6e08\u307f\uff08' + saves.length + '\u4ef6\uff09</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>'; bindSaveListEvents(wrap);
+      });
+      if (_personalTagFilter) saves = saves.filter(sv => (sv.tags || []).includes(_personalTagFilter));
+      // タグフィルターバー更新
+      renderTagFilterBar('tag-filter-bar-personal', getPersonalTags(), _personalTagFilter, setPersonalTagFilter);
+      if (!saves.length) {
+        wrap.innerHTML = '<p class="save-empty">保存されたデータはありません</p>';
+        return;
+      }
+      wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">保存済み（' + saves.length + '件）</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>';
+      bindSaveListEvents(wrap);
     }
     function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
@@ -6968,21 +7140,26 @@ async function sharedGistSet(payload) {
     function renderSharedList() {
       const wrap = document.getElementById("shared-list-wrap");
       const shared = lSharedSaves();
-      const filterBar = '<div class="save-filter-bar" style="margin-bottom:6px;display:flex;gap:3px">'
+      const filterBar = '<div style="display:flex;align-items:center;gap:3px;margin-bottom:6px;flex-wrap:wrap">'
+        + '<div class="save-filter-bar" style="margin-bottom:0;display:flex;gap:3px;flex-shrink:0">'
         + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "all" ? " active" : "") + '" onclick="setSharedFilter(\'all\')">📋 全て</button>'
         + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "char" ? " active" : "") + '" onclick="setSharedFilter(\'char\')">👤 キャラ</button>'
         + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "koma" ? " active" : "") + '" onclick="setSharedFilter(\'koma\')">🎭 コマ</button>'
         + '<button class="save-filter-btn' + ((_sharedFilter || "all") === "both" ? " active" : "") + '" onclick="setSharedFilter(\'both\')">📚 両方</button>'
+        + '</div>'
+        + '<div id="tag-filter-bar-shared" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center"></div>'
         + '</div>';
-      const filtered = shared.filter(sv => {
+      let filtered = shared.filter(sv => {
         if ((_sharedFilter || "all") === "char") return !sv._isKoma && !sv.komaData;
         if ((_sharedFilter || "all") === "koma") return !!sv._isKoma && !sv.komaData;
         if ((_sharedFilter || "all") === "both") return !!sv.komaData;
         return true;
       });
-      if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">\u5171\u6709\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093</p>'; return; }
-      wrap.innerHTML = filterBar + '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">\u5171\u6709\u30c7\u30fc\u30bf\uff08' + filtered.length + '\u4ef6\uff09</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true, 'save')).join("") + '</div>';
+      if (_sharedTagFilter) filtered = filtered.filter(sv => (sv.tags || []).includes(_sharedTagFilter));
+      if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">共有データがありません</p>'; return; }
+      wrap.innerHTML = filterBar + '<div id="tag-filter-bar-shared-wrap"></div><div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">共有データ（' + filtered.length + '件）</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
+      renderTagFilterBar('tag-filter-bar-shared', getSharedTags(), _sharedTagFilter, setSharedTagFilter);
     }
     async function saveDataTo(dest) {
       const d = getCurrentData({ includeKoma: true });
