@@ -3808,7 +3808,7 @@
         const btn = document.createElement('button');
         btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
         btn.textContent = tag;
-        btn.style.cssText = 'font-size:11px;padding:3px 8px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);';
+        btn.style.cssText = 'font-size:11px;padding:3px 8px;line-height:1;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);overflow:hidden;';
         if (currentTag === tag) btn.style.cssText += 'background:var(--accent);color:#fff;border-color:var(--accent);';
         btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
         el.appendChild(btn);
@@ -3953,6 +3953,47 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
           lbl.textContent = tag;
           lbl.style.cssText = 'flex:1;font-weight:600;';
 
+          const editBtn = document.createElement('button');
+          editBtn.textContent = '✏️';
+          editBtn.style.cssText = 'background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;margin-right:2px;';
+          editBtn.title = 'タグ名を編集';
+          editBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            const inp2 = document.createElement('input');
+            inp2.type = 'text';
+            inp2.value = tag;
+            inp2.style.cssText = 'flex:1;font-size:13px;font-weight:600;padding:2px 5px;border:0.5px solid var(--accent);border-radius:3px;background:var(--bg2);color:var(--text);outline:none;font-family:inherit;';
+            lbl.replaceWith(inp2);
+            inp2.focus(); inp2.select();
+            const commit = () => {
+              const newTag = inp2.value.trim();
+              if (!newTag || newTag === tag) { inp2.replaceWith(lbl); return; }
+              // localOrderを更新
+              const oi = localOrder.indexOf(tag);
+              if (oi >= 0) localOrder[oi] = newTag;
+              // 全保存データのタグも置換
+              const allSaves = [...lSaves(), ...lSharedSaves()];
+              // personal
+              const ps = lSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag?newTag:t) }));
+              writeSaves(ps);
+              currentSaves = ps;
+              // shared
+              const ss = lSharedSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag?newTag:t) }));
+              wSharedSaves(ss);
+              // _tagOrderも更新
+              const ti = _tagOrder.indexOf(tag);
+              if (ti >= 0) _tagOrder[ti] = newTag;
+              saveTagOrder();
+              renderRows();
+              showToast('「' + tag + '」→「' + newTag + '」に変更しました');
+            };
+            inp2.addEventListener('blur', commit);
+            inp2.addEventListener('keydown', e2 => {
+              if (e2.key === 'Enter') { e2.preventDefault(); inp2.blur(); }
+              if (e2.key === 'Escape') { inp2.replaceWith(lbl); }
+            });
+          });
+
           const delBtn = document.createElement('button');
           delBtn.textContent = '×';
           delBtn.style.cssText = 'background:none;border:0.5px solid var(--danger);border-radius:3px;color:var(--danger);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;';
@@ -3981,7 +4022,31 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
             });
           });
 
-          row.append(handle, lbl, delBtn);
+          const upBtn = document.createElement('button');
+          upBtn.textContent = '↑';
+          upBtn.style.cssText = 'background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;';
+          upBtn.disabled = idx === 0;
+          upBtn.style.opacity = idx === 0 ? '0.25' : '1';
+          upBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (idx === 0) return;
+            [localOrder[idx - 1], localOrder[idx]] = [localOrder[idx], localOrder[idx - 1]];
+            renderRows();
+          });
+
+          const downBtn = document.createElement('button');
+          downBtn.textContent = '↓';
+          downBtn.style.cssText = 'background:none;border:0.5px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;font-size:12px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;';
+          downBtn.disabled = idx === localOrder.length - 1;
+          downBtn.style.opacity = idx === localOrder.length - 1 ? '0.25' : '1';
+          downBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (idx === localOrder.length - 1) return;
+            [localOrder[idx], localOrder[idx + 1]] = [localOrder[idx + 1], localOrder[idx]];
+            renderRows();
+          });
+
+          row.append(handle, lbl, upBtn, downBtn, editBtn, delBtn);
 
           rowContainer.appendChild(row);
 
@@ -4105,7 +4170,12 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
     }
 
     async function saveTagOrder() {
-      _tagOrder = [..._tagOrder]; // normalize
+      _tagOrder = [..._tagOrder];
+      // 個人Gistにも保存
+      if (syncToken) {
+        gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
+      }
+      // 共有Gistにも保存
       if (sharedToken && sharedGistId) {
         await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
       }
@@ -6812,7 +6882,8 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         showToast("アップロード失敗");
       }
     }
-    async function downloadFromCloud() { if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); } }
+    async function downloadFromCloud() { if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; loadTagOrder(data);
+      if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); } }
     function lSharedSaves() { try { return JSON.parse(localStorage.getItem("coc_v4_shared_saves") || "[]"); } catch { return []; } }
     function wSharedSaves(l) { localStorage.setItem("coc_v4_shared_saves", JSON.stringify(l)); }
     async function applySharedKey(token) { token = (token || "").trim(); if (!token) { setSharedSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } sharedToken = token; localStorage.setItem(L_STOKEN, token); document.getElementById("btn-shared-upload").disabled = false; document.getElementById("btn-shared-download").disabled = false; const sd2 = document.getElementById("btn-shared-download2"); if (sd2) sd2.disabled = false; setSharedSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try { const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) { const u = await r.json(); setSharedSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok"); sharedGistId = localStorage.getItem(L_SGIST) || ""; updSharedGistDisplay(); } else { sharedToken = ""; setSharedSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-shared-upload").disabled = true; document.getElementById("btn-shared-download").disabled = true; } } catch { sharedToken = ""; setSharedSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); } }
@@ -7175,7 +7246,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
 
       const tags = sv.tags || [];
 const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
-  + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
+  + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
