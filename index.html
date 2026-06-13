@@ -4418,7 +4418,6 @@
       buildKomaStatusRows();
       buildKomaParamRows();
       renderKomaPalettePreview();
-      applySettings(d.settings);
       updateKomaJsonPreview();
       updKomaTabBadges();  // ← 追加
       showToast("「" + d.name + "」を読み込みました");
@@ -4570,8 +4569,8 @@
     function getSettings() {
       return {
         hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || document.getElementById('chk-hide-status2')?.checked || document.getElementById('chk-hide-status3')?.checked || false,
-        hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || document.getElementById('chk-hide-chat-char2')?.checked || document.getElementById('chk-hide-chat-char3')?.checked || false,
-        invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || document.getElementById('chk-invisible2')?.checked || document.getElementById('chk-invisible3')?.checked || false,
+hideChat: document.getElementById('chk-hide-chat-char')?.checked ?? false,
+invisible: document.getElementById('chk-invisible')?.checked ?? false,
         skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || document.getElementById('chk-sk-dice2')?.checked || false,
         inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || document.getElementById('chk-incl-sep2')?.checked || document.getElementById('chk-incl-sep3')?.checked || false,
         sepSpace: document.querySelector('input[name="koma-sep-space"]:checked, input[name="koma-sep-space2"]:checked, input[name="koma-sep-space3"]:checked, input[name="koma-sep-space4"]:checked')?.value || 'before',
@@ -4583,8 +4582,8 @@
       };
     }
 
-    function applySettings(s) {
-      if (!s) return;
+function applySettings(s) {
+  s = s || {};
       ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideStatus; });
       ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
       ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
@@ -4601,6 +4600,8 @@
       if (s.bothDb !== undefined) { ['chk-both-db', 'chk-both-db2', 'chk-both-db3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.bothDb; }); }
       if (s.useV6 !== undefined) { ['chk-use-v6', 'chk-use-v6-2', 'chk-use-v6-3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.useV6; }); }
     }
+    let _hideChatChar = false;
+let _invisible = false;
     const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
     const SPELL_REF = [{ name: "コンタクト・ディープ・ワン", cost: "1MP", san: "0/0", sanF: "0", time: "1時間", desc: "深きものと接触し意思疎通を図る。" }, { name: "コンタクト・クトゥルフ", cost: "10MP", san: "1d6/1d10", sanF: "1d10", time: "1時間以上", desc: "ルルイエにてクトゥルフと接触を試みる。" }, { name: "サモン・ビャーカー", cost: "5MP", san: "0/1d3", sanF: "1d3", time: "1ラウンド", desc: "ビャーカー1体を召喚。" }, { name: "サモン・ナイトガウント", cost: "3MP", san: "0/1d4", sanF: "1d4", time: "1ラウンド", desc: "ナイトガウントを召喚。" }, { name: "クリエイト・ゾンビ", cost: "1MP+1SAN", san: "1/1d3", sanF: "1d3", time: "1時間", desc: "死体をゾンビとして再活性化。" }, { name: "ファイアー", cost: "2MP", san: "0/0", sanF: "0", time: "1ラウンド", desc: "炎の弾。1d6ダメージ。" }, { name: "ウォード", cost: "3MP", san: "0/0", sanF: "0", time: "1時間", desc: "区域を霊的に守護する結界。" }, { name: "エルダー・サイン（刻印）", cost: "5MP", san: "1/1d4", sanF: "1d4", time: "1日", desc: "強力な封印の印を刻む。" }, { name: "精神支配", cost: "5MP", san: "1/1d6", sanF: "1d6", time: "持続", desc: "対象を術者の意のままに操る。" }];
@@ -6060,8 +6061,8 @@
         'chk-hide-status2': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
         'chk-hide-status3': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
         'koma-hide-status': ['chk-hide-status', 'chk-hide-status2', 'chk-hide-status3', 'koma-hide-status'],
-        'koma-hide-chat': ['koma-hide-chat'],
-        'koma-invisible': ['koma-invisible'],
+'koma-hide-chat': ['koma-hide-chat', 'chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3'],
+'koma-invisible': ['koma-invisible', 'chk-invisible', 'chk-invisible2', 'chk-invisible3'],
         'chk-sk-dice': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice-save': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
         'chk-sk-dice2': ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'],
@@ -6232,9 +6233,9 @@
       }
       cmdLines = cmdLines.map(l => l.replace(/\(/g, "（").replace(/\)/g, "）").replace(/（\{🎲\}）/g, "({🎲})"));
       while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
-      const isHideStatus = document.getElementById("chk-hide-status")?.checked || document.getElementById("chk-hide-status2")?.checked || false;
-      const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || document.getElementById("chk-hide-chat-char2")?.checked || false;
-      const invisible = document.getElementById("chk-invisible")?.checked || document.getElementById("chk-invisible2")?.checked || false;
+const isHideStatus = document.getElementById("chk-hide-status")?.checked || false;
+const isHideChatCharacter = document.getElementById("chk-hide-chat-char")?.checked || false;
+const invisible = document.getElementById("chk-invisible")?.checked || false;
       // コマタブのfaces・status・paramsを統合（保存タブからの出力時のみ）
       if (!includeKoma) {
         while (cmdLines.length && cmdLines[cmdLines.length - 1] === '') cmdLines.pop();
@@ -6565,7 +6566,6 @@
       saveCustomFields();
       buildCustomFieldRows();
       updateStatDisplay(); reExpandAllMemos();
-      applySettings(data.settings);
       if (data.komaData) {
         loadKomaIntoEditor(data.komaData);
       }
