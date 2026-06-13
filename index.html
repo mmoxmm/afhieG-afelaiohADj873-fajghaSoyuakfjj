@@ -3808,7 +3808,7 @@
         const btn = document.createElement('button');
         btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
         btn.textContent = tag;
-        btn.style.cssText = 'font-size:11px;padding:3px 8px;background:var(--bg);border:0.5px solid var(--border2);';
+        btn.style.cssText = 'font-size:11px;padding:3px 8px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);';
         if (currentTag === tag) btn.style.cssText += 'background:var(--accent);color:#fff;border-color:var(--accent);';
         btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
         el.appendChild(btn);
