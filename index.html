@@ -4752,7 +4752,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         renderKomaSaveList();
         showToast("「" + name + "」を共有に保存中…");
         if (sharedToken) {
-          sharedGistSet({ saves: lSharedSaves() }).then(ok => {
+          sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }).then(ok => {
             showToast(ok ? "「" + name + "」を共有に保存しました" : "共有保存失敗（ローカルには保存済み）");
           });
         }
@@ -4763,7 +4763,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         renderKomaSaveList();
         if (syncToken) {
           setGlobalSt("同期中…", "ing");
-          gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }).then(ok => {
+          gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }).then(ok => {
             setGlobalSt(ok ? "✓ 保存しました" : "⚠ 同期失敗（ローカルには保存済み）", ok ? "ok" : "err");
             showToast(ok ? "「" + name + "」を保存・同期しました" : "「" + name + "」を保存しました（同期失敗）");
           });
@@ -6784,7 +6784,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       gistId = m[1]; localStorage.setItem("coc_gist_id", gistId); updGistDisplay();
       showToast("Gist IDを設定しました");
     }
-    function saveMythosCloud() { saveCustomLocal(); if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); }
+    function saveMythosCloud() { saveCustomLocal(); if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); }
     function addCustomBeing() { const n = document.getElementById("new-being-name").value.trim(), s = document.getElementById("new-being-s").value.trim(), f = document.getElementById("new-being-f").value.trim(); if (!n) { showToast("\u751f\u7269\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; } customBeings.push({ name: n, s: s || "0", f: f || "?", custom: true }); saveMythosCloud(); document.getElementById("new-being-name").value = ""; document.getElementById("new-being-s").value = ""; document.getElementById("new-being-f").value = ""; renderBeingList(); populateSanSelects(); showToast(n + " \u3092\u8ffd\u52a0\u3057\u307e\u3057\u305f"); }
     function addCustomSpell() { const n = document.getElementById("new-spell-name").value.trim(), mp = document.getElementById("new-spell-mp").value.trim(), san = document.getElementById("new-spell-san").value.trim(); if (!n) { showToast("\u5492\u6587\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; } customSpells.push({ name: n, cost: mp || "?", san: "0/" + (san || "?"), sanF: san || "?", time: "\u2014", desc: "\uff08\u30ab\u30b9\u30bf\u30e0\uff09", custom: true }); saveMythosCloud(); document.getElementById("new-spell-name").value = ""; document.getElementById("new-spell-mp").value = ""; document.getElementById("new-spell-san").value = ""; buildSpellRef(); populateSanSelects(); showToast(n + " \u3092\u8ffd\u52a0\u3057\u307e\u3057\u305f"); }
     function populateSanSelects() { const beings = getAllBeings(), allSpells = getAllSpells(); const bS = document.getElementById("san-sel-being"), sS = document.getElementById("san-sel-spell"); if (!bS || !sS) return; bS.innerHTML = "<option value=''>\u2500\u2500 \u9078\u629e \u2500\u2500</option>"; beings.forEach((b, i) => { const o = document.createElement("option"); o.value = i; o.textContent = b.name + " (\u6210:" + b.s + "/\u5931:" + b.f + ")"; bS.appendChild(o); }); sS.innerHTML = "<option value=''>\u2500\u2500 \u9078\u629e \u2500\u2500</option>"; allSpells.forEach((s, i) => { const o = document.createElement("option"); o.value = "s" + i; o.textContent = s.name + " (MP:" + s.cost + ")"; sS.appendChild(o); }); }
@@ -6875,7 +6875,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       }
       setSyncSt("アップロード中…", "ing");
       setGlobalSt("アップロード中…", "ing");
-      const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+      const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
       if (ok) {
         setSyncSt("✓ 完了（" + lSaves().length + "件）", "ok");
         setGlobalSt("✓ 完了（" + lSaves().length + "件）", "ok");
@@ -6917,7 +6917,8 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       } catch { return false; }
     }
     async function sharedGistGet() { if (!sharedGistId) return null; try { const headers = { "Accept": "application/vnd.github.v3+json" }; if (sharedToken) headers["Authorization"] = "token " + sharedToken; const r = await fetch("https://api.github.com/gists/" + sharedGistId, { headers }); if (!r.ok) return null; const d = await r.json(); const content = d.files?.["coc_shared.json"]?.content; if (!content) return null; return JSON.parse(content); } catch { return null; } }
-    async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves }); if (ok) { setSharedSt("\u2713 \u5b8c\u4e86\uff08" + saves.length + "\u4ef6\uff09", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
+    async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves, tagOrder: _tagOrder });
+      if (ok) { setSharedSt("✓ 完了（" + saves.length + "件）", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
     async function downloadFromShared() {
       if (!sharedToken) { showToast("共有トークンを設定してください"); return; }
       if (!sharedGistId) { setSharedSt("⚠ 共有Gist IDを設定してください", "err"); return; }
@@ -7107,7 +7108,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         showToast("「" + d.name + "」を📚両方保存しました");
         if (syncToken) {
           setGlobalSt("同期中…", "ing");
-          const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+          const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
           setGlobalSt(ok ? "✓ 保存しました" : "⚠ 同期失敗", ok ? "ok" : "err");
         }
       } else {
@@ -7118,7 +7119,7 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         showToast("「" + d.name + "」を📚両方・共有保存しました");
         if (sharedToken) {
           setGlobalSt("共有同期中…", "ing");
-          const ok = await sharedGistSet({ saves: lSharedSaves() });
+          const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
           setGlobalSt(ok ? "✓ 共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err");
         }
       }
@@ -7460,7 +7461,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
                 showToast("「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました");
                 if (sharedToken) {
                   setSharedSt("同期中…", "ing");
-                  const ok = await sharedGistSet({ saves: lSharedSaves() });
+                  const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
                   setSharedSt(ok ? "✓ 共有に同期しました" : "⚠ 同期失敗", ok ? "ok" : "err");
                   showToast(ok ? "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書き・同期しました" : "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました（同期失敗）");
                 }
@@ -7474,7 +7475,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
                 showToast("「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました");
                 if (syncToken) {
                   setSyncSt("同期中…", "ing");
-                  const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
+                  const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
                   setSyncSt(ok ? "✓ クラウドに上書きしました" : "⚠ 同期失敗", ok ? "ok" : "err");
                   showToast(ok ? "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書き・同期しました" : "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました（同期失敗）");
                 }
@@ -7515,7 +7516,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
       wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">保存済み（' + saves.length + '件）</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
     }
-    function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
+    function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
       const shared = lSharedSaves();
       const sv = shared.find(s => s.id === id);
@@ -7592,7 +7593,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
         if (currentSavePage === "personal") renderSaveList();
         if (syncToken) {
           setGlobalSt("동기화 중…", "ing");
-          const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
+          const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
           setGlobalSt(ok ? "클라우드에 저장했습니다" : "클라우드 동기화 실패", ok ? "ok" : "err");
           showToast(ok ? "「" + d.name + "」저장 & 동기화 완료" : "저장했습니다（동기화 실패）");
         } else {
@@ -7604,7 +7605,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
         if (currentSavePage === "shared") renderSharedList();
         if (sharedToken) {
           setGlobalSt("공유에 동기화 중…", "ing");
-          const ok = await sharedGistSet({ saves: lSharedSaves() });
+          const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
           setGlobalSt(ok ? "공유 클라우드에 저장했습니다" : "공유 동기화 실패", ok ? "ok" : "err");
           showToast(ok ? "「" + d.name + "」공유 저장 완료" : "저장했습니다（공유 동기화 실패）");
         } else {
