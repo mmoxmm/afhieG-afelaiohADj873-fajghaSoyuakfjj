@@ -2543,7 +2543,8 @@
 
           <!-- 消耗・呪文 -->
           <div class="accordion" id="acc-cons" style="margin-top:0">
-            <div onclick="toggleAcc('cons')" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
+            <div onclick="toggleAcc('cons')"
+              style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
               <button data-cstab="cons" onclick="event.stopPropagation();switchConsSplTab('cons')" id="cstab-btn-cons"
                 style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">🎒
                 消耗品 <span id="badge-cons2" class="acc-badge">0</span></button>
@@ -2587,8 +2588,7 @@
         <!-- 技能・メモ 2カラム -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
           <div class="accordion" id="acc-sk" style="margin-top:0">
-            <div class="acc-hd" onclick="toggleAcc('sk')"
-              style="justify-content:space-between">
+            <div class="acc-hd" onclick="toggleAcc('sk')" style="justify-content:space-between">
               <div class="acc-hd-left">
                 <span class="acc-title">🎯 技能</span>
                 <span class="acc-badge" id="badge-sk">0</span>
@@ -2619,7 +2619,8 @@
           </div>
 
           <div style="border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden">
-            <div onclick="toggleMemo()" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
+            <div onclick="toggleMemo()"
+              style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);align-items:stretch;cursor:pointer">
               <button id="memostat-tab-param" onclick="event.stopPropagation();switchMemoStatTab('param')"
                 style="flex:1;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:3px">
                 📊 パラメータ <span class="acc-badge" id="badge-extra-param">0</span>
@@ -3880,7 +3881,7 @@
 
       const close = () => pop.remove();
       cancelBtn.addEventListener('click', close);
-const confirm = async () => {
+      const confirm = async () => {
         const tag = inp.value.trim();
         console.log('confirm fired, tag:', tag);  // ← 追加
         close();
@@ -3889,7 +3890,7 @@ const confirm = async () => {
           _tagOrder.push(tag);
           await saveTagOrder();
         }
-          console.log('_tagOrder after push:', _tagOrder);  // ← 追加
+        console.log('_tagOrder after push:', _tagOrder);  // ← 追加
         if (containerId === 'tag-filter-bar-personal') { renderSaveList(); renderTagFilterBar(containerId, getPersonalTags(), _personalTagFilter, onClickFn); }
         else if (containerId === 'tag-filter-bar-shared') { renderSharedList(); renderTagFilterBar(containerId, getSharedTags(), _sharedTagFilter, onClickFn); }
         else if (containerId === 'tag-filter-bar-koma') { renderKomaSaveList(); renderTagFilterBar(containerId, getKomaTags(), _komaTagFilter, onClickFn); }
@@ -3906,7 +3907,7 @@ const confirm = async () => {
       }, 300);
     }
 
-function showTagReorderPopup(containerId, tags, onClickFn) {
+    function showTagReorderPopup(containerId, tags, onClickFn) {
       document.getElementById('_tagReorderPop')?.remove();
       const sorted = getSortedTags(tags);
       const pop = document.createElement('div');
@@ -3982,10 +3983,10 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
               const seen = new Set();
               localOrder.forEach((t, i) => { if (seen.has(t)) localOrder.splice(i, 1); else seen.add(t); });
               // 全保存データのタグを旧名→新名に置換（上書き）
-              const ps = lSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag ? newTag : t) }));
+              const ps = lSaves().map(s => ({ ...s, tags: (s.tags || []).map(t => t === tag ? newTag : t) }));
               writeSaves(ps);
               currentSaves = ps;
-              const ss = lSharedSaves().map(s => ({ ...s, tags: (s.tags||[]).map(t => t===tag ? newTag : t) }));
+              const ss = lSharedSaves().map(s => ({ ...s, tags: (s.tags || []).map(t => t === tag ? newTag : t) }));
               wSharedSaves(ss);
               saveTagOrder();
               renderRows();
@@ -6886,8 +6887,10 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
         showToast("アップロード失敗");
       }
     }
-    async function downloadFromCloud() { if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; loadTagOrder(data);
-      if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); } }
+    async function downloadFromCloud() {
+      if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; loadTagOrder(data);
+      if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); }
+    }
     function lSharedSaves() { try { return JSON.parse(localStorage.getItem("coc_v4_shared_saves") || "[]"); } catch { return []; } }
     function wSharedSaves(l) { localStorage.setItem("coc_v4_shared_saves", JSON.stringify(l)); }
     async function applySharedKey(token) { token = (token || "").trim(); if (!token) { setSharedSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } sharedToken = token; localStorage.setItem(L_STOKEN, token); document.getElementById("btn-shared-upload").disabled = false; document.getElementById("btn-shared-download").disabled = false; const sd2 = document.getElementById("btn-shared-download2"); if (sd2) sd2.disabled = false; setSharedSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try { const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) { const u = await r.json(); setSharedSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok"); sharedGistId = localStorage.getItem(L_SGIST) || ""; updSharedGistDisplay(); } else { sharedToken = ""; setSharedSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-shared-upload").disabled = true; document.getElementById("btn-shared-download").disabled = true; } } catch { sharedToken = ""; setSharedSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); } }
@@ -6917,8 +6920,10 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       } catch { return false; }
     }
     async function sharedGistGet() { if (!sharedGistId) return null; try { const headers = { "Accept": "application/vnd.github.v3+json" }; if (sharedToken) headers["Authorization"] = "token " + sharedToken; const r = await fetch("https://api.github.com/gists/" + sharedGistId, { headers }); if (!r.ok) return null; const d = await r.json(); const content = d.files?.["coc_shared.json"]?.content; if (!content) return null; return JSON.parse(content); } catch { return null; } }
-    async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves, tagOrder: _tagOrder });
-      if (ok) { setSharedSt("✓ 完了（" + saves.length + "件）", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
+    async function uploadToShared() {
+      if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves, tagOrder: _tagOrder });
+      if (ok) { setSharedSt("✓ 完了（" + saves.length + "件）", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); }
+    }
     async function downloadFromShared() {
       if (!sharedToken) { showToast("共有トークンを設定してください"); return; }
       if (!sharedGistId) { setSharedSt("⚠ 共有Gist IDを設定してください", "err"); return; }
@@ -7263,8 +7268,8 @@ function showTagReorderPopup(containerId, tags, onClickFn) {
       const statsHtml = rows.length ? rows.join('') : '<span style="color:var(--text3);font-size:11px">データなし</span>';
 
       const tags = sv.tags || [];
-const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
-  + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 3px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
+      const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
+        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 3px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
@@ -7454,7 +7459,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
                 const shared = lSharedSaves();
                 const idx = shared.findIndex(s => s.id === id);
                 if (idx < 0) return;
-                const merged = { ...freshBoth, id, savedAt: new Date().toISOString() };
+                const merged = { ...freshBoth, id, savedAt: new Date().toISOString(), tags: shared[idx].tags };
                 shared[idx] = merged;
                 wSharedSaves(shared);
                 renderSharedList(); renderKomaSaveList(); renderStatSaveList();
@@ -7468,7 +7473,7 @@ const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrin
               } else {
                 const idx = currentSaves.findIndex(s => s.id === id);
                 if (idx < 0) return;
-                const merged = { ...freshBoth, id, savedAt: new Date().toISOString() };
+                const merged = { ...freshBoth, id, savedAt: new Date().toISOString(), tags: currentSaves[idx].tags };
                 currentSaves[idx] = merged;
                 writeSaves(currentSaves);
                 renderSaveList(); renderKomaSaveList(); renderStatSaveList();
