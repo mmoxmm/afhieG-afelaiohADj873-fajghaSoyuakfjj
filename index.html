@@ -3809,15 +3809,7 @@
         ...personal.map(s => ({ ...s, _fromShared: false })),
         ...shared.filter(s => !personal.find(p => p.id === s.id)).map(s => ({ ...s, _fromShared: true }))
       ].sort((a, b) => b.id - a.id)
-        .filter(sv => {
-          if (sv._isKoma) return true;
-          if (!sv.komaData) return false;
-          const kd = sv.komaData;
-          return (kd.labels || []).some(l => !l._sep && l.text)
-            || (kd.statusList || []).some(s => !s._sep && s.label)
-            || (kd.paramList || []).some(p => !p._sep && p.label)
-            || (kd.manualPalette || '').trim();
-        }); // ← コマデータに中身がある保存のみ
+        .filter(sv => sv._isKoma || sv.komaData); // ← コマデータがある保存のみ
       const filtered = all.filter(sv => {
         if (_komaTabFilter === "personal") return !sv._fromShared;
         if (_komaTabFilter === "shared") return !!sv._fromShared;
@@ -4576,15 +4568,17 @@
     }
     function getSettings() {
       return {
-        hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || false,
-        hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || false,
-        invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || false,
-        skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || false,
-        inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || false,
-        sepSpace: document.getElementById('koma-sep-before')?.checked ? 'before' : 'both',
+        hideStatus: document.getElementById('chk-hide-status')?.checked || document.getElementById('koma-hide-status')?.checked || document.getElementById('chk-hide-status2')?.checked || document.getElementById('chk-hide-status3')?.checked || false,
+        hideChat: document.getElementById('chk-hide-chat-char')?.checked || document.getElementById('koma-hide-chat')?.checked || document.getElementById('chk-hide-chat-char2')?.checked || document.getElementById('chk-hide-chat-char3')?.checked || false,
+        invisible: document.getElementById('chk-invisible')?.checked || document.getElementById('koma-invisible')?.checked || document.getElementById('chk-invisible2')?.checked || document.getElementById('chk-invisible3')?.checked || false,
+        skDice: document.getElementById('chk-sk-dice-save')?.checked || document.getElementById('chk-sk-dice')?.checked || document.getElementById('chk-sk-dice2')?.checked || false,
+        inclSep: document.getElementById('chk-incl-sep')?.checked || document.getElementById('koma-incl-sep')?.checked || document.getElementById('chk-incl-sep2')?.checked || document.getElementById('chk-incl-sep3')?.checked || false,
+        sepSpace: document.querySelector('input[name="koma-sep-space"]:checked, input[name="koma-sep-space2"]:checked, input[name="koma-sep-space3"]:checked, input[name="koma-sep-space4"]:checked')?.value || 'before',
         komaPaletteSrc,
-        paletteMode: document.querySelector('input[name="palette-mode"]:checked')?.value || 'auto',
-        cmdOrder: document.querySelector('input[name="cmd-order"]:checked')?.value || 'sk-first'
+        paletteMode: document.querySelector('input[name="palette-mode"]:checked, input[name="palette-mode2"]:checked, input[name="palette-mode3"]:checked')?.value || 'auto',
+        cmdOrder: document.querySelector('input[name="cmd-order"]:checked, input[name="cmd-order2"]:checked, input[name="cmd-order3"]:checked')?.value || 'sk-first',
+        bothDb: document.getElementById('chk-both-db')?.checked || document.getElementById('chk-both-db2')?.checked || document.getElementById('chk-both-db3')?.checked || false,
+        useV6: document.getElementById('chk-use-v6')?.checked || document.getElementById('chk-use-v6-2')?.checked || document.getElementById('chk-use-v6-3')?.checked || false
       };
     }
 
@@ -4594,15 +4588,17 @@
       ['chk-hide-chat-char', 'chk-hide-chat-char2', 'chk-hide-chat-char3', 'koma-hide-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.hideChat; });
       ['chk-invisible', 'chk-invisible2', 'chk-invisible3', 'koma-invisible'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.invisible; });
       ['chk-sk-dice', 'chk-sk-dice-save', 'chk-sk-dice2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.skDice; });
-      ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
+      ['koma-incl-sep', 'chk-incl-sep', 'chk-incl-sep2', 'chk-incl-sep3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.inclSep; });
       const sep = s.sepSpace || 'before';
-      ['koma-sep-before', 'koma-sep-before2', 'koma-sep-before3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
-      ['koma-sep-both', 'koma-sep-both2', 'koma-sep-both3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
+      ['koma-sep-before', 'koma-sep-before2', 'koma-sep-before3', 'koma-sep-before4'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'before'; });
+      ['koma-sep-both', 'koma-sep-both2', 'koma-sep-both3', 'koma-sep-both4'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = sep === 'both'; });
       if (s.komaPaletteSrc) { komaPaletteSrc = s.komaPaletteSrc; const el = document.getElementById('kpsrc-' + s.komaPaletteSrc); if (el) el.checked = true; }
       const pm = s.paletteMode || 'auto';
-      document.querySelectorAll('input[name="palette-mode"], input[name="palette-mode2"]').forEach(el => el.checked = el.value === pm);
+      document.querySelectorAll('input[name="palette-mode"], input[name="palette-mode2"], input[name="palette-mode3"]').forEach(el => el.checked = el.value === pm);
       const co = s.cmdOrder || 'sk-first';
-      document.querySelectorAll('input[name="cmd-order"], input[name="cmd-order2"]').forEach(el => el.checked = el.value === co);
+      document.querySelectorAll('input[name="cmd-order"], input[name="cmd-order2"], input[name="cmd-order3"]').forEach(el => el.checked = el.value === co);
+      if (s.bothDb !== undefined) { ['chk-both-db', 'chk-both-db2', 'chk-both-db3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.bothDb; }); }
+      if (s.useV6 !== undefined) { ['chk-use-v6', 'chk-use-v6-2', 'chk-use-v6-3'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = !!s.useV6; }); }
     }
     const STATS = [{ key: "str", label: "STR", jp: "筋力" }, { key: "con", label: "CON", jp: "体力" }, { key: "siz", label: "SIZ", jp: "体格" }, { key: "int", label: "INT", jp: "知性" }, { key: "pow", label: "POW", jp: "精神力" }, { key: "dex", label: "DEX", jp: "敏捷" }, { key: "app", label: "APP", jp: "外見" }, { key: "edu", label: "EDU", jp: "教育" }];
     const MYTHOS_BEINGS = [{ name: "クトゥルフ（直視）", s: "1", f: "1d10+1" }, { name: "クトゥルフ（知識のみ）", s: "1", f: "6" }, { name: "ハスター", s: "1", f: "6" }, { name: "ナイアルラトホテップ", s: "1", f: "8" }, { name: "シュブ＝ニグラス", s: "1", f: "8" }, { name: "アザトース（遠望）", s: "1", f: "1d6+1" }, { name: "ダゴン", s: "1", f: "6" }, { name: "ディープ・ワン（初遭遇）", s: "0", f: "2" }, { name: "ディープ・ワン（群れ）", s: "1", f: "1d4+1" }, { name: "ショゴス", s: "1", f: "8" }, { name: "ビャーカー", s: "0", f: "1d3+1" }, { name: "ナイトガウント", s: "0", f: "1d4+1" }, { name: "フライング・ポリープ", s: "1", f: "1d6+1" }, { name: "ハウンド・オブ・ティンダロス", s: "1", f: "1d6+1" }, { name: "ミ＝ゴ", s: "0", f: "1d4+1" }, { name: "老いたる者", s: "0", f: "2" }, { name: "グール（初遭遇）", s: "0", f: "1d4" }, { name: "ゾンビ（初遭遇）", s: "0", f: "1d4+1" }, { name: "ゴースト（初遭遇）", s: "1", f: "1d3+1" }, { name: "神話的な儀式（目撃）", s: "1", f: "1d4+2" }, { name: "邪神の書物（初読）", s: "1", f: "4" }, { name: "神話の真実を知った", s: "1", f: "6" }];
