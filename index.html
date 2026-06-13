@@ -6789,7 +6789,12 @@
               overwriteKomaData(id, isShared);
             } else {
               // 保存タブからの上書き：ステータス＋コマ両方更新
-              const freshBoth = getCurrentData({ includeKoma: true });
+              const existing = (isShared ? lSharedSaves() : currentSaves).find(s => s.id === id);
+              const freshBoth = callerTab === 'stats' 
+                ? { ...getCurrentData(), komaData: existing?.komaData, _isKoma: existing?._isKoma }
+                : callerTab === 'koma'
+                ? { ...existing, ...getCurrentData({ includeKoma: true }).komaData && { komaData: getCurrentData({ includeKoma: true }).komaData } }
+                : getCurrentData({ includeKoma: true });
               if (isShared) {
                 const shared = lSharedSaves();
                 const idx = shared.findIndex(s => s.id === id);
@@ -6798,11 +6803,12 @@
                 shared[idx] = merged;
                 wSharedSaves(shared);
                 renderSharedList(); renderKomaSaveList(); renderStatSaveList();
-                showToast("「" + merged.name + "」をステータス＋コマで上書きしました");
+                showToast("「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました");
                 if (sharedToken) {
                   setSharedSt("同期中…", "ing");
                   const ok = await sharedGistSet({ saves: lSharedSaves() });
                   setSharedSt(ok ? "✓ 共有に同期しました" : "⚠ 同期失敗", ok ? "ok" : "err");
+                  showToast(ok ? "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書き・同期しました" : "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました（同期失敗）");
                 }
               } else {
                 const idx = currentSaves.findIndex(s => s.id === id);
@@ -6811,11 +6817,12 @@
                 currentSaves[idx] = merged;
                 writeSaves(currentSaves);
                 renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-                showToast("「" + merged.name + "」をステータス＋コマで上書きしました");
+                showToast("「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました");
                 if (syncToken) {
                   setSyncSt("同期中…", "ing");
                   const ok = await gistSet({ saves: currentSaves, mythos: { beings: customBeings, spells: customSpells } });
                   setSyncSt(ok ? "✓ クラウドに上書きしました" : "⚠ 同期失敗", ok ? "ok" : "err");
+                  showToast(ok ? "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書き・同期しました" : "「" + merged.name + "」の" + (callerTab === 'stats' ? 'ステータス' : 'ステータス＋コマ') + "を上書きしました（同期失敗）");
                 }
               }
             }
