@@ -6482,10 +6482,68 @@ const invisible = document.getElementById("chk-invisible")?.checked || false;
     function lSharedSaves() { try { return JSON.parse(localStorage.getItem("coc_v4_shared_saves") || "[]"); } catch { return []; } }
     function wSharedSaves(l) { localStorage.setItem("coc_v4_shared_saves", JSON.stringify(l)); }
     async function applySharedKey(token) { token = (token || "").trim(); if (!token) { setSharedSt("\u30c8\u30fc\u30af\u30f3\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } sharedToken = token; localStorage.setItem(L_STOKEN, token); document.getElementById("btn-shared-upload").disabled = false; document.getElementById("btn-shared-download").disabled = false; const sd2 = document.getElementById("btn-shared-download2"); if (sd2) sd2.disabled = false; setSharedSt("\u78ba\u8a8d\u4e2d\u2026", "ing"); try { const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "token " + token, "Accept": "application/vnd.github.v3+json" } }); if (r.ok) { const u = await r.json(); setSharedSt("\u2713 \u8a8d\u8a3c OK\uff08" + u.login + "\uff09", "ok"); sharedGistId = localStorage.getItem(L_SGIST) || ""; updSharedGistDisplay(); } else { sharedToken = ""; setSharedSt("\u26a0 \u8a8d\u8a3c\u5931\u6557", "err"); document.getElementById("btn-shared-upload").disabled = true; document.getElementById("btn-shared-download").disabled = true; } } catch { sharedToken = ""; setSharedSt("\u26a0 \u30cd\u30c3\u30c8\u30ef\u30fc\u30af\u30a8\u30e9\u30fc", "err"); } }
-    async function sharedGistSet(payload) { const content = JSON.stringify(payload, null, 2); const body = { description: "CoC NPC Tool Shared Data", public: false, files: { "coc_shared.json": { content } } }; try { let r; if (sharedGistId) r = await fetch("https://api.github.com/gists/" + sharedGistId, { method: "PATCH", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!r.ok) return false; const d = await r.json(); sharedGistId = d.id; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); return true; } catch { return false; } }
+    let _sharedDeletedIds = [];
+try { _sharedDeletedIds = JSON.parse(localStorage.getItem('coc_shared_deleted_ids') || '[]'); } catch { _sharedDeletedIds = []; }
+function saveSharedDeletedIds() { localStorage.setItem('coc_shared_deleted_ids', JSON.stringify(_sharedDeletedIds)); }
+
+async function sharedGistSet(payload) {
+  // 30日以上前の削除履歴を自動掃除
+  const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
+  saveSharedDeletedIds();
+  payload.deletedIds = _sharedDeletedIds;
+  const content = JSON.stringify(payload, null, 2);
+  const body = { description: "CoC NPC Tool Shared Data", public: false, files: { "coc_shared.json": { content } } };
+  try {
+    let r;
+    if (sharedGistId) r = await fetch("https://api.github.com/gists/" + sharedGistId, { method: "PATCH", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    else r = await fetch("https://api.github.com/gists", { method: "POST", headers: { "Authorization": "token " + sharedToken, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    if (!r.ok) return false;
+    const d = await r.json();
+    sharedGistId = d.id;
+    localStorage.setItem(L_SGIST, sharedGistId);
+    updSharedGistDisplay();
+    return true;
+  } catch { return false; }
+}
     async function sharedGistGet() { if (!sharedGistId) return null; try { const headers = { "Accept": "application/vnd.github.v3+json" }; if (sharedToken) headers["Authorization"] = "token " + sharedToken; const r = await fetch("https://api.github.com/gists/" + sharedGistId, { headers }); if (!r.ok) return null; const d = await r.json(); const content = d.files?.["coc_shared.json"]?.content; if (!content) return null; return JSON.parse(content); } catch { return null; } }
     async function uploadToShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } setSharedSt("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const saves = lSharedSaves(); const ok = await sharedGistSet({ saves }); if (ok) { setSharedSt("\u2713 \u5b8c\u4e86\uff08" + saves.length + "\u4ef6\uff09", "ok"); showToast("\u5171\u6709\u306b\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); } else { setSharedSt("\u26a0 \u5931\u6557", "err"); showToast("\u30a2\u30c3\u30d7\u30ed\u30fc\u30c9\u5931\u6557"); } }
-    async function downloadFromShared() { if (!sharedToken) { showToast("\u5171\u6709\u30c8\u30fc\u30af\u30f3\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044"); return; } if (!sharedGistId) { setSharedSt("\u26a0 \u5171\u6709Gist ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } setSharedSt("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u4e2d\u2026", "ing"); const data = await sharedGistGet(); if (!data) { setSharedSt("\u26a0 \u30c7\u30fc\u30bf\u306a\u3057", "err"); showToast("\u30c7\u30fc\u30bf\u306a\u3057"); return; } const remote = data.saves || []; if (remote.length) { const local = lSharedSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); wSharedSaves(merged); setSharedSt("\u2713 \u5b8c\u4e86\uff08" + merged.length + "\u4ef6\uff09", "ok"); showToast(merged.length + "\u4ef6\u53d6\u5f97\u3057\u307e\u3057\u305f"); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); } else setSharedSt("\u26a0 \u30af\u30e9\u30a6\u30c9\u306b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093", "err"); }
+    async function downloadFromShared() {
+  if (!sharedToken) { showToast("共有トークンを設定してください"); return; }
+  if (!sharedGistId) { setSharedSt("⚠ 共有Gist IDを設定してください", "err"); return; }
+  setSharedSt("ダウンロード中…", "ing");
+  const data = await sharedGistGet();
+  if (!data) { setSharedSt("⚠ データなし", "err"); showToast("データなし"); return; }
+  // クラウドの削除履歴を取得してローカルにも反映
+  const remoteDeletedIds = data.deletedIds || [];
+  const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  remoteDeletedIds.forEach(d => {
+    if (!_sharedDeletedIds.find(ld => ld.id === d.id)) {
+      _sharedDeletedIds.push(d);
+    }
+  });
+  _sharedDeletedIds = _sharedDeletedIds.filter(d => new Date(d.deletedAt).getTime() > threshold);
+  saveSharedDeletedIds();
+  // ローカルから削除済みIDのデータを消す
+  const deletedIdSet = new Set(_sharedDeletedIds.map(d => d.id));
+  wSharedSaves(lSharedSaves().filter(s => !deletedIdSet.has(s.id)));
+  const remote = data.saves || [];
+  if (remote.length) {
+    const local = lSharedSaves(), merged = [...remote];
+    local.forEach(l => {
+      if (!merged.find(r => String(r.id) === String(l.id)) && !deletedIdSet.has(l.id)) merged.push(l);
+    });
+    merged.sort((a, b) => b.id - a.id);
+    wSharedSaves(merged);
+    setSharedSt("✓ 完了（" + merged.length + "件）", "ok");
+    showToast(merged.length + "件取得しました");
+    renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+  } else {
+    wSharedSaves([]);
+    renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+    setSharedSt("⚠ クラウドにデータがありません", "err");
+  }
+}
     function setSharedGistId() { const raw = document.getElementById("shared-gist-id-input").value.trim(); if (!raw) { setSharedSt("Gist ID\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "err"); return; } const m = raw.match(/([a-f0-9]{20,40})/i); if (!m) { setSharedSt("\u26a0 \u6709\u52b9\u306aGist ID\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093", "err"); return; } sharedGistId = m[1]; localStorage.setItem(L_SGIST, sharedGistId); updSharedGistDisplay(); setSharedSt("\u2713 Gist ID\u8a2d\u5b9a\u6e08", "ok"); showToast("Gist ID\u3092\u8a2d\u5b9a\u3057\u307e\u3057\u305f"); }
 
     function getCurrentData(opts = {}) {
@@ -6895,6 +6953,9 @@ const invisible = document.getElementById("chk-invisible")?.checked || false;
       document.getElementById("sd-cloud").addEventListener("click", async () => {
         close();
         wSharedSaves(shared.filter(s => s.id !== id));
+        // 削除履歴に追加
+        _sharedDeletedIds.push({ id, deletedAt: new Date().toISOString() });
+        saveSharedDeletedIds();
         renderSharedList(); renderKomaSaveList(); renderStatSaveList();
         showToast("削除中…");
         if (sharedToken) {
