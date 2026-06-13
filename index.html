@@ -5474,7 +5474,7 @@
       customFields = [{ id: 'cf1', label: '', value: '', max: '' }, { id: 'cf2', label: '', value: '', max: '' }, { id: 'cf3', label: '', value: '', max: '' }, { id: 'cf4', label: '', value: '', max: '' }];
       saveCustomFields();
       buildCustomFieldRows();
-extraParams = [{ id: nxtId++, label: '', value: '' }];
+      extraParams = [{ id: nxtId++, label: '', value: '' }];
       saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
       manualPaletteText = ""; saveManualPalette();
       const ta = document.getElementById("manual-palette-textarea");
@@ -5596,12 +5596,12 @@ extraParams = [{ id: nxtId++, label: '', value: '' }];
           return;
         }
         const outerRow = document.createElement('div');
-        outerRow.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:4px;width:100%;';
+        outerRow.style.cssText = 'display:flex;align-items:center;gap:3px;margin-bottom:4px;width:100%;min-height:44px;';
         outerRow.dataset.dnd = idx;
 
         const row = document.createElement('div');
         row.className = 'koma-label-row';
-        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 72px 72px 22px 22px;gap:3px;margin-bottom:0;';
+        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 100px 100px 22px 22px;gap:3px;margin-bottom:0;';
 
         const nameInp = document.createElement('input');
         nameInp.type = 'text'; nameInp.placeholder = ' ラベル名（例：HP）'; nameInp.value = s.label || '';
@@ -5721,7 +5721,7 @@ extraParams = [{ id: nxtId++, label: '', value: '' }];
 
         const row = document.createElement('div');
         row.className = 'koma-label-row';
-        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 147px 22px 22px;gap:3px;margin-bottom:0;';
+        row.style.cssText = 'flex:1;display:grid;grid-template-columns:16px minmax(0,1fr) 203px 22px 22px;gap:3px;margin-bottom:0;';
 
         const nameInp = document.createElement('input');
         nameInp.type = 'text'; nameInp.placeholder = ' ラベル名（例：STR）'; nameInp.value = p.label || '';
@@ -6115,10 +6115,10 @@ extraParams = [{ id: nxtId++, label: '', value: '' }];
       const name = document.getElementById("npc-name").value || "NPC";
       const status = [];
       const hp = getEff("hp"), mp = getEff("mp"), san = getEff("san"), luck = getEff("luck");
-     if (hp > 0) status.push({ label: "HP", value: hp, max: hp });
-if (mp > 0) status.push({ label: "MP", value: mp, max: mp });
-if (san > 0) status.push({ label: "SAN", value: san, max: san });
-if (luck > 0) status.push({ label: "幸運", value: luck, max: luck });
+      if (hp > 0) status.push({ label: "HP", value: hp, max: hp });
+      if (mp > 0) status.push({ label: "MP", value: mp, max: mp });
+      if (san > 0) status.push({ label: "SAN", value: san, max: san });
+      if (luck > 0) status.push({ label: "幸運", value: luck, max: luck });
       consumables.filter(c => c.label).forEach(c => {
         const cur = parseInt(c.cur) || 0, max = parseInt(c.max) || 0;
         status.push({ label: c.label, value: cur, max: max || cur });
@@ -6317,7 +6317,7 @@ if (luck > 0) status.push({ label: "幸運", value: luck, max: luck });
         || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0)
         || extraParams.some(p => p.label) || hasKomaData;
       const activeTab = [...document.querySelectorAll('.tab[data-tab]')].find(b => b.classList.contains('active'))?.dataset.tab;
-const useKoma = activeTab === 'save';
+      const useKoma = activeTab === 'save';
       const txt = any ? (exportMode === "json" ? buildCocoforiaJson(useKoma) : buildCocoforiaText()) : "（스테이터스를 입력하면 출력됩니다）";
       const el = document.getElementById("export-preview");
       if (el) el.textContent = txt;
@@ -6329,8 +6329,12 @@ const useKoma = activeTab === 'save';
       clearTimeout(_renderPaletteTimer);
       _renderPaletteTimer = setTimeout(renderPalettePreview, 80);
     }
-    function copyExport() { if (exportMode === "json") { const hasKomaData2 = (currentKoma.labels || []).some(l => !l._sep && l.text) || (currentKoma.statusList || []).some(s => !s._sep && s.label) || (currentKoma.paramList || []).some(p => !p._sep && p.label) || (currentKoma.manualPalette || '').trim(); const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0) || hasKomaData2; if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const activeTab = [...document.querySelectorAll('.tab[data-tab]')].find(b => b.classList.contains('active'))?.dataset.tab;
-const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(useKoma)); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); } }
+    function copyExport() {
+      if (exportMode === "json") {
+        const hasKomaData2 = (currentKoma.labels || []).some(l => !l._sep && l.text) || (currentKoma.statusList || []).some(s => !s._sep && s.label) || (currentKoma.paramList || []).some(p => !p._sep && p.label) || (currentKoma.manualPalette || '').trim(); const any = STATS.some(s => (vals[s.key] || 0) > 0) || getEff("hp") > 0 || atkList.some(a => a.name) || skList.some(s => s.name && (s.val || 0) > 0) || hasKomaData2; if (!any) { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const activeTab = [...document.querySelectorAll('.tab[data-tab]')].find(b => b.classList.contains('active'))?.dataset.tab;
+        const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(useKoma)); navigator.clipboard.writeText(JSON.stringify(obj)).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557"));
+      } else { const el = document.getElementById("export-preview"); const txt = el?.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } navigator.clipboard.writeText(txt).then(() => showToast("\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f")).catch(() => showToast("\u30b3\u30d4\u30fc\u5931\u6557")); }
+    }
     function downloadExport() { const el = document.getElementById("export-preview"); if (!el) return; const txt = el.textContent; if (!txt || txt === "\uff08\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u5165\u529b\u3059\u308b\u3068\u51fa\u529b\u3055\u308c\u307e\u3059\uff09") { showToast("\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093"); return; } const name = (document.getElementById("npc-name").value || "npc").replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3041-\u3096]/g, "_"); const blob = new Blob([txt], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + ".json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); showToast("\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f"); }
     function renderHpList() { const w = document.getElementById("hp-list"); if (!hpList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">NPC\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = hpList.map((h, i) => { const p = Math.max(0, h.cur / h.max * 100), c = p > 50 ? "#1a9e72" : p > 25 ? "#d09028" : "#c03030"; return '<div class="hp-item"><span class="hp-name">' + esc(h.name) + '</span><div class="hp-bar-wrap"><div class="hp-bar" style="width:' + p + '%;background:' + c + '"></div></div><span class="hp-nums" style="color:' + c + '">' + h.cur + '/' + h.max + '</span><div class="hp-btns"><button class="hp-btn" data-i="' + i + '" data-d="-1">\u2212</button><button class="hp-btn" data-i="' + i + '" data-d="1">\uff0b</button><button class="hp-btn" data-i="' + i + '" data-d="del" style="color:var(--text3)">\u2715</button></div></div>'; }).join(""); w.querySelectorAll(".hp-btn").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i, d = e.currentTarget.dataset.d; if (d === "del") hpList.splice(i, 1); else hpList[i].cur = Math.max(0, Math.min(hpList[i].max, hpList[i].cur + parseInt(d))); renderHpList(); saveKp(); })); }
     function renderInitList() { const w = document.getElementById("init-list"); if (!initList.length) { w.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:4px">\u53c2\u52a0\u8005\u3092\u8ffd\u52a0\u3057\u3066\u304f\u3060\u3055\u3044</div>'; return; } w.innerHTML = initList.map((it, i) => '<div class="init-item' + (i === initTurn ? " active" : "") + '"><span class="init-val">' + it.dex + '</span><span class="init-name">' + esc(it.name) + (i === initTurn ? " \u25c4" : "") + '</span><button class="init-del" data-i="' + i + '">\u2715</button></div>').join(""); w.querySelectorAll(".init-del").forEach(btn => btn.addEventListener("click", e => { const i = +e.currentTarget.dataset.i; initList.splice(i, 1); if (initTurn >= initList.length) initTurn = 0; renderInitList(); saveKp(); })); }
@@ -6563,7 +6567,7 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
       }
       updateExport();
     }
-   async function quickSaveStatus(dest) {
+    async function quickSaveStatus(dest) {
       const d = getCurrentData({ includeKoma: true });
       d.id = Date.now();
       d.savedAt = new Date().toISOString();
@@ -6741,7 +6745,7 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
 
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
         + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'
-        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + esc(sv.name) + '</div>'
+        + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + (getSaveKind(sv)!=="char"?'<span style="text-decoration:underline">':'')+esc(sv.name)+(getSaveKind(sv)!=="char"?'</span>':'') + '</div>'
         + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
         + '</div>'
@@ -6769,7 +6773,7 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
             + (isKoma ? '\u30b3\u30de\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059' : '\u30b9\u30c6\u30fc\u30bf\u30b9\u30bf\u30d6\u306e\u73fe\u5728\u306e\u5185\u5bb9\u3067\u4e0a\u66f8\u304d\u3057\u307e\u3059')
             + '</div>'
             + '<button id="ow-confirm" style="width:100%;background:' + (isKoma ? 'var(--warn)' : 'var(--accent)') + ';border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;padding:10px;margin-bottom:8px;font-weight:700">'
-            + (isKoma ? '🎭 コマタブのみ上書き' : (callerTab === 'stats' ? '📊 ステータスタブのみ上書き' : '📚 ステータス＋コマで上書き'))            + '</button>'
+            + (isKoma ? '🎭 コマタブのみ上書き' : (callerTab === 'stats' ? '📊 ステータスタブのみ上書き' : '📚 ステータス＋コマで上書き')) + '</button>'
             + '<button id="ow-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button>'
             + '</div>';
           document.body.appendChild(overlay);
@@ -7123,7 +7127,8 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
     }
 
     function switchKpTab(t) { document.querySelectorAll("[data-kp]").forEach(b => b.classList.toggle("active", b.dataset.kp === t));["combat", "san", "mythos", "madness", "misc"].forEach(id => { const el = document.getElementById("kp-" + id); if (el) el.style.display = id === t ? "" : "none"; }); }
-    function switchTab(t) {
+     function switchTab(t) {
+      try{localStorage.setItem('coc_last_tab',t);}catch{}
 
       document.querySelectorAll(".tab[data-tab]").forEach(b => b.classList.toggle("active", b.dataset.tab === t));
       ["stats", "dice", "kp", "save", "koma"].forEach(id => {
@@ -7190,6 +7195,8 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
       document.getElementById("btn-shared-upload2")?.addEventListener("click", uploadToShared);
       document.getElementById("btn-shared-download2")?.addEventListener("click", downloadFromShared);
       // diceメモ初期化
+    const _lastTab=localStorage.getItem('coc_last_tab');
+      if(_lastTab)switchTab(_lastTab);
       buildDiceMemoRows();
       // コマ作成タブ初期化
       watchInp(document.getElementById("koma-name"), document.getElementById("w-komaname"));
@@ -7218,9 +7225,9 @@ const useKoma = activeTab === 'save'; const obj = JSON.parse(buildCocoforiaJson(
       // 秘匿コマンド初期化
       updateSecretCmdPreview();
     });
-// loadMemoLocal はDOMContentLoaded後に移動済みか確認。
-// グローバル実行順を明示するため以下の順序を保証
-// （現状のコードでは let nxtId=1 の後に loadMemoLocal() があるか確認必須）
+    // loadMemoLocal はDOMContentLoaded後に移動済みか確認。
+    // グローバル実行順を明示するため以下の順序を保証
+    // （現状のコードでは let nxtId=1 の後に loadMemoLocal() があるか確認必須）
     loadMemoLocal(); buildStatRows(); buildSkRows(); buildAtkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
     buildExtraParamRows();
     updateStatDisplay();
