@@ -4226,6 +4226,7 @@
         return;
       }
       if (_komaTabFilter === 'all' && !_komaTagFilter) filtered.sort((a, b) => b.id - a.id);
+      if (_komaTagFilter) { const s = filtered.filter(sv => sv._fromShared); const p = filtered.filter(sv => !sv._fromShared); filtered = [...s, ...p]; }
       if (!filtered.length) { wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter); return; }
       wrap.innerHTML = filterBar + '<div class="save-list">'
         + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'koma')).join("")
@@ -7280,6 +7281,7 @@
         return;
       }
       if (_statSaveFilter === 'all' && !_statTagFilter) allSaves.sort((a, b) => b.id - a.id);
+      if (_statTagFilter) { const s = allSaves.filter(sv => sv._fromShared); const p = allSaves.filter(sv => !sv._fromShared); allSaves = [...s, ...p]; }
       if (!allSaves.length) { wrap.innerHTML = '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter); return; }
       wrap.innerHTML = '<div class="save-list">' + allSaves.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
       bindSaveListEvents(wrap);
