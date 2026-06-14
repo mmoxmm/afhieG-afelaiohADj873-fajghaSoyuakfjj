@@ -7294,7 +7294,7 @@
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
       const cbId = 'cb-collapse-' + sv.id;
-      const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉じる</label>';
+      const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉</label>';
       const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
         + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
