@@ -7321,11 +7321,13 @@
         if (skN > 0) abilChips.push(chip('#e6f1fb', '#185fa5', '#85b7eb', '技能 ' + skN));
         if (cN > 0) abilChips.push(chip('#faeeda', '#854f0b', '#ef9f27', '消耗品 ' + cN));
         if (splN > 0) abilChips.push(chip('#eeedfe', '#534ab7', '#afa9ec', '呪文 ' + splN));
-        if (epN > 0) abilChips.push(chip('#e1f5ee', '#0f6e56', '#5dcaa5', 'PR ' + epN));
-        if (memoN > 0) abilChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
+        // PR・MEMOは派生値行に移動
+        if (epN > 0) derivedChips.push(chip('#e1f5ee', '#0f6e56', '#5dcaa5', 'PR ' + epN));
+        if (memoN > 0) derivedChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
 
         if (derivedChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">派生</span>' + derivedChips.join('') + '</div>');
-        if (abilChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join('') + '</div>');
+        // 能力値行は1行固定（overflow:hidden ではみ出し非表示）
+        if (abilChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:nowrap;gap:0;overflow:hidden"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join('') + '</div>');
       }
 
       if (hasKomaData) {
@@ -7345,8 +7347,8 @@
       const cbId = 'cb-collapse-' + sv.id;
       // チェック=閉じる仕様（デフォルトOFF=開く）
       const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉じる</label>';
-      const actions = collapseChk
-        + '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
+      // □閉じるは右カラムに移動したのでactionsには含めない
+      const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
         + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
 
@@ -7362,27 +7364,28 @@
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
-      // 右端の縦2段ブロック: 1行目=↑、2行目=↓
-      const moveColHtml = '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;justify-content:space-between;align-self:stretch;">'
-        + moveUpBtn + moveDnBtn
+      // 右カラム：↓ボタン + □閉じる（縦並び）
+      const moveColHtml = '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;align-items:center;justify-content:flex-start;padding-top:1px;">'
+        + moveDnBtn
+        + collapseChk
         + '</div>';
 
-      // 1行目：名前 + タグ + アクションボタン + 日付 | 右端↑
-      // 2行目：chips | 右端↓
-      // → 全体をgridで右端列を固定
+      // 1行目：名前 + タグ + 読込/上書/削除 + 日付 + ↑
+      // 2行目以降：chips | 右カラム=↓+□閉じる
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
         + '<div style="display:grid;grid-template-columns:1fr auto;gap:0 4px;">'
-        // 左カラム（従来の内容）
+        // 左カラム
         + '<div>'
         + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:nowrap">'
         + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">' + esc(sv.name) + '</span>' + '</div>'
         + tagsHtml
         + '<div style="display:flex;gap:3px;flex-shrink:0;align-items:center;">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
+        + moveUpBtn
         + '</div>'
         + statsHtml
         + '</div>'
-        // 右カラム（↑↓縦2段）
+        // 右カラム（↓ + □閉じる）
         + moveColHtml
         + '</div>'
         + '</div>';
