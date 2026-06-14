@@ -7633,6 +7633,11 @@
 
           doneBtn.addEventListener("click", () => addTag());
           cancelBtn.addEventListener("click", closeInput);
+          inp.addEventListener("change", () => {
+            const tag = inp.value.trim();
+            const avail = getAvailTags();
+            if (avail.includes(tag)) addTag();
+          });
           inp.addEventListener("keydown", e => {
             if (e.key === "Enter") { e.preventDefault(); addTag(); }
             if (e.key === "Escape") closeInput();
@@ -7643,7 +7648,8 @@
 
       // ↑↓並び替えボタン
       wrap.querySelectorAll(".btn-move-up").forEach(btn => {
-        btn.addEventListener("click", async () => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
           if (isShared) {
@@ -7652,20 +7658,20 @@
             if (idx <= 0) return;
             [list[idx-1], list[idx]] = [list[idx], list[idx-1]];
             wSharedSaves(list);
-            renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+            setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
             if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx <= 0) return;
             [currentSaves[idx-1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx-1]];
             writeSaves(currentSaves);
-            renderSaveList(); renderKomaSaveList(); renderStatSaveList();
             if (syncToken) { setGlobalSt("同期中…","ing"); const ok = await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells},tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を保存しました":"⚠ 同期失敗",ok?"ok":"err"); }
           }
         });
       });
       wrap.querySelectorAll(".btn-move-down").forEach(btn => {
-        btn.addEventListener("click", async () => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
           if (isShared) {
@@ -7674,7 +7680,7 @@
             if (idx < 0 || idx >= list.length - 1) return;
             [list[idx], list[idx+1]] = [list[idx+1], list[idx]];
             wSharedSaves(list);
-            renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+            setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
             if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
