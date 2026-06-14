@@ -7326,6 +7326,8 @@
         if (memoN > 0) derivedChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
 
         if (derivedChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">派生</span>' + derivedChips.join('') + '</div>');
+        // 派生値行と能力値行の間に薄い区切り線
+        if (derivedChips.length && abilChips.length) rows.push('<div style="border-top:0.5px solid var(--border);margin:3px 0"></div>');
         // 能力値行は1行固定（overflow:hidden ではみ出し非表示）
         if (abilChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:nowrap;gap:0;overflow:hidden"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join('') + '</div>');
       }
@@ -7347,12 +7349,11 @@
       const cbId = 'cb-collapse-' + sv.id;
       // チェック=閉じる仕様（デフォルトOFF=開く）
       const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉じる</label>';
-      // □閉じるは右カラムに移動したのでactionsには含めない
       const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
         + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
 
-      // ↑↓ボタン（右端に縦2段）
+      // ↑↓ボタン（2行目・3行目用）
       const moveUpBtn = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;height:20px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="上へ移動">↑</button>';
       const moveDnBtn = '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;height:20px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="下へ移動">↓</button>';
 
@@ -7364,30 +7365,28 @@
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
-      // 右カラム：↓ボタン + □閉じる（縦並び）
-      const moveColHtml = '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;align-items:center;justify-content:flex-start;padding-top:1px;">'
-        + moveDnBtn
+      // 2行目：□閉じる + ↑（横並び）
+      const row2Html = '<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'
         + collapseChk
+        + moveUpBtn
         + '</div>';
 
-      // 1行目：名前 + タグ + 読込/上書/削除 + 日付 + ↑
-      // 2行目以降：chips | 右カラム=↓+□閉じる
+      // 3行目：↓
+      const row3Html = '<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">'
+        + moveDnBtn
+        + '</div>';
+
+      // 1行目：名前 + タグ + 読込/上書/削除 + 日付
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
-        + '<div style="display:grid;grid-template-columns:1fr auto;gap:0 4px;">'
-        // 左カラム
-        + '<div>'
         + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:nowrap">'
         + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">' + esc(sv.name) + '</span>' + '</div>'
         + tagsHtml
         + '<div style="display:flex;gap:3px;flex-shrink:0;align-items:center;">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
-        + moveUpBtn
         + '</div>'
+        + row2Html
+        + row3Html
         + statsHtml
-        + '</div>'
-        // 右カラム（↓ + □閉じる）
-        + moveColHtml
-        + '</div>'
         + '</div>';
     }
     function bindSaveListEvents(wrap) {
