@@ -7313,12 +7313,12 @@
       const sharedBg = isShared ? 'background:rgba(14,110,86,0.06);border-color:rgba(14,110,86,0.3);' : '';
 
       const chip = (bg, color, border, inner, mono) =>
-        '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;border:0.5px solid ' + border + ';background:' + bg + ';color:' + color + ';font-size:11px;font-weight:500;line-height:1;white-space:nowrap;margin:1px 1px;' + (mono ? 'font-family:monospace;' : '') + '">' + inner + '</span>';
+        '<span style="display:inline-flex;align-items:center;gap:3px;height:18px;padding:0 5px;border-radius:4px;border:0.5px solid ' + border + ';background:' + bg + ';color:' + color + ';font-size:11px;font-weight:500;line-height:1;white-space:nowrap;margin:1px 1px;' + (mono ? 'font-family:monospace;' : '') + '">' + inner + '</span>';
 
       const statChip = (lbl, val) =>
         '<span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;border:0.5px solid var(--border);background:var(--bg2);font-size:11px;line-height:1;white-space:nowrap;gap:2px"><span style="font-size:10px;color:var(--text3)">' + lbl + '</span><strong style="color:var(--text);font-weight:700;font-size:11px">' + val + '</strong></span>';
 
-      const sep = '<span style="color:var(--text3);font-size:12px;padding:0 2px;align-self:center">|</span>';
+      const sep = '<span style="color:var(--text3);font-size:12px;padding:0 2px;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:18px;margin:1px 1px;position:relative;top:-1px">|</span>';
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
       const cbId = 'cb-collapse-' + sv.id;
@@ -7401,7 +7401,7 @@
             const cur = (cf.value !== '' && cf.value !== undefined) ? esc(String(cf.value)) : '0';
             const mx  = (cf.max  !== '' && cf.max  !== undefined) ? esc(String(cf.max))  : cur;
             return chip('var(--bg2)', 'var(--text2)', 'var(--border2)',
-              '<span style="font-size:10px;color:var(--text3)">' + esc(cf.label) + '</span>'
+              '<span style="font-size:10px;color:var(--text3)">' + esc(cf.label) + '</span> '
               + '<strong style="color:var(--text);font-weight:700;font-size:11px">' + cur + '/' + mx + '</strong>');
           })
           .join('');
@@ -7416,8 +7416,8 @@
         if (cfChips)   derivedInner += cfChips;
         if (epN > 0 || memoN > 0) {
           derivedInner += sep;
-          if (epN   > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', '<span style="font-size:10px">PR</span><strong style="font-weight:700;font-size:11px">' + epN + '</strong>');
-          if (memoN > 0) derivedInner += chip('#faece7', '#712b13', '#f0997b', '<span style="font-size:10px">MEMO</span><strong style="font-weight:700;font-size:11px">' + memoN + '</strong>');
+          if (epN   > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', '<span style="font-size:10px">PR</span> <strong style="font-weight:700;font-size:11px">' + epN + '</strong>');
+          if (memoN > 0) derivedInner += chip('#faece7', '#712b13', '#f0997b', '<span style="font-size:10px">MEMO</span> <strong style="font-weight:700;font-size:11px">' + memoN + '</strong>');
         }
 
         // 能力行（STR〜EDU | 攻撃 呪文 技能 消耗品）
@@ -7430,10 +7430,10 @@
         }
         // 攻撃/呪文/技能/消耗品 の間に隙間（|なし、gap相当のmargin）
         const rightChips =
-          (aN   > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '<span style="font-size:10px;color:var(--text3)">攻撃</span><strong style="font-weight:700;font-size:11px;color:#72243e">' + aN + '</strong>') : '') +
-          (splN > 0 ? chip('#eeedfe', '#3c3489', '#afa9ec', '<span style="font-size:10px;color:var(--text3)">呪文</span><strong style="font-weight:700;font-size:11px;color:#3c3489">' + splN + '</strong>') : '') +
-          (skN  > 0 ? chip('#e6f1fb', '#0c447c', '#85b7eb', '<span style="font-size:10px;color:var(--text3)">技能</span><strong style="font-weight:700;font-size:11px;color:#0c447c">' + skN + '</strong>') : '') +
-          (cN   > 0 ? chip('#faeeda', '#633806', '#fac775', '<span style="font-size:10px;color:var(--text3)">消耗品</span><strong style="font-weight:700;font-size:11px;color:#633806">' + cN + '</strong>') : '');
+          (aN   > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '<span style="font-size:10px;color:#ab2626">攻撃</span> <strong style="font-weight:700;font-size:11px;color:#ab2626">' + aN + '</strong>') : '') +
+          (splN > 0 ? chip('#eeedfe', '#3c3489', '#afa9ec', '<span style="font-size:10px;color:#7a43a8">呪文</span> <strong style="font-weight:700;font-size:11px;color:#5a3489">' + splN + '</strong>') : '') +
+          (skN  > 0 ? chip('#e6f1fb', '#0c447c', '#85b7eb', '<span style="font-size:10px;color:#4980bc">技能</span> <strong style="font-weight:700;font-size:11px;color:#0c447c">' + skN + '</strong>') : '') +
+          (cN   > 0 ? chip('#faeeda', '#9f5704', '#fac775', '<span style="font-size:10px;color:#cd870e">消耗品</span> <strong style="font-weight:700;font-size:11px;color:#9f5704">' + (() => { const tots = (sv.consumables||[]).filter(c=>c.label); const cur = tots.reduce((s,c)=>s+(parseInt(c.cur)||0),0); const max = tots.reduce((s,c)=>s+(parseInt(c.max)||0),0); return cur + (max>0?'/'+max:''); })() + '</strong>') : '');
         if (abilInner && rightChips) abilInner += sep;
         abilInner += rightChips;
 
