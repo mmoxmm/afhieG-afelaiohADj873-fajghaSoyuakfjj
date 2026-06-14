@@ -7342,13 +7342,17 @@
       }
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
-      const cbId = 'cb-expand-' + sv.id;
-      const actions = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 5px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="上へ移動">↑</button>'
-        + '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 5px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="下へ移動">↓</button>'
-        + '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時に全ブロックを展開する"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">展開</label>'
+      const cbId = 'cb-collapse-' + sv.id;
+      // チェック=閉じる仕様（デフォルトOFF=開く）
+      const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉じる</label>';
+      const actions = collapseChk
         + '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
         + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
+
+      // ↑↓ボタン（右端に縦2段）
+      const moveUpBtn = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;height:20px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="上へ移動">↑</button>';
+      const moveDnBtn = '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;height:20px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="下へ移動">↓</button>';
 
       const statsHtml = rows.length ? rows.join('') : '<span style="color:var(--text3);font-size:11px">データなし</span>';
 
@@ -7358,14 +7362,29 @@
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
+      // 右端の縦2段ブロック: 1行目=↑、2行目=↓
+      const moveColHtml = '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;justify-content:space-between;align-self:stretch;">'
+        + moveUpBtn + moveDnBtn
+        + '</div>';
+
+      // 1行目：名前 + タグ + アクションボタン + 日付 | 右端↑
+      // 2行目：chips | 右端↓
+      // → 全体をgridで右端列を固定
       return '<div class="save-card" style="padding:8px 12px;' + sharedBg + '">'
-        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:nowrap">'
+        + '<div style="display:grid;grid-template-columns:1fr auto;gap:0 4px;">'
+        // 左カラム（従来の内容）
+        + '<div>'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:nowrap">'
         + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">' + typeEmoji + '<span style="text-decoration:underline">' + esc(sv.name) + '</span>' + '</div>'
         + tagsHtml
-        + '<div style="display:flex;gap:3px;flex-shrink:0">' + actions + '</div>'
+        + '<div style="display:flex;gap:3px;flex-shrink:0;align-items:center;">' + actions + '</div>'
         + '<div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">' + ds + '</div>'
         + '</div>'
         + statsHtml
+        + '</div>'
+        // 右カラム（↑↓縦2段）
+        + moveColHtml
+        + '</div>'
         + '</div>';
     }
     function bindSaveListEvents(wrap) {
@@ -7532,7 +7551,7 @@
 
       // ↑↓並び替えボタン
       wrap.querySelectorAll(".btn-move-up").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
           if (isShared) {
@@ -7542,17 +7561,19 @@
             [list[idx-1], list[idx]] = [list[idx], list[idx-1]];
             wSharedSaves(list);
             renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+            if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx <= 0) return;
             [currentSaves[idx-1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx-1]];
             writeSaves(currentSaves);
             renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+            if (syncToken) { setGlobalSt("同期中…","ing"); const ok = await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells},tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を保存しました":"⚠ 同期失敗",ok?"ok":"err"); }
           }
         });
       });
       wrap.querySelectorAll(".btn-move-down").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
           if (isShared) {
@@ -7562,17 +7583,19 @@
             [list[idx], list[idx+1]] = [list[idx+1], list[idx]];
             wSharedSaves(list);
             renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+            if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx < 0 || idx >= currentSaves.length - 1) return;
             [currentSaves[idx], currentSaves[idx+1]] = [currentSaves[idx+1], currentSaves[idx]];
             writeSaves(currentSaves);
             renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+            if (syncToken) { setGlobalSt("同期中…","ing"); const ok = await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells},tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を保存しました":"⚠ 同期失敗",ok?"ok":"err"); }
           }
         });
       });
       // 読込ボタン（展開CBを参照）
-      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; const doExpand = document.getElementById(btn.dataset.cb)?.checked || false; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv, doExpand); showToast("「" + sv.name + "」を読み込みました"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
+      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; const doExpand = !(document.getElementById(btn.dataset.cb)?.checked || false); if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv, doExpand); showToast("「" + sv.name + "」を読み込みました"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
         btn.addEventListener("click", () => {
           const isShared = btn.dataset.shared === "1";
           const id = +btn.dataset.id;
