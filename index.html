@@ -7365,14 +7365,14 @@
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
-      // 2行目：□閉じる + ↑（横並び）
-      const row2Html = '<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'
+      // 2行目：□閉じる + ↑（右端固定・横並び）
+      const row2Html = '<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-bottom:2px">'
         + collapseChk
         + moveUpBtn
         + '</div>';
 
-      // 3行目：↓
-      const row3Html = '<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">'
+      // 3行目：↓（右端固定）
+      const row3Html = '<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-bottom:4px">'
         + moveDnBtn
         + '</div>';
 
