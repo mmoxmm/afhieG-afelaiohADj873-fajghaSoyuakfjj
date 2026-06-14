@@ -6982,7 +6982,7 @@
     }
     async function downloadFromCloud() {
       if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; loadTagOrder(data);
-      if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); merged.sort((a, b) => b.id - a.id); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); }
+      if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); }
     }
     function lSharedSaves() { try { return JSON.parse(localStorage.getItem("coc_v4_shared_saves") || "[]"); } catch { return []; } }
     function wSharedSaves(l) { localStorage.setItem("coc_v4_shared_saves", JSON.stringify(l)); }
@@ -7043,7 +7043,6 @@
         local.forEach(l => {
           if (!merged.find(r => String(r.id) === String(l.id)) && !deletedIdSet.has(l.id)) merged.push(l);
         });
-        merged.sort((a, b) => b.id - a.id);
         wSharedSaves(merged);
         setSharedSt("✓ 完了（" + merged.length + "件）", "ok");
         showToast(merged.length + "件取得しました");
