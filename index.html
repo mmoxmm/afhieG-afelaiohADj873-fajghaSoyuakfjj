@@ -3374,7 +3374,8 @@
                   id="sync-status-badge" style="font-size:11px;color:var(--text3);margin-left:4px"></span></div>
               <button class="btn-sync" id="btn-upload"
                 style="font-size:12px;padding:4px 8px;background:#c07010;border-color:#c07010" disabled
-                onclick="event.stopPropagation();uploadToCloud()">⬆️ 개인 클라우드를 현재 목록으로 덮어쓰기</button>
+                onclick="event.stopPropagation();if(!confirm('現在の保存リストでクラウドを上書きします。よろしいですか？'))return;uploadToCloud()">⬆️
+                개인 클라우드를 현재 목록으로 덮어쓰기</button>
               <span class="acc-arrow" id="arrow-sync-personal">▼</span>
             </div>
             <div class="acc-body" id="body-sync-personal">
@@ -7745,6 +7746,8 @@
       });
 
       // ↑↓並び替えボタン
+      let _sortSaveTimer = null;
+      const debounceSave = (fn) => { clearTimeout(_sortSaveTimer); _sortSaveTimer = setTimeout(fn, 300); };
       wrap.querySelectorAll(".btn-move-up").forEach(btn => {
         btn.addEventListener("click", async (e) => {
           e.stopPropagation();
@@ -7757,14 +7760,14 @@
             [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }
+            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx <= 0) return;
             [currentSaves[idx - 1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx - 1]];
             writeSaves(currentSaves);
             setTimeout(() => { renderSaveList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (syncToken) { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }
+            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
           }
         });
       });
@@ -7780,14 +7783,14 @@
             [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }
+            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx < 0 || idx >= currentSaves.length - 1) return;
             [currentSaves[idx], currentSaves[idx + 1]] = [currentSaves[idx + 1], currentSaves[idx]];
             writeSaves(currentSaves);
             renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-            if (syncToken) { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }
+            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
           }
         });
       });
