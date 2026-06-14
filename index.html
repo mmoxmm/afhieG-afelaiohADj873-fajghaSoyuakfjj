@@ -3812,7 +3812,7 @@
         const btn = document.createElement('button');
         btn.className = 'save-filter-btn' + (currentTag === tag ? ' active' : '');
         btn.textContent = tag;
-        btn.style.cssText = 'font-size:11px;padding:3px 4px;line-height:1;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);overflow:hidden;';
+        btn.style.cssText = 'font-size:11px;padding:3px 4px;line-height:1;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);overflow:hidden;font-weight:700;';
         if (currentTag === tag) btn.style.cssText += 'background:var(--accent);color:#fff;border-color:var(--accent);';
         btn.addEventListener('click', () => onClickFn(currentTag === tag ? null : tag));
         el.appendChild(btn);
@@ -5234,7 +5234,7 @@
       if (id === "palette" && o) renderPalettePreview();
       if (id === "cons") { const fb = document.getElementById("cons-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼"; }
 
-     if (o) {
+      if (o) {
         // 攻撃⇔消耗品/呪文 ペア同時展開
         const pairedId = _accPairs[id];
         if (pairedId) {
@@ -5282,7 +5282,7 @@
       if (!b) return;
       const o = b.classList.toggle("open");
       const fb = document.getElementById("memo-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼";
-// メモ開閉と技能を連動
+      // メモ開閉と技能を連動
       if (o) {
         const bSk = document.getElementById("body-sk");
         const aSk = document.getElementById("arrow-sk");
@@ -7347,7 +7347,7 @@
       // 派生と能力の間の点線
       const dottedLine = '<div style="border-top:1px dashed var(--border2);margin:3px 0;"></div>';
       // 能力とコマの間の線（BOTHのみ使用）
-      const komaLine   = '<div style="border-top:1px solid var(--border2);margin:3px 0;"></div>';
+      const komaLine = '<div style="border-top:1px solid var(--border2);margin:3px 0;"></div>';
 
       // ---- 1行目：名前 + タグ + ボタン + 日付 ----
       const row1Html = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:nowrap">'
@@ -7363,8 +7363,8 @@
         // ---- KOMA ----
         const kd = sv.komaData || sv;
         const lbls = (kd.labels || []).filter(l => !l._sep && l.text).length;
-        const stN  = (kd.statusList || []).filter(s => !s._sep && s.label).length;
-        const prN  = (kd.paramList  || []).filter(p => !p._sep && p.label).length;
+        const stN = (kd.statusList || []).filter(s => !s._sep && s.label).length;
+        const prN = (kd.paramList || []).filter(p => !p._sep && p.label).length;
         const total = lbls + stN + prN;
         const kc = (t, v) => chip('var(--bg2)', 'var(--text2)', 'var(--border2)', t + ' <strong style="color:var(--text);font-weight:700">' + v + '</strong>');
 
@@ -7383,23 +7383,23 @@
 
       } else {
         // ---- CHAR / BOTH ----
-        const hp2   = sv.ov?.hp   || 0;
-        const mp2   = sv.ov?.mp   || 0;
-        const san2  = sv.ov?.san  || 0;
+        const hp2 = sv.ov?.hp || 0;
+        const mp2 = sv.ov?.mp || 0;
+        const san2 = sv.ov?.san || 0;
         const dbLabel = sv.dmgLabel && sv.dmgLabel !== 'なし' ? sv.dmgLabel : null;
-        const aN    = (sv.atkList     || []).filter(a => a.name).length;
-        const skN   = (sv.skList      || []).filter(s => s.name && (parseInt(s.val) || 0) > 0).length;
-        const splN  = (sv.splList     || []).filter(s => s.name).length;
-        const cN    = (sv.consumables || []).filter(c => c.label).length;
-        const epN   = (sv.extraParams || []).filter(p => p.label).length;
-        const memoN = (sv.memoList    || []).filter(m => m.label || m.content).length;
+        const aN = (sv.atkList || []).filter(a => a.name).length;
+        const skN = (sv.skList || []).filter(s => s.name && (parseInt(s.val) || 0) > 0).length;
+        const splN = (sv.splList || []).filter(s => s.name).length;
+        const cN = (sv.consumables || []).filter(c => c.label).length;
+        const epN = (sv.extraParams || []).filter(p => p.label).length;
+        const memoN = (sv.memoList || []).filter(m => m.label || m.content).length;
 
         // 追加ステータス（customFields）
         const cfChips = (sv.customFields || [])
           .filter(cf => cf.label)
           .map(cf => {
             const cur = (cf.value !== '' && cf.value !== undefined) ? esc(String(cf.value)) : '0';
-            const mx  = (cf.max  !== '' && cf.max  !== undefined) ? esc(String(cf.max))  : cur;
+            const mx = (cf.max !== '' && cf.max !== undefined) ? esc(String(cf.max)) : cur;
             return chip('var(--bg2)', 'var(--text2)', 'var(--border2)',
               '<span style="font-size:10px;color:var(--text3)">' + esc(cf.label) + '</span> '
               + '<strong style="color:var(--text);font-weight:700;font-size:11px;vertical-align:middle">' + cur + '/' + mx + '</strong>');
@@ -7408,32 +7408,32 @@
 
         // 派生行
         let derivedInner = '';
-        if (hp2 > 0)   derivedInner += chip('#fcebeb', '#791f1f', '#f7c1c1', 'HP ' + hp2);
-        if (mp2 > 0)   derivedInner += chip('#eaf3de', '#27500a', '#c0dd97', 'MP ' + mp2);
-        if (san2 > 0)  derivedInner += chip('#eeedfe', '#3c3489', '#cecbf6', 'SAN ' + san2);
-        if (dbLabel)   derivedInner += chip('var(--bg2)', 'var(--text)', 'var(--border2)', 'DB ' + dbLabel, true);
+        if (hp2 > 0) derivedInner += chip('#fcebeb', '#791f1f', '#f7c1c1', 'HP ' + hp2);
+        if (mp2 > 0) derivedInner += chip('#eaf3de', '#27500a', '#c0dd97', 'MP ' + mp2);
+        if (san2 > 0) derivedInner += chip('#eeedfe', '#3c3489', '#cecbf6', 'SAN ' + san2);
+        if (dbLabel) derivedInner += chip('var(--bg2)', 'var(--text)', 'var(--border2)', 'DB ' + dbLabel, true);
         if (dbLabel && cfChips) derivedInner += sep;
-        if (cfChips)   derivedInner += cfChips;
+        if (cfChips) derivedInner += cfChips;
         if (epN > 0 || memoN > 0) {
           derivedInner += sep;
-          if (epN   > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', '<span style="font-size:10px">PR</span> <strong style="font-weight:700;font-size:11px;vertical-align:middle">' + epN + '</strong>');
+          if (epN > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', '<span style="font-size:10px">PR</span> <strong style="font-weight:700;font-size:11px;vertical-align:middle">' + epN + '</strong>');
           if (memoN > 0) derivedInner += chip('#faece7', '#712b13', '#f0997b', '<span style="font-size:10px">MEMO</span> <strong style="font-weight:700;font-size:11px;vertical-align:middle">' + memoN + '</strong>');
         }
 
         // 能力行（STR〜EDU | 攻撃 呪文 技能 消耗品）
         let abilInner = '';
         if (sv.vals) {
-          ['str','con','siz','int','pow','dex','app','edu'].forEach(k => {
+          ['str', 'con', 'siz', 'int', 'pow', 'dex', 'app', 'edu'].forEach(k => {
             const v = sv.vals[k] || 0;
             if (v > 0) abilInner += statChip(k.toUpperCase(), v);
           });
         }
         // 攻撃/呪文/技能/消耗品 の間に隙間（|なし、gap相当のmargin）
         const rightChips =
-          (aN   > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '<span style="font-size:10px;color:#ab2626">攻撃</span> <strong style="font-weight:700;font-size:11px;color:#ab2626">' + aN + '</strong>') : '') +
+          (aN > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '<span style="font-size:10px;color:#ab2626">攻撃</span> <strong style="font-weight:700;font-size:11px;color:#ab2626">' + aN + '</strong>') : '') +
           (splN > 0 ? chip('#eeedfe', '#3c3489', '#afa9ec', '<span style="font-size:10px;color:#7a43a8">呪文</span> <strong style="font-weight:700;font-size:11px;color:#5a3489">' + splN + '</strong>') : '') +
-          (skN  > 0 ? chip('#e6f1fb', '#0c447c', '#85b7eb', '<span style="font-size:10px;color:#4980bc">技能</span> <strong style="font-weight:700;font-size:11px;color:#0c447c">' + skN + '</strong>') : '') +
-          (cN   > 0 ? chip('#faeeda', '#9f5704', '#fac775', '<span style="font-size:10px;color:#b37100">消耗品</span> <strong style="font-weight:700;font-size:11px;color:#9f5704">' + (() => { const tots = (sv.consumables||[]).filter(c=>c.label); const cur = tots.reduce((s,c)=>s+(parseInt(c.cur)||0),0); const max = tots.reduce((s,c)=>s+(parseInt(c.max)||0),0); return cur + (max>0?'/'+max:''); })() + '</strong>') : '');
+          (skN > 0 ? chip('#e6f1fb', '#0c447c', '#85b7eb', '<span style="font-size:10px;color:#4980bc">技能</span> <strong style="font-weight:700;font-size:11px;color:#0c447c">' + skN + '</strong>') : '') +
+          (cN > 0 ? chip('#faeeda', '#9f5704', '#fac775', '<span style="font-size:10px;color:#b37100">消耗品</span> <strong style="font-weight:700;font-size:11px;color:#9f5704">' + (() => { const tots = (sv.consumables || []).filter(c => c.label); const cur = tots.reduce((s, c) => s + (parseInt(c.cur) || 0), 0); const max = tots.reduce((s, c) => s + (parseInt(c.max) || 0), 0); return cur + (max > 0 ? '/' + max : ''); })() + '</strong>') : '');
         if (abilInner && rightChips) abilInner += sep;
         abilInner += rightChips;
 
@@ -7457,10 +7457,10 @@
         if (kind === 'both' && sv.komaData) {
           // 能力とコマの間：点線（BOTHのみ）
           bodyHtml += komaLine;
-          const kd   = sv.komaData;
-          const lbls = (kd.labels     || []).filter(l => !l._sep && l.text).length;
+          const kd = sv.komaData;
+          const lbls = (kd.labels || []).filter(l => !l._sep && l.text).length;
           const stN2 = (kd.statusList || []).filter(s => !s._sep && s.label).length;
-          const prN2 = (kd.paramList  || []).filter(p => !p._sep && p.label).length;
+          const prN2 = (kd.paramList || []).filter(p => !p._sep && p.label).length;
           const total = lbls + stN2 + prN2;
           const kc = (t, v) => chip('var(--bg2)', 'var(--text2)', 'var(--border2)', t + ' <strong style="color:var(--text);font-weight:700">' + v + '</strong>');
           // 4行目：コマ内訳 + 合計（右端コントロールなし）
@@ -7529,58 +7529,146 @@
         el.addEventListener("click", e => { if (didLongPress) e.stopPropagation(); });
       });
 
-      // タグ追加（連続付与対応・候補リスト表示）
+      // タグ追加（カスタムドロップダウン版 v2）
       wrap.querySelectorAll(".btn-tag-add").forEach(el => {
-        el.addEventListener("click", async () => {
+        el.addEventListener("click", async (evClick) => {
+          evClick.stopPropagation();
           const id = +el.dataset.id;
           const isShared = el.dataset.shared === "1";
           const list = isShared ? lSharedSaves() : currentSaves;
           const sv = list.find(s => s.id === id);
           if (!sv) return;
 
-          const _allSaves = [...currentSaves, ...lSharedSaves()];
-          const getAvailTags = () => [...new Set([..._tagOrder, ..._allSaves.flatMap(s => s.tags || [])])]
-            .filter(t => !(sv.tags || []).includes(t));
+          // 既存ポップアップを全閉
+          document.getElementById('_tagAddPop')?.remove();
+          // 全保存データのタグを _tagOrder にマージ（古いタグも候補に出る）
+          [...currentSaves, ...lSharedSaves()].forEach(s =>
+            (s.tags || []).forEach(t => { if (!_tagOrder.includes(t)) _tagOrder.push(t); })
+          );
 
-          // 入力UI生成
-          const container = document.createElement("span");
-          container.style.cssText = "display:inline-flex;align-items:center;gap:2px;flex-wrap:nowrap;";
+          // 毎回最新リストを参照する
+          const getAvailTags = () => {
+            // 全保存データ（sv自身含む）のタグ + _tagOrder を合わせた既知タグ一覧から
+            // sv にまだ付いていないものだけ返す
+            const allSaves = [...currentSaves, ...lSharedSaves()];
+            const allKnownTags = [...new Set([
+              ..._tagOrder,
+              ...allSaves.flatMap(s => s.tags || [])
+            ])];
+            return allKnownTags.filter(t => !(sv.tags || []).includes(t));
+          };
 
-          const inp = document.createElement("input");
-          inp.type = "text";
-          inp.placeholder = "タグ名...";
-          inp.style.cssText = "width:72px;height:18px;font-size:11px;padding:0 4px;border-radius:4px;border:0.5px solid var(--accent);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;";
+          // ===== ポップアップ本体 =====
+          const pop = document.createElement('div');
+          pop.id = '_tagAddPop';
+          pop.style.cssText = [
+            'position:fixed',
+            'z-index:9999',
+            'background:var(--bg)',
+            'border:0.5px solid var(--border2)',
+            'border-radius:var(--radius-lg)',
+            'box-shadow:0 4px 16px rgba(0,0,0,.28)',
+            'padding:8px',
+            'min-width:190px',
+            'max-width:250px',
+          ].join(';');
 
-          const listId = "tag-cands-" + id + "-" + Date.now();
-          const datalist = document.createElement("datalist");
-          datalist.id = listId;
-          getAvailTags().forEach(t => { const o = document.createElement("option"); o.value = t; datalist.appendChild(o); });
-          inp.setAttribute("list", listId);
+          // 入力欄行
+          const inputRow = document.createElement('div');
+          inputRow.style.cssText = 'display:flex;gap:4px;align-items:center;margin-bottom:6px;';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.placeholder = 'タグ名を入力 / 候補を選択';
+          inp.style.cssText = 'flex:1;height:26px;font-size:12px;padding:0 6px;border-radius:var(--radius);border:0.5px solid var(--accent);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;';
+          const cancelBtn = document.createElement('button');
+          cancelBtn.textContent = '×';
+          cancelBtn.title = '閉じる';
+          cancelBtn.style.cssText = 'height:26px;padding:0 8px;font-size:13px;border-radius:var(--radius);border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;flex-shrink:0;';
+          inputRow.append(inp, cancelBtn);
+          pop.appendChild(inputRow);
 
-          const doneBtn = document.createElement("button");
-          doneBtn.textContent = "✓";
-          doneBtn.style.cssText = "height:18px;padding:0 4px;font-size:11px;border-radius:4px;border:0.5px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;flex-shrink:0;line-height:1;";
+          // 区切り線
+          const sep = document.createElement('div');
+          sep.style.cssText = 'font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-bottom:3px;padding:0 1px;';
+          sep.textContent = '既存タグ';
+          pop.appendChild(sep);
 
-          const cancelBtn = document.createElement("button");
-          cancelBtn.textContent = "×";
-          cancelBtn.style.cssText = "height:18px;padding:0 4px;font-size:11px;border-radius:4px;border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;flex-shrink:0;line-height:1;";
+          // 候補リスト
+          const candList = document.createElement('div');
+          candList.style.cssText = 'max-height:160px;overflow-y:auto;';
+          pop.appendChild(candList);
 
-          container.append(inp, datalist, doneBtn, cancelBtn);
-          el.replaceWith(container);
+          // 候補リストを描画
+          const renderCands = (filterStr) => {
+            candList.innerHTML = '';
+            const avail = getAvailTags();
+            const filtered = filterStr
+              ? avail.filter(t => t.toLowerCase().includes(filterStr.toLowerCase()))
+              : avail;
+
+            sep.style.display = avail.length ? '' : 'none';
+
+            if (!filtered.length) {
+              const em = document.createElement('div');
+              em.style.cssText = 'font-size:11px;color:var(--text3);padding:4px 3px;line-height:1.5;';
+              em.textContent = filterStr
+                ? '一致するタグなし → Enterで新規作成'
+                : '（既存タグなし）';
+              candList.appendChild(em);
+              return;
+            }
+            filtered.forEach(tag => {
+              const item = document.createElement('div');
+              item.textContent = tag;
+              item.style.cssText = 'font-size:13px;padding:5px 8px;border-radius:var(--radius);cursor:pointer;color:var(--text2);user-select:none;';
+              item.addEventListener('mouseenter', () => { item.style.background = 'var(--bg3)'; });
+              item.addEventListener('mouseleave', () => { item.style.background = ''; });
+              // pointerdown で即追加（clickより先に発火しpopが消える前に処理）
+              item.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                doAddTag(tag);
+              });
+              candList.appendChild(item);
+            });
+          };
+
+          // DOMに追加してから位置決め
+          document.body.appendChild(pop);
+          renderCands(''); // DOM追加後に描画
+
+          const rect = el.getBoundingClientRect();
+          const ph = pop.offsetHeight;
+          const spaceBelow = window.innerHeight - rect.bottom - 6;
+          pop.style.left = Math.min(rect.left, window.innerWidth - 260) + 'px';
+          if (spaceBelow >= ph || spaceBelow >= 100) {
+            pop.style.top = (rect.bottom + 4) + 'px';
+          } else {
+            pop.style.top = Math.max(4, rect.top - ph - 4) + 'px';
+          }
+
           inp.focus();
 
           let _processing = false;
 
-          const addTag = async () => {
+          const closePop = () => {
+            document.getElementById('_tagAddPop')?.remove();
+          };
+
+          const doAddTag = async (tag) => {
             if (_processing) return;
-            const tag = inp.value.trim();
-            inp.value = "";
-            if (!tag || (sv.tags || []).includes(tag)) {
-              setTimeout(() => inp.focus(), 0);
+            tag = (tag || '').trim();
+            if (!tag) return;
+            if ((sv.tags || []).includes(tag)) {
+              showToast('「' + tag + '」はすでに付いています');
+              inp.value = '';
+              renderCands('');
+              inp.focus();
               return;
             }
             _processing = true;
             sv.tags = [...(sv.tags || []), tag];
+
             if (!_tagOrder.includes(tag)) {
               _tagOrder.push(tag);
               await saveTagOrder();
@@ -7592,57 +7680,66 @@
               writeSaves(list);
               if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
             }
-            // チップをcontainerの前に挿入
-            const chip = document.createElement("span");
-            chip.style.cssText = "display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden;margin:1px 1px";
+
+            // タグチップを＋ボタン直前に挿入
+            const chip = document.createElement('span');
+            chip.style.cssText = 'display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;font-weight:700;white-space:nowrap;user-select:none;overflow:hidden;margin:1px 1px;cursor:default;';
             chip.dataset.tagDel = tag;
             chip.dataset.id = String(id);
             chip.dataset.shared = String(isShared ? 1 : 0);
             chip.textContent = tag;
-            chip.addEventListener("click", async () => {
-              sv.tags = (sv.tags || []).filter(t => t !== tag);
-              if (isShared) { wSharedSaves(list); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); if (sharedToken) await sharedGistSet({ saves: lSharedSaves() }); }
-              else { writeSaves(list); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); }
-              showToast("タグを削除しました");
+
+            // 長押し600msで削除（短押しは何もしない）
+            let _chipTimer = null, _chipDidLong = false;
+            chip.addEventListener('pointerdown', () => {
+              _chipDidLong = false;
+              _chipTimer = setTimeout(() => {
+                _chipDidLong = true;
+                sv.tags = (sv.tags || []).filter(t => t !== tag);
+                chip.remove();
+                if (isShared) {
+                  wSharedSaves(list);
+                  if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
+                  renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+                } else {
+                  writeSaves(list);
+                  if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+                  renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+                }
+                showToast('タグを削除しました');
+              }, 600);
             });
-            container.before(chip);
-            // datalist更新
-            datalist.innerHTML = "";
-            getAvailTags().forEach(t => { const o = document.createElement("option"); o.value = t; datalist.appendChild(o); });
+            chip.addEventListener('pointerup', () => clearTimeout(_chipTimer));
+            chip.addEventListener('pointercancel', () => clearTimeout(_chipTimer));
+            chip.addEventListener('click', (e) => { if (_chipDidLong) e.stopPropagation(); });
+
+            el.before(chip);
+
+            showToast('「' + tag + '」を追加しました');
+            inp.value = '';
             _processing = false;
-            showToast("「" + tag + "」を追加しました");
-            setTimeout(() => inp.focus(), 0);
+            renderCands(''); // 追加済みタグを候補から除外して再描画
+            inp.focus();
           };
 
-          const closeInput = () => {
-            const newEl = document.createElement("span");
-            newEl.className = "btn-tag-add";
-            newEl.style.cssText = "display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap";
-            newEl.dataset.id = String(id);
-            newEl.dataset.shared = String(isShared ? 1 : 0);
-            newEl.textContent = "＋";
-            container.replaceWith(newEl);
-            newEl.addEventListener("click", () => {
-              if (isShared) renderSharedList(); else renderSaveList();
-              setTimeout(() => {
-                const same = document.querySelector('.btn-tag-add[data-id="' + id + '"][data-shared="' + (isShared ? 1 : 0) + '"]');
-                same?.click();
-              }, 60);
-            });
-          };
+          inp.addEventListener('input', (e) => renderCands(e.target.value.trim()));
+          inp.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); await doAddTag(inp.value); }
+            if (e.key === 'Escape') closePop();
+          });
+          cancelBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); });
+          cancelBtn.addEventListener('click', (e) => { e.stopPropagation(); closePop(); });
 
-          doneBtn.addEventListener("click", () => addTag());
-          cancelBtn.addEventListener("click", closeInput);
-          inp.addEventListener("change", () => {
-            const tag = inp.value.trim();
-            const avail = getAvailTags();
-            if (avail.includes(tag)) addTag();
-          });
-          inp.addEventListener("keydown", e => {
-            if (e.key === "Enter") { e.preventDefault(); addTag(); }
-            if (e.key === "Escape") closeInput();
-          });
-          // blur は使わない（cancelBtnで明示クローズ）
+          // ポップアップ外クリックで閉じる
+          setTimeout(() => {
+            const onOut = (e) => {
+              if (document.getElementById('_tagAddPop') && !pop.contains(e.target) && e.target !== el) {
+                closePop();
+                document.removeEventListener('pointerdown', onOut);
+              }
+            };
+            document.addEventListener('pointerdown', onOut);
+          }, 250);
         });
       });
 
@@ -7656,16 +7753,16 @@
             const list = lSharedSaves();
             const idx = list.findIndex(s => s.id === id);
             if (idx <= 0) return;
-            [list[idx-1], list[idx]] = [list[idx], list[idx-1]];
+            [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
+            if (sharedToken) { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx <= 0) return;
-            [currentSaves[idx-1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx-1]];
+            [currentSaves[idx - 1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx - 1]];
             writeSaves(currentSaves);
-            if (syncToken) { setGlobalSt("同期中…","ing"); const ok = await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells},tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を保存しました":"⚠ 同期失敗",ok?"ok":"err"); }
+            if (syncToken) { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }
           }
         });
       });
@@ -7678,17 +7775,17 @@
             const list = lSharedSaves();
             const idx = list.findIndex(s => s.id === id);
             if (idx < 0 || idx >= list.length - 1) return;
-            [list[idx], list[idx+1]] = [list[idx+1], list[idx]];
+            [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { setGlobalSt("共有同期中…","ing"); const ok = await sharedGistSet({saves:lSharedSaves(),tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を共有保存しました":"⚠ 共有同期失敗",ok?"ok":"err"); }
+            if (sharedToken) { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx < 0 || idx >= currentSaves.length - 1) return;
-            [currentSaves[idx], currentSaves[idx+1]] = [currentSaves[idx+1], currentSaves[idx]];
+            [currentSaves[idx], currentSaves[idx + 1]] = [currentSaves[idx + 1], currentSaves[idx]];
             writeSaves(currentSaves);
             renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-            if (syncToken) { setGlobalSt("同期中…","ing"); const ok = await gistSet({saves:lSaves(),mythos:{beings:customBeings,spells:customSpells},tagOrder:_tagOrder}); setGlobalSt(ok?"✓ 並び順を保存しました":"⚠ 同期失敗",ok?"ok":"err"); }
+            if (syncToken) { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }
           }
         });
       });
