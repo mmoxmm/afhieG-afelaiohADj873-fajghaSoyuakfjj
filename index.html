@@ -7332,7 +7332,7 @@
 
       const tags = sv.tags || [];
       const tagsHtml = '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0">'
-        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 3px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
+        + tags.map(t => '<span style="display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 3px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden" data-tag-del="' + esc(t) + '" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">' + esc(t) + '</span>').join('')
         + '<span class="btn-tag-add" style="display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">＋</span>'
         + '</div>';
 
