@@ -4221,14 +4221,17 @@
         + '<div id="tag-filter-bar-koma" style="flex:1;min-width:0;display:flex;gap:3px;flex-wrap:nowrap;align-items:center;overflow-x:auto"></div>'
         + '</div>';
       if (!filtered.length) {
-        wrap.innerHTML = filterBar + '<p class="save-empty">保存データがありません</p>';
+        wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>';
         renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
         return;
       }
+      if (_komaTabFilter === 'all' && !_komaTagFilter) filtered.sort((a, b) => b.id - a.id);
+      if (!filtered.length) { wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter); return; }
       wrap.innerHTML = filterBar + '<div class="save-list">'
         + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'koma')).join("")
         + '</div>';
       bindSaveListEvents(wrap);
+      if (_komaTabFilter === 'all' && !_komaTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
       renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
     }
     function getKomaPaletteText() {
@@ -5379,6 +5382,27 @@
         maxVal.addEventListener('input', e => {
           customFields[idx] = { ...customFields[idx], max: e.target.value };
           saveCustomFields(); updateExport();
+        });
+        // エンター移動: ラベル→現在値→最大値→次行ラベル or 先頭に戻る
+        lbl.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return; e.preventDefault(); val.focus();
+        });
+        val.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return; e.preventDefault(); maxVal.focus();
+        });
+        maxVal.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return; e.preventDefault();
+          // 次の行の存在確認
+          const rows = [...document.querySelectorAll('#custom-field-rows input[type="text"]')];
+          const i = rows.indexOf(lbl);
+          if (lbl.value.trim() !== '' && i >= 0) {
+            // ラベルに値があれば次の行のラベルへ（存在すれば）
+            if (i + 1 < rows.length) { rows[i + 1].focus(); }
+            else { lbl.focus(); }
+          } else {
+            // ラベルが空なら現在の行のラベルに戻る
+            lbl.focus();
+          }
         });
       });
     }
@@ -7255,8 +7279,11 @@
         renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
         return;
       }
+      if (_statSaveFilter === 'all' && !_statTagFilter) allSaves.sort((a, b) => b.id - a.id);
+      if (!allSaves.length) { wrap.innerHTML = '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter); return; }
       wrap.innerHTML = '<div class="save-list">' + allSaves.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
       bindSaveListEvents(wrap);
+      if (_statSaveFilter === 'all' && !_statTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
       renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
     }
 
@@ -7296,8 +7323,8 @@
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
       const cbId = 'cb-collapse-' + sv.id;
       const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉</label>';
-      const moveUpBtn = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="上へ移動">↑</button>';
-      const moveDnBtn = '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="下へ移動">↓</button>';
+      const moveUpBtn = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-sortbtn="1" title="上へ移動">↑</button>';
+      const moveDnBtn = '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-sortbtn="1" title="下へ移動">↓</button>';
 
       const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
@@ -7319,8 +7346,8 @@
         + '</div>';
       // 派生と能力の間の点線
       const dottedLine = '<div style="border-top:1px dashed var(--border2);margin:3px 0;"></div>';
-      // 能力とコマの間の点線（BOTHのみ使用）
-      const komaLine   = '<div style="border-top:1px dashed var(--border2);margin:3px 0;"></div>';
+      // 能力とコマの間の線（BOTHのみ使用）
+      const komaLine   = '<div style="border-top:1px solid var(--border2);margin:3px 0;"></div>';
 
       // ---- 1行目：名前 + タグ + ボタン + 日付 ----
       const row1Html = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:nowrap">'
@@ -7369,8 +7396,14 @@
 
         // 追加ステータス（customFields）
         const cfChips = (sv.customFields || [])
-          .filter(cf => cf.label && (cf.value !== '' && cf.value !== undefined))
-          .map(cf => chip('var(--bg2)', 'var(--text2)', 'var(--border2)', esc(cf.label) + ' <strong style="color:var(--text);font-weight:700">' + esc(String(cf.value)) + '</strong>'))
+          .filter(cf => cf.label)
+          .map(cf => {
+            const cur = (cf.value !== '' && cf.value !== undefined) ? esc(String(cf.value)) : '0';
+            const mx  = (cf.max  !== '' && cf.max  !== undefined) ? esc(String(cf.max))  : cur;
+            return chip('var(--bg2)', 'var(--text2)', 'var(--border2)',
+              '<span style="font-size:10px;color:var(--text3)">' + esc(cf.label) + '</span>'
+              + '<strong style="color:var(--text);font-weight:700;font-size:11px">' + cur + '/' + mx + '</strong>');
+          })
           .join('');
 
         // 派生行
@@ -7379,11 +7412,12 @@
         if (mp2 > 0)   derivedInner += chip('#eaf3de', '#27500a', '#c0dd97', 'MP ' + mp2);
         if (san2 > 0)  derivedInner += chip('#eeedfe', '#3c3489', '#cecbf6', 'SAN ' + san2);
         if (dbLabel)   derivedInner += chip('var(--bg2)', 'var(--text)', 'var(--border2)', 'DB ' + dbLabel, true);
+        if (dbLabel && cfChips) derivedInner += sep;
         if (cfChips)   derivedInner += cfChips;
         if (epN > 0 || memoN > 0) {
           derivedInner += sep;
-          if (epN   > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', 'PR'   + epN);
-          if (memoN > 0) derivedInner += chip('#faece7', '#712b13', '#f0997b', 'MEMO' + memoN);
+          if (epN   > 0) derivedInner += chip('#e1f5ee', '#085041', '#5dcaa5', '<span style="font-size:10px">PR</span><strong style="font-weight:700;font-size:11px">' + epN + '</strong>');
+          if (memoN > 0) derivedInner += chip('#faece7', '#712b13', '#f0997b', '<span style="font-size:10px">MEMO</span><strong style="font-weight:700;font-size:11px">' + memoN + '</strong>');
         }
 
         // 能力行（STR〜EDU | 攻撃 呪文 技能 消耗品）
@@ -7396,24 +7430,26 @@
         }
         // 攻撃/呪文/技能/消耗品 の間に隙間（|なし、gap相当のmargin）
         const rightChips =
-          (aN   > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '攻撃'  + aN)   : '') +
-          (splN > 0 ? '<span style="display:inline-block;width:4px"></span>' + chip('#eeedfe', '#3c3489', '#afa9ec', '呪文' + splN) : '') +
-          (skN  > 0 ? '<span style="display:inline-block;width:4px"></span>' + chip('#e6f1fb', '#0c447c', '#85b7eb', '技能'  + skN)  : '') +
-          (cN   > 0 ? '<span style="display:inline-block;width:4px"></span>' + chip('#faeeda', '#633806', '#fac775', '消耗品' + cN)  : '');
+          (aN   > 0 ? chip('#fbeaf0', '#72243e', '#f4c0d1', '<span style="font-size:10px;color:var(--text3)">攻撃</span><strong style="font-weight:700;font-size:11px;color:#72243e">' + aN + '</strong>') : '') +
+          (splN > 0 ? chip('#eeedfe', '#3c3489', '#afa9ec', '<span style="font-size:10px;color:var(--text3)">呪文</span><strong style="font-weight:700;font-size:11px;color:#3c3489">' + splN + '</strong>') : '') +
+          (skN  > 0 ? chip('#e6f1fb', '#0c447c', '#85b7eb', '<span style="font-size:10px;color:var(--text3)">技能</span><strong style="font-weight:700;font-size:11px;color:#0c447c">' + skN + '</strong>') : '') +
+          (cN   > 0 ? chip('#faeeda', '#633806', '#fac775', '<span style="font-size:10px;color:var(--text3)">消耗品</span><strong style="font-weight:700;font-size:11px;color:#633806">' + cN + '</strong>') : '');
         if (abilInner && rightChips) abilInner += sep;
         abilInner += rightChips;
 
         // 2行目：派生チップ + 閉じる + ↑
+        const derivedLabel = '<span style="font-size:10px;font-weight:700;color:var(--text3);margin-right:3px;flex-shrink:0;">派生</span>';
         bodyHtml += mkRow(
-          derivedInner || '<span style="color:var(--text3);font-size:11px">―</span>',
+          derivedLabel + (derivedInner || '<span style="color:var(--text3);font-size:11px">―</span>'),
           collapseChk + moveUpBtn,
           '3px'
         );
         // 派生と能力の間：点線
         bodyHtml += dottedLine;
         // 3行目：能力チップ + ↓
+        const abilLabel = '<span style="font-size:10px;font-weight:700;color:var(--text3);margin-right:3px;flex-shrink:0;">能力</span>';
         bodyHtml += mkRow(
-          abilInner || '<span style="color:var(--text3);font-size:11px">―</span>',
+          abilLabel + (abilInner || '<span style="color:var(--text3);font-size:11px">―</span>'),
           moveDnBtn,
           kind === 'both' && sv.komaData ? '3px' : ''
         );
@@ -7428,8 +7464,9 @@
           const total = lbls + stN2 + prN2;
           const kc = (t, v) => chip('var(--bg2)', 'var(--text2)', 'var(--border2)', t + ' <strong style="color:var(--text);font-weight:700">' + v + '</strong>');
           // 4行目：コマ内訳 + 合計（右端コントロールなし）
+          const komaRowLabel = '<span style="font-size:10px;font-weight:700;color:var(--text3);margin-right:3px;flex-shrink:0;">コマ</span>';
           bodyHtml += mkRow(
-            kc('差分', lbls) + kc('ST', stN2) + kc('PR', prN2) + sep + chip('var(--bg2)', 'var(--text2)', 'var(--border2)', '合計 ' + total + ' 件'),
+            komaRowLabel + kc('差分', lbls) + kc('ST', stN2) + kc('PR', prN2) + sep + chip('var(--bg2)', 'var(--text2)', 'var(--border2)', '合計 ' + total + ' 件'),
             '',
             ''
           );
@@ -7752,7 +7789,7 @@
       // タグフィルターバー更新
       renderTagFilterBar('tag-filter-bar-personal', getPersonalTags(), _personalTagFilter, setPersonalTagFilter);
       if (!saves.length) {
-        wrap.innerHTML = '<p class="save-empty">保存されたデータはありません</p>';
+        wrap.innerHTML = '<p class="save-empty">データなし</p>';
         return;
       }
       wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">保存済み（' + saves.length + '件）</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>';
@@ -7817,7 +7854,7 @@
         return true;
       });
       if (_sharedTagFilter) filtered = filtered.filter(sv => (sv.tags || []).includes(_sharedTagFilter));
-      if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">共有データがありません</p>'; return; }
+      if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>'; return; }
       wrap.innerHTML = filterBar + '<div id="tag-filter-bar-shared-wrap"></div><div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">共有データ（' + filtered.length + '件）</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
       renderTagFilterBar('tag-filter-bar-shared', getSharedTags(), _sharedTagFilter, setSharedTagFilter);
@@ -8116,6 +8153,12 @@
       const sessionMemo = document.getElementById("session-memo");
       if (sessionMemo) { sessionMemo.value = localStorage.getItem("coc_memo") || ""; bindAutoExpand(sessionMemo); let t4 = null; sessionMemo.addEventListener("input", () => { clearTimeout(t4); t4 = setTimeout(() => { localStorage.setItem("coc_memo", sessionMemo.value); const d = document.getElementById("session-memo-dice"); if (d && d.value !== sessionMemo.value) d.value = sessionMemo.value; }, 600); }); }
       watchInp(document.getElementById("npc-name"), document.getElementById("w-npcname"));
+      // NPC名エンター→STR欄へ移動
+      document.getElementById("npc-name")?.addEventListener("keydown", e => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        document.querySelector('.sg-inp[data-key="str"]')?.focus();
+      });
       watchInp(document.getElementById("sync-key-input"), document.getElementById("w-synckey"));
       watchInp(document.getElementById("shared-token-input"), document.getElementById("w-stoken"));
       watchInp(document.getElementById("shared-gist-id-input"), document.getElementById("w-sgist"));
