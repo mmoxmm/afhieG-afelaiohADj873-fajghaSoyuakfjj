@@ -7294,6 +7294,24 @@
 
       const rows = [];
 
+      // レイアウト：char/koma/なし=2行、both=3行
+      // 1行目(固定): 名前・日付行
+      // 2行目: コマ行(both/komaのみ) or 派生+能力統合行(char)
+      // 3行目: 派生+能力統合行(bothのみ)
+
+      if (hasKomaData) {
+        const kd = sv.komaData || sv;
+        const lbls = (kd.labels || []).filter(l => !l._sep && l.text).length;
+        const stN2 = (kd.statusList || []).filter(s => !s._sep && s.label).length;
+        const prN2 = (kd.paramList || []).filter(p => !p._sep && p.label).length;
+        const total = lbls + stN2 + prN2;
+        const kc = (txt, val) => chip('var(--bg2)', 'var(--text3)', 'var(--border)', '<span style="font-size:10px">' + txt + '</span> <strong style="color:var(--text2)">' + val + '</strong>');
+        rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">コマ</span>'
+          + kc('差分', lbls) + kc('ST', stN2) + kc('PR', prN2)
+          + chip('var(--bg2)', 'var(--text2)', 'var(--border2)', '計 <strong style="font-weight:700">' + total + '</strong>')
+          + '</div>');
+      }
+
       if (hasStatData) {
         const hp2 = sv.ov?.hp || 0, mp2 = sv.ov?.mp || 0, san2 = sv.ov?.san || 0;
         const aN = (sv.atkList || []).filter(a => a.name).length;
@@ -7309,6 +7327,8 @@
         if (mp2 > 0) derivedChips.push(chip('#eaf3de', '#3b6d11', '#c0dd97', 'MP ' + mp2));
         if (san2 > 0) derivedChips.push(chip('#eeedfe', '#534ab7', '#cecbf6', 'SAN ' + san2));
         if (dbLabel) derivedChips.push(chip('var(--bg2)', 'var(--text)', 'var(--border2)', '<span style="font-weight:700;font-family:monospace">DB ' + dbLabel + '</span>', true));
+        if (epN > 0) derivedChips.push(chip('#e1f5ee', '#0f6e56', '#5dcaa5', 'PR ' + epN));
+        if (memoN > 0) derivedChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
 
         const abilChips = [];
         if (sv.vals) {
@@ -7321,28 +7341,21 @@
         if (skN > 0) abilChips.push(chip('#e6f1fb', '#185fa5', '#85b7eb', '技能 ' + skN));
         if (cN > 0) abilChips.push(chip('#faeeda', '#854f0b', '#ef9f27', '消耗品 ' + cN));
         if (splN > 0) abilChips.push(chip('#eeedfe', '#534ab7', '#afa9ec', '呪文 ' + splN));
-        // PR・MEMOは派生値行に移動
-        if (epN > 0) derivedChips.push(chip('#e1f5ee', '#0f6e56', '#5dcaa5', 'PR ' + epN));
-        if (memoN > 0) derivedChips.push(chip('#faece7', '#993c1d', '#f0997b', 'MEMO ' + memoN));
 
-        if (derivedChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">派生</span>' + derivedChips.join('') + '</div>');
-        // 派生値行と能力値行の間に薄い区切り線
-        if (derivedChips.length && abilChips.length) rows.push('<div style="border-top:0.5px solid var(--border);margin:3px 0"></div>');
-        // 能力値行は1行固定（overflow:hidden ではみ出し非表示）
-        if (abilChips.length) rows.push('<div style="display:flex;align-items:center;flex-wrap:nowrap;gap:0;overflow:hidden"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join('') + '</div>');
-      }
-
-      if (hasKomaData) {
-        const kd = sv.komaData || sv;
-        const lbls = (kd.labels || []).filter(l => !l._sep && l.text).length;
-        const stN2 = (kd.statusList || []).filter(s => !s._sep && s.label).length;
-        const prN2 = (kd.paramList || []).filter(p => !p._sep && p.label).length;
-        const total = lbls + stN2 + prN2;
-        const kc = (txt, val) => chip('var(--bg2)', 'var(--text3)', 'var(--border)', '<span style="font-size:10px">' + txt + '</span> <strong style="color:var(--text2)">' + val + '</strong>');
-        rows.push('<div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-top:2px"><span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">コマ</span>'
-          + kc('差分', lbls) + kc('ST', stN2) + kc('PR', prN2)
-          + chip('var(--bg2)', 'var(--text-secondary)', 'var(--border-secondary)', '計 <strong style="font-weight:700">' + total + '</strong>')
-          + '</div>');
+        // 派生＋能力を1行に統合（縦線で区切り）
+        const statParts = [];
+        if (derivedChips.length) {
+          statParts.push('<span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">派生</span>' + derivedChips.join(''));
+        }
+        if (derivedChips.length && abilChips.length) {
+          statParts.push('<span style="display:inline-block;width:0.5px;height:14px;background:var(--border2);margin:0 4px;flex-shrink:0;align-self:center"></span>'
+            + '<span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join(''));
+        } else if (abilChips.length) {
+          statParts.push('<span style="font-size:10px;color:var(--text3);min-width:24px;flex-shrink:0">能力</span>' + abilChips.join(''));
+        }
+        if (statParts.length) {
+          rows.push('<div style="display:flex;align-items:center;flex-wrap:nowrap;gap:0;overflow:hidden">' + statParts.join('') + '</div>');
+        }
       }
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
