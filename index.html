@@ -5221,13 +5221,82 @@
     function showToast(m, dur = 1800) { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._tt); t._tt = setTimeout(() => t.classList.remove("show"), dur); }
     function clrInp(id, wid) { const el = document.getElementById(id); if (!el) return; el.value = ""; document.getElementById(wid)?.classList.remove("hv"); el.dispatchEvent(new Event("input")); }
     function watchInp(el, wrap) { if (!el || !wrap) return; const upd = () => wrap.classList.toggle("hv", el.value.trim() !== ""); el.addEventListener("input", upd); upd(); }
+    // 2カラムペア定義（片方を開いたとき相手も開く）
+    const _accPairs = { 'atk': 'cons', 'cons': 'atk' };
+
     function toggleAcc(id) {
-      const b = document.getElementById("body-" + id), a = document.getElementById("arrow-" + id); if (!b) return; const o = b.classList.toggle("open"); if (a) a.classList.toggle("open", o); if (id === "palette" && o) renderPalettePreview();
-      // cons折りたたみボタンの矢印更新
+      const b = document.getElementById("body-" + id), a = document.getElementById("arrow-" + id);
+      if (!b) return;
+      const o = b.classList.toggle("open");
+      if (a) a.classList.toggle("open", o);
+      if (id === "palette" && o) renderPalettePreview();
       if (id === "cons") { const fb = document.getElementById("cons-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼"; }
+
+     if (o) {
+        // 攻撃⇔消耗品/呪文 ペア同時展開
+        const pairedId = _accPairs[id];
+        if (pairedId) {
+          const pb = document.getElementById("body-" + pairedId);
+          const pa = document.getElementById("arrow-" + pairedId);
+          if (pb && !pb.classList.contains("open")) {
+            pb.classList.add("open");
+            if (pa) pa.classList.add("open");
+            if (pairedId === "cons") { const fb = document.getElementById("cons-fold-btn"); if (fb) fb.textContent = "▲"; }
+          }
+        }
+        // 技能を開いたとき → メモ/パラメータも開く
+        if (id === "sk") {
+          const bm = document.getElementById("body-memo");
+          if (bm && !bm.classList.contains("open")) {
+            bm.classList.add("open");
+            const fm = document.getElementById("memo-fold-btn"); if (fm) fm.textContent = "▲";
+          }
+        }
+      } else {
+        // 閉じるときも連動
+        const pairedId = _accPairs[id];
+        if (pairedId) {
+          const pb = document.getElementById("body-" + pairedId);
+          const pa = document.getElementById("arrow-" + pairedId);
+          if (pb && pb.classList.contains("open")) {
+            pb.classList.remove("open");
+            if (pa) pa.classList.remove("open");
+            if (pairedId === "cons") { const fb = document.getElementById("cons-fold-btn"); if (fb) fb.textContent = "▼"; }
+          }
+        }
+        // 技能を閉じたとき → メモ/パラメータも閉じる
+        if (id === "sk") {
+          const bm = document.getElementById("body-memo");
+          if (bm && bm.classList.contains("open")) {
+            bm.classList.remove("open");
+            const fm = document.getElementById("memo-fold-btn"); if (fm) fm.textContent = "▼";
+          }
+        }
+      }
     }
     function openAcc(id) { document.getElementById("body-" + id)?.classList.add("open"); document.getElementById("arrow-" + id)?.classList.add("open"); }
-    function toggleMemo() { const b = document.getElementById("body-memo"); if (!b) return; const o = b.classList.toggle("open"); const fb = document.getElementById("memo-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼"; }
+    function toggleMemo() {
+      const b = document.getElementById("body-memo");
+      if (!b) return;
+      const o = b.classList.toggle("open");
+      const fb = document.getElementById("memo-fold-btn"); if (fb) fb.textContent = o ? "▲" : "▼";
+// メモ開閉と技能を連動
+      if (o) {
+        const bSk = document.getElementById("body-sk");
+        const aSk = document.getElementById("arrow-sk");
+        if (bSk && !bSk.classList.contains("open")) {
+          bSk.classList.add("open");
+          if (aSk) aSk.classList.add("open");
+        }
+      } else {
+        const bSk = document.getElementById("body-sk");
+        const aSk = document.getElementById("arrow-sk");
+        if (bSk && bSk.classList.contains("open")) {
+          bSk.classList.remove("open");
+          if (aSk) aSk.classList.remove("open");
+        }
+      }
+    }
     function openMemo() { document.getElementById("body-memo")?.classList.add("open"); document.getElementById("arrow-memo")?.classList.add("open"); }
     function toggleParse() { const b = document.getElementById("body-parse"), a = document.getElementById("arrow-parse"); if (!b || !a) return; b.classList.toggle("open"); a.classList.toggle("open"); }
     function autoExpand(el) { el.style.height = "auto"; el.style.height = Math.max(34, el.scrollHeight) + "px"; }
@@ -6993,7 +7062,7 @@
       }
       return data;
     }
-    function loadDataIntoEditor(data) {
+    function loadDataIntoEditor(data, doExpand = false) {
       document.getElementById("npc-name").value = data.name === "（名称なし）" ? "" : data.name;
       document.getElementById("w-npcname").classList.toggle("hv", !!document.getElementById("npc-name").value);
       STATS.forEach(({ key }) => { vals[key] = parseInt(data.vals?.[key]) || 0; });
@@ -7037,22 +7106,34 @@
       if (data.skHeader !== undefined) skHeader = data.skHeader;
       if (data.splHeader !== undefined) splHeader = data.splHeader;
       buildAtkRows(); buildSkRows(); buildSplRows(); buildMemoRows(); buildConsumableRows();
-      // 保存データ読込時は各セクションを折りたたみ、パレットプレビューを開く
-      ["atk", "cons", "sk"].forEach(id => {
-        document.getElementById("body-" + id)?.classList.remove("open");
-        document.getElementById("arrow-" + id)?.classList.remove("open");
-      });
-      // cons折りたたみボタンの矢印更新
-      const consFoldBtn = document.getElementById("cons-fold-btn");
-      if (consFoldBtn) consFoldBtn.textContent = "▼";
-      // パラメータ/MEMOも閉じる
-      const bodyMemo = document.getElementById("body-memo");
-      if (bodyMemo) bodyMemo.classList.remove("open");
-      const memoFoldBtn = document.getElementById("memo-fold-btn");
-      if (memoFoldBtn) memoFoldBtn.textContent = "▼";
-      // パレットプレビューを開く
-      openAcc("palette");
-      renderPalettePreview();
+      // 読込時のブロック開閉（doExpand=true で全展開、false で既存動作）
+      if (doExpand) {
+        ["atk", "cons", "sk", "palette"].forEach(id => openAcc(id));
+        const bodyMemoExp = document.getElementById("body-memo");
+        if (bodyMemoExp) { bodyMemoExp.classList.add("open"); }
+        const memoFoldBtnExp = document.getElementById("memo-fold-btn");
+        if (memoFoldBtnExp) memoFoldBtnExp.textContent = "▲";
+        const consFoldBtnExp = document.getElementById("cons-fold-btn");
+        if (consFoldBtnExp) consFoldBtnExp.textContent = "▲";
+        renderPalettePreview();
+      } else {
+        // 保存データ読込時は各セクションを折りたたみ、パレットプレビューを開く
+        ["atk", "cons", "sk"].forEach(id => {
+          document.getElementById("body-" + id)?.classList.remove("open");
+          document.getElementById("arrow-" + id)?.classList.remove("open");
+        });
+        // cons折りたたみボタンの矢印更新
+        const consFoldBtn = document.getElementById("cons-fold-btn");
+        if (consFoldBtn) consFoldBtn.textContent = "▼";
+        // パラメータ/MEMOも閉じる
+        const bodyMemo = document.getElementById("body-memo");
+        if (bodyMemo) bodyMemo.classList.remove("open");
+        const memoFoldBtn = document.getElementById("memo-fold-btn");
+        if (memoFoldBtn) memoFoldBtn.textContent = "▼";
+        // パレットプレビューを開く
+        openAcc("palette");
+        renderPalettePreview();
+      }
       extraParams = Array.isArray(data.extraParams) ? JSON.parse(JSON.stringify(data.extraParams)) : [];
       saveExtraParams(); buildExtraParamRows(); updExtraParamBadge();
       customFields = (data.customFields || []).map((cf, i) => ({
@@ -7261,7 +7342,11 @@
       }
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
-      const actions = '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">読込</button>'
+      const cbId = 'cb-expand-' + sv.id;
+      const actions = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 5px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="上へ移動">↑</button>'
+        + '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 5px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" title="下へ移動">↓</button>'
+        + '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時に全ブロックを展開する"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">展開</label>'
+        + '<button class="btn-load" style="' + btnStyle + 'background:var(--text);border:0.5px solid var(--text);color:var(--bg);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-cb="' + cbId + '">読込</button>'
         + '<button class="btn-update" style="' + btnStyle + 'background:none;border:0.5px solid #c07010;color:#c07010;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-caller="' + callerTab + '">上書</button>'
         + '<button class="btn-dng btn-delete" style="' + btnStyle + 'background:none;border:0.5px solid var(--danger);color:var(--danger);" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '">削除</button>';
 
@@ -7333,7 +7418,7 @@
         el.addEventListener("click", e => { if (didLongPress) e.stopPropagation(); });
       });
 
-      // タグ追加
+      // タグ追加（連続付与対応・候補リスト表示）
       wrap.querySelectorAll(".btn-tag-add").forEach(el => {
         el.addEventListener("click", async () => {
           const id = +el.dataset.id;
@@ -7341,79 +7426,153 @@
           const list = isShared ? lSharedSaves() : currentSaves;
           const sv = list.find(s => s.id === id);
           if (!sv) return;
-          // 既存タグを候補として表示
+
           const _allSaves = [...currentSaves, ...lSharedSaves()];
-          const allTags = [...new Set([
-            ..._tagOrder,
-            ..._allSaves.flatMap(s => s.tags || [])
-          ])].filter(t => !(sv.tags || []).includes(t));
+          const getAvailTags = () => [...new Set([..._tagOrder, ..._allSaves.flatMap(s => s.tags || [])])]
+            .filter(t => !(sv.tags || []).includes(t));
 
           // 入力UI生成
+          const container = document.createElement("span");
+          container.style.cssText = "display:inline-flex;align-items:center;gap:2px;flex-wrap:nowrap;";
+
           const inp = document.createElement("input");
           inp.type = "text";
           inp.placeholder = "タグ名...";
-          inp.style.cssText = "width:80px;height:18px;font-size:11px;padding:0 4px;border-radius:4px;border:0.5px solid var(--accent);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;";
-          el.replaceWith(inp);
+          inp.style.cssText = "width:72px;height:18px;font-size:11px;padding:0 4px;border-radius:4px;border:0.5px solid var(--accent);background:var(--bg2);color:var(--text);outline:none;font-family:inherit;";
+
+          const listId = "tag-cands-" + id + "-" + Date.now();
+          const datalist = document.createElement("datalist");
+          datalist.id = listId;
+          getAvailTags().forEach(t => { const o = document.createElement("option"); o.value = t; datalist.appendChild(o); });
+          inp.setAttribute("list", listId);
+
+          const doneBtn = document.createElement("button");
+          doneBtn.textContent = "✓";
+          doneBtn.style.cssText = "height:18px;padding:0 4px;font-size:11px;border-radius:4px;border:0.5px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;flex-shrink:0;line-height:1;";
+
+          const cancelBtn = document.createElement("button");
+          cancelBtn.textContent = "×";
+          cancelBtn.style.cssText = "height:18px;padding:0 4px;font-size:11px;border-radius:4px;border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;flex-shrink:0;line-height:1;";
+
+          container.append(inp, datalist, doneBtn, cancelBtn);
+          el.replaceWith(container);
           inp.focus();
 
-          // 候補表示
-          let datalist = null;
-          if (allTags.length) {
-            datalist = document.createElement("datalist");
-            datalist.id = "tag-candidates-" + id;
-            allTags.forEach(t => { const opt = document.createElement("option"); opt.value = t; datalist.appendChild(opt); });
-            inp.setAttribute("list", datalist.id);
-            inp.parentElement?.appendChild(datalist);
-          }
+          let _processing = false;
 
-          const confirm = async () => {
+          const addTag = async () => {
+            if (_processing) return;
             const tag = inp.value.trim();
-            if (tag && !(sv.tags || []).includes(tag)) {
-              sv.tags = [...(sv.tags || []), tag];
-              if (!_tagOrder.includes(tag)) {
-                _tagOrder.push(tag);
-                await saveTagOrder();
-              }
-              if (isShared) {
-                wSharedSaves(list);
-                if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
-              } else {
-                writeSaves(list);
-                if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
-              }
-              // カードのタグ表示部分だけ更新（リスト全体の再描画を避ける）
-              const tagArea = inp.closest('[style*="display:flex"][style*="align-items:center"][style*="gap:2px"][style*="flex-shrink:0"]');
-              if (tagArea) {
-                const newTag = document.createElement('span');
-                newTag.style.cssText = 'display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;gap:2px;cursor:pointer;white-space:nowrap';
-                newTag.dataset.tagDel = tag;
-                newTag.dataset.id = String(id);
-                newTag.dataset.shared = String(isShared ? 1 : 0);
-                newTag.innerHTML = tag;
-                newTag.addEventListener('click', async () => {
-                  sv.tags = (sv.tags || []).filter(t => t !== tag);
-                  if (isShared) { wSharedSaves(list); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); if (sharedToken) await sharedGistSet({ saves: lSharedSaves() }); }
-                  else { writeSaves(list); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); }
-                  showToast("タグを削除しました");
-                });
-                tagArea.insertBefore(newTag, inp);
-              }
-              inp.value = '';
-              _tagAddConfirmed = false;
-              inp.focus();
-              showToast("タグを追加しました");
+            inp.value = "";
+            if (!tag || (sv.tags || []).includes(tag)) {
+              setTimeout(() => inp.focus(), 0);
+              return;
             }
+            _processing = true;
+            sv.tags = [...(sv.tags || []), tag];
+            if (!_tagOrder.includes(tag)) {
+              _tagOrder.push(tag);
+              await saveTagOrder();
+            }
+            if (isShared) {
+              wSharedSaves(list);
+              if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
+            } else {
+              writeSaves(list);
+              if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+            }
+            // チップをcontainerの前に挿入
+            const chip = document.createElement("span");
+            chip.style.cssText = "display:inline-flex;align-items:center;height:18px;line-height:1;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;user-select:none;overflow:hidden;margin:1px 1px";
+            chip.dataset.tagDel = tag;
+            chip.dataset.id = String(id);
+            chip.dataset.shared = String(isShared ? 1 : 0);
+            chip.textContent = tag;
+            chip.addEventListener("click", async () => {
+              sv.tags = (sv.tags || []).filter(t => t !== tag);
+              if (isShared) { wSharedSaves(list); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); if (sharedToken) await sharedGistSet({ saves: lSharedSaves() }); }
+              else { writeSaves(list); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } }); }
+              showToast("タグを削除しました");
+            });
+            container.before(chip);
+            // datalist更新
+            datalist.innerHTML = "";
+            getAvailTags().forEach(t => { const o = document.createElement("option"); o.value = t; datalist.appendChild(o); });
+            _processing = false;
+            showToast("「" + tag + "」を追加しました");
+            setTimeout(() => inp.focus(), 0);
           };
-          let _tagAddConfirmed = false;
-          let _enterFired = false;
-          inp.addEventListener("keydown", e => { if (e.key === "Enter") { _enterFired = true; _tagAddConfirmed = true; confirm(); } if (e.key === "Escape") { if (isShared) renderSharedList(); else renderSaveList(); } });
-          inp.addEventListener("keyup", e => { if (e.key === "Enter" && !_enterFired) { _tagAddConfirmed = true; confirm(); } _enterFired = false; });
-          inp.addEventListener("blur", () => { if (!_tagAddConfirmed) { _tagAddConfirmed = true; confirm(); } });
-          inp.addEventListener("change", e => { _tagAddConfirmed = true; confirm(); });
+
+          const closeInput = () => {
+            const newEl = document.createElement("span");
+            newEl.className = "btn-tag-add";
+            newEl.style.cssText = "display:inline-flex;align-items:center;height:18px;padding:0 5px;border-radius:4px;background:var(--bg);border:0.5px dashed var(--border2);color:var(--text3);font-size:11px;cursor:pointer;white-space:nowrap";
+            newEl.dataset.id = String(id);
+            newEl.dataset.shared = String(isShared ? 1 : 0);
+            newEl.textContent = "＋";
+            container.replaceWith(newEl);
+            newEl.addEventListener("click", () => {
+              if (isShared) renderSharedList(); else renderSaveList();
+              setTimeout(() => {
+                const same = document.querySelector('.btn-tag-add[data-id="' + id + '"][data-shared="' + (isShared ? 1 : 0) + '"]');
+                same?.click();
+              }, 60);
+            });
+          };
+
+          doneBtn.addEventListener("click", () => addTag());
+          cancelBtn.addEventListener("click", closeInput);
+          inp.addEventListener("keydown", e => {
+            if (e.key === "Enter") { e.preventDefault(); addTag(); }
+            if (e.key === "Escape") closeInput();
+          });
+          // blur は使わない（cancelBtnで明示クローズ）
         });
       });
 
-      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv); showToast("\u300c" + sv.name + "\u300d\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
+      // ↑↓並び替えボタン
+      wrap.querySelectorAll(".btn-move-up").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = +btn.dataset.id;
+          const isShared = btn.dataset.shared === "1";
+          if (isShared) {
+            const list = lSharedSaves();
+            const idx = list.findIndex(s => s.id === id);
+            if (idx <= 0) return;
+            [list[idx-1], list[idx]] = [list[idx], list[idx-1]];
+            wSharedSaves(list);
+            renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+          } else {
+            const idx = currentSaves.findIndex(s => s.id === id);
+            if (idx <= 0) return;
+            [currentSaves[idx-1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx-1]];
+            writeSaves(currentSaves);
+            renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+          }
+        });
+      });
+      wrap.querySelectorAll(".btn-move-down").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = +btn.dataset.id;
+          const isShared = btn.dataset.shared === "1";
+          if (isShared) {
+            const list = lSharedSaves();
+            const idx = list.findIndex(s => s.id === id);
+            if (idx < 0 || idx >= list.length - 1) return;
+            [list[idx], list[idx+1]] = [list[idx+1], list[idx]];
+            wSharedSaves(list);
+            renderSharedList(); renderKomaSaveList(); renderStatSaveList();
+          } else {
+            const idx = currentSaves.findIndex(s => s.id === id);
+            if (idx < 0 || idx >= currentSaves.length - 1) return;
+            [currentSaves[idx], currentSaves[idx+1]] = [currentSaves[idx+1], currentSaves[idx]];
+            writeSaves(currentSaves);
+            renderSaveList(); renderKomaSaveList(); renderStatSaveList();
+          }
+        });
+      });
+      // 読込ボタン（展開CBを参照）
+      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; const doExpand = document.getElementById(btn.dataset.cb)?.checked || false; if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv, doExpand); showToast("「" + sv.name + "」を読み込みました"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
         btn.addEventListener("click", () => {
           const isShared = btn.dataset.shared === "1";
           const id = +btn.dataset.id;
