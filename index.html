@@ -7762,6 +7762,7 @@
             if (idx <= 0) return;
             [currentSaves[idx - 1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx - 1]];
             writeSaves(currentSaves);
+            setTimeout(() => { renderSaveList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
             if (syncToken) { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }
           }
         });
