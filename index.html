@@ -4156,10 +4156,14 @@
 
     let _komaTagFilter = null;
     let _tagOrder = []; // 共有Gistで管理するタグ並び順
+    let _tagSaveOrder = {}; // タグごとの保存カード並び順 { tagName: [id, id, ...] }
 
     function loadTagOrder(data) {
       if (data && Array.isArray(data.tagOrder)) {
         _tagOrder = data.tagOrder;
+      }
+      if (data && data.tagSaveOrder && typeof data.tagSaveOrder === 'object') {
+        _tagSaveOrder = data.tagSaveOrder;
       }
     }
 
@@ -4179,11 +4183,11 @@
       _tagOrder = [...new Set(_tagOrder)]; // 重複除去
       // 個人Gistにも保存
       if (syncToken) {
-        await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder });
+        await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
       }
       // 共有Gistにも保存
       if (sharedToken && sharedGistId) {
-        await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder });
+        await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
       }
     }
 
@@ -4226,14 +4230,26 @@
         renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
         return;
       }
-      if (_komaTabFilter === 'all' && !_komaTagFilter) filtered.sort((a, b) => b.id - a.id);
-      if (_komaTagFilter) { const s = filtered.filter(sv => sv._fromShared); const p = filtered.filter(sv => !sv._fromShared); filtered = [...s, ...p]; }
+      if (_komaTagFilter) {
+        const order = _tagSaveOrder[_komaTagFilter] || [];
+        if (order.length) {
+          filtered.sort((a, b) => {
+            const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+            if (ai === -1 && bi === -1) return 0;
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          });
+        }
+      } else {
+        filtered.sort((a, b) => b.id - a.id);
+      }
       if (!filtered.length) { wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter); return; }
       wrap.innerHTML = filterBar + '<div class="save-list">'
         + filtered.map(sv => renderSaveCard(sv, !!sv._fromShared, 'koma')).join("")
         + '</div>';
       bindSaveListEvents(wrap);
-      if (_komaTabFilter === 'all' && !_komaTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
+      if (!_komaTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
       renderTagFilterBar('tag-filter-bar-koma', getKomaTags(), _komaTagFilter, setKomaTagFilter);
     }
     function getKomaPaletteText() {
@@ -6983,6 +6999,7 @@
     }
     async function downloadFromCloud() {
       if (!syncToken) { showToast("トークンを設定してください"); return; } setSyncSt("ダウンロード中…", "ing"); setGlobalSt("ダウンロード中…", "ing"); const data = await gistGet(); if (!data) { setSyncSt("⚠ データなし", "err"); setGlobalSt("⚠ データなし", "err"); showToast("データなし"); return; } const remote = data.saves || []; loadTagOrder(data);
+      if (data.tagSaveOrder) _tagSaveOrder = { ..._tagSaveOrder, ...data.tagSaveOrder };
       if (remote.length) { const local = lSaves(), merged = [...remote]; local.forEach(l => { if (!merged.find(r => String(r.id) === String(l.id))) merged.push(l); }); currentSaves = merged; wSaves(merged); setSyncSt("✓ 完了（" + merged.length + "件）", "ok"); setGlobalSt("✓ 完了（" + merged.length + "件）", "ok"); const komaCount = merged.filter(s => s._isKoma).length; renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast(komaCount + "件のコマを取得しました（計" + merged.length + "件）"); } else { setSyncSt("⚠ クラウドにデータがありません", "err"); setGlobalSt("⚠ クラウドにデータがありません", "err"); showToast("⚠ クラウドにデータがありません"); } const rm = data.mythos; if (rm) { if (rm.beings) rm.beings.forEach(rb => { if (!customBeings.find(lb => lb.name === rb.name)) customBeings.push(rb); }); if (rm.spells) rm.spells.forEach(rs => { if (!customSpells.find(ls => ls.name === rs.name)) customSpells.push(rs); }); saveCustomLocal(); renderBeingList(); buildSpellRef(); populateSanSelects(); }
     }
     function lSharedSaves() { try { return JSON.parse(localStorage.getItem("coc_v4_shared_saves") || "[]"); } catch { return []; } }
@@ -7026,6 +7043,7 @@
       if (!data) { setSharedSt("⚠ データなし", "err"); showToast("データなし"); return; }
       // クラウドの削除履歴を取得してローカルにも反映
       loadTagOrder(data);
+      if (data.tagSaveOrder) _tagSaveOrder = { ..._tagSaveOrder, ...data.tagSaveOrder };
       const remoteDeletedIds = data.deletedIds || [];
       const threshold = Date.now() - 30 * 24 * 60 * 60 * 1000;
       remoteDeletedIds.forEach(d => {
@@ -7274,18 +7292,29 @@
         if (_statSaveFilter === "shared") return !!sv._fromShared;
         return true;
       });
-      if (_statTagFilter) allSaves = allSaves.filter(sv => (sv.tags || []).includes(_statTagFilter));
+      if (_statTagFilter) {
+        allSaves = allSaves.filter(sv => (sv.tags || []).includes(_statTagFilter));
+        const order = _tagSaveOrder[_statTagFilter] || [];
+        if (order.length) {
+          allSaves.sort((a, b) => {
+            const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+            if (ai === -1 && bi === -1) return 0;
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          });
+        }
+      } else {
+        allSaves.sort((a, b) => b.id - a.id);
+      }
       if (!allSaves.length) {
         wrap.innerHTML = '<p class="save-empty">保存データがありません</p>';
         renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
         return;
       }
-      if (_statSaveFilter === 'all' && !_statTagFilter) allSaves.sort((a, b) => b.id - a.id);
-      if (_statTagFilter) { const s = allSaves.filter(sv => sv._fromShared); const p = allSaves.filter(sv => !sv._fromShared); allSaves = [...s, ...p]; }
-      if (!allSaves.length) { wrap.innerHTML = '<p class="save-empty">データなし</p>'; renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter); return; }
       wrap.innerHTML = '<div class="save-list">' + allSaves.map(sv => renderSaveCard(sv, !!sv._fromShared, 'stats')).join("") + '</div>';
       bindSaveListEvents(wrap);
-      if (_statSaveFilter === 'all' && !_statTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
+      if (!_statTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
       renderTagFilterBar('tag-filter-bar-stat-top', getStatTags(), _statTagFilter, setStatTagFilter);
     }
 
@@ -7324,7 +7353,8 @@
 
       const btnStyle = 'font-size:11px;padding:0 7px;height:20px;line-height:20px;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;';
       const cbId = 'cb-collapse-' + sv.id;
-      const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '" style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉</label>';
+      const collapseChecked = sv.collapse ? ' checked' : '';
+      const collapseChk = '<label style="display:inline-flex;align-items:center;gap:2px;height:20px;cursor:pointer;font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0;padding:0 3px;" title="読込時にブロックを閉じる"><input type="checkbox" id="' + cbId + '"' + collapseChecked + ' style="cursor:pointer;accent-color:var(--accent);width:11px;height:11px;margin:0;">閉</label>';
       const moveUpBtn = '<button class="btn-move-up" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-sortbtn="1" title="上へ移動">↑</button>';
       const moveDnBtn = '<button class="btn-move-down" style="' + btnStyle + 'background:none;border:0.5px solid var(--border2);color:var(--text3);padding:0 6px;" data-id="' + sv.id + '" data-shared="' + (isShared ? 1 : 0) + '" data-sortbtn="1" title="下へ移動">↓</button>';
 
@@ -7516,11 +7546,12 @@
               if (isShared) {
                 wSharedSaves(list);
                 renderSharedList(); renderKomaSaveList(); renderStatSaveList();
-                if (sharedToken) await sharedGistSet({ saves: lSharedSaves() });
+                if (sharedToken) await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
               } else {
-                writeSaves(list);
+                const freshSaves2 = lSaves().map(s => s.id === sv.id ? sv : s);
+                writeSaves(freshSaves2);
                 renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-                if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+                if (syncToken) await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
               }
               showToast("タグを削除しました");
             });
@@ -7677,10 +7708,12 @@
             }
             if (isShared) {
               wSharedSaves(list);
-              if (sharedToken) sharedGistSet({ saves: lSharedSaves() });
+              if (sharedToken) sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
             } else {
-              writeSaves(list);
-              if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells } });
+              // list は古い参照の可能性があるため lSaves() で再取得して保存
+              const freshSaves = lSaves().map(s => s.id === sv.id ? sv : s);
+              writeSaves(freshSaves);
+              if (syncToken) gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder });
             }
 
             // タグチップを＋ボタン直前に挿入
@@ -7753,6 +7786,25 @@
           e.stopPropagation();
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
+          // タグフィルター中はtagSaveOrderを更新
+          const activeTag = _personalTagFilter || _sharedTagFilter || _statTagFilter || _komaTagFilter;
+          if (activeTag) {
+            const allIds = [...lSaves(), ...lSharedSaves()].filter(s => (s.tags||[]).includes(activeTag)).map(s => s.id);
+            if (!_tagSaveOrder[activeTag]) _tagSaveOrder[activeTag] = [...allIds];
+            const order = _tagSaveOrder[activeTag];
+            const pos = order.indexOf(id);
+            if (pos > 0) { [order[pos-1], order[pos]] = [order[pos], order[pos-1]]; }
+            setTimeout(() => { renderSaveList(); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
+            debounceSave(async () => {
+              setGlobalSt("並び順を保存中…", "ing");
+              const p = syncToken ? gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }) : Promise.resolve(false);
+              const s = sharedToken ? sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }) : Promise.resolve(false);
+              const [ok1, ok2] = await Promise.all([p, s]);
+              setGlobalSt((ok1||ok2) ? "✓ 並び順を保存しました" : "⚠ 同期失敗", (ok1||ok2) ? "ok" : "err");
+            });
+            return;
+          }
+          // タグなし（全体）は従来通り
           if (isShared) {
             const list = lSharedSaves();
             const idx = list.findIndex(s => s.id === id);
@@ -7760,14 +7812,14 @@
             [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
+            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx <= 0) return;
             [currentSaves[idx - 1], currentSaves[idx]] = [currentSaves[idx], currentSaves[idx - 1]];
             writeSaves(currentSaves);
             setTimeout(() => { renderSaveList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
+            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
           }
         });
       });
@@ -7776,6 +7828,25 @@
           e.stopPropagation();
           const id = +btn.dataset.id;
           const isShared = btn.dataset.shared === "1";
+          // タグフィルター中はtagSaveOrderを更新
+          const activeTag = _personalTagFilter || _sharedTagFilter || _statTagFilter || _komaTagFilter;
+          if (activeTag) {
+            const allIds = [...lSaves(), ...lSharedSaves()].filter(s => (s.tags||[]).includes(activeTag)).map(s => s.id);
+            if (!_tagSaveOrder[activeTag]) _tagSaveOrder[activeTag] = [...allIds];
+            const order = _tagSaveOrder[activeTag];
+            const pos = order.indexOf(id);
+            if (pos >= 0 && pos < order.length - 1) { [order[pos], order[pos+1]] = [order[pos+1], order[pos]]; }
+            setTimeout(() => { renderSaveList(); renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
+            debounceSave(async () => {
+              setGlobalSt("並び順を保存中…", "ing");
+              const p = syncToken ? gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }) : Promise.resolve(false);
+              const s = sharedToken ? sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }) : Promise.resolve(false);
+              const [ok1, ok2] = await Promise.all([p, s]);
+              setGlobalSt((ok1||ok2) ? "✓ 並び順を保存しました" : "⚠ 同期失敗", (ok1||ok2) ? "ok" : "err");
+            });
+            return;
+          }
+          // タグなし（全体）は従来通り
           if (isShared) {
             const list = lSharedSaves();
             const idx = list.findIndex(s => s.id === id);
@@ -7783,19 +7854,36 @@
             [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
             wSharedSaves(list);
             setTimeout(() => { renderSharedList(); renderKomaSaveList(); renderStatSaveList(); }, 0);
-            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
+            if (sharedToken) { debounceSave(async () => { setGlobalSt("共有同期中…", "ing"); const ok = await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); setGlobalSt(ok ? "✓ 並び順を共有保存しました" : "⚠ 共有同期失敗", ok ? "ok" : "err"); }); }
           } else {
             const idx = currentSaves.findIndex(s => s.id === id);
             if (idx < 0 || idx >= currentSaves.length - 1) return;
             [currentSaves[idx], currentSaves[idx + 1]] = [currentSaves[idx + 1], currentSaves[idx]];
             writeSaves(currentSaves);
             renderSaveList(); renderKomaSaveList(); renderStatSaveList();
-            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
+            if (syncToken) { debounceSave(async () => { setGlobalSt("同期中…", "ing"); const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); setGlobalSt(ok ? "✓ 並び順を保存しました" : "⚠ 同期失敗", ok ? "ok" : "err"); }); }
           }
         });
       });
       // 読込ボタン（展開CBを参照）
-      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; const doExpand = !(document.getElementById(btn.dataset.cb)?.checked || false); if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv, doExpand); showToast("「" + sv.name + "」を読み込みました"); } }); }); wrap.querySelectorAll(".btn-update").forEach(btn => {
+      wrap.querySelectorAll(".btn-load").forEach(btn => { btn.addEventListener("click", () => { const isShared = btn.dataset.shared === "1"; const list = isShared ? lSharedSaves() : currentSaves; const sv = list.find(s => s.id === +btn.dataset.id); if (!sv) return; const doExpand = !(document.getElementById(btn.dataset.cb)?.checked || false); if (sv._isKoma) { loadKomaData(sv.id, isShared); } else { loadDataIntoEditor(sv, doExpand); showToast("「" + sv.name + "」を読み込みました"); } }); });
+      // 閉じるcheckの変更をsv.collapseに保存してGist同期
+      wrap.querySelectorAll('input[id^="cb-collapse-"]').forEach(cb => {
+        cb.addEventListener("change", () => {
+          const id = +cb.id.replace("cb-collapse-", "");
+          const pSv = currentSaves.find(s => s.id === id);
+          const shSv = lSharedSaves().find(s => s.id === id);
+          if (pSv) {
+            pSv.collapse = cb.checked;
+            writeSaves(currentSaves);
+            if (syncToken) debounceSave(async () => { await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); });
+          } else if (shSv) {
+            const shList = lSharedSaves().map(s => s.id === id ? { ...s, collapse: cb.checked } : s);
+            wSharedSaves(shList);
+            if (sharedToken) debounceSave(async () => { await sharedGistSet({ saves: lSharedSaves(), tagOrder: _tagOrder, tagSaveOrder: _tagSaveOrder }); });
+          }
+        });
+      }); wrap.querySelectorAll(".btn-update").forEach(btn => {
         btn.addEventListener("click", () => {
           const isShared = btn.dataset.shared === "1";
           const id = +btn.dataset.id;
@@ -7893,7 +7981,23 @@
         if (f === "both") return getSaveKind(sv) === "both";
         return true;
       });
-      if (_personalTagFilter) saves = saves.filter(sv => (sv.tags || []).includes(_personalTagFilter));
+      if (_personalTagFilter) {
+        saves = saves.filter(sv => (sv.tags || []).includes(_personalTagFilter));
+        // タグ別並び順でソート
+        const order = _tagSaveOrder[_personalTagFilter] || [];
+        if (order.length) {
+          saves.sort((a, b) => {
+            const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+            if (ai === -1 && bi === -1) return 0;
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          });
+        }
+      } else {
+        // 全て表示は保存日時降順で固定
+        saves.sort((a, b) => b.id - a.id);
+      }
       // タグフィルターバー更新
       renderTagFilterBar('tag-filter-bar-personal', getPersonalTags(), _personalTagFilter, setPersonalTagFilter);
       if (!saves.length) {
@@ -7902,6 +8006,8 @@
       }
       wrap.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">保存済み（' + saves.length + '件）</div><div class="save-list">' + saves.map(sv => renderSaveCard(sv, false, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
+      // 全て表示中は↑↓ボタンを非表示
+      if (!_personalTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
     }
     function showPersonalDeleteDialog(id) { const sv = currentSaves.find(s => s.id === id); if (!sv) return; const overlay = document.createElement("div"); overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"; overlay.innerHTML = '<div style="background:var(--bg);border-radius:var(--radius-lg);padding:16px;max-width:280px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.3)"><div style="font-size:15px;font-weight:700;margin-bottom:6px">\u300c' + sv.name + '\u300d\u3092\u524a\u9664</div><div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">\u524a\u9664\u65b9\u6cd5\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044</div><button id="pd-local" style="width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:6px;text-align:left">\ud83d\udda5 \u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u306e\u307f\u524a\u9664<br><span style="font-size:11px;color:var(--text3)">\u30af\u30e9\u30a6\u30c9\u306b\u306f\u6b8b\u308a\u307e\u3059</span></button><button id="pd-cloud" style="width:100%;background:none;border:0.5px solid var(--danger);border-radius:var(--radius);color:var(--danger);cursor:pointer;font-family:inherit;font-size:13px;padding:10px;margin-bottom:8px;text-align:left">\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664<br><span style="font-size:11px;opacity:.8">\u6b21\u56de\u53d6\u5f97\u6642\u306b\u5236\u9664\u3055\u308c\u307e\u3059</span></button><button id="pd-cancel" style="width:100%;background:none;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text3);cursor:pointer;font-family:inherit;font-size:13px;padding:8px">\u30ad\u30e3\u30f3\u30bb\u30eb</button></div>'; document.body.appendChild(overlay); const close = () => document.body.removeChild(overlay); overlay.querySelector("#pd-cancel").addEventListener("click", close); overlay.addEventListener("click", e => { if (e.target === overlay) close(); }); overlay.querySelector("#pd-local").addEventListener("click", () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u81ea\u5206\u306e\u753b\u9762\u304b\u3089\u524a\u9664\u3057\u307e\u3057\u305f"); }); overlay.querySelector("#pd-cloud").addEventListener("click", async () => { close(); writeSaves(currentSaves.filter(s => s.id !== id)); renderSaveList(); renderKomaSaveList(); renderStatSaveList(); showToast("\u524a\u9664\u4e2d\u2026"); if (syncToken) { const ok = await gistSet({ saves: lSaves(), mythos: { beings: customBeings, spells: customSpells }, tagOrder: _tagOrder }); showToast(ok ? "\u2601\ufe0f \u30af\u30e9\u30a6\u30c9\u304b\u3089\u3082\u524a\u9664\u3057\u307e\u3057\u305f" : "\u26a0 \u30af\u30e9\u30a6\u30c9\u524a\u9664\u5931\u6557\uff08\u30ed\u30fc\u30ab\u30eb\u306f\u524a\u9664\u6e08\uff09"); } else { showToast("\u26a0 \u30c8\u30fc\u30af\u30f3\u672a\u8a2d\u5b9a\uff08\u30ed\u30fc\u30ab\u30eb\u306e\u307f\u524a\u9664\uff09"); } }); }
     function showSharedDeleteDialog(id) {
@@ -7961,10 +8067,25 @@
         if ((_sharedFilter || "all") === "both") return !!sv.komaData;
         return true;
       });
-      if (_sharedTagFilter) filtered = filtered.filter(sv => (sv.tags || []).includes(_sharedTagFilter));
+      if (_sharedTagFilter) {
+        filtered = filtered.filter(sv => (sv.tags || []).includes(_sharedTagFilter));
+        const order = _tagSaveOrder[_sharedTagFilter] || [];
+        if (order.length) {
+          filtered.sort((a, b) => {
+            const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+            if (ai === -1 && bi === -1) return 0;
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          });
+        }
+      } else {
+        filtered.sort((a, b) => b.id - a.id);
+      }
       if (!shared.length) { wrap.innerHTML = filterBar + '<p class="save-empty">データなし</p>'; return; }
       wrap.innerHTML = filterBar + '<div id="tag-filter-bar-shared-wrap"></div><div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">共有データ（' + filtered.length + '件）</div><div class="save-list">' + filtered.map(sv => renderSaveCard(sv, true, 'save')).join("") + '</div>';
       bindSaveListEvents(wrap);
+      if (!_sharedTagFilter) wrap.querySelectorAll('[data-sortbtn]').forEach(el => el.style.display = 'none');
       renderTagFilterBar('tag-filter-bar-shared', getSharedTags(), _sharedTagFilter, setSharedTagFilter);
     }
     async function saveDataTo(dest) {
